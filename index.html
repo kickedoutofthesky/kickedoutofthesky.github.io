@@ -246,21 +246,21 @@
       <div class="row grey_background">
         <div class="col-sm-2"></div>
         <div class="col-sm-8 text-center">
-          <form id="contactForm" method="POST">
+          <form id="contactForm" accept-charset="utf-8" method="post">
             <div class="mb-3 text-start">
-              <label for="name" class="form-label">Name</label>
-              <input id="name" class="form-control" type="name" name="Name" required>
+              <label for="full-name" class="form-label">Name</label>
+              <input id="full-name" class="form-control" type="text" name="Name" required>
             </div>
             <div class="mb-3 text-start">
-              <label for="name" class="form-label">Email</label>
-              <input id="email" class="form-control" type="email" name="_replyto" required>
+              <label for="email-address" class="form-label">Email</label>
+              <input id="email-address" class="form-control" type="email" name="_replyto" required>
             </div>
             <div class="mb-3 text-start">
               <label for="name" class="form-label">Message</label>
               <textarea id="message" class="form-control" type="message" name="Message" required></textarea>
             </div>
             <div class="mb-3 text-end">
-              <input type="hidden" name="_subject" value="From www.kickedoutofthesky.com" />
+              <input type="hidden" name="_subject" id="email-subject" value="Contact from www.kickedoutofthesky.com" />
               <input type="text" name="_gotcha" style="display:none" />
               <button id="submit" type="submit" value="Send" class="btn btn-light">Submit</button>
             </div>
@@ -275,7 +275,6 @@
         </div>
       </div>
     </div>
-
     <script
       src="https://code.jquery.com/jquery-3.6.0.min.js"
       integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
@@ -289,12 +288,12 @@
       $("#submit").on("click", function() {
         message = $(contactForm).serialize();
         $.ajax({
-          url: "//formspree.io/kickedoutofthesky@gmail.com",
+          url: "https://formspree.io/f/xqknernz",
           method: "POST",
           data: {message: message},
           dataType: "json"
         });
-        alert('Thank you for the email. We will be in touch!');
+        alert('Your email has been sent to kickedoutofthesky@gmail.com');
         return false;
       });
     </script>
