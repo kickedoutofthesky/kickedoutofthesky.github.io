@@ -248,15 +248,15 @@
         <div class="col-sm-8 text-center">
           <form id="contactForm" accept-charset="utf-8" method="post">
             <div class="mb-3 text-start">
-              <label for="full-name" class="form-label">Name</label>
-              <input id="full-name" class="form-control" type="text" name="Name" required>
+              <label for="name" class="form-label">Name</label>
+              <input id="name" class="form-control" type="text" name="Name" required>
             </div>
             <div class="mb-3 text-start">
-              <label for="email-address" class="form-label">Email</label>
-              <input id="email-address" class="form-control" type="email" name="_replyto" required>
+              <label for="email" class="form-label">Email</label>
+              <input id="email" class="form-control" type="email" name="_replyto" required>
             </div>
             <div class="mb-3 text-start">
-              <label for="name" class="form-label">Message</label>
+              <label for="message" class="form-label">Message</label>
               <textarea id="message" class="form-control" type="message" name="Message" required></textarea>
             </div>
             <div class="mb-3 text-end">
@@ -282,19 +282,29 @@
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
     <script type="text/javascript">
-      // Contact form
-      var message = "";
 
+      // Contact form
       $("#submit").on("click", function() {
-        message = $(contactForm).serialize();
+        var formData = {
+          name: $("#name").val(),
+          email: $("#email").val(),
+          message: $("#message").val(),
+        };
         $.ajax({
-          url: "https://formspree.io/f/xqknernz",
+          url: "https://formspree.io/f/xqknernz", // Kicked Out Of The Sky
+          //url: "https://formspree.io/f/xpzbpaqq", // Let Go Media
           method: "POST",
-          data: {message: message},
-          dataType: "json"
-        });
-        alert('Your email has been sent to kickedoutofthesky@gmail.com');
-        return false;
+          dataType: "json",
+          data: { formData }
+        }).done(function (data) {
+          alert('Your email has been sent to kickedoutofthesky@gmail.com');
+          $("#name").val("");
+          $("#email").val("");
+          $("#message").val("");
+        });;
+
+        event.preventDefault();
+        //return false;
       });
     </script>
   </body>
