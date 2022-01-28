@@ -36,15 +36,7 @@ i.fab {
     letter-spacing: 1px;
 }
 
-.push_fm_reason {
-  width: 300px;
-  height: 600px;
-  overflow: hidden;
-  scroll: none;
-  border: none;
-}
-
-.push_fm_kicked {
+.push_fm {
   width: 300px;
   height: 925px;
   overflow: hidden;
