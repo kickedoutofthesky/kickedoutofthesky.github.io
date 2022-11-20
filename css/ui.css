@@ -3,11 +3,13 @@ body {
     font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
     font-weight: 300;
     background-color: rgba(0, 0, 0);
+    position: relative;
 }
 
 #home {
-  background:transparent url('../img/cover3.jpg') no-repeat top center /cover;
+  background: url('../img/koots_single_cover.jpg') no-repeat center center /contain black;
   height: calc(100vh - 50px);
+  margin-top: 50px;
 }
 
 .cover-container {
@@ -52,7 +54,7 @@ i.fab {
 }
 
 .section_header {
-  padding-top: 10px;
+  padding-top: 50px;
 }
 
 .height-250 {
