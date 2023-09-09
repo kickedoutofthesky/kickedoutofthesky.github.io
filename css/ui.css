@@ -7,7 +7,7 @@ body {
 }
 
 #home {
-  background: url('../img/how-i-feel_single-cover.jpg') no-repeat center center /contain black;
+  background: url('../img/how-i-feel_single-cover.png') no-repeat center center /contain black;
   height: calc(100vh - 50px);
   margin-top: 50px;
 }
