@@ -46,6 +46,14 @@ i.fab {
   border: none;
 }
 
+.push_fm_presave {
+  width: 300px;
+  height: 525px;
+  overflow: hidden;
+  scroll: none;
+  border: none;
+}
+
 .youtube_kicked {
   width: 560px;
   height: 315px;
