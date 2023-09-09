@@ -12,10 +12,6 @@ body {
   margin-top: 50px;
 }
 
-.cover-container {
-  height: calc(50vh - 25px);
-}
-
 i.fab {
   color: rgb(0, 0, 0, .85);
   font-size: 36px;
@@ -36,6 +32,10 @@ i.fab {
     padding: 30px 0;
     color: #ccc;
     letter-spacing: 1px;
+}
+
+.navbar-lower {
+  margin-top: 50px;
 }
 
 .push_fm {
