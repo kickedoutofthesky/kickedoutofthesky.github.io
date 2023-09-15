@@ -73,6 +73,10 @@ i.fab {
   margin-bottom: -51px;
 }
 
+.coming_soon {
+  height: 300px;
+}
+
 /* Photos carousel */
 
 .carousel-inner {
