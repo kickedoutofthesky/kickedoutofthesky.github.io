@@ -4,6 +4,7 @@ body {
     font-weight: 300;
     background-color: rgba(0, 0, 0);
     position: relative;
+    overflow-x: hidden;
 }
 
 #home {
@@ -80,16 +81,18 @@ i.fab {
 /* Photos carousel */
 
 .carousel-inner {
-	width: 100%;
-	display: inline-block;
+	height: 100%;
+  padding-top: 65%;
+	display: block;
 	position: relative;
+  content: "";
 }
 
-.carousel-inner {
+/*.carousel-inner {
 	padding-top: 48%;
 	display: block;
 	content: "";
-}
+}*/
 
 .carousel-item {
 	position: absolute;
@@ -106,39 +109,39 @@ i.fab {
 }
 
 .carousel-item-1 {
-  background:transparent url('../img/website_photos-1008-sm.jpg') no-repeat top center /cover;
+  background:transparent url('../img/website_photos-1008-xsm.jpg') no-repeat top center /cover;
 }
 
 .carousel-item-2 {
-  background:transparent url('../img/website_photos-1005-sm.jpg') no-repeat center center /cover;
+  background:transparent url('../img/website_photos-1005-xsm.jpg') no-repeat center center /cover;
 }
 
 .carousel-item-3 {
-  background:transparent url('../img/website_photos-1009-sm.jpg') no-repeat top center /cover;
+  background:transparent url('../img/website_photos-1009-xsm.jpg') no-repeat top center /cover;
 }
 
 .carousel-item-4 {
-  background:transparent url('../img/website_photos-1006-sm.jpg') no-repeat top center /cover;
+  background:transparent url('../img/website_photos-1006-xsm.jpg') no-repeat top center /cover;
 }
 
 .carousel-item-5 {
-  background:transparent url('../img/website_photos-1003-sm.jpg') no-repeat center center /cover;
+  background:transparent url('../img/website_photos-1003-xsm.jpg') no-repeat center center /cover;
 }
 
 .carousel-item-6 {
-  background:transparent url('../img/website_photos-1002-sm.jpg') no-repeat center center /cover;
+  background:transparent url('../img/website_photos-1002-xsm.jpg') no-repeat center center /cover;
 }
 
 .carousel-item-7 {
-  background:transparent url('../img/website_photos-1004-sm.jpg') no-repeat center center /cover;
+  background:transparent url('../img/website_photos-1004-xsm.jpg') no-repeat center center /cover;
 }
 
 .carousel-item-8 {
-  background:transparent url('../img/website_photos-1001-sm.jpg') no-repeat center center /cover;
+  background:transparent url('../img/website_photos-1001-xsm.jpg') no-repeat center center /cover;
 }
 
 .carousel-item-9 {
-  background:transparent url('../img/website_photos-1007-sm.jpg') no-repeat center center /cover;
+  background:transparent url('../img/website_photos-1007-xsm.jpg') no-repeat center center /cover;
 }
 
 .carousel-indicators button {
@@ -193,3 +196,12 @@ i.fab {
 }
 
 .overflow-hidden { overflow: hidden; }
+
+.container-fluid {
+  padding-left: 0px;
+  padding-right: 0px;
+}
+
+.navbar-brand {
+  padding-left: 10px;
+}
