@@ -8,7 +8,7 @@ body {
 }
 
 #home {
-  background: url('../img/website_photos-1006-xsm.jpg') no-repeat center center /cover black;
+  background: url('../img/website_photos-1005-xsm.jpg') no-repeat center center /cover black;
   height: calc(100vh - 50px);
   margin-top: 50px;
 }
