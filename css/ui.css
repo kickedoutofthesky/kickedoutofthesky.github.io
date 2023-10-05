@@ -8,9 +8,14 @@ body {
 }
 
 #home {
-  background: url('../img/website_photos-1005-xsm.jpg') no-repeat center center /cover black;
-  height: calc(100vh - 50px);
-  margin-top: 50px;
+  background-image: url('../img/website_photos-1007-xsm.jpg');
+  background-repeat: no-repeat;
+  background-color: black;
+  background-position-x: center;
+  background-position-y: top;
+  background-size: cover;
+  height: calc(100vh - 112px);
+  margin-top: 112px;
 }
 
 i.fab {
