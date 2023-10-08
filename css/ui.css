@@ -14,8 +14,22 @@ body {
   background-position-x: center;
   background-position-y: top;
   background-size: cover;
-  height: calc(100vh - 112px);
-  margin-top: 112px;
+  height: calc(100vh - 80px);
+  margin-top: 80px;
+}
+
+@media (max-width: 995px) {
+  #home {
+    height: calc(100vh - 112px);
+    margin-top: 112px;
+  }
+}
+
+@media (max-width: 571px) {
+  #home {
+    height: calc(100vh - 192px);
+    margin-top: 192px;
+  }
 }
 
 i.fab {
@@ -199,6 +213,7 @@ i.fab {
   -ms-flex: 1;
   flex: 1;
 }
+
 @media (min-width: 768px) {
   .flex-md-equal > * {
     -ms-flex: 1;
