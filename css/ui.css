@@ -15,17 +15,17 @@ body {
   background-position-x: center;
   background-position-y: top;
   background-size: cover;
-  height: 100vh;
+  height: calc(100vh - 115px);
 }
 
 #top {
   height: 115px;
   content: "";
-  display:block;
+  display: block;
 }
 
 .section:before {
-  height: 60px;
+  height: 75px;
   content: "";
   display:block;
 }
