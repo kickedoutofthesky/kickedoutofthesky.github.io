@@ -4,6 +4,7 @@ body {
     font-weight: 300;
     background-color: rgba(0, 0, 0);
     position: relative;
+    overflow-y: auto;
     overflow-x: hidden;
 }
 
@@ -14,22 +15,19 @@ body {
   background-position-x: center;
   background-position-y: top;
   background-size: cover;
-  height: calc(100vh - 80px);
-  margin-top: 80px;
+  height: 100vh;
 }
 
-@media (max-width: 995px) {
-  #home {
-    height: calc(100vh - 112px);
-    margin-top: 112px;
-  }
+#top {
+  height: 115px;
+  content: "";
+  display:block;
 }
 
-@media (max-width: 571px) {
-  #home {
-    height: calc(100vh - 192px);
-    margin-top: 192px;
-  }
+.section:before {
+  height: 60px;
+  content: "";
+  display:block;
 }
 
 i.fab {
@@ -54,13 +52,18 @@ i.fab {
     letter-spacing: 1px;
 }
 
-.navbar-lower {
-  margin-top: 50px;
+.nav-link {
+  padding-top: 5px;
+  padding-bottom: 5px;
+  padding-left: 8px;
+  padding-right: 8px;
+  font-weight: 900;
+  font-size: .9em;
 }
 
 .push_fm {
   width: 300px;
-  height: 975px;
+  height: 940px;
   overflow: hidden;
   scroll: none;
   border: none;
@@ -214,12 +217,12 @@ i.fab {
   flex: 1;
 }
 
-@media (min-width: 768px) {
+/*@media (min-width: 768px) {
   .flex-md-equal > * {
     -ms-flex: 1;
     flex: 1;
   }
-}
+}*/
 
 .overflow-hidden { overflow: hidden; }
 
