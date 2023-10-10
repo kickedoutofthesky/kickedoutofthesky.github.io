@@ -1,17 +1,14 @@
-html {
-  overflow-x: hidden;
-  width: auto;
+body {
+  padding-bottom: 50px;
+  font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+  font-weight: 300;
+  background-color: rgba(0, 0, 0);
+  position: relative;
 }
 
-body {
-    padding-bottom: 50px;
-    font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
-    font-weight: 300;
-    background-color: rgba(0, 0, 0);
-    position: relative;
-    overflow-y: auto;
-    overflow-x: hidden;
-    width: auto;
+.site_wrapper {
+  overflow: hidden;
+  position: relative;
 }
 
 #home {
@@ -25,21 +22,18 @@ body {
   -moz-background-size: cover;
   -o-background-size: cover;
   height: calc(100vh - 115px);
-  overflow: hidden;
 }
 
 #top {
   height: 115px;
   content: "";
   display: block;
-  overflow: hidden;
 }
 
 .section:before {
   height: 75px;
   content: "";
   display:block;
-  overflow: hidden;
 }
 
 i.fab {
@@ -250,15 +244,4 @@ i.fab {
 .brand {
   margin: 20px;
   height: 24px;
-}
-
-/* Hide scrollbar for Chrome, Safari and Opera */
-.example::-webkit-scrollbar {
-  display: none;
-}
-
-/* Hide scrollbar for IE, Edge and Firefox */
-.example {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
 }
