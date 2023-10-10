@@ -194,7 +194,7 @@ i.fab {
 
 /* Custom translucent site header */
 .site-header {
-  background-color: rgba(0, 0, 0, .85);
+  background-color: rgba(0, 0, 0, .5);
   -webkit-backdrop-filter: saturate(180%) blur(20px);
   backdrop-filter: saturate(180%) blur(20px);
 }
@@ -210,7 +210,7 @@ i.fab {
 }
 
 .translucent-effect {
-  background-color: rgba(0, 0, 0, .3);
+  background-color: rgba(0, 0, 0, .5);
 }
 
 .width-90 {
@@ -243,4 +243,31 @@ i.fab {
 .brand {
   margin: 20px;
   height: 24px;
+}
+
+.btn-sm {
+  padding-left: 4px;
+  padding-right: 4px;
+  padding-top: 2px;
+  padding-bottom: 2px;
+}
+
+button.paypal-button-custom {
+  position: relative;
+  display: inline-block;
+}
+
+input.paypal-button-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0;
+}
+
+.layer-1 {
+  z-index: 1;
+}
+
+.layer-2 {
+  z-index: 2;
 }

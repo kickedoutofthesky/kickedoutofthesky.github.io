@@ -54,11 +54,19 @@
               </a>
             </div>
             <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-12 col-xm-12 col-xs-12">
-              <ul class="nav justify-content-center px-3">
+              <ul class="nav justify-content-center p-2">
+                <li class="nav-item">
+                  <button type="button" class="mx-2 btn btn-sm btn-warning ml-onclick-form"  onclick="ml('show', 'KglvM2', true)">
+                    <i class="fa fa-star"></i>&nbsp;Sign Up
+                  </button>
+                </li>
                 <li class="nav-item">
                   <form action="https://www.paypal.com/donate" method="post" target="_top">
                     <input type="hidden" name="hosted_button_id" value="QLWVMNADR927N" />
-                    <input type="image" target="_blank" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif" border="0" name="submit" title="PayPal - The safer, easier way to pay online!" alt="Donate with PayPal button" style="padding-top: 8px" />
+                    <button type="button" class="paypal-button-custom mx-2 btn btn-sm btn-warning">
+                      <input type="image" class="paypal-button-image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif" border="0" name="submit" title="PayPal - The safer, easier way to pay online!" alt="Donate with PayPal button" />
+                      <i class="fa-brands fa-paypal"></i>&nbsp;Donate
+                    </input>
                     <img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1" />
                   </form>
                 </li>
@@ -90,7 +98,7 @@
               </ul>
             </div>
             <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-12 col-xm-12 col-xs-12">
-              <ul class="nav justify-content-center px-3">
+              <ul class="nav justify-content-center p-2">
                 <li class="nav-item">
                   <a class="nav-link active" href="#music">Music</a>
                 </li>
@@ -342,5 +350,14 @@
         //return false;
       });
     </script>
+    <!-- MailerLite Universal -->
+    <script>
+        (function(w,d,e,u,f,l,n){w[f]=w[f]||function(){(w[f].q=w[f].q||[])
+        .push(arguments);},l=d.createElement(e),l.async=1,l.src=u,
+        n=d.getElementsByTagName(e)[0],n.parentNode.insertBefore(l,n);})
+        (window,document,'script','https://assets.mailerlite.com/js/universal.js','ml');
+        ml('account', '638341');
+    </script>
+    <!-- End MailerLite Universal -->
   </body>
 </html>
