@@ -1,3 +1,7 @@
+html {
+  overflow-x: hidden;
+}
+
 body {
     padding-bottom: 50px;
     font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
@@ -15,19 +19,25 @@ body {
   background-position-x: center;
   background-position-y: top;
   background-size: cover;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
   height: calc(100vh - 115px);
+  overflow: hidden;
 }
 
 #top {
   height: 115px;
   content: "";
   display: block;
+  overflow: hidden;
 }
 
 .section:before {
   height: 75px;
   content: "";
   display:block;
+  overflow: hidden;
 }
 
 i.fab {
@@ -205,7 +215,11 @@ i.fab {
 }
 
 .translucent-effect {
-  background-color: rgba(0, 0, 0, 0);
+  background-color: rgba(0, 0, 0, .3);
+}
+
+.width-90 {
+  width: 90%;
 }
 
 /*
@@ -217,12 +231,12 @@ i.fab {
   flex: 1;
 }
 
-/*@media (min-width: 768px) {
+@media (min-width: 768px) {
   .flex-md-equal > * {
     -ms-flex: 1;
     flex: 1;
   }
-}*/
+}
 
 .overflow-hidden { overflow: hidden; }
 
