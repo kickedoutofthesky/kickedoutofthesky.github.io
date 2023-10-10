@@ -1,5 +1,6 @@
 html {
   overflow-x: hidden;
+  width: auto;
 }
 
 body {
@@ -10,6 +11,7 @@ body {
     position: relative;
     overflow-y: auto;
     overflow-x: hidden;
+    width: auto;
 }
 
 #home {
@@ -248,4 +250,15 @@ i.fab {
 .brand {
   margin: 20px;
   height: 24px;
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.example::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.example {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
 }
