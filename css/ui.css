@@ -20,17 +20,17 @@ body {
   -webkit-background-size: cover;
   -moz-background-size: cover;
   -o-background-size: cover;
-  height: calc(100vh - 115px);
+  height: calc(100vh - 135px);
 }
 
 #top {
-  height: 115px;
+  height: 135px;
   content: "";
   display: block;
 }
 
 .section:before {
-  height: 75px;
+  height: 100px;
   content: "";
   display:block;
 }
@@ -250,6 +250,7 @@ i.fab {
   padding-right: 4px;
   padding-top: 2px;
   padding-bottom: 2px;
+  color: #000 !important;
 }
 
 button.paypal-button-custom {

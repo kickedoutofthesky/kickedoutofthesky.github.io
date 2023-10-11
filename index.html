@@ -40,6 +40,15 @@
       ga('create', 'UA-78962902-1', 'auto');
       ga('send', 'pageview');
     </script>
+    <!-- MailerLite Universal -->
+    <script>
+        (function(w,d,e,u,f,l,n){w[f]=w[f]||function(){(w[f].q=w[f].q||[])
+        .push(arguments);},l=d.createElement(e),l.async=1,l.src=u,
+        n=d.getElementsByTagName(e)[0],n.parentNode.insertBefore(l,n);})
+        (window,document,'script','https://assets.mailerlite.com/js/universal.js','ml');
+        ml('account', '638341');
+    </script>
+    <!-- End MailerLite Universal -->
   </head>
 
   <body data-bs-spy="scroll" data-bs-target="#navbarMain" data-bs-smooth-scroll="true" data-bs-offset="0" class="text-center" tabindex="0">
@@ -56,9 +65,9 @@
             <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-12 col-xm-12 col-xs-12">
               <ul class="nav justify-content-center p-2">
                 <li class="nav-item">
-                  <button type="button" class="mx-2 btn btn-sm btn-warning ml-onclick-form"  onclick="ml('show', 'KglvM2', true)">
+                  <a type="button" class="mx-2 btn btn-sm btn-warning" href="#signup">
                     <i class="fa fa-star"></i>&nbsp;Sign Up
-                  </button>
+                  </a>
                 </li>
                 <li class="nav-item">
                   <form action="https://www.paypal.com/donate" method="post" target="_top">
@@ -310,6 +319,19 @@
         </div>
         <div class="col-xs-1 col-sm-1 col-md-2 col-lg-3 col-xl-4 col-xxl-4"></div>
       </div>
+      <!-- Sign Up -->
+      <div id="signup" class="row black_background">
+        <div class="col-12 text-center">
+          <h3 class="section section_header">SIGN UP</h3>
+        </div>
+      </div>
+      <div class="row g-4 px-5 black_background">
+        <div class="col-xs-1 col-sm-1 col-md-2 col-lg-3 col-xl-4 col-xxl-4"></div>
+        <div class="col-xs-10 col-sm-10 col-md-8 col-lg-6 col-xl-4 col-xxl-4">
+          <div class="ml-embedded" data-form="VU76Kw"></div>
+        </div>
+        <div class="col-xs-1 col-sm-1 col-md-2 col-lg-3 col-xl-4 col-xxl-4"></div>
+      </div>
       <!-- Footer -->
       <div class="row black_background margin-bottom-minus-navbar height-250">
         <div class="col-12 text-center">
@@ -350,14 +372,5 @@
         //return false;
       });
     </script>
-    <!-- MailerLite Universal -->
-    <script>
-        (function(w,d,e,u,f,l,n){w[f]=w[f]||function(){(w[f].q=w[f].q||[])
-        .push(arguments);},l=d.createElement(e),l.async=1,l.src=u,
-        n=d.getElementsByTagName(e)[0],n.parentNode.insertBefore(l,n);})
-        (window,document,'script','https://assets.mailerlite.com/js/universal.js','ml');
-        ml('account', '638341');
-    </script>
-    <!-- End MailerLite Universal -->
   </body>
 </html>
