@@ -106,7 +106,6 @@ i.fab {
 }
 
 /* Photos carousel */
-
 .carousel-inner {
 	height: 100%;
   padding-top: 65%;
@@ -114,12 +113,6 @@ i.fab {
 	position: relative;
   content: "";
 }
-
-/*.carousel-inner {
-	padding-top: 48%;
-	display: block;
-	content: "";
-}*/
 
 .carousel-item {
 	position: absolute;
