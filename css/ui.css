@@ -24,10 +24,12 @@ body {
 
 .background-image-1 {
   background-image: url('../img/cover-1.jpg');
+  background-position-x: 40%;
 }
 
 .background-image-2 {
   background-image: url('../img/cover-2.jpg');
+  background-position-x: 70%;
 }
 
 .background-image-3 {
