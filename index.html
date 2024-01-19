@@ -52,7 +52,7 @@
     </script>
   </head>
 
-  <body data-bs-spy="scroll" data-bs-target="#navbarMain" data-bs-smooth-scroll="true" data-bs-offset="0" class="text-center" tabindex="0">
+  <body data-bs-spy="scroll" data-bs-target="#navbarMain" data-bs-smooth-scroll="true" data-bs-offset="0" class="text-center" tabindex="0" onload="onLoadDocument()">
     <div class="site_wrapper">
       <!-- Navbar -->
       <nav id="navbarMain" class="navbar navbar-expand site-header fixed-top translucent-effect justify-content-center">
@@ -351,6 +351,26 @@
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
     <script type="text/javascript">
+
+      function onLoadDocument() {
+        const randomBackground = ['background-image-1','background-image-2', 'background-image-3', 'background-image-4'];
+
+        console.log(randomBackground);
+
+        const randomNumber = Math.floor(Math.random() * randomBackground.length);
+
+        console.log(randomNumber);
+
+        const backgroundClass = randomBackground[randomNumber];
+
+        console.log(backgroundClass);
+
+        const homeElement = document.getElementById('home')
+
+        console.log(homeElement);
+
+        homeElement.classList.add(backgroundClass);
+      };
 
       // Contact form
       $("#submit").on("click", function() {
