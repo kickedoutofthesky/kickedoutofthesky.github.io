@@ -13,8 +13,6 @@ body {
 #home {
   background-repeat: no-repeat;
   background-color: black;
-  background-position-x: center;
-  background-position-y: top;
   background-size: cover;
   -webkit-background-size: cover;
   -moz-background-size: cover;
@@ -25,19 +23,25 @@ body {
 .background-image-1 {
   background-image: url('../img/cover-1.jpg');
   background-position-x: 40%;
+  background-position-y: top;
 }
 
 .background-image-2 {
   background-image: url('../img/cover-2.jpg');
   background-position-x: 70%;
+  background-position-y: 20%;
 }
 
 .background-image-3 {
   background-image: url('../img/cover-3.jpg');
+  background-position-x: center;
+  background-position-y: top;
 }
 
 .background-image-4 {
   background-image: url('../img/cover-4.jpg');
+  background-position-x: center;
+  background-position-y: 20%;
 }
 
 #top {
