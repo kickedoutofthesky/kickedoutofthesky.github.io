@@ -103,6 +103,14 @@ i.fab {
   border: none;
 }
 
+.push_fm_preorder {
+  width: 300px;
+  height: 500px;
+  overflow: hidden;
+  scroll: none;
+  border: none;
+}
+
 .youtube_kicked {
   width: 560px;
   height: 315px;
@@ -256,7 +264,7 @@ i.fab {
 
 .brand {
   margin: 20px;
-  height: 24px;
+  height: 30px;
 }
 
 .btn-sm {
