@@ -20,6 +20,12 @@ body {
   height: calc(100vh - 135px);
 }
 
+.background-image {
+  background-image: url('../img/levity-of-lies_ep-cover-50.jpg');
+  background-position-x: center;
+  background-position-y: top;
+}
+
 .background-image-1 {
   background-image: url('../img/cover-1.jpg');
   background-position-x: 40%;
@@ -45,16 +51,15 @@ body {
 }
 
 #top {
-  height: 135px;
+  height: 160px;
   content: "";
   display: block;
 }
 
-.section:before {
-  height: 100px;
-  content: "";
-  display:block;
-}
+/*.section {
+  padding-top: 60px;
+  padding-bottom: 60px;
+}*/
 
 i.fab {
   color: rgb(0, 0, 0, .85);
@@ -89,7 +94,7 @@ i.fab {
 
 .push_fm {
   width: 300px;
-  height: 655px;
+  height: 625px;
   overflow: hidden;
   scroll: none;
   border: none;
@@ -119,7 +124,9 @@ i.fab {
 }
 
 .section_header {
-  padding-top: 50px;
+  height: 150px;
+  content: "";
+  display: block;
 }
 
 .height-250 {
