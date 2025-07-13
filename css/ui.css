@@ -5,6 +5,16 @@ body {
   background-color: rgba(0, 0, 0);
 }
 
+a, a:visited {
+  color: white;
+  text-decoration: none;
+}
+
+a:hover, a:active {
+  color: white;
+  text-decoration: underline;
+}
+
 .site_wrapper {
   overflow: hidden;
   position: relative;
@@ -20,46 +30,11 @@ body {
   height: calc(100vh - 135px);
 }
 
-.background-image {
-  background-image: url('../img/levity-of-lies_ep-cover-50.jpg');
-  background-position-x: center;
-  background-position-y: top;
-}
-
-.background-image-1 {
-  background-image: url('../img/cover-1.jpg');
-  background-position-x: 40%;
-  background-position-y: top;
-}
-
-.background-image-2 {
-  background-image: url('../img/cover-2.jpg');
-  background-position-x: 70%;
-  background-position-y: 20%;
-}
-
-.background-image-3 {
-  background-image: url('../img/cover-3.jpg');
-  background-position-x: center;
-  background-position-y: top;
-}
-
-.background-image-4 {
-  background-image: url('../img/cover-4.jpg');
-  background-position-x: center;
-  background-position-y: 20%;
-}
-
 #top {
   height: 160px;
   content: "";
   display: block;
 }
-
-/*.section {
-  padding-top: 60px;
-  padding-bottom: 60px;
-}*/
 
 i.fab {
   color: rgb(0, 0, 0, .85);
@@ -92,30 +67,6 @@ i.fab {
   font-size: .9em;
 }
 
-.push_fm {
-  width: 300px;
-  height: 625px;
-  overflow: hidden;
-  scroll: none;
-  border: none;
-}
-
-.push_fm_presave {
-  width: 300px;
-  height: 525px;
-  overflow: hidden;
-  scroll: none;
-  border: none;
-}
-
-.push_fm_preorder {
-  width: 300px;
-  height: 500px;
-  overflow: hidden;
-  scroll: none;
-  border: none;
-}
-
 .youtube_kicked {
   width: 560px;
   height: 315px;
@@ -133,92 +84,25 @@ i.fab {
   height: 250px;
 }
 
+.album_cover {
+  max-width: 300px;
+  max-height: 300px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+}
+
+.album_cover:hover {
+  transform: scale(1.1) translateY(-8px);
+  box-shadow: 0 15px 25px rgba(0, 0, 0, 0.3);
+  z-index: 10; /* keep it above neighbors */
+}
+
 .margin-bottom-minus-navbar {
   margin-bottom: -51px;
 }
 
 .coming_soon {
   height: 300px;
-}
-
-/* Photos carousel */
-.carousel-inner {
-	height: 100%;
-  padding-top: 65%;
-	display: block;
-	position: relative;
-  content: "";
-}
-
-.carousel-item {
-	position: absolute;
-	top: 0;
-	bottom: 0;
-	right: 0;
-	left: 0;
-	background: transparent;
-	background: no-repeat center center scroll;
-	-webkit-background-size: cover;
-	-moz-background-size: cover;
-	-o-background-size: cover;
-	background-size: cover;
-}
-
-.carousel-item-1 {
-  background:transparent url('../img/website_photos-1008-xsm.jpg') no-repeat top center /cover;
-}
-
-.carousel-item-2 {
-  background:transparent url('../img/website_photos-1005-xsm.jpg') no-repeat center center /cover;
-}
-
-.carousel-item-3 {
-  background:transparent url('../img/website_photos-1009-xsm.jpg') no-repeat top center /cover;
-}
-
-.carousel-item-4 {
-  background:transparent url('../img/website_photos-1006-xsm.jpg') no-repeat top center /cover;
-}
-
-.carousel-item-5 {
-  background:transparent url('../img/website_photos-1003-xsm.jpg') no-repeat center center /cover;
-}
-
-.carousel-item-6 {
-  background:transparent url('../img/website_photos-1002-xsm.jpg') no-repeat center center /cover;
-}
-
-.carousel-item-7 {
-  background:transparent url('../img/website_photos-1004-xsm.jpg') no-repeat center center /cover;
-}
-
-.carousel-item-8 {
-  background:transparent url('../img/website_photos-1001-xsm.jpg') no-repeat center center /cover;
-}
-
-.carousel-item-9 {
-  background:transparent url('../img/website_photos-1007-xsm.jpg') no-repeat center center /cover;
-}
-
-.carousel-indicators button {
-  margin: 2px;
-  background-color: rgba(0, 0, 0, .75);
-}
-
-.carousel-indicators button.active {
-  margin: 2px;
-  background-color: rgba(99, 99, 99, .75);
-}
-
-.carousel-control-next,
-.carousel-control-prev {
-    filter: invert(100%);
-}
-
-.carousel-control-next-icon,
-.carousel-control-prev-icon {
-  width: 30px;
-  height: 30px;
 }
 
 /* Custom translucent site header */
