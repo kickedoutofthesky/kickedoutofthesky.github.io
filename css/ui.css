@@ -55,7 +55,7 @@ i.fab {
 }
 
 .grey_background {
-  background: rgba(15, 15, 15);
+  background: #0f0f0f;
   position: relative;
   padding: 30px 0;
   color: #ccc;
@@ -63,7 +63,7 @@ i.fab {
 }
 
 .black_background {
-  background: rgba(0, 0, 0);
+  background: #000000;
   position: relative;
   padding: 30px 0;
   color: #ccc;
@@ -190,7 +190,7 @@ i.fab {
 /* Newsletter/MailerLite Form Styling */
 .ml-embedded,
 .ml-embedded * {
-  background-color: rgba(15, 15, 15) !important;
+  background-color: #0f0f0f !important;
   color: #ccc !important;
   border-color: #444 !important;
 }
@@ -199,7 +199,7 @@ i.fab {
 .ml-embedded input[type="email"],
 .ml-embedded textarea,
 .ml-embedded select {
-  background-color: rgba(30, 30, 30) !important;
+  background-color: #1e1e1e !important;
   color: #fff !important;
   border: 1px solid #444 !important;
   border-radius: 4px !important;
@@ -218,6 +218,7 @@ i.fab {
 .ml-embedded input[type="submit"],
 .ml-embedded .btn {
   background-color: #ffc107 !important;
+  background: #ffc107 !important;
   color: #000 !important;
   border: 1px solid #ffc107 !important;
   border-radius: 4px !important;
@@ -227,41 +228,18 @@ i.fab {
 
 .ml-embedded button:hover,
 .ml-embedded input[type="submit"]:hover,
-.ml-embedded .btn:hover {
+.ml-embedded .btn:hover,
+.ml-embedded button:focus,
+.ml-embedded input[type="submit"]:focus,
+.ml-embedded .btn:focus {
   background-color: #e0a800 !important;
+  background: #e0a800 !important;
   border-color: #e0a800 !important;
   color: #000 !important;
 }
 
-.ml-embedded label {
-  color: #ccc !important;
-  font-weight: normal !important;
-}
-
-.ml-embedded .form-control {
-  background-color: rgba(30, 30, 30) !important;
-  color: #fff !important;
-  border: 1px solid #444 !important;
-}
-
-.ml-embedded .form-control:focus {
-  background-color: rgba(30, 30, 30) !important;
-  color: #fff !important;
-  border-color: #666 !important;
-  box-shadow: 0 0 5px rgba(255, 255, 255, 0.1) !important;
-}
-
-/* Override any MailerLite specific styling */
-.ml-embedded .ml-form-embedWrapper,
-.ml-embedded .ml-form-embedContainer,
-.ml-embedded .ml-form-fieldRow {
-  background-color: transparent !important;
-}
-
-.ml-embedded .ml-form-successBody,
-.ml-embedded .ml-form-errorBody {
-  background-color: rgba(15, 15, 15) !important;
-  color: #ccc !important;
+#mlb2-8448360.ml-form-embedContainer .ml-form-embedWrapper .ml-form-embedBody .ml-form-horizontalRow button {
+  color: #000 !important;
 }
 
 /* Contact Form Styling to match Newsletter */
