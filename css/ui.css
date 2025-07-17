@@ -3,14 +3,14 @@ body {
   font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial,
     "Lucida Grande", sans-serif;
   font-weight: 300;
-  background-color: rgba(0, 0, 0);
+  background-color: #000000;
 }
 
 a,
 a:visited,
 a:hover,
 a:active {
-  color: white;
+  color: #ffffff;
   text-decoration: none;
 }
 
@@ -22,7 +22,7 @@ a:active {
 
 .site_wrapper .btn-text:hover,
 .site_wrapper .btn-text:focus {
-  color: white;
+  color: #ffffff;
   background-color: transparent;
   text-decoration: none;
 }
@@ -34,7 +34,7 @@ a:active {
 
 #home {
   background-repeat: no-repeat;
-  background-color: black;
+  background-color: #000000;
   background-size: cover;
   -webkit-background-size: cover;
   -moz-background-size: cover;
@@ -49,7 +49,7 @@ a:active {
 }
 
 i.fab {
-  color: rgb(0, 0, 0, 0.85);
+  color: #000000d9;
   font-size: 36px;
   padding-left: 10px;
 }
@@ -104,7 +104,7 @@ i.fab {
 
 .album_cover:hover {
   transform: scale(1.1) translateY(-8px);
-  box-shadow: 0 15px 25px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 15px 25px #0000004d;
   z-index: 10; /* keep it above neighbors */
 }
 
@@ -118,7 +118,7 @@ i.fab {
 
 /* Custom translucent site header */
 .site-header {
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: #00000080;
   -webkit-backdrop-filter: saturate(180%) blur(20px);
   backdrop-filter: saturate(180%) blur(20px);
 }
@@ -129,12 +129,12 @@ i.fab {
 }
 
 .site-header a:hover {
-  color: #fff;
+  color: #ffffff;
   text-decoration: none;
 }
 
 .translucent-effect {
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: #00000080;
 }
 
 .width-90 {
@@ -191,8 +191,8 @@ i.fab {
 .ml-embedded,
 .ml-embedded * {
   background-color: #0f0f0f !important;
-  color: #ccc !important;
-  border-color: #444 !important;
+  color: #cccccc !important;
+  border-color: #444444 !important;
 }
 
 .ml-embedded input[type="text"],
@@ -200,8 +200,8 @@ i.fab {
 .ml-embedded textarea,
 .ml-embedded select {
   background-color: #1e1e1e !important;
-  color: #fff !important;
-  border: 1px solid #444 !important;
+  color: #ffffff !important;
+  border: 1px solid #444444 !important;
   border-radius: 4px !important;
 }
 
@@ -209,9 +209,9 @@ i.fab {
 .ml-embedded input[type="email"]:focus,
 .ml-embedded textarea:focus,
 .ml-embedded select:focus {
-  border-color: #666 !important;
+  border-color: #666666 !important;
   outline: none !important;
-  box-shadow: 0 0 5px rgba(255, 255, 255, 0.1) !important;
+  box-shadow: 0 0 5px #ffffff1a !important;
 }
 
 .ml-embedded button,
@@ -219,7 +219,7 @@ i.fab {
 .ml-embedded .btn {
   background-color: #ffc107 !important;
   background: #ffc107 !important;
-  color: #000 !important;
+  color: #000000 !important;
   border: 1px solid #ffc107 !important;
   border-radius: 4px !important;
   transition: all 0.3s ease !important;
@@ -235,45 +235,45 @@ i.fab {
   background-color: #e0a800 !important;
   background: #e0a800 !important;
   border-color: #e0a800 !important;
-  color: #000 !important;
+  color: #000000 !important;
 }
 
 #mlb2-8448360.ml-form-embedContainer .ml-form-embedWrapper .ml-form-embedBody .ml-form-horizontalRow button {
-  color: #000 !important;
+  color: #000000 !important;
 }
 
 /* Contact Form Styling to match Newsletter */
 #contact .form-label {
-  color: #ccc !important;
+  color: #cccccc !important;
   font-weight: normal !important;
 }
 
 #contact .form-control {
-  background-color: rgba(30, 30, 30) !important;
-  color: #fff !important;
-  border: 1px solid #444 !important;
+  background-color: #1e1e1e !important;
+  color: #ffffff !important;
+  border: 1px solid #444444 !important;
   border-radius: 4px !important;
 }
 
 #contact .form-control:focus {
-  background-color: rgba(30, 30, 30) !important;
-  color: #fff !important;
-  border-color: #666 !important;
-  box-shadow: 0 0 5px rgba(255, 255, 255, 0.1) !important;
+  background-color: #1e1e1e !important;
+  color: #ffffff !important;
+  border-color: #666666 !important;
+  box-shadow: 0 0 5px #ffffff1a !important;
   outline: none !important;
 }
 
 #contact textarea.form-control {
-  background-color: rgba(30, 30, 30) !important;
-  color: #fff !important;
-  border: 1px solid #444 !important;
+  background-color: #1e1e1e !important;
+  color: #ffffff !important;
+  border: 1px solid #444444 !important;
   min-height: 120px !important;
   resize: vertical !important;
 }
 
 #contact .btn-light {
   background-color: #ffc107 !important;
-  color: #000 !important;
+  color: #000000 !important;
   border: 1px solid #ffc107 !important;
   border-radius: 4px !important;
   transition: all 0.3s ease !important;
@@ -283,5 +283,5 @@ i.fab {
 #contact .btn-light:hover {
   background-color: #e0a800 !important;
   border-color: #e0a800 !important;
-  color: #000 !important;
+  color: #000000 !important;
 }
