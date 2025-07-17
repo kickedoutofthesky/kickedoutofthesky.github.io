@@ -186,3 +186,124 @@ i.fab {
 .layer-2 {
   z-index: 2;
 }
+
+/* Newsletter/MailerLite Form Styling */
+.ml-embedded,
+.ml-embedded * {
+  background-color: rgba(15, 15, 15) !important;
+  color: #ccc !important;
+  border-color: #444 !important;
+}
+
+.ml-embedded input[type="text"],
+.ml-embedded input[type="email"],
+.ml-embedded textarea,
+.ml-embedded select {
+  background-color: rgba(30, 30, 30) !important;
+  color: #fff !important;
+  border: 1px solid #444 !important;
+  border-radius: 4px !important;
+}
+
+.ml-embedded input[type="text"]:focus,
+.ml-embedded input[type="email"]:focus,
+.ml-embedded textarea:focus,
+.ml-embedded select:focus {
+  border-color: #666 !important;
+  outline: none !important;
+  box-shadow: 0 0 5px rgba(255, 255, 255, 0.1) !important;
+}
+
+.ml-embedded button,
+.ml-embedded input[type="submit"],
+.ml-embedded .btn {
+  background-color: #ffc107 !important;
+  color: #000 !important;
+  border: 1px solid #ffc107 !important;
+  border-radius: 4px !important;
+  transition: all 0.3s ease !important;
+  font-weight: 500 !important;
+}
+
+.ml-embedded button:hover,
+.ml-embedded input[type="submit"]:hover,
+.ml-embedded .btn:hover {
+  background-color: #e0a800 !important;
+  border-color: #e0a800 !important;
+  color: #000 !important;
+}
+
+.ml-embedded label {
+  color: #ccc !important;
+  font-weight: normal !important;
+}
+
+.ml-embedded .form-control {
+  background-color: rgba(30, 30, 30) !important;
+  color: #fff !important;
+  border: 1px solid #444 !important;
+}
+
+.ml-embedded .form-control:focus {
+  background-color: rgba(30, 30, 30) !important;
+  color: #fff !important;
+  border-color: #666 !important;
+  box-shadow: 0 0 5px rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Override any MailerLite specific styling */
+.ml-embedded .ml-form-embedWrapper,
+.ml-embedded .ml-form-embedContainer,
+.ml-embedded .ml-form-fieldRow {
+  background-color: transparent !important;
+}
+
+.ml-embedded .ml-form-successBody,
+.ml-embedded .ml-form-errorBody {
+  background-color: rgba(15, 15, 15) !important;
+  color: #ccc !important;
+}
+
+/* Contact Form Styling to match Newsletter */
+#contact .form-label {
+  color: #ccc !important;
+  font-weight: normal !important;
+}
+
+#contact .form-control {
+  background-color: rgba(30, 30, 30) !important;
+  color: #fff !important;
+  border: 1px solid #444 !important;
+  border-radius: 4px !important;
+}
+
+#contact .form-control:focus {
+  background-color: rgba(30, 30, 30) !important;
+  color: #fff !important;
+  border-color: #666 !important;
+  box-shadow: 0 0 5px rgba(255, 255, 255, 0.1) !important;
+  outline: none !important;
+}
+
+#contact textarea.form-control {
+  background-color: rgba(30, 30, 30) !important;
+  color: #fff !important;
+  border: 1px solid #444 !important;
+  min-height: 120px !important;
+  resize: vertical !important;
+}
+
+#contact .btn-light {
+  background-color: #ffc107 !important;
+  color: #000 !important;
+  border: 1px solid #ffc107 !important;
+  border-radius: 4px !important;
+  transition: all 0.3s ease !important;
+  font-weight: 500 !important;
+}
+
+#contact .btn-light:hover {
+  background-color: #e0a800 !important;
+  border-color: #e0a800 !important;
+  color: #000 !important;
+}
