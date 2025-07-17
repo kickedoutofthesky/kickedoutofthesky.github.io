@@ -1,18 +1,30 @@
 body {
   padding-bottom: 50px;
-  font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+  font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial,
+    "Lucida Grande", sans-serif;
   font-weight: 300;
   background-color: rgba(0, 0, 0);
 }
 
-a, a:visited {
+a,
+a:visited,
+a:hover,
+a:active {
   color: white;
   text-decoration: none;
 }
 
-a:hover, a:active {
+.site_wrapper .btn-text {
+  color: inherit;
+  background-color: inherit;
+  text-decoration: none;
+}
+
+.site_wrapper .btn-text:hover,
+.site_wrapper .btn-text:focus {
   color: white;
-  text-decoration: underline;
+  background-color: transparent;
+  text-decoration: none;
 }
 
 .site_wrapper {
@@ -37,25 +49,25 @@ a:hover, a:active {
 }
 
 i.fab {
-  color: rgb(0, 0, 0, .85);
+  color: rgb(0, 0, 0, 0.85);
   font-size: 36px;
   padding-left: 10px;
 }
 
 .grey_background {
-    background: rgba(15, 15, 15);
-    position: relative;
-    padding: 30px 0;
-    color: #ccc;
-    letter-spacing: 1px;
+  background: rgba(15, 15, 15);
+  position: relative;
+  padding: 30px 0;
+  color: #ccc;
+  letter-spacing: 1px;
 }
 
 .black_background {
-    background: rgba(0, 0, 0);
-    position: relative;
-    padding: 30px 0;
-    color: #ccc;
-    letter-spacing: 1px;
+  background: rgba(0, 0, 0);
+  position: relative;
+  padding: 30px 0;
+  color: #ccc;
+  letter-spacing: 1px;
 }
 
 .nav-link {
@@ -64,14 +76,13 @@ i.fab {
   padding-left: 8px;
   padding-right: 8px;
   font-weight: 900;
-  font-size: .9em;
+  font-size: 0.9em;
 }
 
 .youtube_kicked {
   width: 560px;
   height: 315px;
   overflow: hidden;
-  scroll: none;
 }
 
 .section_header {
@@ -107,14 +118,14 @@ i.fab {
 
 /* Custom translucent site header */
 .site-header {
-  background-color: rgba(0, 0, 0, .5);
+  background-color: rgba(0, 0, 0, 0.5);
   -webkit-backdrop-filter: saturate(180%) blur(20px);
   backdrop-filter: saturate(180%) blur(20px);
 }
 
 .site-header a {
   color: #999;
-  transition: ease-in-out color .15s;
+  transition: ease-in-out color 0.15s;
 }
 
 .site-header a:hover {
@@ -123,7 +134,7 @@ i.fab {
 }
 
 .translucent-effect {
-  background-color: rgba(0, 0, 0, .5);
+  background-color: rgba(0, 0, 0, 0.5);
 }
 
 .width-90 {
@@ -146,7 +157,9 @@ i.fab {
   }
 }
 
-.overflow-hidden { overflow: hidden; }
+.overflow-hidden {
+  overflow: hidden;
+}
 
 .container-fluid {
   padding-left: 0px;
@@ -164,18 +177,6 @@ i.fab {
   padding-top: 2px;
   padding-bottom: 2px;
   color: #000 !important;
-}
-
-button.paypal-button-custom {
-  position: relative;
-  display: inline-block;
-}
-
-input.paypal-button-image {
-  position: absolute;
-  top: 0;
-  left: 0;
-  opacity: 0;
 }
 
 .layer-1 {
