@@ -187,65 +187,6 @@ i.fab {
   z-index: 2;
 }
 
-/* Newsletter/MailerLite Form Styling */
-.ml-embedded,
-.ml-embedded * {
-  background-color: #0f0f0f !important;
-  color: #cccccc !important;
-  border-color: #444444 !important;
-}
-
-.ml-embedded input[type="text"],
-.ml-embedded input[type="email"],
-.ml-embedded textarea,
-.ml-embedded select {
-  background-color: #1e1e1e !important;
-  color: #ffffff !important;
-  border: 1px solid #444444 !important;
-  border-radius: 4px !important;
-}
-
-.ml-embedded input[type="text"]:focus,
-.ml-embedded input[type="email"]:focus,
-.ml-embedded textarea:focus,
-.ml-embedded select:focus {
-  border-color: #666666 !important;
-  outline: none !important;
-  box-shadow: 0 0 5px #ffffff1a !important;
-}
-
-.ml-embedded button,
-.ml-embedded input[type="submit"],
-.ml-embedded .btn {
-  background-color: #ffc107 !important;
-  background: #ffc107 !important;
-  color: #000000 !important;
-  border: 1px solid #ffc107 !important;
-  border-radius: 4px !important;
-  transition: all 0.3s ease !important;
-  font-weight: 500 !important;
-}
-
-.ml-embedded button:hover,
-.ml-embedded input[type="submit"]:hover,
-.ml-embedded .btn:hover,
-.ml-embedded button:focus,
-.ml-embedded input[type="submit"]:focus,
-.ml-embedded .btn:focus {
-  background-color: #e0a800 !important;
-  background: #e0a800 !important;
-  border-color: #e0a800 !important;
-  color: #000000 !important;
-}
-
-#mlb2-8448360.ml-form-embedContainer
-  .ml-form-embedWrapper
-  .ml-form-embedBody
-  .ml-form-horizontalRow
-  button {
-  color: #000000 !important;
-}
-
 /* Contact Form Styling to match Newsletter */
 #contact .form-label {
   color: #cccccc !important;
