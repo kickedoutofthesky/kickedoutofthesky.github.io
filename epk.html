@@ -1,0 +1,521 @@
+<!--
+Kicked Out of the Sky — Dark Embedded Web EPK (single scrolling page)
+Files required (place these in the same folder as this HTML file or update paths):
+ - Kicked-Out-Of-The-Sky_transparent.png   (logo)
+ - mural-1004.jpg                           (header background)
+ - alfama-1041.jpg                          (secondary photo)
+ - Kicked-Out-of-the-Sky-EPK.pdf            (optional — link to the PDF)
+
+How to use:
+ 1. Put this file (epk.html) and the asset files in the same folder on your web host.
+ 2. Open epk.html in a browser to preview. Upload to kickedoutofthesky.com/epk to embed.
+ 3. Adjust links (Spotify, YouTube, socials) if needed in the HTML.
+
+Designed for a dark/urban aesthetic. Feel free to ask for edits (fonts, spacing, copy).
+-->
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Kicked Out of the Sky — EPK</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Playfair+Display:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #070707;
+        --panel: #0f0f10;
+        --muted: #bdbdbd;
+        --gold: #ffd166;
+        --accent: #c9a84b;
+        --max-width: 1100px;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        height: 100%;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: #fff;
+        font-family: Montserrat, system-ui, Arial;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        line-height: 1.5;
+      }
+      a {
+        color: var(--gold);
+        text-decoration: none;
+      }
+      .container {
+        max-width: var(--max-width);
+        margin: 0 auto;
+        padding: 40px 20px;
+      }
+
+      /* Header / Hero */
+      .hero {
+        min-height: 60vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+        background: url("mural-1004.jpg") center/cover no-repeat;
+      }
+      .hero::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(180deg, rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.85));
+      }
+      .hero-inner {
+        position: relative;
+        text-align: center;
+        z-index: 2;
+        padding: 60px 20px;
+      }
+      .logo {
+        max-width: 260px;
+        margin: 0 auto;
+      }
+      .large-logo {
+        max-width: 420px;
+      }
+      .tagline {
+        color: var(--gold);
+        font-weight: 600;
+        letter-spacing: 1px;
+      }
+      h1 {
+        font-family: "Playfair Display", serif;
+        font-size: 44px;
+        margin: 8px 0 6px;
+      }
+      .sub {
+        color: var(--muted);
+        margin-bottom: 18px;
+      }
+
+      /* Sticky nav */
+      .topbar {
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        background: linear-gradient(0deg, rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.2));
+        backdrop-filter: blur(4px);
+        padding: 8px 12px;
+      }
+      .nav-inner {
+        max-width: var(--max-width);
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        min-height: 40px;
+      }
+      .nav-links {
+        display: flex;
+        align-items: center;
+      }
+      .nav-links a {
+        margin-left: 16px;
+        color: var(--muted);
+        font-weight: 600;
+        line-height: 1;
+      }
+
+      /* Sections */
+      section {
+        padding: 56px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+      }
+      .section-header {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 18px;
+      }
+      .section-header h2 {
+        margin: 0;
+        color: var(--gold);
+        font-size: 18px;
+      }
+      .lead {
+        color: var(--muted);
+        max-width: 820px;
+      }
+
+      /* Card layout for meta */
+      .meta-grid {
+        display: grid;
+        grid-template-columns: 1fr 420px;
+        gap: 28px;
+        align-items: start;
+      }
+      .card {
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(0, 0, 0, 0.03));
+        padding: 18px;
+        border-radius: 8px;
+      }
+      .card p {
+        margin: 6px 0;
+        color: var(--muted);
+      }
+      .pill {
+        display: inline-block;
+        padding: 6px 10px;
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.03);
+        color: var(--gold);
+        font-weight: 700;
+      }
+
+      /* Media embeds */
+      .players {
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+        min-width: 350px;
+      }
+      .embed {
+        background: #000;
+        padding: 12px;
+        border-radius: 6px;
+        min-width: 320px;
+      }
+      .youtube-container {
+        position: relative;
+        width: 100%;
+        padding-bottom: 56.25%; /* 16:9 aspect ratio */
+        height: 0;
+        overflow: hidden;
+      }
+      .youtube-container iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+      }
+
+      /* Photos */
+      .photo-row {
+        display: flex;
+        gap: 16px;
+        margin-top: 12px;
+      }
+      .photo-row img {
+        width: 100%;
+        height: auto;
+        border-radius: 6px;
+        object-fit: cover;
+      }
+
+      /* Artist photo styling */
+      .artist-section {
+        display: flex;
+        gap: 24px;
+        align-items: flex-start;
+        margin-top: 20px;
+      }
+      .artist-text {
+        flex: 2;
+      }
+      .artist-photo {
+        flex: 1;
+        max-width: 200px;
+      }
+      .artist-photo img {
+        width: 100%;
+        height: auto;
+        border-radius: 6px;
+        object-fit: cover;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      }
+
+      /* Buttons */
+      .btn {
+        display: inline-block;
+        padding: 10px 16px;
+        border-radius: 6px;
+        background: var(--gold);
+        color: #000;
+        font-weight: 700;
+      }
+      .btn-outline {
+        background: transparent;
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        color: var(--gold);
+      }
+
+      /* Contact */
+      .contact-grid {
+        display: flex;
+        flex-direction: row;
+        gap: 20px;
+        align-items: center;
+      }
+      .contact-info {
+        color: var(--muted);
+      }
+
+      footer {
+        padding: 28px 0;
+        text-align: center;
+        color: #777;
+      }
+
+      @media (max-width: 900px) {
+        .meta-grid {
+          grid-template-columns: 1fr;
+        }
+        .artist-section {
+          flex-direction: column;
+          gap: 16px;
+        }
+        .artist-photo {
+          max-width: 180px;
+          margin: 0 auto;
+        }
+        h1 {
+          font-size: 32px;
+        }
+        .logo {
+          max-width: 180px;
+        }
+        .topbar {
+          padding: 6px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="topbar">
+      <div class="nav-inner">
+        <div style="display: flex; gap: 12px; align-items: center">
+          <img class="logo" src="Kicked-Out-Of-The-Sky_transparent.png" alt="logo" />
+        </div>
+        <div class="nav-links">
+          <a href="#about">About</a>
+          <a href="#music">Listen</a>
+          <a href="#contact">Contact</a>
+        </div>
+      </div>
+    </div>
+
+    <header class="hero">
+      <div class="hero-inner container">
+        <img class="large-logo" src="Kicked-Out-Of-The-Sky_transparent.png" alt="logo" />
+        <div class="tagline">Pop Punk / Indie Rock from Lisbon by way of Los Angeles</div>
+        <div class="sub">Single — "Wasting My Life Away" • Released August 22, 2025 • 3:44</div>
+        <div style="margin-top: 18px">
+          <a
+            class="btn"
+            href="https://open.spotify.com/track/4yt5M4iMAEPSkBVjdJT6NW?si=8ff0da60a5f24bb9"
+            target="_blank"
+          >
+            Listen on Spotify
+          </a>
+          <a
+            class="btn"
+            style="
+              margin-left: 10px;
+              background: transparent;
+              color: var(--gold);
+              border: 1px solid rgba(255, 255, 255, 0.06);
+            "
+            href="https://www.youtube.com/watch?v=Rb7_To1AFD4"
+            target="_blank"
+          >
+            Watch on YouTube
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <main class="container">
+      <section id="about">
+        <div class="section-header">
+          <h2>ABOUT THE SONG</h2>
+        </div>
+        <p class="lead">
+          “Wasting My Life Away” is an introspective anthem about the battle for sobriety — the feeling of being stuck
+          in a loop, fighting to find meaning while the world keeps spinning. Driven by soaring guitars, raw emotion,
+          and an infectious chorus, it captures the modern pop-punk revival’s heart while delivering a deeply personal
+          message.
+        </p>
+
+        <div class="meta-grid" style="margin-top: 20px">
+          <div>
+            <div class="card">
+              <p>
+                <strong>Artist:</strong>
+                Kicked Out of the Sky (Matt Bachman — Guitar, Vocals)
+              </p>
+              <p>
+                <strong>Origin:</strong>
+                Formed in Los Angeles, CA (2020) — based in Lisbon, Portugal
+              </p>
+              <p>
+                <strong>Genre:</strong>
+                Pop Punk / Indie Rock
+              </p>
+              <p>
+                <strong>Release Date:</strong>
+                August 22, 2025
+              </p>
+              <p>
+                <strong>Length:</strong>
+                3:44
+              </p>
+              <p>
+                <strong>ISRC:</strong>
+                TCAJW2518798
+              </p>
+              <p>
+                <strong>UPC:</strong>
+                859712003133
+              </p>
+              <p class="pill">No explicit lyrics</p>
+            </div>
+
+            <div style="margin-top: 14px">
+              <em style="color: var(--muted)">
+                “I wrote ‘Wasting My Life Away’ while getting sober — it’s about clawing my way back to something real,
+                even when I felt trapped in the chaos.”
+              </em>
+            </div>
+          </div>
+
+          <aside>
+            <div class="card">
+              <h3 style="margin-top: 0; color: var(--gold)">Listen / Watch</h3>
+              <div style="margin-bottom: 10px">Embedded players and quick links.</div>
+              <div class="players">
+                <div class="embed">
+                  <!-- Spotify embed -->
+                  <iframe
+                    src="https://open.spotify.com/embed/track/4yt5M4iMAEPSkBVjdJT6NW"
+                    width="100%"
+                    height="80"
+                    frameborder="0"
+                    allowtransparency="true"
+                    allow="encrypted-media"
+                  ></iframe>
+                </div>
+                <div class="embed">
+                  <!-- YouTube embed -->
+                  <div class="youtube-container">
+                    <iframe
+                      src="https://www.youtube.com/embed/Rb7_To1AFD4"
+                      frameborder="0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowfullscreen
+                    ></iframe>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <section id="artist">
+        <div class="section-header">
+          <h2>ABOUT THE ARTIST</h2>
+        </div>
+        <div class="artist-section">
+          <div class="artist-text" style="flex: 0 0 50%; max-width: 50%">
+            <p class="lead">
+              Kicked Out of the Sky is the solo project of Matt Bachman (guitar, vocals). Formed in Los Angeles in 2020
+              and now based in Lisbon, the project blends emotional storytelling with high-energy pop-punk and indie
+              rock influences. Matt’s music channels the golden era of 2000s punk while embracing cinematic modern
+              production.
+            </p>
+            <section id="music">
+              <div class="section-header"><h2>STREAM / WATCH</h2></div>
+              <p class="lead">
+                Quick links and QR-friendly embeds. Scan the QR codes in the downloadable PDF or use the buttons below.
+              </p>
+              <div style="margin-top: 12px; display: flex; gap: 12px; flex-wrap: wrap">
+                <a
+                  class="btn"
+                  href="https://open.spotify.com/track/4yt5M4iMAEPSkBVjdJT6NW?si=8ff0da60a5f24bb9"
+                  target="_blank"
+                >
+                  Listen on Spotify
+                </a>
+                <a class="btn" href="https://www.youtube.com/watch?v=Rb7_To1AFD4" target="_blank">Watch on YouTube</a>
+                <a class="btn btn-outline" href="http://itunes.apple.com/album/id/1827225059" target="_blank">
+                  Open in Apple Music
+                </a>
+                <a class="btn btn-outline" href="Kicked-Out-of-the-Sky-EPK.pdf" target="_blank">Download PDF EPK</a>
+              </div>
+            </section>
+            <section id="contact">
+              <div class="section-header"><h2>CONTACT / BOOKING</h2></div>
+              <div class="contact-grid">
+                <div class="card" style="flex: 1">
+                  <p class="contact-info">
+                    <strong>Email:</strong>
+                    <a href="mailto:kickedoutofthesky@gmail.com">kickedoutofthesky@gmail.com</a>
+                  </p>
+                  <p class="contact-info">
+                    <strong>WhatsApp:</strong>
+                    <a href="https://wa.me/18183889228" target="_blank">+1 818 388 9228</a>
+                  </p>
+                  <p class="contact-info">
+                    <strong>Website:</strong>
+                    <a href="https://www.kickedoutofthesky.com" target="_blank">kickedoutofthesky.com</a>
+                  </p>
+                  <p class="contact-info">
+                    <strong>Instagram:</strong>
+                    <a href="https://www.instagram.com/kicked_out_of_the_sky" target="_blank">@kicked_out_of_the_sky</a>
+                  </p>
+                  <p class="contact-info">
+                    <strong>TikTok:</strong>
+                    <a href="https://www.tiktok.com/@kickedoutofthesky" target="_blank">@kickedoutofthesky</a>
+                  </p>
+                  <p style="margin-top: 8px; color: var(--muted)">
+                    <em>Available for European tour support slots and festival bookings in 2026.</em>
+                  </p>
+                </div>
+              </div>
+            </section>
+          </div>
+          <div class="artist-photo" style="flex: 0 0 50%; max-width: 50%">
+            <img src="alfama-1041.jpg" alt="promo photo" />
+          </div>
+        </div>
+      </section>
+      <footer>
+        <div style="max-width: var(--max-width); margin: 0 auto; padding: 18px 20px; color: #777">
+          ©
+          <strong>Kicked Out of the Sky</strong>
+          — All rights reserved. Designed for promoters, radio programmers, and press.
+          <a href="https://www.kickedoutofthesky.com" target="_blank">kickedoutofthesky.com</a>
+        </div>
+      </footer>
+    </main>
+
+    <script>
+      // Smooth scrolling for anchor links
+      document.querySelectorAll('a[href^="#"]').forEach(function (a) {
+        a.addEventListener("click", function (e) {
+          e.preventDefault();
+          var target = document.querySelector(this.getAttribute("href"));
+          if (target) {
+            target.scrollIntoView({ behavior: "smooth", block: "start" });
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

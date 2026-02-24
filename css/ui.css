@@ -1,6 +1,11 @@
+/* ============================================================
+   GLOBAL STYLES
+   ============================================================ */
+
 body {
   padding-bottom: 50px;
-  font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial,
+  font-family:
+    "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial,
     "Lucida Grande", sans-serif;
   font-weight: 300;
   background-color: #000000;
@@ -70,6 +75,20 @@ i.fab {
   letter-spacing: 1px;
 }
 
+/* ============================================================
+   NAVIGATION & HEADER
+   ============================================================ */
+
+h2 {
+  color: #cccccc;
+  font-family: Helvetica, sans-serif;
+  font-size: 30px;
+  font-weight: 400;
+  margin: 0 0 10px 0;
+  text-align: center;
+  word-break: break-word;
+}
+
 .nav-link {
   padding-top: 5px;
   padding-bottom: 5px;
@@ -98,7 +117,9 @@ i.fab {
 .album_cover {
   max-width: 300px;
   max-height: 300px;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
   cursor: pointer;
 }
 
@@ -107,6 +128,10 @@ i.fab {
   box-shadow: 0 15px 25px #0000004d;
   z-index: 10; /* keep it above neighbors */
 }
+
+/* ============================================================
+   ALBUM COVERS & MEDIA
+   ============================================================ */
 
 .margin-bottom-minus-navbar {
   margin-bottom: -51px;
@@ -231,6 +256,10 @@ i.fab {
   color: #000000 !important;
 }
 
+/* ============================================================
+   CONTACT FORM & TOUR SECTIONS
+   ============================================================ */
+
 /* Tour Section Styling */
 .tour-dates {
   max-width: 800px;
@@ -324,13 +353,6 @@ i.fab {
 .venue-location {
   color: #cccccc;
   font-size: 0.95em;
-}
-
-#tour h2,
-#contact h2 {
-  color: #cccccc;
-  font-weight: bold;
-  margin-bottom: 2rem;
 }
 
 @media (max-width: 768px) {
