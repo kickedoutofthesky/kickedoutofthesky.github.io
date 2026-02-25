@@ -1,0 +1,297 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family:
+    "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial,
+    "Lucida Grande", sans-serif;
+  background-color: #000000;
+  color: #cccccc;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+header {
+  text-align: center;
+  margin-bottom: 40px;
+  padding: 20px 0;
+}
+
+header h1 {
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+  color: #ffffff;
+}
+
+header a {
+  display: inline-block;
+  padding: 10px 15px;
+  color: #ffffff;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+header a:hover {
+  color: #cccccc;
+}
+
+main {
+  margin-top: 40px;
+}
+
+/* Products Grid */
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 30px;
+  margin-bottom: 40px;
+}
+
+.product-card {
+  background: #0f0f0f;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+  transition:
+    transform 0.3s,
+    box-shadow 0.3s;
+  cursor: pointer;
+  border: 1px solid #1a1a1a;
+}
+
+.product-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.8);
+  background: #1a1a1a;
+}
+
+.product-image {
+  width: 100%;
+  height: 250px;
+  background: #1a1a1a;
+  overflow: hidden;
+}
+
+.product-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.product-info {
+  padding: 15px;
+}
+
+.product-name {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 5px;
+  color: #ffffff;
+}
+
+.product-price {
+  font-size: 1.2rem;
+  color: #ffffff;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.product-description {
+  font-size: 0.9rem;
+  color: #cccccc;
+  margin-bottom: 15px;
+  line-height: 1.4;
+}
+
+.btn {
+  display: inline-block;
+  padding: 10px 15px;
+  background-color: #ffffff;
+  color: #000000;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  text-decoration: none;
+  font-size: 0.95rem;
+  transition:
+    background-color 0.3s,
+    color 0.3s;
+  font-weight: 600;
+}
+
+.btn:hover {
+  background-color: #cccccc;
+  color: #000000;
+}
+
+.btn-primary {
+  background-color: #ffffff;
+  color: #000000;
+}
+
+.btn-primary:hover {
+  background-color: #cccccc;
+}
+
+.btn-secondary {
+  background-color: #666;
+  color: #ffffff;
+}
+
+.btn-outline-secondary {
+  background-color: transparent;
+  color: #ffffff;
+  border: 1px solid #ffffff;
+}
+
+.btn-outline-secondary:hover {
+  background-color: #ffffff;
+  color: #000000;
+}
+
+/* Product Detail */
+.product-detail {
+  background: transparent;
+  border-radius: 8px;
+  padding: 40px 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+}
+
+.product-detail-image {
+  width: 100%;
+  height: 400px;
+  background: #0f0f0f;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #1a1a1a;
+}
+
+.product-detail-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.product-detail-info h1 {
+  font-size: 2rem;
+  margin-bottom: 20px;
+  color: #ffffff;
+}
+
+.product-detail-price {
+  font-size: 1.5rem;
+  color: #ffffff;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.product-detail-description {
+  color: #cccccc;
+  line-height: 1.6;
+  margin-bottom: 30px;
+}
+
+.product-actions {
+  display: flex;
+  gap: 15px;
+}
+
+.product-actions input {
+  width: 80px;
+  padding: 10px;
+  border: 1px solid #333;
+  border-radius: 4px;
+  font-size: 1rem;
+  background-color: #0f0f0f;
+  color: #ffffff;
+}
+
+/* Messages */
+.success-message,
+.cancel-message {
+  text-align: center;
+  padding: 60px 20px;
+  background: #0f0f0f;
+  border-radius: 8px;
+  border: 1px solid #1a1a1a;
+}
+
+.success-message h1 {
+  color: #22863a;
+  margin-bottom: 15px;
+  font-size: 2rem;
+}
+
+.cancel-message h1 {
+  color: #cb2431;
+  margin-bottom: 15px;
+  font-size: 2rem;
+}
+
+.success-message p,
+.cancel-message p {
+  margin-bottom: 30px;
+  color: #cccccc;
+  font-size: 1.1rem;
+}
+
+.success-message a,
+.cancel-message a {
+  display: inline-block;
+  padding: 12px 30px;
+  background-color: #ffffff;
+  color: #000000;
+  text-decoration: none;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+  font-weight: 600;
+}
+
+.success-message a:hover,
+.cancel-message a:hover {
+  background-color: #cccccc;
+}
+
+/* Form styling */
+.form-label {
+  color: #ffffff;
+  font-weight: 500;
+}
+
+.form-select,
+.form-control {
+  background-color: #0f0f0f;
+  border-color: #333;
+  color: #ffffff;
+}
+
+.form-select:focus,
+.form-control:focus {
+  background-color: #0f0f0f;
+  border-color: #ffffff;
+  color: #ffffff;
+  box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.25);
+}
+
+.form-select option {
+  background-color: #0f0f0f;
+  color: #ffffff;
+
+  .product-detail {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+
+  .product-detail-image {
+    height: 300px;
+  }
+}

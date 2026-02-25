@@ -1,0 +1,16 @@
+{
+  "name": "kickedoutofthesky-store",
+  "version": "1.0.0",
+  "description": "Store frontend for Kicked Out of the Sky",
+  "main": "index.js",
+  "scripts": {
+    "fetch-products": "node scripts/fetch-printful-products.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.0.0"
+  },
+  "devDependencies": {},
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
