@@ -33,24 +33,24 @@
       </div>
     </nav>
 
-    <div class="container py-5">
-      <div class="text-center mb-5">
-        <h1 class="display-4">Store</h1>
-        <p class="lead">Official Kicked Out of the Sky merchandise</p>
+    <!-- Coming Soon Placeholder -->
+    <div id="coming-soon" class="container d-flex align-items-center justify-content-center" style="min-height: 60vh">
+      <div class="text-center">
+        <h1 class="display-3 mb-4">Coming Soon</h1>
+        <p class="lead mb-5" style="color: #cccccc">Official Kicked Out of the Sky merchandise store launching soon.</p>
+        <a href="../index.html" class="btn btn-primary">Back to Home</a>
       </div>
+    </div>
 
-      <div id="products-grid" class="products-grid">
-        <!-- Products will be loaded here by store.js -->
+    <!-- Store Content (Hidden for now) -->
+    <div id="store-content" style="display: none">
+      <div id="loading" class="text-center" style="padding: 60px 20px">
+        <p style="color: #cccccc">Loading products...</p>
       </div>
-
-      <div id="loading" class="text-center py-5">
-        <p>Loading products...</p>
-      </div>
-
-      <div id="error" class="alert alert-danger" style="display: none" role="alert">
-        <h4 class="alert-heading">Error</h4>
-        <p>Failed to load products. Please try again later or contact support.</p>
-      </div>
+      <div id="error" style="display: none; padding: 20px; text-align: center; color: #cc0000"></div>
+      <main>
+        <div class="products-grid" id="products-grid"></div>
+      </main>
     </div>
 
     <!-- Bootstrap JS -->
