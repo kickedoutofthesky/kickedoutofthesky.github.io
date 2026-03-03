@@ -1,0 +1,12 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+echo "🔍 Running lint-staged (prettier + eslint)..."
+npx lint-staged
+
+echo ""
+echo "🧪 Running tests..."
+npm test -- --passWithNoTests
+
+echo ""
+echo "✅ All checks passed! Ready to commit."
