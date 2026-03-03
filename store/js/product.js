@@ -1,4 +1,7 @@
+/* global cart, playDingSound, createCartBurst, showCartNotification */
 // Product Detail Page
+let currentProduct = null;
+
 document.addEventListener("DOMContentLoaded", async () => {
   const detail = document.getElementById("product-detail");
   const loading = document.getElementById("loading");
@@ -35,55 +38,66 @@ document.addEventListener("DOMContentLoaded", async () => {
       return;
     }
 
+    currentProduct = product;
+
     // Clear loading state
     loading.style.display = "none";
 
+    // Get first color as default
+    const availableColors = Object.keys(product.variants);
+    const defaultColor = availableColors[0];
+    const defaultImage = product.image;
+
     // Render product detail
     detail.innerHTML = `
-            <div class="row">
-              <div class="col-md-6">
-                <div class="product-detail-image">
-                    <img src="${product.image}" alt="${product.title}" class="img-fluid" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22400%22%3E%3Crect fill=%22%23e0e0e0%22 width=%22400%22 height=%22400%22/%3E%3C/svg%3E'">
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="product-detail-info">
-                    <h1 class="mb-3">${product.title}</h1>
-                    <p class="product-detail-price fs-4 mb-4">${product.display_price}</p>
-
-                    <div class="mb-4">
-                      <h5>Select Options:</h5>
-                      <div class="mb-3">
-                        <label for="color" class="form-label">Color</label>
-                        <select id="color" class="form-select" onchange="updateSizes()">
-                          <option value="">-- Choose a color --</option>
-                          ${Object.keys(product.variants)
-                            .map(color => `<option value="${color}">${color}</option>`)
-                            .join("")}
-                        </select>
-                      </div>
-
-                      <div class="mb-3">
-                        <label for="size" class="form-label">Size</label>
-                        <select id="size" class="form-select">
-                          <option value="">-- Choose a size --</option>
-                        </select>
-                      </div>
-
-                      <div class="mb-3">
-                        <label for="quantity" class="form-label">Quantity</label>
-                        <input type="number" id="quantity" class="form-control" style="max-width: 100px;" min="1" value="1">
-                      </div>
-                    </div>
-
-                    <button class="btn btn-primary btn-lg" onclick="addToCart('${product.product_key}')">Add to Cart</button>
-                </div>
-              </div>
+      <div class="row">
+        <div class="col-md-7">
+            <div class="product-detail-image">
+              <img id="product-image" src="${defaultImage}" alt="${product.title}" class="img-fluid rounded">
             </div>
-        `;
+          </div>
+          <div class="col-md-5">
+            <div class="product-detail-info" style="text-align: left;">
+              <h1 class="mb-3">${product.title}</h1>
+              <p class="product-detail-price fs-4 mb-4 text-warning" id="price-display">${product.display_price}</p>
 
-    // Store variants in window for later use
-    window.currentProduct = product;
+              <div class="mb-4">
+                ${
+                  availableColors.length > 1
+                    ? `
+                <div class="mb-3">
+                  <label for="color" class="form-label">Color</label>
+                  <select id="color" class="form-select" onchange="updateColorAndPrice(); checkFormComplete()">
+                    ${availableColors.map(color => `<option value="${color}">${color}</option>`).join("")}
+                  </select>
+                </div>
+                `
+                    : ""
+                }
+
+                <div class="mb-3">
+                  <label for="size" class="form-label">Size</label>
+                  <select id="size" class="form-select" onchange="updatePrice(); checkFormComplete()">
+                    <option value="">-- Choose a size --</option>
+                  </select>
+                </div>
+
+                <div class="mb-3">
+                  <label for="quantity" class="form-label">Quantity</label>
+                  <input type="number" id="quantity" class="form-control" style="max-width: 100px;" min="1" value="1" onchange="checkFormComplete()">
+                </div>
+              </div>
+
+              <button id="add-to-cart-btn" class="btn btn-warning btn-lg fw-bold" onclick="addToCart()" disabled>
+                Add to Cart
+              </button>
+            </div>
+          </div>
+        </div>
+    `;
+
+    // Initialize sizes for default color
+    updateSizes(defaultColor);
   } catch (error) {
     console.error("Error loading product:", error);
     loading.style.display = "none";
@@ -92,41 +106,138 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 });
 
-function updateSizes() {
-  const colorSelect = document.getElementById("color");
+function updateSizes(selectedColor) {
+  if (!currentProduct) return;
+
   const sizeSelect = document.getElementById("size");
-  const selectedColor = colorSelect.value;
+  const color = selectedColor || document.getElementById("color")?.value;
 
   // Clear existing sizes
   sizeSelect.innerHTML = '<option value="">-- Choose a size --</option>';
 
-  if (selectedColor && window.currentProduct) {
-    const sizes = Object.keys(window.currentProduct.variants[selectedColor] || {});
+  if (color && currentProduct.variants[color]) {
+    const colorData = currentProduct.variants[color];
+    const sizes = colorData.sizes ? Object.keys(colorData.sizes) : Object.keys(colorData).filter(k => k !== "image");
+
     sizes.forEach(size => {
       const option = document.createElement("option");
       option.value = size;
       option.textContent = size;
       sizeSelect.appendChild(option);
     });
+
+    // Auto-select first size if only one available
+    if (sizes.length === 1) {
+      sizeSelect.value = sizes[0];
+    }
+  }
+
+  checkFormComplete();
+}
+
+function updateColorAndPrice() {
+  const colorSelect = document.getElementById("color");
+  const selectedColor = colorSelect.value;
+
+  if (currentProduct && selectedColor && currentProduct.variants[selectedColor]) {
+    // Use color-specific image if available
+    const colorData = currentProduct.variants[selectedColor];
+    const colorImage = colorData.image || currentProduct.image;
+    document.getElementById("product-image").src = colorImage;
+
+    // Reset sizes
+    updateSizes(selectedColor);
+    updatePrice();
   }
 }
 
-function addToCart(productKey) {
+function selectColorThumbnail(color) {
+  // Update the color dropdown
   const colorSelect = document.getElementById("color");
-  const sizeSelect = document.getElementById("size");
-  const quantity = document.getElementById("quantity").value;
+  if (colorSelect) {
+    colorSelect.value = color;
+  }
 
-  const color = colorSelect.value;
+  // Update main image
+  if (currentProduct && currentProduct.variants[color]) {
+    const colorData = currentProduct.variants[color];
+    const colorImage = colorData.image || currentProduct.image;
+    document.getElementById("product-image").src = colorImage;
+  }
+
+  // Update thumbnail highlights
+  const thumbnails = document.querySelectorAll("#color-thumbnails img");
+  thumbnails.forEach((thumb, index) => {
+    const availableColors = Object.keys(currentProduct.variants);
+    if (availableColors[index] === color) {
+      thumb.style.border = "3px solid #ffc107";
+    } else {
+      thumb.style.border = "2px solid #333";
+    }
+  });
+
+  // Update sizes and price
+  updateSizes(color);
+  updatePrice();
+}
+
+function updatePrice() {
+  if (!currentProduct) return;
+
+  const sizeSelect = document.getElementById("size");
   const size = sizeSelect.value;
 
-  if (!color || !size) {
-    alert("Please select a color and size.");
+  // All sizes/colors have the same price
+  if (size) {
+    document.getElementById("price-display").textContent = currentProduct.display_price;
+  }
+}
+
+function checkFormComplete() {
+  const colorSelect = document.getElementById("color");
+  const sizeSelect = document.getElementById("size");
+  const button = document.getElementById("add-to-cart-btn");
+
+  // Check if color is required (multiple colors) and selected
+  const colorValid = !colorSelect || colorSelect.value !== "";
+
+  // Check if size is selected
+  const sizeValid = sizeSelect.value !== "";
+
+  // Enable button only if both are valid
+  if (colorValid && sizeValid) {
+    button.disabled = false;
+  } else {
+    button.disabled = true;
+  }
+}
+
+function addToCart() {
+  if (!currentProduct) return;
+
+  const colorSelect = document.getElementById("color");
+  const sizeSelect = document.getElementById("size");
+  const quantityInput = document.getElementById("quantity");
+
+  const color = colorSelect?.value || Object.keys(currentProduct.variants)[0];
+  const size = sizeSelect.value;
+  const quantity = parseInt(quantityInput.value) || 1;
+
+  if (!size) {
+    alert("Please select a size.");
     return;
   }
 
-  // Get variant ID
-  const variantId = window.currentProduct.variants[color][size].variant_id;
+  // Add to cart
+  cart.addItem(currentProduct.product_key, color, size, quantity);
 
-  alert(`Added ${quantity} x ${window.currentProduct.title} (${color} / ${size}) to cart!\nVariant ID: ${variantId}`);
-  // TODO: Implement actual cart functionality
+  // Show notifications
+  playDingSound();
+  createCartBurst();
+  showCartNotification(`${currentProduct.title} (${color}/${size})`);
+
+  // Update cart badge
+  setTimeout(() => {
+    cart.updateCartBadge();
+  }, 100);
 }

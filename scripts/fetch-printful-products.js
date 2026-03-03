@@ -6,7 +6,7 @@ const path = require("path");
 const https = require("https");
 
 const PRINTFUL_API_KEY = process.env.PRINTFUL_API_KEY;
-const STORE_ID = process.env.PRINTFUL_STORE_ID;
+// const STORE_ID = process.env.PRINTFUL_STORE_ID; // Currently unused
 
 if (!PRINTFUL_API_KEY) {
   console.error("❌ Error: PRINTFUL_API_KEY not found in .env file");
@@ -14,6 +14,16 @@ if (!PRINTFUL_API_KEY) {
 }
 
 const API_BASE = "https://api.printful.com";
+
+// Helper to determine image index based on product type
+function getImageIndex(productTitle) {
+  if (productTitle.includes("Long Sleeve")) return 3;
+  if (productTitle.includes("Hoodie")) return 2;
+  if (productTitle.includes("Hat") || productTitle.includes("Cap")) return 1;
+  if (productTitle.includes("Sticker")) return 1;
+  if (productTitle.includes("Tee")) return 2; // Regular tees
+  return 0; // Default fallback
+}
 
 // Helper to make API requests
 function makeRequest(endpoint) {
@@ -93,6 +103,8 @@ async function fetchProducts() {
 
         const variantsByColor = {};
         let baseRetailPrice = null;
+        let variantPreviewImage = null;
+        const imageIndex = getImageIndex(product.name);
 
         // Group variants by color, then by size parsing the name
         variants.forEach(variant => {
@@ -102,10 +114,13 @@ async function fetchProducts() {
           const size = parts[2] || "One Size";
 
           if (!variantsByColor[color]) {
-            variantsByColor[color] = {};
+            variantsByColor[color] = {
+              image: null,
+              sizes: {},
+            };
           }
 
-          variantsByColor[color][size] = {
+          variantsByColor[color].sizes[size] = {
             variant_id: variant.id,
           };
 
@@ -113,14 +128,32 @@ async function fetchProducts() {
           if (!baseRetailPrice && variant.retail_price) {
             baseRetailPrice = variant.retail_price;
           }
+
+          // Log all available images for this variant
+          if (variant.files && variant.files.length > 0) {
+            console.log(`      📸 ${variant.name}:`);
+            variant.files.forEach((file, idx) => {
+              console.log(`         [${idx}] ${file.preview_url}`);
+            });
+          }
+
+          // Capture image for this color at the correct index
+          if (!variantsByColor[color].image && variant.files && variant.files.length > imageIndex) {
+            variantsByColor[color].image = variant.files[imageIndex].preview_url;
+          }
+
+          // Capture first variant's preview image if available
+          if (!variantPreviewImage && variant.files && variant.files.length > imageIndex) {
+            variantPreviewImage = variant.files[imageIndex].preview_url;
+          }
         });
 
-        const displayPrice = baseRetailPrice ? `$${Math.ceil(parseFloat(baseRetailPrice) * 1.3)}` : "Contact for Price";
+        const displayPrice = baseRetailPrice ? `$${parseFloat(baseRetailPrice).toFixed(2)}` : "Contact for Price";
 
         const productData = {
           product_key: `product_${product.id}`,
           title: product.name,
-          image: product.thumbnail_url || "/store/assets/images/placeholder.png",
+          image: variantPreviewImage || product.thumbnail_url || "/store/assets/images/placeholder.png",
           display_price: displayPrice,
           variants: variantsByColor,
         };
@@ -133,6 +166,19 @@ async function fetchProducts() {
     }
 
     console.log(`\n✅ Found ${products.length} products with variants`);
+
+    // Sort products: Tees, Hats, Long Sleeve, Hoodie, Stickers
+    products.sort((a, b) => {
+      const getCategory = title => {
+        if (title.includes("Long Sleeve")) return 3;
+        if (title.includes("Hoodie")) return 4;
+        if (title.includes("Hat") || title.includes("Cap")) return 2;
+        if (title.includes("Sticker")) return 5;
+        if (title.includes("Tee")) return 1;
+        return 6;
+      };
+      return getCategory(a.title) - getCategory(b.title);
+    });
 
     // Write to products.json
     const outputPath = path.join(__dirname, "../store/data/products.json");
