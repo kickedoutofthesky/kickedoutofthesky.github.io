@@ -352,6 +352,10 @@ input[type="number"] {
   .nav-link {
     font-size: 0.9rem !important;
   }
+
+  .product-detail-info h1 {
+    margin-top: 20px;
+  }
 }
 
 @media (max-width: 576px) {
@@ -372,7 +376,48 @@ input[type="number"] {
     gap: 30px;
   }
 
+  .product-image {
+    height: 450px;
+  }
+
+  .product-detail-info h1 {
+    margin-top: 20px;
+  }
+
   .product-detail-image {
     height: 300px;
+  }
+}
+
+/* Store navbar logo - smaller than main site */
+.brand {
+  height: 25px !important;
+}
+
+@media (min-width: 768px) {
+  .brand {
+    height: 40px !important;
+  }
+
+  .product-image {
+    height: 400px;
+  }
+}
+
+@media (min-width: 1000px) {
+  .brand {
+    height: 50px !important;
+  }
+}
+
+@media (min-width: 1200px) {
+  .brand {
+    height: 60px !important;
+  }
+}
+
+@media (min-width: 1400px) {
+  .brand {
+    height: 55px !important;
   }
 }
