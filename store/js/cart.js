@@ -1,4 +1,6 @@
 // Shopping Cart Management
+/* global cart */
+
 class ShoppingCart {
   constructor() {
     this.storageKey = "kots_cart";
@@ -92,4 +94,4 @@ class ShoppingCart {
 }
 
 // Initialize global cart instance
-const cart = new ShoppingCart();
+var cart = new ShoppingCart();

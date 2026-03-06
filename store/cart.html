@@ -13,6 +13,65 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
     <link rel="stylesheet" href="../css/ui.css" />
     <link rel="stylesheet" href="assets/css/styles.css" />
+    <style>
+      #cart-summary {
+        width: 100%;
+        margin-top: 0;
+      }
+
+      @media (max-width: 767px) {
+        .cart-container {
+          display: block;
+        }
+
+        #cart-summary {
+          width: 100%;
+          margin-top: 40px;
+        }
+      }
+
+      @media (min-width: 768px) and (max-width: 999px) {
+        .cart-container {
+          display: block;
+        }
+
+        #cart-summary {
+          width: 100%;
+          position: static;
+          margin-top: 40px;
+        }
+      }
+
+      @media (min-width: 1000px) {
+        .cart-container {
+          display: flex;
+          gap: 40px;
+        }
+
+        #cart-items {
+          flex: 1;
+        }
+
+        #cart-summary {
+          height: fit-content;
+          position: sticky;
+          top: 165px;
+          margin-top: 0 !important;
+        }
+      }
+
+      @media (min-width: 1000px) and (max-width: 1199px) {
+        #cart-summary {
+          width: 350px;
+        }
+      }
+
+      @media (min-width: 1200px) {
+        #cart-summary {
+          width: 400px;
+        }
+      }
+    </style>
   </head>
   <body data-bs-spy="scroll" data-bs-offset="0" class="text-center" tabindex="0">
     <!-- Navbar -->
@@ -105,86 +164,92 @@
           <a href="index.html" class="btn btn-primary">Continue Shopping</a>
         </div>
 
-        <!-- Cart Items -->
-        <div id="cart-items" style="display: grid; gap: 20px; margin-bottom: 40px">
-          <!-- Cart items will be rendered here -->
-        </div>
+        <!-- Cart Container -->
+        <div class="cart-container">
+          <!-- Cart Items -->
+          <div id="cart-items" style="display: grid; gap: 20px; margin-bottom: 40px">
+            <!-- Cart items will be rendered here -->
+          </div>
 
-        <!-- Order Summary -->
-        <div
-          id="cart-summary"
-          style="
-            display: none;
-            background: #0f0f0f;
-            padding: 30px;
-            border-radius: 8px;
-            border: 1px solid #1a1a1a;
-            margin-top: 40px;
-          "
-        >
-          <h3 style="color: #fff; margin-bottom: 20px">Order Summary</h3>
+          <!-- Order Summary -->
           <div
+            id="cart-summary"
             style="
-              display: flex;
-              justify-content: space-between;
-              color: #ccc;
-              margin-bottom: 15px;
-              padding-bottom: 15px;
-              border-bottom: 1px solid #333;
+              display: none;
+              background: #0f0f0f;
+              padding: 30px;
+              border-radius: 8px;
+              border: 1px solid #1a1a1a;
+              margin-top: 40px;
             "
           >
-            <span>Subtotal:</span>
-            <span id="subtotal">$0.00</span>
+            <h3 style="color: #fff; margin-bottom: 20px">Order Summary</h3>
+            <div
+              style="
+                display: flex;
+                justify-content: space-between;
+                color: #ccc;
+                margin-bottom: 15px;
+                padding-bottom: 15px;
+                border-bottom: 1px solid #333;
+              "
+            >
+              <span>Subtotal:</span>
+              <span id="subtotal">$0.00</span>
+            </div>
+            <div
+              style="
+                display: flex;
+                justify-content: space-between;
+                color: #ccc;
+                margin-bottom: 15px;
+                padding-bottom: 15px;
+                border-bottom: 1px solid #333;
+              "
+            >
+              <span>Tax:</span>
+              <span>TBD</span>
+            </div>
+            <div
+              style="
+                display: flex;
+                justify-content: space-between;
+                color: #ccc;
+                margin-bottom: 15px;
+                padding-bottom: 15px;
+                border-bottom: 1px solid #333;
+              "
+            >
+              <span>Shipping:</span>
+              <span>TBD</span>
+            </div>
+            <div
+              style="display: flex; justify-content: space-between; color: #fff; font-size: 1.2rem; font-weight: bold"
+            >
+              <span>Total:</span>
+              <span id="total">$0.00</span>
+            </div>
+            <p style="color: #999; font-size: 0.9rem; margin-top: 15px; padding-top: 15px; border-top: 1px solid #333">
+              Tax and shipping costs will be determined during checkout.
+            </p>
+            <button
+              id="checkout-btn"
+              class="btn btn-warning w-100"
+              style="margin-top: 20px; font-weight: bold; padding: 15px"
+            >
+              Proceed to Checkout
+            </button>
+            <button class="btn btn-outline-secondary w-100" style="margin-top: 10px; padding: 15px">
+              <a href="index.html" style="text-decoration: none; color: inherit">Continue Shopping</a>
+            </button>
           </div>
-          <div
-            style="
-              display: flex;
-              justify-content: space-between;
-              color: #ccc;
-              margin-bottom: 15px;
-              padding-bottom: 15px;
-              border-bottom: 1px solid #333;
-            "
-          >
-            <span>Tax:</span>
-            <span>TBD</span>
-          </div>
-          <div
-            style="
-              display: flex;
-              justify-content: space-between;
-              color: #ccc;
-              margin-bottom: 15px;
-              padding-bottom: 15px;
-              border-bottom: 1px solid #333;
-            "
-          >
-            <span>Shipping:</span>
-            <span>TBD</span>
-          </div>
-          <div style="display: flex; justify-content: space-between; color: #fff; font-size: 1.2rem; font-weight: bold">
-            <span>Total:</span>
-            <span id="total">$0.00</span>
-          </div>
-          <p style="color: #999; font-size: 0.9rem; margin-top: 15px; padding-top: 15px; border-top: 1px solid #333">
-            Tax and shipping costs will be determined during checkout.
-          </p>
-          <button
-            id="checkout-btn"
-            class="btn btn-warning w-100"
-            style="margin-top: 20px; font-weight: bold; padding: 15px"
-          >
-            Proceed to Checkout
-          </button>
-          <button class="btn btn-outline-secondary w-100" style="margin-top: 10px; padding: 15px">
-            <a href="index.html" style="text-decoration: none; color: inherit">Continue Shopping</a>
-          </button>
         </div>
       </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="js/cart.js"></script>
+    <script src="js/cart-notification.js"></script>
     <script src="js/cart-display.js"></script>
   </body>
 </html>
