@@ -423,29 +423,36 @@
                   <a class="nav-link" href="#tour">Tour</a>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link" href="/store/index.html">Store</a>
+                  <a class="nav-link" href="/store/index.html" onclick="openStore(event)">Store</a>
                 </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="#contact">Contact</a>
-                </li>
+                <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
               </ul>
             </div>
           </div>
         </div>
       </nav>
+
+      <script>
+        function openStore(e) {
+          e.preventDefault();
+          const storeWindow = window.open("/store/index.html", "storeTab");
+          if (storeWindow) {
+            storeWindow.focus();
+          }
+        }
+      </script>
       <!-- Music -->
       <div id="music" class="row g-4 px-5 black_background section justify-content-center">
         <div class="section_header"></div>
 
         <div class="col-12 col-md-10 col-lg-8">
           <div class="row row-cols-1 row-cols-md-1 justify-content-center">
-            <div class="mb-4" style="margin-top: 4rem">
+            <div class="mb-5 release-header" style="margin-top: 4rem">
               'WASTING MY LIFE AWAY'
               <br />
               Available Everywhere now!
               <br />
-              <br />
-              <a href="https://linktr.ee/kickedoutofthesky" target="_blank" class="btn btn-warning btn-sm">
+              <a href="https://linktr.ee/kickedoutofthesky" target="_blank" class="btn btn-warning btn-sm mt-4">
                 Listen / Buy
               </a>
             </div>

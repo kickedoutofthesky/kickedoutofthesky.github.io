@@ -175,10 +175,69 @@ h2 {
   flex: 1;
 }
 
+.brand {
+  margin: 20px;
+  height: 30px;
+}
+
 @media (min-width: 768px) {
   .flex-md-equal > * {
     -ms-flex: 1;
     flex: 1;
+  }
+
+  .nav-link {
+    font-size: 1.1em;
+  }
+
+  .brand {
+    height: 55px;
+  }
+
+  .release-header {
+    font-size: 1.5em;
+  }
+}
+
+@media (min-width: 1000px) {
+  .brand {
+    height: 75px;
+  }
+
+  .nav-link {
+    font-size: 1.15em;
+  }
+
+  .release-header {
+    font-size: 1.6em;
+  }
+}
+
+@media (min-width: 1200px) {
+  .brand {
+    height: 85px;
+  }
+
+  .nav-link {
+    font-size: 1.2em;
+  }
+
+  .release-header {
+    font-size: 1.7em;
+  }
+}
+
+@media (min-width: 1400px) {
+  .brand {
+    height: 100px;
+  }
+
+  .nav-link {
+    font-size: 1.3em;
+  }
+
+  .release-header {
+    font-size: 1.8em;
   }
 }
 
@@ -191,18 +250,41 @@ h2 {
   padding-right: 0px;
 }
 
-.brand {
-  margin: 20px;
-  height: 30px;
+.btn-sm {
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
 }
 
-.btn-sm {
-  padding-left: 4px;
-  padding-right: 4px;
-  padding-top: 2px;
-  padding-bottom: 2px;
-  color: #000 !important;
+.btn-warning,
+.btn-warning:hover,
+.btn-warning:focus,
+.btn-warning:active,
+.btn-warning.active {
+  color: #000000 !important;
 }
+
+.btn-warning i,
+.btn-warning:hover i,
+.btn-warning:focus i,
+.btn-warning:active i,
+.btn-warning.active i {
+  color: #000000 !important;
+}
+
+.nav-link {
+  color: #999 !important;
+  transition: color 0.15s ease-in-out;
+}
+
+.nav-link:hover {
+  color: #ffffff !important;
+}
+
+.nav-link.active {
+  color: #ffffff !important;
+}
+
+/* Button styling handled by Bootstrap defaults */
 
 .layer-1 {
   z-index: 1;
@@ -380,5 +462,9 @@ h2 {
 
   .date-box {
     margin-bottom: 1rem;
+  }
+
+  .ml-embedded {
+    min-height: 500px;
   }
 }
