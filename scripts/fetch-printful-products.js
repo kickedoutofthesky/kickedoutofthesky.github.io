@@ -107,11 +107,24 @@ async function fetchProducts() {
         const imageIndex = getImageIndex(product.name);
 
         // Group variants by color, then by size parsing the name
+        // For Stickers, there are no colors, just sizes
+        const isSticker = product.name.includes("Sticker");
+
         variants.forEach(variant => {
           // Parse name like "Unisex Tee w/ Text / Black Heather / XS"
+          // For Stickers: "Die-cut Sticker w/ Text / 2″×2″"
           const parts = variant.name.split(" / ");
-          const color = parts[1] || "Default";
-          const size = parts[2] || "One Size";
+
+          let color, size;
+          if (isSticker) {
+            color = "Satin"; // Default color for stickers
+            size = parts[1] || "One Size";
+            // Normalize sticker sizes: "2″×2″" -> "2x2", "3″×3″" -> "3x3"
+            size = size.replace(/″×″/g, "x").replace(/″/g, "").replace(/×/g, "x");
+          } else {
+            color = parts[1] || "Default";
+            size = parts[2] || "One Size";
+          }
 
           if (!variantsByColor[color]) {
             variantsByColor[color] = {

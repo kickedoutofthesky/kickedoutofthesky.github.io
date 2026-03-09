@@ -340,6 +340,10 @@ input[type="number"] {
   flex-wrap: nowrap !important;
 }
 
+nav .container-fluid {
+  margin-left: 10px !important;
+}
+
 @media (max-width: 768px) {
   .brand {
     max-height: 35px;
@@ -385,7 +389,33 @@ input[type="number"] {
   }
 
   .product-detail-image {
-    height: 300px;
+    height: 400px;
+  }
+
+  /* Reorganize navbar for smallest screens - match main page wrapping */
+  nav.site-header {
+    padding: 0 !important;
+  }
+
+  nav .container-fluid {
+    flex-direction: column !important;
+    justify-content: center !important;
+    gap: 0;
+    align-items: center !important;
+    margin-left: 10px !important;
+  }
+
+  nav .container-fluid > a {
+    margin: 10px auto 10px auto !important;
+    display: flex !important;
+    justify-content: center !important;
+    width: 100%;
+  }
+
+  nav .container-fluid .nav {
+    width: 100% !important;
+    justify-content: center !important;
+    padding: 0 0 10px 0 !important;
   }
 }
 

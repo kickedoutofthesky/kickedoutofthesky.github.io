@@ -14,31 +14,87 @@
     <link rel="stylesheet" href="../css/ui.css" />
     <link rel="stylesheet" href="assets/css/styles.css" />
     <style>
+      #cart-items {
+        display: grid;
+        gap: 20px;
+        margin-bottom: 40px;
+      }
+
       #cart-summary {
         width: 100%;
         margin-top: 0;
       }
 
-      @media (max-width: 767px) {
-        .cart-container {
-          display: block;
+      @media (max-width: 576px) {
+        #cart-items > div {
+          flex-wrap: wrap;
         }
 
-        #cart-summary {
+        #cart-items > div > div:first-child {
           width: 100%;
-          margin-top: 40px;
+          margin-bottom: 15px;
+        }
+
+        #cart-items > div > div:last-child {
+          width: 100%;
         }
       }
 
-      @media (min-width: 768px) and (max-width: 999px) {
+      @media (max-width: 767px) {
+        div[style*="margin-top: 100px"] {
+          margin-top: 180px !important;
+        }
+
+        div[style*="margin-top: 100px"] .container {
+          max-width: 100%;
+          padding: 0;
+        }
+
         .cart-container {
           display: block;
         }
 
-        #cart-summary {
+        #cart-items {
+          display: grid;
+          gap: 20px;
+          margin-bottom: 40px;
           width: 100%;
+          padding: 0 20px;
+        }
+
+        #cart-summary {
+          width: calc(100% - 40px);
+          margin-top: 40px;
+          margin-left: 20px;
+          margin-right: 20px;
+        }
+        div[style*="margin-top: 100px"] {
+          margin-top: 140px !important;
+        }
+
+        div[style*="margin-top: 100px"] .container {
+          max-width: 100%;
+          padding: 0;
+        }
+
+        .cart-container {
+          display: block;
+        }
+
+        #cart-items {
+          display: grid;
+          gap: 20px;
+          margin-bottom: 40px;
+          width: 100%;
+          padding: 0 20px;
+        }
+
+        #cart-summary {
+          width: calc(100% - 40px);
           position: static;
           margin-top: 40px;
+          margin-left: 20px;
+          margin-right: 20px;
         }
       }
 
@@ -46,10 +102,19 @@
         .cart-container {
           display: flex;
           gap: 40px;
+          align-items: flex-start;
         }
 
         #cart-items {
           flex: 1;
+          display: grid;
+          gap: 20px;
+          margin-bottom: 0;
+          height: fit-content;
+        }
+
+        #cart-items > div {
+          padding: 15px !important;
         }
 
         #cart-summary {

@@ -1,4 +1,4 @@
-/* global cart, playDingSound, createCartBurst, showCartNotification */
+/* global cart, playDingSound, createCartBurst */
 // Product Detail Page
 let currentProduct = null;
 
@@ -231,13 +231,7 @@ function addToCart() {
   // Add to cart
   cart.addItem(currentProduct.product_key, color, size, quantity);
 
-  // Show notifications
+  // Show notifications and wait for animation
   playDingSound();
   createCartBurst();
-  showCartNotification(`${currentProduct.title} (${color}/${size})`);
-
-  // Update cart badge
-  setTimeout(() => {
-    cart.updateCartBadge();
-  }, 100);
 }

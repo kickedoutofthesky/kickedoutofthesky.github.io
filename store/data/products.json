@@ -457,18 +457,13 @@
     "image": "https://files.cdn.printful.com/files/bce/bcef073ae4dd804e9000dbcc7149db28_preview.png",
     "display_price": "$4.50",
     "variants": {
-      "2″×2″": {
+      "Satin": {
         "image": "https://files.cdn.printful.com/files/bce/bcef073ae4dd804e9000dbcc7149db28_preview.png",
         "sizes": {
-          "One Size": {
+          "2x2": {
             "variant_id": 5209549629
-          }
-        }
-      },
-      "3″×3″": {
-        "image": null,
-        "sizes": {
-          "One Size": {
+          },
+          "3x3": {
             "variant_id": 5209549630
           }
         }
@@ -481,18 +476,13 @@
     "image": "https://files.cdn.printful.com/files/744/744be123c5dbb2666e037a47e79dc2b7_preview.png",
     "display_price": "$4.50",
     "variants": {
-      "2″×2″": {
+      "Satin": {
         "image": "https://files.cdn.printful.com/files/744/744be123c5dbb2666e037a47e79dc2b7_preview.png",
         "sizes": {
-          "One Size": {
+          "2x2": {
             "variant_id": 5209549609
-          }
-        }
-      },
-      "3″×3″": {
-        "image": null,
-        "sizes": {
-          "One Size": {
+          },
+          "3x3": {
             "variant_id": 5209549613
           }
         }

@@ -1,5 +1,5 @@
 // Cart Display & Checkout
-/* global cart, updateCartQuantity, removeFromCart */
+/* global cart, updateCartQuantity, removeFromCart, showCartBadgeBurst */
 
 let products = [];
 
@@ -123,12 +123,14 @@ function updateCartQuantity(index, quantity) {
   } else {
     cart.updateQuantity(index, quantity);
     displayCart();
+    showCartBadgeBurst();
   }
 }
 
 function removeFromCart(index) {
   cart.removeItem(index);
   displayCart();
+  showCartBadgeBurst();
 }
 
 function getProductImage(product, color) {
