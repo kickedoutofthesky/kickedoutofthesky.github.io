@@ -76,6 +76,7 @@ function displayCart() {
     const lineTotal = pricePerItem * item.quantity;
 
     const itemCard = document.createElement("div");
+    itemCard.setAttribute("data-testid", "cart-item");
     itemCard.style.cssText =
       "background: #0f0f0f; padding: 20px; border-radius: 8px; border: 1px solid #1a1a1a; display: flex; gap: 20px;";
 
@@ -84,17 +85,17 @@ function displayCart() {
         <img src="${image}" alt="${product.title}" style="width: 100%; height: 100%; object-fit: cover;">
       </div>
       <div style="flex: 1; text-align: left;">
-        <h4 style="color: #fff; margin-bottom: 8px;">${product.title}</h4>
+        <h4 style="color: #fff; margin-bottom: 8px;" data-testid="item-name">${product.title}</h4>
         <p style="color: #ccc; font-size: 0.9rem; margin: 4px 0;">Color: ${item.color}</p>
         <p style="color: #ccc; font-size: 0.9rem; margin: 4px 0;">Size: ${item.size}</p>
         <div style="display: flex; gap: 10px; align-items: center; margin-top: 15px;">
-          <span style="color: #ffc107; font-weight: bold;">$${(pricePerItem / 100).toFixed(2)}</span>
+          <span style="color: #ffc107; font-weight: bold;" data-testid="item-price">$${(pricePerItem / 100).toFixed(2)}</span>
           <span style="color: #ccc;">×</span>
           <button onclick="updateCartQuantity(${index}, ${item.quantity - 1})" style="background: #333; color: #fff; border: none; width: 30px; height: 30px; cursor: pointer; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1rem;"><i class="fas fa-minus"></i></button>
-          <input type="text" value="${item.quantity}" readonly style="width: 50px; padding: 5px; background: #1a1a1a; color: #fff; border: 1px solid #333; text-align: center; border-radius: 4px;">
+          <input type="text" data-testid="quantity-input" value="${item.quantity}" readonly style="width: 50px; padding: 5px; background: #1a1a1a; color: #fff; border: 1px solid #333; text-align: center; border-radius: 4px;">
           <button onclick="updateCartQuantity(${index}, ${item.quantity + 1})" style="background: #333; color: #fff; border: none; width: 30px; height: 30px; cursor: pointer; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1rem;"><i class="fas fa-plus"></i></button>
           <span style="color: #ccc; margin-left: auto;">Total: <span style="color: #ffc107; font-weight: bold;">$${(lineTotal / 100).toFixed(2)}</span></span>
-          <button onclick="removeFromCart(${index})" style="background: none; color: #fff; border: none; padding: 8px 0 8px 12px; cursor: pointer; font-size: 1.1rem;"><i class="fas fa-trash"></i></button>
+          <button onclick="removeFromCart(${index})" data-testid="remove-item" style="background: none; color: #fff; border: none; padding: 8px 0 8px 12px; cursor: pointer; font-size: 1.1rem;"><i class="fas fa-trash"></i></button>
         </div>
       </div>
     `;

@@ -56,13 +56,13 @@ document.addEventListener("DOMContentLoaded", async () => {
       <div class="row">
         <div class="col-md-7">
             <div class="product-detail-image">
-              <img id="product-image" src="${defaultImage}" alt="${product.title}" class="img-fluid rounded">
+              <img id="product-image" data-testid="product-image" src="${defaultImage}" alt="${product.title}" class="img-fluid rounded">
             </div>
           </div>
           <div class="col-md-5">
             <div class="product-detail-info" style="text-align: left;">
-              <h1 class="mb-3">${product.title}</h1>
-              <p class="product-detail-price fs-4 mb-4 text-warning" id="price-display">${priceDisplay}</p>
+              <h1 class="mb-3" data-testid="product-title">${product.title}</h1>
+              <p class="product-detail-price fs-4 mb-4 text-warning" id="price-display" data-testid="product-price">${priceDisplay}</p>
 
               <div class="mb-4">
                 ${
@@ -70,7 +70,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                     ? `
                 <div class="mb-3">
                   <label for="color" class="form-label">Color</label>
-                  <select id="color" class="form-select" onchange="updateColorAndPrice(); checkFormComplete()">
+                  <select id="color" data-testid="color-select" class="form-select" onchange="updateColorAndPrice(); checkFormComplete()">
                     ${availableColors.map(color => `<option value="${color}">${color}</option>`).join("")}
                   </select>
                 </div>
@@ -80,7 +80,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
                 <div class="mb-3">
                   <label for="size" class="form-label">Size</label>
-                  <select id="size" class="form-select" onchange="updatePrice(); checkFormComplete()">
+                  <select id="size" data-testid="size-select" class="form-select" onchange="updatePrice(); checkFormComplete()">
                     <option value="">-- Choose a size --</option>
                   </select>
                 </div>

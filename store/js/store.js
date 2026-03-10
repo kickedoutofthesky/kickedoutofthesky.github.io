@@ -24,18 +24,19 @@ document.addEventListener("DOMContentLoaded", async () => {
     products.forEach(product => {
       const card = document.createElement("div");
       card.className = "product-card";
+      card.setAttribute("data-testid", "product-card");
       card.style.cursor = "pointer";
 
       // Get display price (single price or range)
       const displayPrice = getPriceDisplay(product);
 
       card.innerHTML = `
-        <div class="product-image">
+        <div class="product-image" data-testid="product-image">
           <img src="${product.image}" alt="${product.title}" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22280%22 height=%22250%22%3E%3Crect fill=%22%23666%22 width=%22280%22 height=%22250%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 font-family=%22sans-serif%22 font-size=%2218%22 fill=%22%23fff%22%3EImage not available%3C/text%3E%3C/svg%3E'">
         </div>
         <div class="product-info">
-          <h3 class="product-name">${product.title}</h3>
-          <p class="product-price">${displayPrice}</p>
+          <h3 class="product-name" data-testid="product-title">${product.title}</h3>
+          <p class="product-price" data-testid="product-price">${displayPrice}</p>
           <a href="product.html?key=${product.product_key}" class="btn btn-warning btn-sm">
             View Details
           </a>
