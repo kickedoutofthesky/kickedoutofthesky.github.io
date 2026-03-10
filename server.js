@@ -39,22 +39,51 @@ const server = http.createServer((req, res) => {
   const fullPath = path.join(BASE_DIR, filePath);
 
   fs.stat(fullPath, (err, stats) => {
-    if (err || !stats.isFile()) {
-      // Try adding .html extension
-      const htmlPath = fullPath + ".html";
-      fs.stat(htmlPath, (htmlErr, htmlStats) => {
-        if (htmlErr || !htmlStats.isFile()) {
+    if (err && err.code !== "ENOENT") {
+      res.writeHead(500);
+      res.end("Server Error");
+      console.error(`Error: ${err.message}`);
+      return;
+    }
+
+    // If it's a directory, try index.html
+    if (!err && stats.isDirectory()) {
+      // Redirect to trailing slash if needed
+      if (!req.url.endsWith("/")) {
+        res.writeHead(301, { Location: req.url + "/" });
+        res.end();
+        return;
+      }
+      const indexPath = path.join(fullPath, "index.html");
+      fs.stat(indexPath, (indexErr, indexStats) => {
+        if (indexErr || !indexStats.isFile()) {
           res.writeHead(404);
           res.end(`Not Found: ${filePath}`);
           console.log(`⚠️  404: ${filePath}`);
           return;
         }
-
-        serveFile(htmlPath, res);
+        serveFile(indexPath, res);
       });
-    } else {
-      serveFile(fullPath, res);
+      return;
     }
+
+    // If file exists, serve it
+    if (!err && stats.isFile()) {
+      serveFile(fullPath, res);
+      return;
+    }
+
+    // Try adding .html extension
+    const htmlPath = fullPath + ".html";
+    fs.stat(htmlPath, (htmlErr, htmlStats) => {
+      if (htmlErr || !htmlStats.isFile()) {
+        res.writeHead(404);
+        res.end(`Not Found: ${filePath}`);
+        console.log(`⚠️  404: ${filePath}`);
+        return;
+      }
+      serveFile(htmlPath, res);
+    });
   });
 
   function serveFile(file, response) {
