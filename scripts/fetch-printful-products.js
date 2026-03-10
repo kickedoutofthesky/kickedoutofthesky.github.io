@@ -114,13 +114,16 @@ async function fetchProducts() {
         // Group variants by color, then by size parsing the name
         // For Stickers, there are no colors, just sizes
         // For Hoodies, there is only one color (Black), and sizes
+        // For Trucker Caps, there is only one color (Black & White), and One Size
         const isSticker = product.name.includes("Sticker");
         const isHoodie = product.name.includes("Hoodie");
+        const isTruckerCap = product.name.includes("Trucker Cap");
 
         variants.forEach(variant => {
           // Parse name like "Unisex Tee w/ Text / Black Heather / XS"
           // For Stickers: "Die-cut Sticker w/ Text / 2″×2″"
           // For Hoodies: "Unisex Hoodie w/ Text / S"
+          // For Trucker Caps: "Trucker Cap w/ Text / One Size"
           const parts = variant.name.split(" / ");
 
           let color, size;
@@ -131,6 +134,9 @@ async function fetchProducts() {
             size = size.replace(/″×″/g, "x").replace(/″/g, "").replace(/×/g, "x");
           } else if (isHoodie) {
             color = "Black"; // Hoodie is always Black
+            size = parts[1] || "One Size";
+          } else if (isTruckerCap) {
+            color = "Black & White"; // Trucker Cap is always Black & White
             size = parts[1] || "One Size";
           } else {
             color = parts[1] || "Default";
