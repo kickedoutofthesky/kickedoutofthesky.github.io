@@ -17,7 +17,12 @@ const API_BASE = "https://api.printful.com";
 
 // Helper to determine image index based on product type
 function getImageIndex(productTitle) {
-  if (productTitle.includes("Long Sleeve")) return 3;
+  if (productTitle.includes("Long Sleeve")) {
+    // The Star + Typewriter Sleeve has product images at index 3
+    if (productTitle.includes("Star")) return 3;
+    // Other long sleeves use index 2
+    return 2;
+  }
   if (productTitle.includes("Hoodie")) return 2;
   if (productTitle.includes("Hat") || productTitle.includes("Cap")) return 1;
   if (productTitle.includes("Sticker")) return 1;
@@ -108,11 +113,14 @@ async function fetchProducts() {
 
         // Group variants by color, then by size parsing the name
         // For Stickers, there are no colors, just sizes
+        // For Hoodies, there is only one color (Black), and sizes
         const isSticker = product.name.includes("Sticker");
+        const isHoodie = product.name.includes("Hoodie");
 
         variants.forEach(variant => {
           // Parse name like "Unisex Tee w/ Text / Black Heather / XS"
           // For Stickers: "Die-cut Sticker w/ Text / 2″×2″"
+          // For Hoodies: "Unisex Hoodie w/ Text / S"
           const parts = variant.name.split(" / ");
 
           let color, size;
@@ -121,6 +129,9 @@ async function fetchProducts() {
             size = parts[1] || "One Size";
             // Normalize sticker sizes: "2″×2″" -> "2x2", "3″×3″" -> "3x3"
             size = size.replace(/″×″/g, "x").replace(/″/g, "").replace(/×/g, "x");
+          } else if (isHoodie) {
+            color = "Black"; // Hoodie is always Black
+            size = parts[1] || "One Size";
           } else {
             color = parts[1] || "Default";
             size = parts[2] || "One Size";
@@ -135,6 +146,7 @@ async function fetchProducts() {
 
           variantsByColor[color].sizes[size] = {
             variant_id: variant.id,
+            price_cents: variant.retail_price ? Math.round(parseFloat(variant.retail_price) * 100) : null,
           };
 
           // Capture first variant's retail price for display
@@ -166,7 +178,7 @@ async function fetchProducts() {
         const productData = {
           product_key: `product_${product.id}`,
           title: product.name,
-          image: variantPreviewImage || product.thumbnail_url || "/store/assets/images/placeholder.png",
+          image: product.thumbnail_url || variantPreviewImage || "/store/assets/images/placeholder.png",
           display_price: displayPrice,
           variants: variantsByColor,
         };

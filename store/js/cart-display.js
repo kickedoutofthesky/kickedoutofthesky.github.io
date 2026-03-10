@@ -155,6 +155,14 @@ async function proceedToCheckout() {
     return;
   }
 
+  // Validate cart items before proceeding
+  const validation = cart.validateItemsForCheckout(products);
+  if (!validation.valid) {
+    alert("Cannot proceed to checkout:\n\n" + validation.errors.join("\n"));
+    console.error("Checkout validation errors:", validation.errors);
+    return;
+  }
+
   try {
     // Transform cart items for backend
     const items = cart.items
@@ -176,8 +184,6 @@ async function proceedToCheckout() {
       })
       .filter(item => item !== null);
 
-    const subtotalCents = cart.getSubtotalCents(products);
-
     // Call backend checkout endpoint
     const response = await fetch("https://kickedoutofthesky-store.vercel.app/api/create-checkout-session", {
       method: "POST",
@@ -186,27 +192,37 @@ async function proceedToCheckout() {
       },
       body: JSON.stringify({
         items,
-        subtotal_cents: subtotalCents,
-        orderDate: new Date().toISOString(),
         successUrl: window.location.origin + "/store/success.html",
         cancelUrl: window.location.href,
       }),
     });
 
-    if (!response.ok) {
-      throw new Error("Checkout failed");
-    }
-
     const data = await response.json();
 
-    // Redirect to Stripe checkout
-    if (data.redirect_url) {
-      window.location.href = data.redirect_url;
-    } else if (data.url) {
+    if (!response.ok) {
+      // Parse error response from backend
+      const errorMessage = data.error || data.message || "Checkout failed";
+      console.error("Checkout error:", errorMessage);
+      alert("Checkout failed: " + errorMessage);
+      return;
+    }
+
+    // Store session ID for success page to access
+    if (data.sessionId) {
+      sessionStorage.setItem("checkoutSessionId", data.sessionId);
+    }
+
+    // Clear cart before redirecting
+    cart.clear();
+
+    // Redirect to Stripe checkout using the new response format
+    if (data.url) {
       window.location.href = data.url;
+    } else {
+      throw new Error("No checkout URL provided by server");
     }
   } catch (error) {
     console.error("Checkout error:", error);
-    alert("Checkout failed. Please try again.");
+    alert("Checkout failed: " + (error.message || "Please try again."));
   }
 }

@@ -48,6 +48,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     const defaultColor = availableColors[0];
     const defaultImage = product.image;
 
+    // Get price range for display
+    const priceDisplay = getPriceDisplay(product);
+
     // Render product detail
     detail.innerHTML = `
       <div class="row">
@@ -59,11 +62,11 @@ document.addEventListener("DOMContentLoaded", async () => {
           <div class="col-md-5">
             <div class="product-detail-info" style="text-align: left;">
               <h1 class="mb-3">${product.title}</h1>
-              <p class="product-detail-price fs-4 mb-4 text-warning" id="price-display">${product.display_price}</p>
+              <p class="product-detail-price fs-4 mb-4 text-warning" id="price-display">${priceDisplay}</p>
 
               <div class="mb-4">
                 ${
-                  availableColors.length > 1
+                  availableColors.length >= 1
                     ? `
                 <div class="mb-3">
                   <label for="color" class="form-label">Color</label>
@@ -184,13 +187,24 @@ function selectColorThumbnail(color) {
 function updatePrice() {
   if (!currentProduct) return;
 
+  const colorSelect = document.getElementById("color");
   const sizeSelect = document.getElementById("size");
+  const color = colorSelect?.value || Object.keys(currentProduct.variants)[0];
   const size = sizeSelect.value;
 
-  // All sizes/colors have the same price
-  if (size) {
-    document.getElementById("price-display").textContent = currentProduct.display_price;
+  // If size is selected, show specific variant price
+  if (size && color) {
+    const variantData = currentProduct.variants[color]?.sizes?.[size];
+    if (variantData?.price_cents !== null && variantData?.price_cents !== undefined) {
+      const price = variantData.price_cents / 100;
+      document.getElementById("price-display").textContent = `$${price.toFixed(2)}`;
+      return;
+    }
   }
+
+  // If no size selected or price not found, show price range
+  const priceDisplay = getPriceDisplay(currentProduct);
+  document.getElementById("price-display").textContent = priceDisplay;
 }
 
 function checkFormComplete() {
@@ -212,7 +226,7 @@ function checkFormComplete() {
   }
 }
 
-function addToCart() {
+async function addToCart() {
   if (!currentProduct) return;
 
   const colorSelect = document.getElementById("color");
@@ -228,10 +242,50 @@ function addToCart() {
     return;
   }
 
-  // Add to cart
-  cart.addItem(currentProduct.product_key, color, size, quantity);
+  // Add to cart without updating badge yet (skipBadgeUpdate = true)
+  cart.addItem(currentProduct.product_key, color, size, quantity, true);
 
-  // Show notifications and wait for animation
+  // Show notifications and wait for animation to complete
   playDingSound();
-  createCartBurst();
+  await createCartBurst();
+
+  // Update badge after animation completes
+  cart.updateCartBadge();
+}
+
+// Get all variant prices for a product and return display price (single or range)
+function getPriceDisplay(product) {
+  const prices = [];
+
+  // Collect all prices from all variants and sizes
+  if (product.variants && typeof product.variants === "object") {
+    Object.values(product.variants).forEach(colorData => {
+      if (colorData.sizes && typeof colorData.sizes === "object") {
+        Object.values(colorData.sizes).forEach(sizeData => {
+          // Try to get price from variant object first
+          if (sizeData.price_cents !== null && sizeData.price_cents !== undefined) {
+            prices.push(sizeData.price_cents);
+          }
+        });
+      }
+    });
+  }
+
+  // If no variant prices found, fall back to display_price
+  if (prices.length === 0) {
+    return product.display_price;
+  }
+
+  // Sort prices and get min and max
+  prices.sort((a, b) => a - b);
+  const minPrice = prices[0];
+  const maxPrice = prices[prices.length - 1];
+
+  // If all prices are the same, show single price
+  if (minPrice === maxPrice) {
+    return `$${(minPrice / 100).toFixed(2)}`;
+  }
+
+  // If prices differ, show range
+  return `$${(minPrice / 100).toFixed(2)} - $${(maxPrice / 100).toFixed(2)}`;
 }

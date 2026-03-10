@@ -26,16 +26,26 @@ function createCartBurst() {
   const quantityInput = document.getElementById("quantity");
   const cartBadge = document.getElementById("cart-badge");
 
-  if (!quantityInput || !cartBadge) {
-    console.warn("Quantity input or cart badge not found");
+  if (!quantityInput) {
+    console.warn("Quantity input not found");
     return Promise.resolve();
+  }
+
+  // If badge doesn't exist or is not visible, use the Cart nav link as target
+  let targetElement = cartBadge;
+  if (!cartBadge || cartBadge.offsetParent === null) {
+    targetElement = document.querySelector("a.nav-link[href='cart.html']");
+    if (!targetElement) {
+      console.warn("Cart badge and cart link not found");
+      return Promise.resolve();
+    }
   }
 
   const quantity = parseInt(quantityInput.value) || 1;
 
   // Get positions
   const inputRect = quantityInput.getBoundingClientRect();
-  const badgeRect = cartBadge.getBoundingClientRect();
+  const targetRect = targetElement.getBoundingClientRect();
 
   return new Promise(resolve => {
     // Create flying badge circle
@@ -62,21 +72,20 @@ function createCartBurst() {
     flyingBadge.textContent = quantity;
     document.body.appendChild(flyingBadge);
 
-    // Animate to cart badge (slower: 1.2s instead of 0.6s)
+    // Animate to cart target (slower: 1.2s instead of 0.6s)
     setTimeout(() => {
       flyingBadge.style.transition = "all 1.2s ease-in-out";
-      flyingBadge.style.top = `${badgeRect.top + badgeRect.height / 2}px`;
-      flyingBadge.style.left = `${badgeRect.left + badgeRect.width / 2}px`;
+      flyingBadge.style.top = `${targetRect.top + targetRect.height / 2}px`;
+      flyingBadge.style.left = `${targetRect.left + targetRect.width / 2}px`;
       flyingBadge.style.transform = "translate(-50%, -50%) scale(0.8)";
     }, 10);
 
-    // Burst animation when reaching badge
+    // Burst animation when reaching target
     setTimeout(() => {
-      // Update cart badge and create burst animation
-      if (cartBadge && typeof cart !== "undefined") {
-        cart.updateCartBadge();
-
-        // Add burst animation to the badge
+      // Note: Badge count will be updated by addToCart() after animation completes
+      // Here we just show the burst animation effect
+      if (cartBadge && cartBadge.offsetParent !== null) {
+        // Add burst animation to the badge if it exists and is visible
         cartBadge.style.animation = "badgeBurst 0.5s ease-out";
         setTimeout(() => {
           cartBadge.style.animation = "";
@@ -93,8 +102,8 @@ function createCartBurst() {
 
         particle.style.cssText = `
           position: fixed;
-          top: ${badgeRect.top + badgeRect.height / 2}px;
-          left: ${badgeRect.left + badgeRect.width / 2}px;
+          top: ${targetRect.top + targetRect.height / 2}px;
+          left: ${targetRect.left + targetRect.width / 2}px;
           width: 8px;
           height: 8px;
           background-color: #ffc107;
@@ -109,8 +118,8 @@ function createCartBurst() {
         // Animate particles outward
         setTimeout(() => {
           particle.style.transition = "all 0.5s ease-out";
-          particle.style.top = `${badgeRect.top + badgeRect.height / 2 + vy}px`;
-          particle.style.left = `${badgeRect.left + badgeRect.width / 2 + vx}px`;
+          particle.style.top = `${targetRect.top + targetRect.height / 2 + vy}px`;
+          particle.style.left = `${targetRect.left + targetRect.width / 2 + vx}px`;
           particle.style.opacity = "0";
         }, 10);
 

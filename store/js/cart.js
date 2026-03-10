@@ -15,14 +15,16 @@ class ShoppingCart {
     return saved ? JSON.parse(saved) : [];
   }
 
-  saveCart() {
+  saveCart(skipBadgeUpdate = false) {
     console.log("saveCart - saving items:", this.items);
     localStorage.setItem(this.storageKey, JSON.stringify(this.items));
     console.log("saveCart - localStorage now contains:", localStorage.getItem(this.storageKey));
-    this.updateCartBadge();
+    if (!skipBadgeUpdate) {
+      this.updateCartBadge();
+    }
   }
 
-  addItem(productKey, color, size, quantity) {
+  addItem(productKey, color, size, quantity, skipBadgeUpdate = false) {
     const existingItem = this.items.find(
       item => item.productKey === productKey && item.color === color && item.size === size
     );
@@ -33,7 +35,7 @@ class ShoppingCart {
       this.items.push({ productKey, color, size, quantity });
     }
 
-    this.saveCart();
+    this.saveCart(skipBadgeUpdate);
     return true;
   }
 
@@ -67,8 +69,21 @@ class ShoppingCart {
     return subtotal;
   }
 
-  getPriceForVariant(product, _color, _size) {
-    // All variants of a product have the same price (product.display_price)
+  getPriceForVariant(product, color, size) {
+    // Try to get price from variant object first
+    if (
+      product.variants &&
+      product.variants[color] &&
+      product.variants[color].sizes &&
+      product.variants[color].sizes[size]
+    ) {
+      const variantPrice = product.variants[color].sizes[size].price_cents;
+      if (variantPrice !== null && variantPrice !== undefined) {
+        return variantPrice;
+      }
+    }
+
+    // Fallback to product display_price (for backwards compatibility)
     if (!product.display_price) return 0;
     const priceStr = product.display_price.replace("$", "");
     return Math.round(parseFloat(priceStr) * 100);
@@ -90,6 +105,39 @@ class ShoppingCart {
   clear() {
     this.items = [];
     this.saveCart();
+  }
+
+  validateItemsForCheckout(products) {
+    const errors = [];
+
+    this.items.forEach((item, index) => {
+      const product = products.find(p => p.product_key === item.productKey);
+
+      if (!product) {
+        errors.push(`Item ${index + 1}: Product not found`);
+        return;
+      }
+
+      if (!product.variants[item.color]) {
+        errors.push(`Item ${index + 1}: Color "${item.color}" not available for ${product.title}`);
+        return;
+      }
+
+      if (!product.variants[item.color].sizes[item.size]) {
+        errors.push(`Item ${index + 1}: Size "${item.size}" not available for ${product.title} in ${item.color}`);
+        return;
+      }
+
+      const variantId = product.variants[item.color].sizes[item.size].variant_id;
+      if (!variantId) {
+        errors.push(`Item ${index + 1}: Variant ID missing for ${product.title}`);
+      }
+    });
+
+    return {
+      valid: errors.length === 0,
+      errors,
+    };
   }
 }
 

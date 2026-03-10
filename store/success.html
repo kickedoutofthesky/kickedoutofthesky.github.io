@@ -101,6 +101,23 @@
           <div class="success-message" style="text-align: center; padding: 60px 20px">
             <h1 style="color: #fff; margin-bottom: 20px">✓ Order Successful</h1>
             <p style="color: #ccc; margin-bottom: 30px; font-size: 1.1rem">Thank you for your purchase!</p>
+            <div
+              id="order-ref"
+              style="
+                margin-bottom: 30px;
+                padding: 20px;
+                background: #1a1a1a;
+                border-radius: 8px;
+                border: 1px solid #333;
+                display: none;
+              "
+            >
+              <p style="color: #999; margin: 0 0 10px 0; font-size: 0.9rem">Order Reference:</p>
+              <p
+                id="session-id"
+                style="color: #ffc107; margin: 0; font-weight: bold; font-family: monospace; font-size: 1rem"
+              ></p>
+            </div>
             <a href="index.html" class="btn btn-warning btn-sm">Return to Store</a>
           </div>
         </main>
@@ -110,5 +127,17 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="js/cart.js"></script>
     <script src="js/cart-notification.js"></script>
+    <script>
+      // Display order reference from checkout session
+      document.addEventListener("DOMContentLoaded", () => {
+        const sessionId = sessionStorage.getItem("checkoutSessionId");
+        if (sessionId) {
+          document.getElementById("order-ref").style.display = "block";
+          document.getElementById("session-id").textContent = sessionId;
+          // Clear the session ID after displaying it
+          sessionStorage.removeItem("checkoutSessionId");
+        }
+      });
+    </script>
   </body>
 </html>
