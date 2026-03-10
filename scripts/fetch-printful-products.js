@@ -181,10 +181,18 @@ async function fetchProducts() {
 
         const displayPrice = baseRetailPrice ? `$${parseFloat(baseRetailPrice).toFixed(2)}` : "Contact for Price";
 
+        // For Trucker Caps, use the variant image instead of thumbnail
+        let mainImage;
+        if (isTruckerCap) {
+          mainImage = variantPreviewImage || product.thumbnail_url || "/store/assets/images/placeholder.png";
+        } else {
+          mainImage = product.thumbnail_url || variantPreviewImage || "/store/assets/images/placeholder.png";
+        }
+
         const productData = {
           product_key: `product_${product.id}`,
           title: product.name,
-          image: product.thumbnail_url || variantPreviewImage || "/store/assets/images/placeholder.png",
+          image: mainImage,
           display_price: displayPrice,
           variants: variantsByColor,
         };
