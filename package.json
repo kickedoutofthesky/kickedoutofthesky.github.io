@@ -9,6 +9,8 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
+    "e2e": "cypress run",
+    "e2e:open": "cypress open",
     "lint": "eslint --ext .js .",
     "lint:fix": "eslint --ext .js . --fix",
     "format": "prettier --write . '!store/data/products.json'",
@@ -20,6 +22,7 @@
   "devDependencies": {
     "@babel/preset-env": "^7.29.0",
     "babel-jest": "^26.6.3",
+    "cypress": "^10.11.0",
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.5",
