@@ -138,6 +138,7 @@ function updateSizes(selectedColor) {
   checkFormComplete();
 }
 
+// eslint-disable-next-line no-unused-vars
 function updateColorAndPrice() {
   const colorSelect = document.getElementById("color");
   const selectedColor = colorSelect.value;
@@ -154,6 +155,7 @@ function updateColorAndPrice() {
   }
 }
 
+// eslint-disable-next-line no-unused-vars
 function selectColorThumbnail(color) {
   // Update the color dropdown
   const colorSelect = document.getElementById("color");
@@ -226,6 +228,7 @@ function checkFormComplete() {
   }
 }
 
+// eslint-disable-next-line no-unused-vars
 async function addToCart() {
   if (!currentProduct) return;
 

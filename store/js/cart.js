@@ -1,4 +1,5 @@
 // Shopping Cart Management
+/* eslint-disable-next-line no-unused-vars */
 /* global cart */
 
 class ShoppingCart {
@@ -142,4 +143,5 @@ class ShoppingCart {
 }
 
 // Initialize global cart instance
+// eslint-disable-next-line no-unused-vars
 var cart = new ShoppingCart();

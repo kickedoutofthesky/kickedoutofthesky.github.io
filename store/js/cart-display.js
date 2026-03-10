@@ -1,4 +1,5 @@
 // Cart Display & Checkout
+/* eslint-disable-next-line no-unused-vars */
 /* global cart, updateCartQuantity, removeFromCart, showCartBadgeBurst */
 
 let products = [];
@@ -117,6 +118,7 @@ function updateCartSummary() {
   totalEl.textContent = `$${subtotalDollars.toFixed(2)}`;
 }
 
+// eslint-disable-next-line no-unused-vars
 function updateCartQuantity(index, quantity) {
   if (quantity <= 0) {
     removeFromCart(index);
@@ -127,6 +129,7 @@ function updateCartQuantity(index, quantity) {
   }
 }
 
+// eslint-disable-next-line no-unused-vars
 function removeFromCart(index) {
   cart.removeItem(index);
   displayCart();

@@ -21,6 +21,7 @@ function playDingSound() {
   oscillator.stop(audioContext.currentTime + 0.1);
 }
 
+// eslint-disable-next-line no-unused-vars
 function createCartBurst() {
   // Get the quantity input position
   const quantityInput = document.getElementById("quantity");
@@ -132,6 +133,7 @@ function createCartBurst() {
   });
 }
 
+// eslint-disable-next-line no-unused-vars
 function showCartBadgeBurst() {
   // Play ding sound
   playDingSound();
@@ -184,6 +186,7 @@ function showCartBadgeBurst() {
   }
 }
 
+// eslint-disable-next-line no-unused-vars
 function showCartNotification(productName) {
   const notification = document.createElement("div");
   notification.className = "alert alert-success";
