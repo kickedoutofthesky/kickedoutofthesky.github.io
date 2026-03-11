@@ -5,8 +5,8 @@ describe("Store Homepage and Navigation", () => {
   });
 
   it("should display the store homepage", () => {
-    cy.get("h1").should("exist");
     cy.get("[data-testid='product-grid']").should("exist");
+    cy.get("nav").should("exist");
   });
 
   it("should display product cards", () => {

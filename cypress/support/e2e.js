@@ -13,6 +13,20 @@
 // https://on.cypress.io/configuration
 // ***********************************************************
 
+// Ignore cross-origin script errors from CDN resources (Bootstrap, Font Awesome)
+// These are expected and don't affect test functionality
+// eslint-disable-next-line no-undef
+Cypress.on("uncaught:exception", (err, _runnable) => {
+  // Ignore Script errors (cross-origin resource errors from CDN)
+  if (err.message === "Script error." || err.message.includes("Script error")) {
+    // Log it for debugging but don't fail
+    console.warn("Ignoring cross-origin script error:", err);
+    return false; // Continue test execution
+  }
+  // Let other errors fail the tests
+  return true;
+});
+
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
 

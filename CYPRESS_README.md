@@ -30,6 +30,7 @@ This opens the Cypress UI where you can:
 - View and run individual tests
 - See real-time feedback
 - Debug test failures with developer tools
+
 - Re-run tests instantly after code changes
 
 ### Run Tests Headlessly (CI Mode)
@@ -47,6 +48,7 @@ This runs all tests headlessly and outputs results to the terminal.
 Tests for store homepage and navigation
 
 - Displays store homepage correctly
+
 - Shows product cards
 - Navigates to product detail pages
 - Cart and store links are available
@@ -80,6 +82,7 @@ Tests for shopping cart functionality
 - Show cart subtotal
 - Remove items from cart
 - Update quantities
+
 - Empty cart handling
 
 ### 5. **checkout.cy.js**
@@ -90,6 +93,7 @@ Tests for checkout flow
 - Display checkout form
 - Handle empty cart
 - Show order summary
+
 - Display cancel button
 - Verify item counts and totals
 
@@ -98,6 +102,7 @@ Tests for checkout flow
 Comprehensive test adding all products and all variants to cart
 
 - Adds every product with every color variant
+
 - Verifies correct product counts
 - Calculates and verifies cart totals
 
@@ -118,6 +123,7 @@ The tests rely on the following `data-testid` attributes in your HTML:
 
 - `data-testid="product-detail"` - Main product detail container
 - `data-testid="product-title"` - Product title
+
 - `data-testid="product-price"` - Product price
 - `data-testid="product-image"` - Product image
 - `data-testid="color-select"` - Color variant selector
@@ -160,15 +166,19 @@ Cypress configuration is in `cypress.config.js`:
 
 - **baseUrl**: `http://localhost:5500` - Update this to your local dev server
 - **specPattern**: `cypress/e2e/**/*.cy.js` - Test file pattern
+
 - **viewportWidth/Height**: 1280x720 (default Cypress viewport)
 
 ## Running Tests Locally
 
 1. Start your local development server on port 5500
 2. Open a new terminal and run:
+
    ```bash
    npm run e2e:open
+
    ```
+
 3. Click a test file to run it
 4. Results will show in real-time
 
@@ -178,6 +188,7 @@ To run tests in CI/CD pipeline:
 
 ```bash
 npm run e2e
+
 ```
 
 Example GitHub Actions workflow:
