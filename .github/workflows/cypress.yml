@@ -1,0 +1,121 @@
+name: Cypress E2E Tests
+
+on:
+  push:
+    branches: [main, gh-pages, develop]
+  pull_request:
+    branches: [main, gh-pages, develop]
+
+env:
+  # Backend URL for testing (point to Vercel staging/preview)
+  # For local testing, this can be overridden
+  CYPRESS_BACKEND_URL: ${{ secrets.CYPRESS_BACKEND_URL || 'http://localhost:5500' }}
+  NODE_ENV: test
+
+jobs:
+  cypress:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    strategy:
+      matrix:
+        node-version: [14.x]
+      fail-fast: false
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Start local server
+        run: |
+          npx serve -s . -p 5500 &
+          echo $! > /tmp/server.pid
+          sleep 3
+        timeout-minutes: 5
+
+      - name: Wait for server to be ready
+        run: |
+          npm install -g wait-on
+          wait-on http://localhost:5500 --timeout=10000
+        timeout-minutes: 2
+
+      - name: Run Cypress tests
+        run: npm run e2e
+        env:
+          CYPRESS_BASE_URL: http://localhost:5500
+          # Uncomment to use Vercel staging backend
+          # CYPRESS_BACKEND_URL: ${{ secrets.CYPRESS_BACKEND_URL }}
+
+      - name: Stop local server
+        if: always()
+        run: |
+          if [ -f /tmp/server.pid ]; then
+            kill $(cat /tmp/server.pid) 2>/dev/null || true
+          fi
+
+      - name: Upload Cypress screenshots on failure
+        uses: actions/upload-artifact@v3
+        if: failure()
+        with:
+          name: cypress-screenshots
+          path: cypress/screenshots
+          retention-days: 7
+
+      - name: Upload Cypress videos on failure
+        uses: actions/upload-artifact@v3
+        if: failure()
+        with:
+          name: cypress-videos
+          path: cypress/videos
+          retention-days: 7
+
+      - name: Comment on PR with test results
+        if: always() && github.event_name == 'pull_request'
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const fs = require('fs');
+            const testResultsFile = 'cypress-test-results.json';
+
+            let comment = '## Cypress E2E Test Results\n\n';
+
+            if (fs.existsSync(testResultsFile)) {
+              const results = JSON.parse(fs.readFileSync(testResultsFile, 'utf8'));
+              comment += `✅ Tests passed: ${results.stats.passes}\n`;
+              comment += `❌ Tests failed: ${results.stats.failures}\n`;
+              comment += `⏭️ Tests skipped: ${results.stats.skipped}\n`;
+            } else {
+              comment += 'See GitHub Actions logs for test results.';
+            }
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
+
+  cypress-status:
+    name: Cypress Tests Status
+    runs-on: ubuntu-latest
+    needs: cypress
+    if: always()
+    steps:
+      - name: Check Cypress test status
+        run: |
+          if [ "${{ needs.cypress.result }}" = "failure" ]; then
+            echo "❌ Cypress tests failed"
+            exit 1
+          else
+            echo "✅ Cypress tests passed"
+            exit 0
+          fi
