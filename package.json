@@ -18,6 +18,8 @@
     "format:check": "prettier --check . '!store/data/products.json'"
   },
   "dependencies": {
+    "@sentry/browser": "^10.43.0",
+    "@sentry/tracing": "^7.120.4",
     "dotenv": "^16.0.0"
   },
   "devDependencies": {
