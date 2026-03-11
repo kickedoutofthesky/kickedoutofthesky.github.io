@@ -1,0 +1,235 @@
+# Contributing to Kicked Out of the Sky Store
+
+## Development Setup
+
+### Prerequisites
+
+- Node.js 14.x or higher
+- npm 6.x or higher
+
+### Local Development
+
+```bash
+# Install dependencies
+npm install
+
+# Start development server (runs on http://localhost:5500)
+npm run dev
+
+# Run unit tests
+npm test
+
+# Run unit tests in watch mode
+npm test:watch
+
+# Run linting
+npm run lint
+
+# Fix linting issues
+npm run lint:fix
+
+# Format code with Prettier
+npm run format
+
+# Run e2e tests (requires dev server running)
+npm run e2e
+
+# Open Cypress test runner (interactive mode)
+npm run e2e:open
+```
+
+## Testing
+
+### Unit Tests
+
+We use Jest for unit tests. Tests are in `store/js/__tests__/` and should cover:
+
+- Cart functionality
+- Product display and pricing
+- Checkout calculations
+- API integrations
+
+```bash
+npm test                 # Run all tests
+npm run test:coverage    # Generate coverage report
+npm test:watch          # Watch mode for development
+```
+
+### E2E Tests
+
+We use Cypress for end-to-end testing. Tests are in `cypress/e2e/` and cover:
+
+- Store navigation
+- Product browsing and variant selection
+- Add to cart flow
+- Shopping cart management
+- Checkout process
+- Stripe integration readiness
+
+**Requirements:** Development server must be running on port 5500
+
+```bash
+npm run dev             # Terminal 1
+npm run e2e            # Terminal 2 - runs headless
+npm run e2e:open       # Terminal 2 - opens Cypress UI
+```
+
+## CI/CD Pipeline (GitHub Actions)
+
+The project includes automated testing via GitHub Actions. On every push and pull request:
+
+1. **Format Check** - Ensures code matches Prettier formatting
+2. **Linting** - ESLint validates code quality
+3. **Unit Tests** - Jest runs all unit tests with coverage
+4. **E2E Tests** - Cypress runs end-to-end test suite
+5. **Coverage Report** - Uploaded to Codecov
+
+### Workflow Status
+
+- Checks run automatically on push to `main`, `gh-pages`, or `develop` branches
+- All checks must pass before merging (if branch protection is enabled)
+- E2E test failures won't block merge (marked as `continue-on-error`)
+
+## Pre-commit Hooks
+
+The project uses Husky + lint-staged to automatically:
+
+- Run ESLint on staged `.js` files
+- Format with Prettier
+- Run Jest tests
+
+This happens automatically when you run `git commit`. If checks fail, fix the issues and commit again.
+
+## Code Quality Standards
+
+### ESLint Rules
+
+- No unused variables (unless prefixed with `_`)
+- Consistent quote style
+- Proper error handling
+- No console.log in production code
+
+### Testing Requirements
+
+- Unit tests for business logic (cart, pricing, checkout)
+- E2E tests for critical user flows
+- Coverage target: 80%+ for core functionality
+
+### Naming Conventions
+
+- Use semantic HTML5 elements
+- Data attributes for test selectors: `data-testid="..."`
+- Descriptive variable names
+- Clear function names that indicate purpose
+
+## Stripe Integration Testing
+
+### Test Credentials
+
+- **Test Card (Success):** 4242 4242 4242 4242
+- **Test Card (Decline):** 4000 0000 0000 0002
+- **Expiry:** Any future date
+- **CVC:** Any 3 digits
+
+### Webhook Testing
+
+Use the Stripe CLI to test webhooks locally:
+
+```bash
+# Install Stripe CLI (if not already installed)
+brew install stripe/stripe-cli/stripe
+
+# Listen for events and forward to local server
+stripe listen --forward-to localhost:3000/webhooks/stripe
+
+# In another terminal, trigger test events
+stripe trigger checkout.session.completed
+```
+
+See `STRIPE_WEBHOOK_GUIDE.md` for complete webhook implementation details.
+
+## Printful Integration Testing
+
+When implemented, test in Printful's sandbox environment:
+
+- Use test API credentials (separate from production)
+- Test product sync, order creation, and shipping calculations
+- Verify webhook handling for order status updates
+
+## Common Tasks
+
+### Adding a New Test
+
+```bash
+# Unit test
+touch store/js/__tests__/my-feature.test.js
+
+# E2E test
+touch cypress/e2e/my-feature.cy.js
+```
+
+### Debugging Tests
+
+```bash
+# Run single test file
+npm test store/js/__tests__/cart.test.js
+
+# Run Cypress in debug mode
+npx cypress run --debug
+
+# Watch test output in real-time
+npm run test:watch
+```
+
+### Fixing Linting Issues Automatically
+
+```bash
+npm run lint:fix
+npm run format
+```
+
+## Deployment
+
+The site is deployed on GitHub Pages. The `gh-pages` branch is deployed automatically.
+
+```bash
+# Build/prepare for deployment (if needed)
+npm run build
+
+# Push to gh-pages branch
+git push origin gh-pages
+```
+
+## Troubleshooting
+
+### Tests Failing Locally but Not in CI
+
+- Clear node_modules and reinstall: `rm -rf node_modules && npm install`
+- Check Node version: `node --version`
+- Clear npm cache: `npm cache clean --force`
+
+### Dev Server Not Starting
+
+```bash
+# Kill process on port 5500
+lsof -ti:5500 | xargs kill -9
+
+# Try again
+npm run dev
+```
+
+### E2E Tests Timing Out
+
+- Ensure dev server is running on port 5500
+- Check if port 5500 is in use: `lsof -i :5500`
+- Increase test timeout if needed in `cypress.config.js`
+
+## Questions?
+
+Refer to documentation:
+
+- Cypress: https://docs.cypress.io
+- Jest: https://jestjs.io
+- ESLint: https://eslint.org
+- Prettier: https://prettier.io
+- Stripe: https://stripe.com/docs/testing
