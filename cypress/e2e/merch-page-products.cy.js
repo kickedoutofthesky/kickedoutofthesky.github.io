@@ -15,8 +15,8 @@ describe("Merch Page - Product Visibility and Display", () => {
     cy.get("[data-testid='product-card']").each($card => {
       // Each card should have a product name
       cy.wrap($card).within(() => {
-        cy.get("[data-testid='product-name']").should("be.visible");
-        cy.get("[data-testid='product-name']").invoke("text").should("not.be.empty");
+        cy.get("[data-testid='product-title']").should("be.visible");
+        cy.get("[data-testid='product-title']").invoke("text").should("not.be.empty");
       });
     });
   });
@@ -25,7 +25,7 @@ describe("Merch Page - Product Visibility and Display", () => {
     cy.get("[data-testid='product-card']").each($card => {
       cy.wrap($card).within(() => {
         // Image should exist and have src attribute
-        cy.get("[data-testid='product-image']").should("exist").should("have.attr", "src");
+        cy.get("[data-testid='product-image'] img").should("exist").should("have.attr", "src");
       });
     });
   });
@@ -33,7 +33,7 @@ describe("Merch Page - Product Visibility and Display", () => {
   it("should display product images with alt text", () => {
     cy.get("[data-testid='product-card']").each($card => {
       cy.wrap($card).within(() => {
-        cy.get("[data-testid='product-image']").should("have.attr", "alt");
+        cy.get("[data-testid='product-image'] img").should("have.attr", "alt");
       });
     });
   });
@@ -87,7 +87,7 @@ describe("Merch Page - Product Visibility and Display", () => {
   });
 
   it("should display product information consistently", () => {
-    const productElements = ["product-name", "product-price", "product-image"];
+    const productElements = ["product-title", "product-price", "product-image"];
 
     cy.get("[data-testid='product-card']").each($card => {
       productElements.forEach(element => {
@@ -99,7 +99,7 @@ describe("Merch Page - Product Visibility and Display", () => {
   });
 
   it("should have products sorted or in expected order", () => {
-    cy.get("[data-testid='product-name']").then($names => {
+    cy.get("[data-testid='product-title']").then($names => {
       const names = [];
       $names.each((index, el) => {
         names.push(el.textContent);
@@ -156,7 +156,7 @@ describe("Merch Page - Product Visibility and Display", () => {
     cy.get("[data-testid='product-card']").first().should("be.visible").and("have.css", "cursor");
 
     // Product names should have readable text
-    cy.get("[data-testid='product-name']").first().invoke("text").should("not.be.empty");
+    cy.get("[data-testid='product-title']").first().invoke("text").should("not.be.empty");
   });
 
   it("should persist product grid state when navigating away and back", () => {

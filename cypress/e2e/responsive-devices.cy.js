@@ -61,7 +61,7 @@ describe("Responsive Design - Mobile and Tablet Viewports", () => {
       });
 
       // Product names should be readable
-      cy.get("[data-testid='product-name']").each($name => {
+      cy.get("[data-testid='product-title']").each($name => {
         cy.wrap($name).invoke("text").should("not.be.empty");
       });
 
@@ -226,7 +226,7 @@ describe("Responsive Design - Mobile and Tablet Viewports", () => {
 
         // Card should have readable content
         cy.wrap($card).within(() => {
-          cy.get("[data-testid='product-name']").should("exist");
+          cy.get("[data-testid='product-title']").should("exist");
           cy.get("[data-testid='product-image']").should("exist");
           cy.get("[data-testid='product-price']").should("exist");
         });
@@ -442,7 +442,7 @@ describe("Responsive Design - Mobile and Tablet Viewports", () => {
         cy.visit("/store");
 
         // All text should have reasonable font size
-        cy.get("[data-testid='product-name']")
+        cy.get("[data-testid='product-title']")
           .first()
           .then($text => {
             const fontSize = window.getComputedStyle($text[0]).fontSize;

@@ -169,7 +169,7 @@ describe("Responsive Design Tests", () => {
 
         it("should have adequate line spacing", () => {
           cy.visit("/store");
-          cy.get("[data-testid='product-name']")
+          cy.get("[data-testid='product-title']")
             .first()
             .then($element => {
               const lineHeight = cy.window().then(win => win.getComputedStyle($element[0]).lineHeight);
@@ -180,7 +180,7 @@ describe("Responsive Design Tests", () => {
         it("should have sufficient color contrast", () => {
           cy.visit("/store");
           // Check that text is visible (basic check)
-          cy.get("[data-testid='product-name']").first().should("have.css", "color");
+          cy.get("[data-testid='product-title']").first().should("have.css", "color");
         });
       });
 

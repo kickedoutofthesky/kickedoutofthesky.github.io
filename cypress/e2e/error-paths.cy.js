@@ -298,7 +298,7 @@ describe("Error Paths and Edge Cases", () => {
 
       // Product cards should be visible even if images are loading
       cy.get("[data-testid='product-card']").should("have.length.greaterThan", 0);
-      cy.get("[data-testid='product-name']").should("have.length.greaterThan", 0);
+      cy.get("[data-testid='product-title']").should("have.length.greaterThan", 0);
     });
 
     it("should handle add to cart during loading", () => {
