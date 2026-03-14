@@ -100,18 +100,8 @@ const server = http.createServer((req, res) => {
         return;
       }
 
-      // For HTML files, inject the API URL into a global variable
-      if (ext === ".html") {
-        const apiUrl = process.env.BACKEND_URL || "https://kickedoutofthesky-store.vercel.app";
-        const configScript = `<script>window.__API_URL__ = "${apiUrl}";</script>`;
-        const injectedData = data.toString().replace("</head>", `${configScript}\n</head>`);
-        response.writeHead(200, { "Content-Type": mimeType });
-        response.end(injectedData);
-      } else {
-        response.writeHead(200, { "Content-Type": mimeType });
-        response.end(data);
-      }
-
+      response.writeHead(200, { "Content-Type": mimeType });
+      response.end(data);
       console.log(`✅ ${req.url} (${mimeType})`);
     });
   }
