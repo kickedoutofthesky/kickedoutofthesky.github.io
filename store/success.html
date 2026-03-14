@@ -152,34 +152,61 @@
     <script src="js/cart.js"></script>
     <script src="js/cart-notification.js"></script>
     <script>
-      // Display order reference from checkout session and retrieve shipping details
+      // Retrieve order details from Stripe session (appended by Stripe redirect)
       document.addEventListener("DOMContentLoaded", async () => {
-        const sessionId = sessionStorage.getItem("checkoutSessionId");
-        if (sessionId) {
-          document.getElementById("order-ref").style.display = "block";
-          document.getElementById("session-id").textContent = sessionId;
+        // Extract session_id from URL params (Stripe appends ?session_id=cs_test_...)
+        const params = new URLSearchParams(window.location.search);
+        const sessionId = params.get("session_id");
 
-          // Try to retrieve shipping details from backend
-          try {
-            const backendUrl = window.__API_URL__ || "https://kickedoutofthesky-store.vercel.app";
-            const response = await fetch(`${backendUrl}/api/session-details?session_id=${sessionId}`);
-            if (response.ok) {
-              const data = await response.json();
+        if (!sessionId) {
+          // No session ID provided — customer navigated here directly or session expired
+          console.warn("No session ID found in URL");
+          showGenericThanks();
+          return;
+        }
 
-              if (data.shippingDetails) {
-                displayShippingDetails(data);
-              }
+        // Display order reference
+        document.getElementById("order-ref").style.display = "block";
+        document.getElementById("session-id").textContent = sessionId;
+
+        // Fetch order details from backend
+        try {
+          const backendUrl = window.__API_URL__ || "https://kickedoutofthesky-store.vercel.app";
+          const response = await fetch(`${backendUrl}/api/order-details?session_id=${encodeURIComponent(sessionId)}`);
+
+          if (!response.ok) {
+            if (response.status === 404) {
+              // Session not found or not paid
+              console.error("Order not found or payment incomplete");
+              showOrderNotFoundError();
+              return;
+            } else if (response.status === 401) {
+              // Unauthorized (session doesn't belong to this store)
+              console.error("Unauthorized access to session");
+              showGenericThanks();
+              return;
+            } else {
+              throw new Error(`API error: ${response.status}`);
             }
-          } catch (error) {
-            console.error("Error fetching session details:", error);
           }
 
-          // Clear the session ID after displaying it (but keep it if we need to retry)
-          // sessionStorage.removeItem("checkoutSessionId");
+          const data = await response.json();
+
+          // Validate response contains expected data
+          if (data.shippingDetails) {
+            displayOrderDetails(data);
+          } else {
+            // Fallback if no shipping details but API succeeded
+            showGenericThanks();
+          }
+        } catch (error) {
+          console.error("Error fetching order details:", error);
+          // API failed, but order was placed — show reassuring message
+          showApiErrorMessage();
         }
       });
 
-      function displayShippingDetails(data) {
+      function displayOrderDetails(data) {
         const shippingDetails = data.shippingDetails;
         const shippingOption = data.shippingOption;
 
@@ -205,6 +232,33 @@
           methodEl.textContent = shippingOption;
           document.getElementById("shipping-details").style.display = "block";
         }
+      }
+
+      function showGenericThanks() {
+        // Show success page without order details
+        console.log("Showing generic thank you message");
+      }
+
+      function showOrderNotFoundError() {
+        // Show friendly error if order/session not found
+        const successMessage = document.querySelector(".success-message");
+        const errorMsg = document.createElement("div");
+        errorMsg.style.cssText =
+          "color: #ff6b6b; padding: 20px; background: #1a1a1a; border-radius: 8px; margin-top: 20px; border: 1px solid #ff6b6b";
+        errorMsg.innerHTML =
+          "<p style='margin: 0'>Order not found or payment incomplete. Please check your email for confirmation details.</p>";
+        successMessage.appendChild(errorMsg);
+      }
+
+      function showApiErrorMessage() {
+        // Show reassuring message if API call fails (order was still placed)
+        const successMessage = document.querySelector(".success-message");
+        const infoMsg = document.createElement("div");
+        infoMsg.style.cssText =
+          "color: #ffc107; padding: 20px; background: #1a1a1a; border-radius: 8px; margin-top: 20px; border: 1px solid #ffc107";
+        infoMsg.innerHTML =
+          "<p style='margin: 0'>Your order was placed successfully! Check your email for order confirmation and shipping details.</p>";
+        successMessage.appendChild(infoMsg);
       }
     </script>
   </body>

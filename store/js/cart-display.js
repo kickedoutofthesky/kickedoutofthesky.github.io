@@ -197,7 +197,7 @@ async function proceedToCheckout() {
       },
       body: JSON.stringify({
         items,
-        successUrl: window.location.origin + "/store/success.html",
+        successUrl: window.location.origin + "/store/success.html?session_id={CHECKOUT_SESSION_ID}",
         cancelUrl: window.location.href,
       }),
     });
@@ -210,11 +210,6 @@ async function proceedToCheckout() {
       console.error("Checkout error:", errorMessage);
       alert("Checkout failed: " + errorMessage);
       return;
-    }
-
-    // Store session ID for success page to access
-    if (data.sessionId) {
-      sessionStorage.setItem("checkoutSessionId", data.sessionId);
     }
 
     // Clear cart before redirecting
