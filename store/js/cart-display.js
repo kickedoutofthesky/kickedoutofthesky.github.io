@@ -189,7 +189,8 @@ async function proceedToCheckout() {
       .filter(item => item !== null);
 
     // Call backend checkout endpoint
-    const response = await fetch("https://kickedoutofthesky-store.vercel.app/api/create-checkout-session", {
+    const backendUrl = window.__API_URL__ || "https://kickedoutofthesky-store.vercel.app";
+    const response = await fetch(backendUrl + "/api/create-checkout-session", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

@@ -252,7 +252,7 @@ Keep track of decisions made:
 - [ ] US
 - [ ] CA
 - [ ] EU
-- [ ] Others: ******\_\_\_\_******
+- [ ] Others: **\*\***\_\_\_\_**\*\***
 
 ### Issue & Resolution Log
 

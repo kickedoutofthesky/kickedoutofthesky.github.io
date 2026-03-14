@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "prepare": "husky install",
-    "dev": "node server.js",
+    "dev": "PORT=3000 node server.js",
     "fetch-products": "node scripts/fetch-printful-products.js",
     "test": "jest",
     "test:watch": "jest --watch",

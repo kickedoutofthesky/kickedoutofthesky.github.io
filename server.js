@@ -1,8 +1,10 @@
 const http = require("http");
 const fs = require("fs");
 const path = require("path");
+require("dotenv").config({ path: ".env.local" });
+require("dotenv").config(); // Falls back to .env if .env.local doesn't exist
 
-const PORT = 5500;
+const PORT = process.env.PORT || 3000;
 const BASE_DIR = __dirname;
 
 const mimeTypes = {
@@ -98,8 +100,18 @@ const server = http.createServer((req, res) => {
         return;
       }
 
-      response.writeHead(200, { "Content-Type": mimeType });
-      response.end(data);
+      // For HTML files, inject the API URL into a global variable
+      if (ext === ".html") {
+        const apiUrl = process.env.BACKEND_URL || "https://kickedoutofthesky-store.vercel.app";
+        const configScript = `<script>window.__API_URL__ = "${apiUrl}";</script>`;
+        const injectedData = data.toString().replace("</head>", `${configScript}\n</head>`);
+        response.writeHead(200, { "Content-Type": mimeType });
+        response.end(injectedData);
+      } else {
+        response.writeHead(200, { "Content-Type": mimeType });
+        response.end(data);
+      }
+
       console.log(`✅ ${req.url} (${mimeType})`);
     });
   }

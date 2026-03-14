@@ -19,7 +19,7 @@
     <nav
       id="navbarMain"
       class="navbar navbar-expand site-header fixed-top"
-      style="padding: 15px 40px 15px 0; background-color: #000"
+      style="padding: 15px 40px 15px 0; background-color: #00000080"
     >
       <div class="container-fluid" style="display: flex; justify-content: space-between; align-items: center">
         <a href="../index.html" style="flex-shrink: 0; display: flex; align-items: center">
@@ -160,9 +160,8 @@
 
           // Try to retrieve shipping details from backend
           try {
-            const response = await fetch(
-              `https://kickedoutofthesky-store.vercel.app/api/session-details?session_id=${sessionId}`
-            );
+            const backendUrl = window.__API_URL__ || "https://kickedoutofthesky-store.vercel.app";
+            const response = await fetch(`${backendUrl}/api/session-details?session_id=${sessionId}`);
             if (response.ok) {
               const data = await response.json();
 
