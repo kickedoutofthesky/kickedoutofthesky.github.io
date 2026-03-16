@@ -144,7 +144,19 @@ Store these in your **backend repository's** `.env.local`:
 | ----------------------- | ---------------- | ---------------------------------------- |
 | `STRIPE_SECRET_KEY`     | `sk_test_...`    | Stripe Dashboard → Developers → API Keys |
 | `STRIPE_WEBHOOK_SECRET` | `whsec_test_...` | From `stripe listen` command output      |
-| `PRINTFUL_API_KEY`      | `test_...`       | Printful Dashboard → Settings → API      |
+| `PRINTFUL_API_KEY`      | (your API key)   | Printful Dashboard → Settings → API Key  |
+| `ENVIRONMENT`           | `development`    | Flag for backend to create test orders   |
+
+## Important Notes on Printful
+
+**Printful Test vs. Production:**
+
+- Printful does **NOT** have separate test/production API keys
+- You have a **single API key** for both test and production
+- The difference is controlled by a flag in your backend order creation code:
+  - **Test orders** are marked with `is_draft_order: true` (won't be fulfilled or charged)
+  - **Production orders** are marked with `is_draft_order: false` (will be fulfilled)
+- Your backend should check the `ENVIRONMENT` variable to decide which flag to use
 
 ## Important Rules
 
@@ -152,12 +164,15 @@ Store these in your **backend repository's** `.env.local`:
 
 - Keep `.env.local` only in backend repository
 - Never commit any `.env.local` files
-- Use test keys locally
+- Use Stripe test keys locally (`sk_test_...`)
+- Set `ENVIRONMENT=development` locally to create draft orders
+- Use your single Printful API key in all environments
 
 ❌ **DON'T:**
 
 - Store secrets in frontend code/files
 - Commit environment files
+- Try to find separate "test" and "production" Printful API keys (they don't exist)
 - Use production keys locally
 
 ## Troubleshooting

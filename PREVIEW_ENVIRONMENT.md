@@ -64,7 +64,8 @@ git push origin feature/your-feature-name
 ```
 STRIPE_SECRET_KEY = sk_test_...
 STRIPE_WEBHOOK_SECRET = whsec_test_... (from Stripe dashboard)
-PRINTFUL_API_KEY = Test API Key
+PRINTFUL_API_KEY = Your Printful API Key
+ENVIRONMENT = preview
 BACKEND_URL = https://your-branch.vercel.app/api
 FRONTEND_URL = https://your-branch.vercel.app
 ```
@@ -167,6 +168,21 @@ stripe listen --forward-to localhost:3001/api/webhook
 
 - Check Printful dashboard (test mode) for test orders
 - Verify order details match what was submitted
+- **Important:** In Preview, backend sets `ENVIRONMENT=preview` which marks Printful orders as draft/test
+- Draft orders won't be fulfilled or charged — they're safe for testing
+
+## Printful Test vs. Production in Preview
+
+When you deploy to preview:
+
+1. **Backend checks `ENVIRONMENT=preview`**
+2. **When creating Printful order**, backend sets `is_draft: true`
+3. **Printful dashboard** shows order in "Test Orders" section, not "Live Orders"
+4. **Order will NOT be fulfilled or charged**
+
+This lets you test the full flow safely. To actually fulfill orders, merge to `main` (production).
+
+**Note:** Printful uses the **same API key** in all environments. The difference between test and production is controlled by the `ENVIRONMENT` variable and the order draft flag in your backend code. See [PRINTFUL_TEST_VS_PRODUCTION.md](PRINTFUL_TEST_VS_PRODUCTION.md) for details.
 
 ## Environment Variables Reference
 
@@ -174,7 +190,8 @@ stripe listen --forward-to localhost:3001/api/webhook
 | ----------------------- | ----------------------------- | ------------------------------- |
 | `STRIPE_SECRET_KEY`     | Stripe API key (test)         | `sk_test_...`                   |
 | `STRIPE_WEBHOOK_SECRET` | Stripe webhook signing secret | `whsec_test_...`                |
-| `PRINTFUL_API_KEY`      | Printful test API key         | `test_...`                      |
+| `PRINTFUL_API_KEY`      | Printful API key              | Your Printful API key           |
+| `ENVIRONMENT`           | Controls order behavior       | `preview`                       |
 | `BACKEND_URL`           | Backend API endpoint          | `https://branch.vercel.app/api` |
 | `FRONTEND_URL`          | Frontend URL (for redirects)  | `https://branch.vercel.app`     |
 

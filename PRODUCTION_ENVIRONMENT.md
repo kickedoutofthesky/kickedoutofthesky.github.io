@@ -38,12 +38,13 @@ This guide covers the production deployment triggered by merging to the `main` b
 
 Go to **Settings → Environment Variables** → Add each variable with **ONLY "Production" box checked**:
 
-| Variable                | Value                           | Source                  |
-| ----------------------- | ------------------------------- | ----------------------- |
-| `STRIPE_SECRET_KEY`     | `sk_live_...`                   | Stripe Live API Keys    |
-| `STRIPE_WEBHOOK_SECRET` | `whsec_...`                     | Stripe Live Webhooks    |
-| `PRINTFUL_API_KEY`      | `prod_api_key...`               | Printful Production API |
-| `FRONTEND_URL`          | `https://kickedoutofthesky.com` | Your custom domain      |
+| Variable                | Value                           | Source                                  |
+| ----------------------- | ------------------------------- | --------------------------------------- |
+| `STRIPE_SECRET_KEY`     | `sk_live_...`                   | Stripe Live API Keys                    |
+| `STRIPE_WEBHOOK_SECRET` | `whsec_...`                     | Stripe Live Webhooks                    |
+| `PRINTFUL_API_KEY`      | Your Printful API key           | Printful Dashboard → Settings → API Key |
+| `ENVIRONMENT`           | `production`                    | Set to trigger live orders              |
+| `FRONTEND_URL`          | `https://kickedoutofthesky.com` | Your custom domain                      |
 
 ⚠️ **DO NOT:**
 
@@ -68,7 +69,10 @@ Before deploying:
 # Verify values start with correct prefixes:
 # - STRIPE_SECRET_KEY: sk_live_
 # - STRIPE_WEBHOOK_SECRET: whsec_ (from live endpoint)
-# - PRINTFUL_API_KEY: Production key (not "test_")
+# - ENVIRONMENT: production (to trigger live orders)
+# - PRINTFUL_API_KEY: Your Printful API key (same key used in all environments)
+#   Note: Printful uses one API key for both test & live. The ENVIRONMENT variable
+#         controls whether orders are marked as draft (test) or live.
 ```
 
 ## Deployment Process
@@ -192,7 +196,8 @@ Before merging to main, verify:
 
 - [ ] `STRIPE_SECRET_KEY` in Vercel = `sk_live_...` (not `sk_test_...`)
 - [ ] `STRIPE_WEBHOOK_SECRET` = live webhook secret (from Stripe)
-- [ ] `PRINTFUL_API_KEY` = production key (not test key)
+- [ ] `ENVIRONMENT` = `production` (controls order fulfillment behavior)
+- [ ] `PRINTFUL_API_KEY` = production key (same key used in test/preview, but with `ENVIRONMENT=production` to trigger live orders)
 - [ ] `FRONTEND_URL` = `https://kickedoutofthesky.com`
 - [ ] All env vars set to "Production" only (not Preview/Development)
 
@@ -211,6 +216,16 @@ Before merging to main, verify:
 - [ ] Product catalog synced to live store
 - [ ] Shipping rates reviewed and approved
 - [ ] Tax settings configured in Printful
+- [ ] **IMPORTANT:** Backend code sets `ENVIRONMENT=production` (this controls order flags, not API keys)
+
+⚠️ **Important: Printful API Key Model**
+
+Printful uses **one API key for both test and production**. The difference is controlled in your backend code:
+
+- **Test/Preview environments:** Backend sets `is_draft_order: true` → orders won't be fulfilled
+- **Production environment:** Backend sets `is_draft_order: false` → orders will be fulfilled
+- **Same API key** is used in all environments
+- The `ENVIRONMENT` variable controls which behavior is active
 
 ### Testing in Preview
 

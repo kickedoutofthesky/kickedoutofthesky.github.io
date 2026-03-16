@@ -9,8 +9,8 @@ This document provides a high-level overview of how code flows through different
 - **When:** `npm run dev`
 - **Frontend:** `http://localhost:3000`
 - **Backend:** `http://localhost:3001`
-- **Stripe:** Test mode
-- **Printful:** Test mode
+- **Stripe:** Test mode (`sk_test_...`)
+- **Printful:** Draft orders (`is_draft_order: true` in code)
 - **Real Money:** ❌ No
 - **Real Orders:** ❌ No
 - **Use Case:** Building features, testing locally
@@ -21,8 +21,8 @@ This document provides a high-level overview of how code flows through different
 - **When:** Push to any non-main branch or PR
 - **Frontend:** `https://your-branch.vercel.app`
 - **Backend:** `https://your-branch.vercel.app/api`
-- **Stripe:** Test mode (separate webhook)
-- **Printful:** Test mode
+- **Stripe:** Test mode (`sk_test_...`, separate webhook)
+- **Printful:** Draft orders (`is_draft_order: true` in code)
 - **Real Money:** ❌ No
 - **Real Orders:** ❌ No
 - **Use Case:** Code review, QA testing, team collaboration
@@ -33,8 +33,8 @@ This document provides a high-level overview of how code flows through different
 - **When:** Merge to main branch
 - **Frontend:** `https://kickedoutofthesky.com`
 - **Backend:** `https://kickedoutofthesky-store.vercel.app/api`
-- **Stripe:** Live mode (real payments)
-- **Printful:** Live/Production mode
+- **Stripe:** Live mode (`sk_live_...`, real payments)
+- **Printful:** Live orders (`is_draft_order: false` in code)
 - **Real Money:** ✅ Yes
 - **Real Orders:** ✅ Yes
 - **Use Case:** Serving real customers, processed real payments
