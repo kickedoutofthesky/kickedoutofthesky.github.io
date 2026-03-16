@@ -32,9 +32,9 @@ const server = http.createServer((req, res) => {
     return;
   }
 
-  // Serve store by default for root
+  // Serve main index by default for root
   if (filePath === "/") {
-    filePath = "/store/index.html";
+    filePath = "/index.html";
   }
 
   // Try to serve the requested file

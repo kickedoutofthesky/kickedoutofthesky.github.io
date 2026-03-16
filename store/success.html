@@ -40,6 +40,8 @@
                 color: #999;
                 text-decoration: none;
                 font-size: 1.2rem;
+                display: flex;
+                align-items: center;
                 transition: ease-in-out color 0.15s;
                 cursor: pointer;
               "
@@ -142,6 +144,78 @@
                 <!-- Shipping method populated by script -->
               </p>
             </div>
+
+            <!-- Order Summary Section -->
+            <div
+              id="order-summary"
+              style="
+                margin-bottom: 30px;
+                padding: 20px;
+                background: #1a1a1a;
+                border-radius: 8px;
+                border: 1px solid #333;
+                display: none;
+                text-align: left;
+              "
+            >
+              <p style="color: #999; margin: 0 0 15px 0; font-size: 0.9rem; font-weight: bold">Order Items:</p>
+              <div id="order-items" style="color: #ccc; margin-bottom: 20px; font-size: 0.95rem">
+                <!-- Items populated by script -->
+              </div>
+
+              <div style="border-top: 1px solid #333; padding-top: 15px">
+                <div
+                  style="
+                    display: flex;
+                    justify-content: space-between;
+                    color: #ccc;
+                    margin-bottom: 8px;
+                    font-size: 0.95rem;
+                  "
+                >
+                  <span>Subtotal:</span>
+                  <span id="summary-subtotal">$0.00</span>
+                </div>
+                <div
+                  style="
+                    display: flex;
+                    justify-content: space-between;
+                    color: #ccc;
+                    margin-bottom: 8px;
+                    font-size: 0.95rem;
+                  "
+                >
+                  <span>Shipping:</span>
+                  <span id="summary-shipping">$0.00</span>
+                </div>
+                <div
+                  style="
+                    display: flex;
+                    justify-content: space-between;
+                    color: #ccc;
+                    margin-bottom: 15px;
+                    font-size: 0.95rem;
+                  "
+                >
+                  <span>Tax:</span>
+                  <span id="summary-tax">$0.00</span>
+                </div>
+                <div
+                  style="
+                    display: flex;
+                    justify-content: space-between;
+                    color: #ffc107;
+                    font-weight: bold;
+                    font-size: 1.1rem;
+                    border-top: 1px solid #333;
+                    padding-top: 15px;
+                  "
+                >
+                  <span>Total:</span>
+                  <span id="summary-total">$0.00</span>
+                </div>
+              </div>
+            </div>
             <a href="index.html" class="btn btn-warning btn-sm">Return to Store</a>
           </div>
         </main>
@@ -193,10 +267,11 @@
           const data = await response.json();
 
           // Validate response contains expected data
-          if (data.shippingDetails) {
+          // Display if we have any order data (items, summary, shipping, etc)
+          if (data.lineItems || data.orderSummary || data.shippingDetails) {
             displayOrderDetails(data);
           } else {
-            // Fallback if no shipping details but API succeeded
+            // Fallback if no meaningful data returned
             showGenericThanks();
           }
         } catch (error) {
@@ -209,7 +284,11 @@
       function displayOrderDetails(data) {
         const shippingDetails = data.shippingDetails;
         const shippingOption = data.shippingOption;
+        const orderSummary = data.orderSummary;
+        const lineItems = data.lineItems;
+        const customerEmail = data.customerEmail;
 
+        // Display shipping details
         if (shippingDetails) {
           const addressDiv = document.getElementById("shipping-address");
           const address = shippingDetails.address || {};
@@ -231,6 +310,46 @@
           const methodEl = document.getElementById("shipping-method");
           methodEl.textContent = shippingOption;
           document.getElementById("shipping-details").style.display = "block";
+        }
+
+        // Display order items and summary
+        if (lineItems && lineItems.length > 0) {
+          const itemsDiv = document.getElementById("order-items");
+          itemsDiv.innerHTML = lineItems
+            .map(
+              item =>
+                `<div style="display: flex; justify-content: space-between; margin-bottom: 10px">
+                  <div>
+                    <div>${item.description || item.name || "Item"}</div>
+                    <div style="color: #999; font-size: 0.85rem">Qty: ${item.quantity || 1}</div>
+                  </div>
+                  <div style="text-align: right; font-weight: bold">
+                    $${((item.amount_total || 0) / 100).toFixed(2)}
+                  </div>
+                </div>`
+            )
+            .join("");
+
+          document.getElementById("order-summary").style.display = "block";
+        }
+
+        // Display cost breakdown
+        if (orderSummary) {
+          document.getElementById("summary-subtotal").textContent = `$${((orderSummary.subtotal || 0) / 100).toFixed(
+            2
+          )}`;
+          document.getElementById("summary-shipping").textContent = `$${((orderSummary.shipping || 0) / 100).toFixed(
+            2
+          )}`;
+          document.getElementById("summary-tax").textContent = `$${((orderSummary.tax || 0) / 100).toFixed(2)}`;
+          document.getElementById("summary-total").textContent = `$${((orderSummary.total || 0) / 100).toFixed(2)}`;
+
+          document.getElementById("order-summary").style.display = "block";
+        }
+
+        // Display email if available
+        if (customerEmail) {
+          console.log(`Order confirmation sent to: ${customerEmail}`);
         }
       }
 
