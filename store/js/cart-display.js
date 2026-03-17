@@ -175,14 +175,9 @@ async function proceedToCheckout() {
         if (!product) return null;
 
         const variantId = product.variants[item.color]?.sizes?.[item.size]?.variant_id;
-        const priceCents = cart.getPriceForVariant(product, item.color, item.size);
 
         return {
           variant_id: variantId,
-          product_name: product.title,
-          color: item.color,
-          size: item.size,
-          price_cents: priceCents,
           quantity: item.quantity,
         };
       })
