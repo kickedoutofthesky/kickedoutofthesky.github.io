@@ -354,7 +354,7 @@ nav .container-fluid {
   }
 
   .nav-link {
-    font-size: 0.9rem !important;
+    font-size: 1.1rem !important;
   }
 
   .product-detail-info h1 {
@@ -372,7 +372,7 @@ nav .container-fluid {
   }
 
   .nav-link {
-    font-size: 0.8rem !important;
+    font-size: 1.1rem !important;
   }
 
   .products-grid {
@@ -442,12 +442,12 @@ nav .container-fluid {
 
 @media (min-width: 1200px) {
   .brand {
-    height: 60px !important;
+    height: 45px !important;
   }
 }
 
 @media (min-width: 1400px) {
   .brand {
-    height: 55px !important;
+    height: 45px !important;
   }
 }
