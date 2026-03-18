@@ -51,14 +51,28 @@ fetch(`${backendUrl}/api/order-details?session_id=cs_test_abc123`);
 
 ### 4. Extract Safe Data from Stripe Session
 
-Do **NOT** return the raw session object — it contains sensitive payment method details.
+Do **NOT** return the raw session object — it contains sensitive payment method details and secrets.
 
-Return only these fields:
+**Strip out these fields before responding:**
+
+- `payment_intent` (contains payment method details)
+- `payment_method_types`
+- Any field starting with `sk_` or `whsec_` (API keys and webhooks secrets)
+- `customer` (internal Stripe customer ID)
+- `client_secret`
+
+**Return only these sale fields:**
 
 ```json
 {
+  "currency": "usd",
+  "customerDetails": {
+    "name": "John Doe",
+    "email": "john@example.com",
+    "phone": "+1-555-123-4567"
+  },
   "shippingDetails": {
-    "name": "Customer Name",
+    "name": "John Doe",
     "address": {
       "line1": "123 Main St",
       "line2": "Apt 4",
@@ -68,31 +82,64 @@ Return only these fields:
       "country": "US"
     }
   },
-  "shippingOption": "Express Shipping",
+  "shippingOption": "Express ($15.00)",
   "orderSummary": {
     "subtotal": 5999,
-    "shipping": 1000,
+    "shipping": 1500,
     "tax": 600,
-    "total": 7599
+    "total": 8099
   },
-  "customerEmail": "customer@example.com",
   "lineItems": [
     {
-      "name": "Product Name",
+      "description": "Black Tee - Medium",
       "quantity": 2,
-      "price": 2999
+      "unitPrice": 2999,
+      "amount_total": 5998
+    },
+    {
+      "description": "Logo Hoodie - Large",
+      "quantity": 1,
+      "unitPrice": 4999,
+      "amount_total": 4999
     }
   ]
 }
 ```
 
-**Fields to extract:**
+**Field extraction guide:**
 
-- `shippingDetails`: From `session.shipping_details` (name + address)
-- `shippingOption`: From `session.shipping_options` (the selected shipping method label)
-- `orderSummary`: Calculate from `session.amount_subtotal`, `session.shipping_cost`, `session.total_details.amount_tax`, `session.amount_total` (all in cents)
-- `customerEmail`: From `session.customer_details.email`
-- `lineItems`: List of items ordered
+| Response Field                        | Source                                                                    | Notes                                           |
+| ------------------------------------- | ------------------------------------------------------------------------- | ----------------------------------------------- |
+| `currency`                            | `session.currency`                                                        | E.g., "usd", "eur"                              |
+| `customerDetails.name`                | `session.customer_details.name`                                           | Full name from Stripe form                      |
+| `customerDetails.email`               | `session.customer_details.email`                                          | Email address                                   |
+| `customerDetails.phone`               | `session.customer_details.phone`                                          | Optional, may be null                           |
+| `shippingDetails.name`                | `session.shipping_details.name`                                           | Name on shipping label                          |
+| `shippingDetails.address.line1`       | `session.shipping_details.address.line1`                                  | Street address                                  |
+| `shippingDetails.address.line2`       | `session.shipping_details.address.line2`                                  | Apt/Suite (optional)                            |
+| `shippingDetails.address.city`        | `session.shipping_details.address.city`                                   | City                                            |
+| `shippingDetails.address.state`       | `session.shipping_details.address.state`                                  | State/Province                                  |
+| `shippingDetails.address.postal_code` | `session.shipping_details.address.postal_code`                            | ZIP code                                        |
+| `shippingDetails.address.country`     | `session.shipping_details.address.country`                                | ISO country code                                |
+| `shippingOption`                      | `session.shipping_options[0].shipping_rate.display_name` or custom string | Display name for shipping method                |
+| `orderSummary.subtotal`               | `session.amount_subtotal`                                                 | In cents (divide by 100 for display)            |
+| `orderSummary.shipping`               | `session.shipping_cost.amount_total`                                      | In cents                                        |
+| `orderSummary.tax`                    | `session.total_details.amount_tax`                                        | In cents                                        |
+| `orderSummary.total`                  | `session.amount_total`                                                    | In cents                                        |
+| `lineItems[].description`             | `line_item.description`                                                   | Product name + variant (from line_items.data[]) |
+| `lineItems[].quantity`                | `line_item.quantity`                                                      | Number ordered                                  |
+| `lineItems[].unitPrice`               | `line_item.price.unit_amount`                                             | In cents                                        |
+| `lineItems[].amount_total`            | `line_item.amount_total`                                                  | In cents (quantity × unit price)                |
+
+**To retrieve line items, expand the session:**
+
+```javascript
+const session = await stripe.checkout.sessions.retrieve(session_id, {
+  expand: ["line_items"],
+});
+
+// Then access: session.line_items.data[]
+```
 
 ### 5. Error Handling
 

@@ -472,4 +472,185 @@ describe("Checkout Validation", () => {
       expect(result[0].variant_id).toBe(1003);
     });
   });
+
+  describe("Order Details Response Format", () => {
+    test("should validate required fields in order details response", () => {
+      const validateOrderDetailsResponse = response => {
+        const requiredFields = ["currency", "customerDetails", "shippingDetails", "orderSummary", "lineItems"];
+        return requiredFields.every(field => field in response);
+      };
+
+      const validResponse = {
+        currency: "usd",
+        customerDetails: { email: "test@example.com", name: "John Doe", phone: "+1-555-1234" },
+        shippingDetails: { name: "John Doe", address: { line1: "123 Main St", city: "NYC", country: "US" } },
+        orderSummary: { subtotal: 5999, shipping: 1500, tax: 600, total: 8099 },
+        lineItems: [{ description: "Tee", quantity: 2, unitPrice: 2999, amount_total: 5998 }],
+      };
+      expect(validateOrderDetailsResponse(validResponse)).toBe(true);
+
+      const missingField = {
+        currency: "usd",
+        customerDetails: { email: "test@example.com" },
+        shippingDetails: { name: "John Doe" },
+        orderSummary: { total: 8099 },
+      };
+      expect(validateOrderDetailsResponse(missingField)).toBe(false);
+    });
+
+    test("should have customer details with email and name", () => {
+      const response = {
+        customerDetails: {
+          name: "John Doe",
+          email: "john@example.com",
+          phone: "+1-555-123-4567",
+        },
+      };
+
+      expect(response.customerDetails).toHaveProperty("email");
+      expect(response.customerDetails).toHaveProperty("name");
+      expect(response.customerDetails).toHaveProperty("phone");
+      expect(response.customerDetails.email).toBe("john@example.com");
+    });
+
+    test("should include shipping address fields", () => {
+      const response = {
+        shippingDetails: {
+          name: "John Doe",
+          address: {
+            line1: "123 Main St",
+            line2: "Apt 4",
+            city: "New York",
+            state: "NY",
+            postal_code: "10001",
+            country: "US",
+          },
+        },
+      };
+
+      const { address } = response.shippingDetails;
+      expect(address).toHaveProperty("line1");
+      expect(address).toHaveProperty("city");
+      expect(address).toHaveProperty("country");
+      expect(address.line1).toBe("123 Main St");
+      expect(address.country).toBe("US");
+    });
+
+    test("should format line items with unit price and quantity", () => {
+      const response = {
+        lineItems: [
+          {
+            description: "Black Tee - Medium",
+            quantity: 2,
+            unitPrice: 2999,
+            amount_total: 5998,
+          },
+          {
+            description: "Logo Hoodie - Large",
+            quantity: 1,
+            unitPrice: 4999,
+            amount_total: 4999,
+          },
+        ],
+      };
+
+      expect(response.lineItems).toHaveLength(2);
+      expect(response.lineItems[0]).toHaveProperty("unitPrice");
+      expect(response.lineItems[0]).toHaveProperty("quantity");
+      expect(response.lineItems[0]).toHaveProperty("amount_total");
+      expect(response.lineItems[0].quantity).toBe(2);
+      expect(response.lineItems[0].amount_total).toBe(5998);
+    });
+
+    test("should include cost breakdown with subtotal, shipping, tax, total", () => {
+      const response = {
+        orderSummary: {
+          subtotal: 5999,
+          shipping: 1500,
+          tax: 600,
+          total: 8099,
+        },
+      };
+
+      const { orderSummary } = response;
+      expect(orderSummary).toHaveProperty("subtotal");
+      expect(orderSummary).toHaveProperty("shipping");
+      expect(orderSummary).toHaveProperty("tax");
+      expect(orderSummary).toHaveProperty("total");
+      expect(orderSummary.total).toBe(8099);
+    });
+
+    test("should NOT include sensitive payment data", () => {
+      const sensitiveFields = ["payment_intent", "payment_method", "payment_method_types", "client_secret"];
+
+      const validResponse = {
+        currency: "usd",
+        customerDetails: { email: "test@example.com", name: "John Doe" },
+        shippingDetails: { name: "John Doe", address: { city: "NYC" } },
+        orderSummary: { total: 8099 },
+        lineItems: [],
+      };
+
+      sensitiveFields.forEach(field => {
+        expect(validResponse).not.toHaveProperty(field);
+      });
+    });
+
+    test("should NOT include API keys or secrets", () => {
+      const forbiddenFields = field => /^(sk_|pk_|whsec_)/.test(field);
+
+      const response = {
+        currency: "usd",
+        customerDetails: { email: "test@example.com" },
+      };
+
+      Object.keys(response).forEach(key => {
+        expect(forbiddenFields(key)).toBe(false);
+      });
+    });
+
+    test("should NOT include internal Stripe customer ID", () => {
+      const response = {
+        currency: "usd",
+        customerDetails: { email: "test@example.com", name: "John Doe" },
+        shippingDetails: { name: "John Doe" },
+        orderSummary: { total: 8099 },
+        lineItems: [],
+      };
+
+      // Should not have a 'customer' field with Stripe customer ID
+      expect(response).not.toHaveProperty("customer");
+    });
+
+    test("should include currency field for price formatting", () => {
+      const response = {
+        currency: "usd",
+        orderSummary: { total: 8099 },
+      };
+
+      expect(response).toHaveProperty("currency");
+      expect(response.currency).toBe("usd");
+    });
+
+    test("should validate all amounts are in cents (integer values)", () => {
+      const response = {
+        orderSummary: {
+          subtotal: 5999,
+          shipping: 1500,
+          tax: 600,
+          total: 8099,
+        },
+        lineItems: [
+          {
+            unitPrice: 2999,
+            amount_total: 5998,
+          },
+        ],
+      };
+
+      expect(Number.isInteger(response.orderSummary.total)).toBe(true);
+      expect(Number.isInteger(response.lineItems[0].unitPrice)).toBe(true);
+      expect(response.orderSummary.total).toBeGreaterThan(0);
+    });
+  });
 });

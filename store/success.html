@@ -104,6 +104,8 @@
           <div class="success-message" style="text-align: center; padding: 60px 20px">
             <h1 style="color: #fff; margin-bottom: 20px">✓ Order Successful</h1>
             <p style="color: #ccc; margin-bottom: 30px; font-size: 1.1rem">Thank you for your purchase!</p>
+
+            <!-- Order Reference Section -->
             <div
               id="order-ref"
               style="
@@ -122,6 +124,29 @@
               ></p>
             </div>
 
+            <!-- Customer Info Section -->
+            <div
+              id="customer-info"
+              style="
+                margin-bottom: 30px;
+                padding: 20px;
+                background: #1a1a1a;
+                border-radius: 8px;
+                border: 1px solid #333;
+                display: none;
+                text-align: left;
+              "
+            >
+              <p style="color: #999; margin: 0 0 15px 0; font-size: 0.9rem; font-weight: bold">
+                Order Confirmation Sent To:
+              </p>
+              <div style="color: #ccc; margin-bottom: 12px; font-size: 0.95rem">
+                <div id="customer-name" style="font-weight: 500; margin-bottom: 5px"></div>
+                <div id="customer-email" style="color: #ffc107"></div>
+                <div id="customer-phone" style="color: #999; font-size: 0.9rem; margin-top: 5px"></div>
+              </div>
+            </div>
+
             <!-- Shipping Details Section -->
             <div
               id="shipping-details"
@@ -135,8 +160,8 @@
                 text-align: left;
               "
             >
-              <p style="color: #999; margin: 0 0 15px 0; font-size: 0.9rem; font-weight: bold">Shipping Address:</p>
-              <div id="shipping-address" style="color: #ccc; margin-bottom: 15px; font-size: 0.95rem; line-height: 1.6">
+              <p style="color: #999; margin: 0 0 15px 0; font-size: 0.9rem; font-weight: bold">Shipping To:</p>
+              <div id="shipping-address" style="color: #ccc; margin-bottom: 20px; font-size: 0.95rem; line-height: 1.8">
                 <!-- Address populated by script -->
               </div>
               <p style="color: #999; margin: 0 0 8px 0; font-size: 0.9rem; font-weight: bold">Shipping Method:</p>
@@ -145,7 +170,7 @@
               </p>
             </div>
 
-            <!-- Order Summary Section -->
+            <!-- Order Items Section -->
             <div
               id="order-summary"
               style="
@@ -216,6 +241,7 @@
                 </div>
               </div>
             </div>
+
             <a href="index.html" class="btn btn-warning btn-sm">Return to Store</a>
           </div>
         </main>
@@ -288,7 +314,22 @@
         const shippingOption = data.shippingOption;
         const orderSummary = data.orderSummary;
         const lineItems = data.lineItems;
-        const customerEmail = data.customerEmail;
+        const customerDetails = data.customerDetails || {};
+        const currency = data.currency || "USD";
+
+        // Display customer info
+        if (customerDetails.email || customerDetails.name || customerDetails.phone) {
+          if (customerDetails.name) {
+            document.getElementById("customer-name").textContent = customerDetails.name;
+          }
+          if (customerDetails.email) {
+            document.getElementById("customer-email").textContent = customerDetails.email;
+          }
+          if (customerDetails.phone) {
+            document.getElementById("customer-phone").textContent = customerDetails.phone;
+          }
+          document.getElementById("customer-info").style.display = "block";
+        }
 
         // Display shipping details
         if (shippingDetails) {
@@ -314,22 +355,25 @@
           document.getElementById("shipping-details").style.display = "block";
         }
 
-        // Display order items and summary
+        // Display order items with unit prices and line totals
         if (lineItems && lineItems.length > 0) {
           const itemsDiv = document.getElementById("order-items");
+          const currencySymbol = currency === "USD" ? "$" : currency;
+
           itemsDiv.innerHTML = lineItems
-            .map(
-              item =>
-                `<div style="display: flex; justify-content: space-between; margin-bottom: 10px">
-                  <div>
-                    <div>${item.description || item.name || "Item"}</div>
-                    <div style="color: #999; font-size: 0.85rem">Qty: ${item.quantity || 1}</div>
-                  </div>
-                  <div style="text-align: right; font-weight: bold">
-                    $${((item.amount_total || 0) / 100).toFixed(2)}
-                  </div>
-                </div>`
-            )
+            .map(item => {
+              const unitPrice = (item.unitPrice || 0) / 100;
+              const lineTotal = (item.amount_total || 0) / 100;
+              return `<div style="margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid #333">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 6px">
+                  <div>${item.description || item.name || "Item"}</div>
+                  <div style="font-weight: bold">${currencySymbol}${lineTotal.toFixed(2)}</div>
+                </div>
+                <div style="display: flex; justify-content: space-between; color: #999; font-size: 0.85rem">
+                  <div>Qty: ${item.quantity || 1} × ${currencySymbol}${unitPrice.toFixed(2)} each</div>
+                </div>
+              </div>`;
+            })
             .join("");
 
           document.getElementById("order-summary").style.display = "block";
@@ -337,21 +381,17 @@
 
         // Display cost breakdown
         if (orderSummary) {
-          document.getElementById("summary-subtotal").textContent = `$${((orderSummary.subtotal || 0) / 100).toFixed(
-            2
-          )}`;
-          document.getElementById("summary-shipping").textContent = `$${((orderSummary.shipping || 0) / 100).toFixed(
-            2
-          )}`;
-          document.getElementById("summary-tax").textContent = `$${((orderSummary.tax || 0) / 100).toFixed(2)}`;
-          document.getElementById("summary-total").textContent = `$${((orderSummary.total || 0) / 100).toFixed(2)}`;
+          const currencySymbol = currency === "USD" ? "$" : currency;
+          document.getElementById("summary-subtotal").textContent =
+            `${currencySymbol}${((orderSummary.subtotal || 0) / 100).toFixed(2)}`;
+          document.getElementById("summary-shipping").textContent =
+            `${currencySymbol}${((orderSummary.shipping || 0) / 100).toFixed(2)}`;
+          document.getElementById("summary-tax").textContent =
+            `${currencySymbol}${((orderSummary.tax || 0) / 100).toFixed(2)}`;
+          document.getElementById("summary-total").textContent =
+            `${currencySymbol}${((orderSummary.total || 0) / 100).toFixed(2)}`;
 
           document.getElementById("order-summary").style.display = "block";
-        }
-
-        // Display email if available
-        if (customerEmail) {
-          console.log(`Order confirmation sent to: ${customerEmail}`);
         }
       }
 
