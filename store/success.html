@@ -250,6 +250,10 @@
         const params = new URLSearchParams(window.location.search);
         const sessionId = params.get("session_id");
 
+        console.log("Success page loaded");
+        console.log("Session ID from URL:", sessionId);
+        console.log("Full URL:", window.location.href);
+
         if (!sessionId) {
           // No session ID provided — customer navigated here directly or session expired
           console.warn("No session ID found in URL");
@@ -258,13 +262,29 @@
         }
 
         // Display order reference
-        document.getElementById("order-ref").style.display = "block";
-        document.getElementById("session-id").textContent = sessionId;
+        const orderRef = document.getElementById("order-ref");
+        const sessionIdEl = document.getElementById("session-id");
+        console.log("order-ref element found:", !!orderRef);
+        console.log("session-id element found:", !!sessionIdEl);
+        
+        if (orderRef) {
+          orderRef.style.display = "block";
+        }
+        if (sessionIdEl) {
+          sessionIdEl.textContent = sessionId;
+        }
 
         // Fetch order details from backend
         try {
           const backendUrl = window.__API_URL__ || "https://kickedoutofthesky-store.vercel.app";
+          console.log("Backend URL:", backendUrl);
+          console.log("window.__API_URL__:", window.__API_URL__);
+          console.log("Fetching from:", `${backendUrl}/api/order-details?session_id=${encodeURIComponent(sessionId)}`);
+          
           const response = await fetch(`${backendUrl}/api/order-details?session_id=${encodeURIComponent(sessionId)}`);
+
+          console.log("Response status:", response.status);
+          console.log("Response ok:", response.ok);
 
           if (!response.ok) {
             if (response.status === 404) {
@@ -284,18 +304,34 @@
 
           const data = await response.json();
           console.log("Order details API response:", data);
+          console.log("Response keys:", Object.keys(data));
+          console.log("Data type:", typeof data);
+          console.log("Data is null:", data === null);
+          console.log("Data is undefined:", data === undefined);
 
           // Update order reference with orderId if available
           if (data.orderId) {
+            console.log("Found orderId:", data.orderId);
             document.getElementById("session-id").textContent = data.orderId;
             // Also update the order ID display
-            document.getElementById("order-id-display").textContent = `Order #${data.orderId}`;
-            document.getElementById("order-id-display").style.display = "block";
+            const orderIdDisplay = document.getElementById("order-id-display");
+            if (orderIdDisplay) {
+              orderIdDisplay.textContent = `Order #${data.orderId}`;
+              orderIdDisplay.style.display = "block";
+            }
           }
 
           // Validate response contains expected data
           // Display if we have any order data (items, summary, shipping, etc)
+          console.log("Checking for order data:", {
+            hasLineItems: !!data.lineItems,
+            hasOrderSummary: !!data.orderSummary,
+            hasShippingDetails: !!data.shippingDetails,
+            hasShippingAddress: !!data.shippingAddress,
+          });
+          
           if (data.lineItems || data.orderSummary || data.shippingDetails || data.shippingAddress) {
+            console.log("Displaying order details");
             displayOrderDetails(data);
             // Clear cart and saved country now that payment is confirmed
             if (typeof cart !== "undefined" && cart && typeof cart.clear === "function") {
@@ -305,10 +341,12 @@
           } else {
             // Fallback if no meaningful data returned
             console.warn("No order data found in response");
+            console.warn("Data:", JSON.stringify(data, null, 2));
             showGenericThanks();
           }
         } catch (error) {
           console.error("Error fetching order details:", error);
+          console.error("Error type:", error.constructor.name);
           console.error("Error details:", {
             message: error.message,
             status: error.status,
