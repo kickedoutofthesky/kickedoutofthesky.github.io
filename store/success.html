@@ -270,6 +270,8 @@
           // Display if we have any order data (items, summary, shipping, etc)
           if (data.lineItems || data.orderSummary || data.shippingDetails) {
             displayOrderDetails(data);
+            // Clear cart now that payment is confirmed
+            cart.clear();
           } else {
             // Fallback if no meaningful data returned
             showGenericThanks();

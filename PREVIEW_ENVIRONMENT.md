@@ -341,7 +341,6 @@ Store Page:        https://your-branch.vercel.app/store
 Checkout Endpoint: https://your-branch.vercel.app/api/create-checkout-session
 Webhook Endpoint:  https://your-branch.vercel.app/api/webhook
 Success Page:      https://your-branch.vercel.app/store/success.html
-Cancel Page:       https://your-branch.vercel.app/store/cancel.html
 ```
 
 ## Next Steps

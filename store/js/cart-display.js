@@ -264,10 +264,8 @@ async function proceedToCheckout() {
       return;
     }
 
-    // Clear cart before redirecting
-    cart.clear();
-
     // Redirect to Stripe checkout using the new response format
+    // (Cart will be cleared on success page after payment confirmation)
     if (data.url) {
       window.location.href = data.url;
     } else {

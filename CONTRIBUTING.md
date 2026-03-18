@@ -246,8 +246,7 @@ Provides visual/audio feedback when items are added to cart:
 
 ### Store Pages
 
-- **`store/cancel.html`** — Stripe checkout cancellation redirect page. Shown when a customer clicks "Back" on the Stripe checkout form.
-- **`store/success.html`** — Stripe checkout success page. Displays order details, shipping info, and confirmation.
+- **`store/success.html`** — Stripe checkout success page. Displays order details, shipping info, and confirmation. Cart is cleared when payment is confirmed.
 
 ### Backend (Separate Repository)
 

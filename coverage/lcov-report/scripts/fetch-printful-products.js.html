@@ -25,14 +25,14 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/114</span>
+                <span class='fraction'>0/121</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/81</span>
+                <span class='fraction'>0/90</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/104</span>
+                <span class='fraction'>0/111</span>
             </div>
         
             
@@ -284,7 +284,21 @@
 <a name='L219'></a><a href='#L219'>219</a>
 <a name='L220'></a><a href='#L220'>220</a>
 <a name='L221'></a><a href='#L221'>221</a>
-<a name='L222'></a><a href='#L222'>222</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L222'></a><a href='#L222'>222</a>
+<a name='L223'></a><a href='#L223'>223</a>
+<a name='L224'></a><a href='#L224'>224</a>
+<a name='L225'></a><a href='#L225'>225</a>
+<a name='L226'></a><a href='#L226'>226</a>
+<a name='L227'></a><a href='#L227'>227</a>
+<a name='L228'></a><a href='#L228'>228</a>
+<a name='L229'></a><a href='#L229'>229</a>
+<a name='L230'></a><a href='#L230'>230</a>
+<a name='L231'></a><a href='#L231'>231</a>
+<a name='L232'></a><a href='#L232'>232</a>
+<a name='L233'></a><a href='#L233'>233</a>
+<a name='L234'></a><a href='#L234'>234</a>
+<a name='L235'></a><a href='#L235'>235</a>
+<a name='L236'></a><a href='#L236'>236</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -400,10 +414,13 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -418,6 +435,9 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -454,12 +474,20 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -621,13 +649,16 @@ async function <span class="fstat-no" title="function not covered" >fetchProduct
         // Group variants by color, then by size parsing the name
         // For Stickers, there are no colors, just sizes
         // For Hoodies, there is only one color (Black), and sizes
+        // For Trucker Caps, there is only one color (Black &amp; White), and One Size
         const isSticker = <span class="cstat-no" title="statement not covered" >product.name.includes("Sticker");</span>
         const isHoodie = <span class="cstat-no" title="statement not covered" >product.name.includes("Hoodie");</span>
+        const isTruckerCap = <span class="cstat-no" title="statement not covered" >product.name.includes("Trucker Cap");</span>
 &nbsp;
 <span class="cstat-no" title="statement not covered" >        variants.forEach(<span class="fstat-no" title="function not covered" >va</span>riant =&gt; {</span>
           // Parse name like "Unisex Tee w/ Text / Black Heather / XS"
           // For Stickers: "Die-cut Sticker w/ Text / 2″×2″"
           // For Hoodies: "Unisex Hoodie w/ Text / S"
+          // For Trucker Caps: "Trucker Cap w/ Text / One Size"
           const parts = <span class="cstat-no" title="statement not covered" >variant.name.split(" / ");</span>
 &nbsp;
           let color, size;
@@ -638,6 +669,9 @@ async function <span class="fstat-no" title="function not covered" >fetchProduct
 <span class="cstat-no" title="statement not covered" >            size = size.replace(/″×″/g, "x").replace(/″/g, "").replace(/×/g, "x");</span>
           } else <span class="cstat-no" title="statement not covered" >if (isHoodie) {</span>
 <span class="cstat-no" title="statement not covered" >            color = "Black"; </span>// Hoodie is always Black
+<span class="cstat-no" title="statement not covered" >            size = parts[1] || "One Size";</span>
+          } else <span class="cstat-no" title="statement not covered" >if (isTruckerCap) {</span>
+<span class="cstat-no" title="statement not covered" >            color = "Black &amp; White"; </span>// Trucker Cap is always Black &amp; White
 <span class="cstat-no" title="statement not covered" >            size = parts[1] || "One Size";</span>
           } else {
 <span class="cstat-no" title="statement not covered" >            color = parts[1] || "Default";</span>
@@ -682,10 +716,18 @@ async function <span class="fstat-no" title="function not covered" >fetchProduct
 &nbsp;
         const displayPrice = <span class="cstat-no" title="statement not covered" >baseRetailPrice ? `$${parseFloat(baseRetailPrice).toFixed(2)}` : "Contact for Price";</span>
 &nbsp;
+        // For Trucker Caps, use the variant image instead of thumbnail
+        let mainImage;
+<span class="cstat-no" title="statement not covered" >        if (isTruckerCap) {</span>
+<span class="cstat-no" title="statement not covered" >          mainImage = variantPreviewImage || product.thumbnail_url || "/store/assets/images/placeholder.png";</span>
+        } else {
+<span class="cstat-no" title="statement not covered" >          mainImage = product.thumbnail_url || variantPreviewImage || "/store/assets/images/placeholder.png";</span>
+        }
+&nbsp;
         const productData = <span class="cstat-no" title="statement not covered" >{</span>
           product_key: `product_${product.id}`,
           title: product.name,
-          image: product.thumbnail_url || variantPreviewImage || "/store/assets/images/placeholder.png",
+          image: mainImage,
           display_price: displayPrice,
           variants: variantsByColor,
         };
@@ -733,7 +775,7 @@ async function <span class="fstat-no" title="function not covered" >fetchProduct
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-03-10T12:56:10.335Z
+                at 2026-03-18T12:15:59.125Z
             </div>
         <script src="../prettify.js"></script>
         <script>

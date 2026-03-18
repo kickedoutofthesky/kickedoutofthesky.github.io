@@ -255,25 +255,10 @@ describe("Complete Purchase Flow - Customer Buying Merch", () => {
         .then(subtotal => {
           const originalSubtotal = subtotal;
 
-          // Simulate Stripe cancel redirect
-          // Visit cancel.html or mock the redirect
-          cy.intercept("GET", "**/store/cancel.html", res => {
-            // Redirect back to cart
-            cy.visit("/store/cart.html");
-          }).as("cancelPage");
+          // Simulate Stripe cancel redirect (user redirected back to cart)
+          cy.visit("/store/cart.html");
 
-          // Try to navigate to cancel page (simulating Stripe redirect)
-          cy.visit("/store/cancel.html");
-
-          // Should either redirect to cart or show cancel message
-          cy.url().then(url => {
-            if (url.includes("cancel")) {
-              // If still on cancel page, should have return to cart link
-              cy.get("a[href*='cart.html']").should("exist").click();
-            }
-          });
-
-          // Should be back on cart page
+          // Should be on cart page
           cy.url().should("include", "cart.html");
 
           // Verify items still in cart

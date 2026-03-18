@@ -359,33 +359,19 @@ describe("Checkout API Payload Tests", () => {
           },
         }).as("checkoutWithCancel");
 
-        // Simulate Stripe redirect to cancel URL
-        const cancelUrl = `${window.location.origin}/store/cancel.html`;
-        cy.visit(cancelUrl);
+        // Simulate Stripe redirect to cancel URL (redirects back to cart)
+        cy.visit("/store/cart.html");
 
-        // Verify we're on cancel page
-        cy.url().should("include", "cancel.html");
+        // Verify we're on cart page
+        cy.url().should("include", "cart.html");
 
-        // Navigate back to cart
-        cy.get("a[href*='cart.html'], a[href*='index.html']").first().click();
-
-        // Verify items are still in cart
+        // Verify items are still in cart after cancel
         cy.get("[data-testid='cart-item']").should("have.length.greaterThan", 0);
         cy.get("[data-testid='cart-subtotal']").should("exist");
       });
     });
 
-    it("should show cancel message when visiting cancel page", () => {
-      cy.visit("/store/cancel.html");
-
-      // Verify cancel page content
-      cy.get("body").should("be.visible");
-
-      // Should have message about cancelled payment or link back to cart
-      cy.contains(/cancel|back|cart/i).should("be.visible");
-    });
-
-    it("should allow user to return to store from cancel page without losing cart", () => {
+    it("should preserve cart when user cancels from Stripe checkout", () => {
       // First add items to cart
       cy.visit("/store");
       cy.get("[data-testid='product-card']").first().click();
@@ -398,16 +384,11 @@ describe("Checkout API Payload Tests", () => {
         expect((cart.items || []).length).to.be.greaterThan(0);
       });
 
-      // Go to cancel page
-      cy.visit("/store/cancel.html");
+      // Navigate to cart (simulating Stripe cancel redirect)
+      cy.visit("/store/cart.html");
 
-      // Click link to go back to store/cart (exact link varies by implementation)
-      cy.get("a[href*='index.html'], a[href*='cart.html'], button:contains('Continue Shopping')")
-        .first()
-        .click({ force: true });
-
-      // Verify we're back on store or cart page
-      cy.url().should("match", /store\/(index\.html|cart\.html)?$/);
+      // Verify we're on cart page
+      cy.url().should("include", "cart.html");
 
       // Verify cart still has items
       cy.window().then(win => {
