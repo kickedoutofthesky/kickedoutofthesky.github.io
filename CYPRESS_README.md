@@ -178,6 +178,52 @@ Tests Stripe integration readiness
 - Checkout button availability
 - Test mode verification
 
+### 17. **success-page.cy.js**
+
+Tests order confirmation page functionality:
+
+**Order Display Tests:**
+
+- Display success message and loading indicator
+- Load and display order items with product images
+- Parse item names and extract product information
+- Display customer information (name, email, phone)
+- Display shipping address with country name translation
+- Display order summary with totals
+- Hide order confirmation number from display
+- Hide "Return to Store" button
+- Load and display product images for order items
+- Hide loading indicator after data loads
+
+**Responsive Design Tests:**
+
+- Two-column layout on desktop (1000px+)
+- Single column layout on tablet (768px-999px)
+- Single column layout on mobile (≤767px)
+- Stack order items vertically on small screens (≤576px)
+- Display product images with proper dimensions on mobile
+- Full-width layout on mobile
+- Maintain readability on all screen sizes
+
+**Order Items Display:**
+
+- Display all items without internal scrollbar
+- No max-height restriction on order items container
+- Product images display inline with details
+- Flexbox layout for responsive wrapping
+
+**Loading States:**
+
+- Show loading indicator while fetching order details
+- Hide loading indicator after data loads
+- Hide loading indicator on API errors
+
+**Product Image Display:**
+
+- Display product images for each order item
+- Display images inline with product details
+- Images have valid src attributes
+
 ## Test Data Attributes
 
 The tests rely on the following `data-testid` attributes in your HTML:
@@ -219,6 +265,23 @@ The tests rely on the following `data-testid` attributes in your HTML:
 - `data-testid="order-summary"` - Order summary container
 - `data-testid="order-item"` - Order line item
 - `data-testid="order-total"` - Order total
+
+### Success Page
+
+- `id="loading-indicator"` - Loading spinner during order details fetch
+- `id="order-section"` - Order items container
+- `id="customer-section"` - Customer information container
+- `id="shipping-section"` - Shipping address container
+- `id="order-items"` - Order items list
+- `id="customer-name"` - Customer name display
+- `id="customer-email"` - Customer email display
+- `id="customer-phone"` - Customer phone display
+- `id="shipping-address"` - Shipping address display
+- `id="shipping-method"` - Shipping method display
+- `id="summary-subtotal"` - Order subtotal
+- `id="summary-shipping"` - Shipping cost
+- `id="summary-tax"` - Tax amount
+- `id="summary-total"` - Order total
 
 ## Adding Test Data Attributes
 

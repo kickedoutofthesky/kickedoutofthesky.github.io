@@ -307,20 +307,104 @@ Test on at least 2 real phones (iOS and Android if possible):
 
 ## 11. Success Page Flow
 
-### Post-Payment
+### Page Load & Display
 
 - [ ] Success page loads immediately after payment
-- [ ] Order number displayed
-- [ ] Order total shown
-- [ ] Shipping address confirmed
-- [ ] Expected delivery date shown (if applicable)
+- [ ] Loading indicator displays during initial page load
+- [ ] Loading indicator hides once order details load
+- [ ] Page displays "✓ Order Successful" message
+- [ ] "Thank you for your purchase!" message visible
+
+### Customer Information
+
+- [ ] Customer name displayed
+- [ ] Customer email displayed
+- [ ] Customer phone number displayed (if provided)
+- [ ] Customer information section is clearly labeled
+
+### Order Items Display
+
+- [ ] All order items are visible without scrolling
+- [ ] No internal scrollbar in order items section
+- [ ] Product images display for each item
+- [ ] Product images are properly sized and positioned
+- [ ] Item name/description displays (e.g., "Unisex Tee w/ Man Falling - Black / S")
+- [ ] Quantity displays for each item
+- [ ] Unit price displays per item
+- [ ] Line total displays for each item
+- [ ] Currency symbol ($) displays correctly
+
+### Shipping Address
+
+- [ ] Shipping address section clearly labeled
+- [ ] Recipient name displays
+- [ ] Street address displays
+- [ ] City, state, postal code display in correct format
+- [ ] Country displays as full name (e.g., "United States" not "US")
+- [ ] Shipping method displays (if provided)
+
+### Order Summary
+
+- [ ] Subtotal displays correctly
+- [ ] Shipping cost displays correctly
+- [ ] Tax amount displays correctly
+- [ ] Total amount displays prominently
+- [ ] All monetary values formatted with currency symbol and 2 decimal places
+
+### Responsive Design Testing
+
+**Desktop (1200px+):**
+
+- [ ] Two-column layout: order items on left, customer/shipping info on right
+- [ ] Sidebar is sticky and visible while scrolling
+- [ ] Proper spacing between columns
+
+**Tablet (768px-999px):**
+
+- [ ] Single column layout
+- [ ] Cards stack vertically
+- [ ] Full width content
+- [ ] Information is easy to read
+
+**Mobile (≤767px):**
+
+- [ ] Single column layout
+- [ ] Order items and customer info stack vertically
+- [ ] Content is readable without horizontal scrolling
+
+**Small Mobile (≤576px):**
+
+- [ ] Product images display above item details
+- [ ] Item details wrap below images
+- [ ] Text is readable and not cramped
+- [ ] All fields visible without excessive scrolling
+
+### UI Elements
+
+- [ ] Order confirmation number NOT displayed on page
+- [ ] "Return to Store" button does NOT exist
+- [ ] No unnecessary buttons or links present
+- [ ] Page layout is clean and minimal
+
+### Multi-Item Orders
+
+- [ ] If order contains 2+ items, all display correctly
+- [ ] Images display for each item variant
+- [ ] Pricing calculations are correct for each item
+- [ ] Total reflects sum of all items plus shipping/tax
+
+### Product Image Display
+
+- [ ] Product images load without errors
+- [ ] Images display for different product types (tees, hoodies, stickers, etc.)
+- [ ] The correct variant image displays (e.g., "Black" color shows black image)
+- [ ] No broken image placeholders
 
 ### Follow-up Actions
 
-- [ ] Link to order tracking works
-- [ ] Link to print label works (if Printful integration)
-- [ ] "Continue Shopping" button returns to store
-- [ ] Cart cleared after successful order (optional - depends on design)
+- [ ] Email confirmation received (check spam/promotions folder)
+- [ ] Customer can reference order for future inquiries
+- [ ] Cart is cleared (if user returns to store)
 
 ---
 

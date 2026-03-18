@@ -167,18 +167,69 @@ https://kickedoutofthesky.com/store/success.html?session_id=cs_test_abc123xyz789
 }
 ```
 
-## Step 8: Front End Displays Success Page
+## Step 8: Frontend Displays Success Page
 
 **Frontend Code:** [store/success.html](store/success.html)
 
+**Page Behavior:**
+
+1. Shows loading indicator while fetching order details
+2. Extracts `session_id` from URL query parameters
+3. Loads products and countries data
+4. Calls backend `/api/order-details` API
+5. Displays confirmation details (see below)
+6. Hides loading indicator once data loads
+
 **Displays:**
 
-- ✅ Confirmation message
-- ✅ Order reference number (session ID)
-- ✅ Shipping address (from backend response)
-- ✅ Shipping method selected (from backend response)
-- ✅ Order summary / line items (optional, from backend response)
-- ✅ "Return to Store" button link
+- ✅ Confirmation message: "✓ Order Successful"
+- ✅ Customer information: Name, email, phone
+- ✅ Shipping address with country name translation (e.g., "US" → "United States")
+- ✅ Shipping method selected
+- ✅ Order items with:
+  - ✅ Product images (fetched from product catalog)
+  - ✅ Product name, color, and size
+  - ✅ Quantity
+  - ✅ Unit price and line total
+- ✅ Order summary:
+  - ✅ Subtotal
+  - ✅ Shipping cost
+  - ✅ Tax
+  - ✅ Total amount
+- ✅ Currency symbol appropriate for currency (USD = $)
+
+**Responsive Design:**
+
+- **Desktop (1000px+):** Two-column layout with order items on left, customer/shipping info on right
+- **Tablet (768px-999px):** Single column, cards stack vertically
+- **Mobile (≤767px):** Single column, full-width layout
+- **Small Mobile (≤576px):** Order items wrap with product images above text
+
+**Features:**
+
+- ✅ Order confirmation number NOT displayed on page (logged to console only)
+- ✅ "Return to Store" button removed
+- ✅ No scrollbar in order items section (all items visible)
+- ✅ Product images sized appropriately for screen size
+- ✅ Loading indicator displays during API fetch, hides when complete or on error
+
+**Item Name Parsing:**
+
+Frontend parses item names in format: `"Product Title - Color / Size"`
+
+Example: `"Unisex Tee w/ Man Falling - Black / S"`
+
+Extracts:
+
+- Product title: `"Unisex Tee w/ Man Falling"`
+- Color: `"Black"`
+- Size: `"S"`
+
+Uses extracted data to:
+
+1. Find product in `products.json` by title
+2. Retrieve color-specific product image
+3. Display image with order item
 
 ## Simultaneously: Webhook Handling (Backend)
 

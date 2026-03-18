@@ -128,6 +128,36 @@ Tests Printful product data fetching and transformation:
 - ✅ Select images by index with fallback
 - ✅ Sort products by category
 
+### 5. **success-page.test.js** - Order Confirmation Tests
+
+Tests success page functionality for order confirmation display:
+
+- Item name parsing (extract product title, color, size)
+- Product image retrieval from product data
+- Country code to country name mapping
+- Loading indicator visibility
+- Order items display and formatting
+- Shipping address formatting
+- Currency display and calculations
+
+**Key test cases:**
+
+- ✅ Parse item names with product title, color, and size
+- ✅ Handle item names with multi-word colors
+- ✅ Handle item names without sizes (stickers, etc.)
+- ✅ Fallback to original name if parsing fails
+- ✅ Return color-specific product images
+- ✅ Fallback to main product image when color unavailable
+- ✅ Return null for missing products or images
+- ✅ Map country codes to country names
+- ✅ Fallback to code when country not in map
+- ✅ Show/hide loading indicator
+- ✅ Handle missing indicator element gracefully
+- ✅ Format currency values correctly
+- ✅ Calculate line totals and verify structure
+- ✅ Format shipping addresses with all fields
+- ✅ Handle partial addresses (missing fields)
+
 ## Test Configuration
 
 ### jest.config.js
@@ -193,8 +223,51 @@ test("description of what is tested", () => {
 - **Product Display**: 100% of pricing, image, and form logic
 - **Checkout Validation**: 100% of validation, country, button state, and error handling
 - **Product Fetch**: 100% of transformation logic
+- **Success Page**: 100% of parsing, image retrieval, country mapping, and display logic
 
-**Total**: 92 tests passing ✅
+**Total**: 102+ tests passing ✅
+
+## End-to-End Tests (Cypress)
+
+Comprehensive e2e test coverage for user workflows:
+
+### success-page.cy.js - Order Confirmation Tests
+
+Tests complete order confirmation page experience:
+
+- ✅ Display success message and loading indicator
+- ✅ Load and display order items with product images
+- ✅ Parse item names and extract product information
+- ✅ Display customer information (name, email, phone)
+- ✅ Display shipping address with country name translation
+- ✅ Display order summary with totals
+- ✅ Hide order confirmation number from display
+- ✅ Hide "Return to Store" button
+- ✅ Load and display product images for order items
+- ✅ Hide loading indicator after data loads
+
+### Responsive Design Tests
+
+- ✅ Two-column layout on desktop (1000px+)
+- ✅ Single column layout on tablet (768px-999px)
+- ✅ Single column layout on mobile (≤767px)
+- ✅ Stack order items vertically on small screens (≤576px)
+- ✅ Display product images with proper dimensions on mobile
+- ✅ Full-width layout on mobile
+- ✅ Maintain readability on all screen sizes
+
+### Order Items Display
+
+- ✅ Display all items without internal scrollbar
+- ✅ No max-height restriction on order items container
+- ✅ Product images display inline with details
+- ✅ Flexbox layout for responsive wrapping
+
+### Loading States
+
+- ✅ Show loading indicator while fetching order details
+- ✅ Hide loading indicator after data loads
+- ✅ Hide loading indicator on API errors
 
 ## Continuous Testing
 
