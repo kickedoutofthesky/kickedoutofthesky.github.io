@@ -61,28 +61,28 @@ Do **NOT** return the raw session object — it contains sensitive payment metho
 - `customer` (internal Stripe customer ID)
 - `client_secret`
 
-**Return only these safe fields:**
+**Return only these sale fields:**
 
 ```json
 {
-  "orderId": "cs_test_123",
-  "currency": "USD",
-  "customer": {
+  "currency": "usd",
+  "customerDetails": {
     "name": "John Doe",
     "email": "john@example.com",
     "phone": "+1-555-123-4567"
   },
-  "shippingAddress": {
+  "shippingDetails": {
     "name": "John Doe",
-    "line1": "123 Main St",
-    "line2": "Apt 4B",
-    "city": "New York",
-    "state": "NY",
-    "postal_code": "10001",
-    "country": "US"
+    "address": {
+      "line1": "123 Main St",
+      "line2": "Apt 4",
+      "city": "New York",
+      "state": "NY",
+      "postal_code": "10001",
+      "country": "US"
+    }
   },
-  "shippingMethod": "Standard Shipping",
-  "shippingCost": 1500,
+  "shippingOption": "Express ($15.00)",
   "orderSummary": {
     "subtotal": 5999,
     "shipping": 1500,
@@ -91,16 +91,16 @@ Do **NOT** return the raw session object — it contains sensitive payment metho
   },
   "lineItems": [
     {
-      "name": "Black Tee - Medium",
+      "description": "Black Tee - Medium",
       "quantity": 2,
       "unitPrice": 2999,
-      "amount": 5998
+      "amount_total": 5998
     },
     {
-      "name": "Logo Hoodie - Large",
+      "description": "Logo Hoodie - Large",
       "quantity": 1,
       "unitPrice": 4999,
-      "amount": 4999
+      "amount_total": 4999
     }
   ]
 }
@@ -108,30 +108,28 @@ Do **NOT** return the raw session object — it contains sensitive payment metho
 
 **Field extraction guide:**
 
-| Response Field                | Source                                                                 | Notes                                           |
-| ----------------------------- | ---------------------------------------------------------------------- | ----------------------------------------------- |
-| `orderId`                     | `session.id`                                                           | Stripe session ID (e.g., "cs*test*...")         |
-| `currency`                    | `session.currency`                                                     | E.g., "USD", "EUR"                              |
-| `customer.name`               | `session.customer_details.name`                                        | Full name from Stripe form                      |
-| `customer.email`              | `session.customer_details.email`                                       | Email address                                   |
-| `customer.phone`              | `session.customer_details.phone`                                       | Optional, may be null                           |
-| `shippingAddress.name`        | `session.shipping_details.name`                                        | Name on shipping label                          |
-| `shippingAddress.line1`       | `session.shipping_details.address.line1`                               | Street address                                  |
-| `shippingAddress.line2`       | `session.shipping_details.address.line2`                               | Apt/Suite (optional)                            |
-| `shippingAddress.city`        | `session.shipping_details.address.city`                                | City                                            |
-| `shippingAddress.state`       | `session.shipping_details.address.state`                               | State/Province                                  |
-| `shippingAddress.postal_code` | `session.shipping_details.address.postal_code`                         | ZIP code                                        |
-| `shippingAddress.country`     | `session.shipping_details.address.country`                             | ISO country code                                |
-| `shippingMethod`              | `session.shipping_options[0].shipping_rate.display_name` or custom str | Display name for shipping method                |
-| `shippingCost`                | `session.shipping_cost.amount_total`                                   | In cents                                        |
-| `orderSummary.subtotal`       | `session.amount_subtotal`                                              | In cents (divide by 100 for display)            |
-| `orderSummary.shipping`       | `session.shipping_cost.amount_total`                                   | In cents                                        |
-| `orderSummary.tax`            | `session.total_details.amount_tax`                                     | In cents                                        |
-| `orderSummary.total`          | `session.amount_total`                                                 | In cents                                        |
-| `lineItems[].name`            | `line_item.description`                                                | Product name + variant (from line_items.data[]) |
-| `lineItems[].quantity`        | `line_item.quantity`                                                   | Number ordered                                  |
-| `lineItems[].unitPrice`       | `line_item.price.unit_amount`                                          | In cents                                        |
-| `lineItems[].amount`          | `line_item.amount_total`                                               | In cents (quantity × unit price)                |
+| Response Field                        | Source                                                                    | Notes                                           |
+| ------------------------------------- | ------------------------------------------------------------------------- | ----------------------------------------------- |
+| `currency`                            | `session.currency`                                                        | E.g., "usd", "eur"                              |
+| `customerDetails.name`                | `session.customer_details.name`                                           | Full name from Stripe form                      |
+| `customerDetails.email`               | `session.customer_details.email`                                          | Email address                                   |
+| `customerDetails.phone`               | `session.customer_details.phone`                                          | Optional, may be null                           |
+| `shippingDetails.name`                | `session.shipping_details.name`                                           | Name on shipping label                          |
+| `shippingDetails.address.line1`       | `session.shipping_details.address.line1`                                  | Street address                                  |
+| `shippingDetails.address.line2`       | `session.shipping_details.address.line2`                                  | Apt/Suite (optional)                            |
+| `shippingDetails.address.city`        | `session.shipping_details.address.city`                                   | City                                            |
+| `shippingDetails.address.state`       | `session.shipping_details.address.state`                                  | State/Province                                  |
+| `shippingDetails.address.postal_code` | `session.shipping_details.address.postal_code`                            | ZIP code                                        |
+| `shippingDetails.address.country`     | `session.shipping_details.address.country`                                | ISO country code                                |
+| `shippingOption`                      | `session.shipping_options[0].shipping_rate.display_name` or custom string | Display name for shipping method                |
+| `orderSummary.subtotal`               | `session.amount_subtotal`                                                 | In cents (divide by 100 for display)            |
+| `orderSummary.shipping`               | `session.shipping_cost.amount_total`                                      | In cents                                        |
+| `orderSummary.tax`                    | `session.total_details.amount_tax`                                        | In cents                                        |
+| `orderSummary.total`                  | `session.amount_total`                                                    | In cents                                        |
+| `lineItems[].description`             | `line_item.description`                                                   | Product name + variant (from line_items.data[]) |
+| `lineItems[].quantity`                | `line_item.quantity`                                                      | Number ordered                                  |
+| `lineItems[].unitPrice`               | `line_item.price.unit_amount`                                             | In cents                                        |
+| `lineItems[].amount_total`            | `line_item.amount_total`                                                  | In cents (quantity × unit price)                |
 
 **To retrieve line items, expand the session:**
 
