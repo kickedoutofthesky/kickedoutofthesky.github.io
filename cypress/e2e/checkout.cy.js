@@ -57,16 +57,20 @@ describe("Checkout Flow", () => {
     // Get current URL (cart.html)
     cy.url().should("include", "cart.html");
 
-    // Checkout button should exist and be enabled
-    cy.get("button").contains("Proceed to Checkout").should("exist").should("not.be.disabled");
-    // Backend will handle Stripe redirect when clicked
+    // Checkout button starts disabled until country is selected
+    cy.get("button").contains("Proceed to Checkout").should("exist").should("be.disabled");
+
+    // Select a country to enable checkout
+    cy.get("#shipping-country").select("US");
+    cy.get("button").contains("Proceed to Checkout").should("not.be.disabled");
   });
 
   it("should require items in cart for checkout", () => {
     // Verify we have items
     cy.get("[data-testid='cart-item']").should("have.length.greaterThan", 0);
 
-    // Button should be clickable with items
+    // Button should be clickable with items after selecting country
+    cy.get("#shipping-country").select("US");
     cy.get("button").contains("Proceed to Checkout").should("not.be.disabled");
   });
 

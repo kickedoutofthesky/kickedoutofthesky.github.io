@@ -1,5 +1,7 @@
 # Stripe Webhook Integration Guide
 
+> **Note:** This document describes the backend webhook handler in the separate [`kickedoutofthesky-store`](https://kickedoutofthesky-store.vercel.app) Vercel repository.
+
 This guide documents how to verify Stripe webhook signatures and handle payment events for the store.
 
 ## Webhook Signature Verification

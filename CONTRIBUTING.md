@@ -4,7 +4,7 @@
 
 ### Prerequisites
 
-- Node.js 14.x or higher
+- Node.js 20.x or higher
 - npm 6.x or higher
 
 ### Local Development
@@ -13,7 +13,7 @@
 # Install dependencies
 npm install
 
-# Start development server (runs on http://localhost:5500)
+# Start development server (runs on http://localhost:3000)
 npm run dev
 
 # Run unit tests
@@ -66,7 +66,7 @@ We use Cypress for end-to-end testing. Tests are in `cypress/e2e/` and cover:
 - Checkout process
 - Stripe integration readiness
 
-**Requirements:** Development server must be running on port 5500
+**Requirements:** Development server must be running on port 3000 (or port 5500 if using `npx serve` in CI)
 
 ```bash
 npm run dev             # Terminal 1
@@ -211,8 +211,8 @@ git push origin gh-pages
 ### Dev Server Not Starting
 
 ```bash
-# Kill process on port 5500
-lsof -ti:5500 | xargs kill -9
+# Kill process on port 3000
+lsof -ti:3000 | xargs kill -9
 
 # Try again
 npm run dev
@@ -220,9 +220,44 @@ npm run dev
 
 ### E2E Tests Timing Out
 
-- Ensure dev server is running on port 5500
-- Check if port 5500 is in use: `lsof -i :5500`
+- Ensure dev server is running on port 3000 (or port 5500 if using `npx serve`)
+- Check if the port is in use: `lsof -i :3000`
 - Increase test timeout if needed in `cypress.config.js`
+
+## Project Architecture
+
+### Development Server (`server.js`)
+
+A custom Node.js static file server (no dependencies beyond `http`, `fs`, `path`, and `dotenv`). Serves the site on port 3000 (`npm run dev`). Handles MIME types, directory traversal prevention, and auto-serves `index.html` for directory paths.
+
+### Product Data Pipeline
+
+- **`scripts/fetch-printful-products.js`** — Fetches product catalog from the Printful API and writes to `store/data/products.json`. Run with `npm run fetch-products`. Requires `PRINTFUL_API_KEY` in `.env`.
+- **`store/data/products.json`** — Generated product catalog used by the store frontend. Do not edit manually; regenerate with the fetch script.
+- **`store/data/printful-shipping-countries.json`** — List of 249 countries supported by Printful for shipping. Used to populate the shipping country dropdown on the cart page.
+
+### Cart Notifications (`store/js/cart-notification.js`)
+
+Provides visual/audio feedback when items are added to cart:
+
+- `playDingSound()` — Plays a short beep via Web Audio API
+- `createCartBurst()` — Animates a burst effect from the quantity input to the cart badge
+- `showCartBadgeBurst()` — Shows a pulsing animation on the cart badge
+
+### Store Pages
+
+- **`store/cancel.html`** — Stripe checkout cancellation redirect page. Shown when a customer clicks "Back" on the Stripe checkout form.
+- **`store/success.html`** — Stripe checkout success page. Displays order details, shipping info, and confirmation.
+
+### Backend (Separate Repository)
+
+The backend API lives in a separate Vercel repository (`kickedoutofthesky-store`). The following docs in this repo describe the backend specs:
+
+- `BACKEND_IMPLEMENTATION_CHECKLIST.md`
+- `STRIPE_HOSTED_CHECKOUT_IMPLEMENTATION.md`
+- `BACKEND_ORDER_DETAILS_ENDPOINT.md`
+- `STRIPE_WEBHOOK_GUIDE.md`
+- `STRIPE_IMPLEMENTATION_QUICKSTART.md`
 
 ## Questions?
 

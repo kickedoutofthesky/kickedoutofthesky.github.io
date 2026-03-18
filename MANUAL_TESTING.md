@@ -18,7 +18,7 @@ This document outlines manual testing that should be completed before going live
 
 ### Happy Path (Success)
 
-1. [ ] Open store at `http://localhost:5500/store`
+1. [ ] Open store at `http://localhost:3000/store`
 2. [ ] Browse products - verify images load correctly
 3. [ ] Click on a product - details page displays
 4. [ ] Select a size from dropdown (if available)

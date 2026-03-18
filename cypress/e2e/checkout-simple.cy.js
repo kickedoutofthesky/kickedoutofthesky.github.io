@@ -42,8 +42,10 @@ describe("Checkout Flow", () => {
   });
 
   it("should have checkout button available", () => {
-    cy.get("button").contains("Proceed to Checkout").should("exist").should("not.be.disabled");
-    // Backend will handle Stripe redirect when clicked
+    // Button starts disabled until shipping country is selected
+    cy.get("button").contains("Proceed to Checkout").should("exist").should("be.disabled");
+    cy.get("#shipping-country").select("US");
+    cy.get("button").contains("Proceed to Checkout").should("not.be.disabled");
   });
 
   it("should display cart subtotal before checkout", () => {

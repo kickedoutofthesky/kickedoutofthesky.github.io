@@ -127,6 +127,57 @@ describe("ShoppingCart", () => {
         }
         return 0;
       },
+
+      updateCartBadge() {
+        const badge = document.getElementById("cart-badge");
+        const total = this.getTotal();
+        if (badge) {
+          if (total > 0) {
+            badge.textContent = total;
+            badge.style.display = "flex";
+          } else {
+            badge.style.display = "none";
+          }
+        }
+      },
+
+      clear() {
+        this.items = [];
+        this.saveCart();
+      },
+
+      validateItemsForCheckout(products) {
+        const errors = [];
+
+        this.items.forEach((item, index) => {
+          const product = products.find(p => p.product_key === item.productKey);
+
+          if (!product) {
+            errors.push(`Item ${index + 1}: Product not found`);
+            return;
+          }
+
+          if (!product.variants[item.color]) {
+            errors.push(`Item ${index + 1}: Color "${item.color}" not available for ${product.title}`);
+            return;
+          }
+
+          if (!product.variants[item.color].sizes[item.size]) {
+            errors.push(`Item ${index + 1}: Size "${item.size}" not available for ${product.title} in ${item.color}`);
+            return;
+          }
+
+          const variantId = product.variants[item.color].sizes[item.size].variant_id;
+          if (!variantId) {
+            errors.push(`Item ${index + 1}: Variant ID missing for ${product.title}`);
+          }
+        });
+
+        return {
+          valid: errors.length === 0,
+          errors,
+        };
+      },
     };
   });
 
@@ -256,6 +307,131 @@ describe("ShoppingCart", () => {
     test("should return empty array if no cart in localStorage", () => {
       const loaded = cart.loadCart();
       expect(loaded).toEqual([]);
+    });
+  });
+
+  describe("clear", () => {
+    test("should remove all items from cart", () => {
+      cart.addItem("product_1", "Black", "M", 1);
+      cart.addItem("product_2", "Satin", "2x2", 2);
+      expect(cart.items).toHaveLength(2);
+      cart.clear();
+      expect(cart.items).toHaveLength(0);
+    });
+
+    test("should persist empty cart to localStorage", () => {
+      cart.addItem("product_1", "Black", "M", 1);
+      cart.clear();
+      const saved = JSON.parse(localStorage.getItem("kots_cart"));
+      expect(saved).toEqual([]);
+    });
+  });
+
+  describe("updateCartBadge", () => {
+    test("should show badge with count when items exist", () => {
+      document.body.innerHTML = '<span id="cart-badge" style="display:none"></span>';
+      cart.addItem("product_1", "Black", "M", 3);
+      cart.updateCartBadge();
+      const badge = document.getElementById("cart-badge");
+      expect(badge.textContent).toBe("3");
+      expect(badge.style.display).toBe("flex");
+    });
+
+    test("should hide badge when cart is empty", () => {
+      document.body.innerHTML = '<span id="cart-badge" style="display:flex">1</span>';
+      cart.updateCartBadge();
+      const badge = document.getElementById("cart-badge");
+      expect(badge.style.display).toBe("none");
+    });
+
+    test("should not throw if badge element does not exist", () => {
+      document.body.innerHTML = "";
+      expect(() => cart.updateCartBadge()).not.toThrow();
+    });
+  });
+
+  describe("validateItemsForCheckout", () => {
+    test("should return valid for correct items", () => {
+      cart.addItem("product_1", "Black", "M", 1);
+      const result = cart.validateItemsForCheckout(mockProducts);
+      expect(result.valid).toBe(true);
+      expect(result.errors).toHaveLength(0);
+    });
+
+    test("should return error for product not found", () => {
+      cart.items.push({ productKey: "nonexistent", color: "Black", size: "M", quantity: 1 });
+      const result = cart.validateItemsForCheckout(mockProducts);
+      expect(result.valid).toBe(false);
+      expect(result.errors[0]).toContain("Product not found");
+    });
+
+    test("should return error for invalid color", () => {
+      cart.items.push({ productKey: "product_1", color: "Purple", size: "M", quantity: 1 });
+      const result = cart.validateItemsForCheckout(mockProducts);
+      expect(result.valid).toBe(false);
+      expect(result.errors[0]).toContain("Color");
+    });
+
+    test("should return error for invalid size", () => {
+      cart.items.push({ productKey: "product_1", color: "Black", size: "XXXL", quantity: 1 });
+      const result = cart.validateItemsForCheckout(mockProducts);
+      expect(result.valid).toBe(false);
+      expect(result.errors[0]).toContain("Size");
+    });
+
+    test("should return valid with empty cart", () => {
+      const result = cart.validateItemsForCheckout(mockProducts);
+      expect(result.valid).toBe(true);
+      expect(result.errors).toHaveLength(0);
+    });
+
+    test("should collect multiple errors for multiple invalid items", () => {
+      cart.items.push({ productKey: "nonexistent", color: "Black", size: "M", quantity: 1 });
+      cart.items.push({ productKey: "product_1", color: "Purple", size: "M", quantity: 1 });
+      const result = cart.validateItemsForCheckout(mockProducts);
+      expect(result.valid).toBe(false);
+      expect(result.errors).toHaveLength(2);
+    });
+  });
+
+  describe("getPriceForVariant edge cases", () => {
+    test("should return 0 when product has no display_price and variant not found", () => {
+      const productNoPrice = {
+        product_key: "product_x",
+        title: "No Price",
+        image: "x.jpg",
+        variants: {},
+      };
+      const price = cart.getPriceForVariant(productNoPrice, "Red", "S");
+      expect(price).toBe(0);
+    });
+
+    test("should handle null price_cents in variant by using display_price", () => {
+      const productNullPrice = {
+        product_key: "product_x",
+        title: "Null Price",
+        image: "x.jpg",
+        display_price: "$10.00",
+        variants: {
+          Black: {
+            sizes: {
+              M: { variant_id: 999, price_cents: null },
+            },
+          },
+        },
+      };
+      const price = cart.getPriceForVariant(productNullPrice, "Black", "M");
+      expect(price).toBe(1000);
+    });
+  });
+
+  describe("getSubtotalCents edge cases", () => {
+    test("should skip items with no matching product", () => {
+      cart.items.push({ productKey: "nonexistent", color: "Black", size: "M", quantity: 1 });
+      cart.addItem("product_1", "Black", "M", 1);
+      const subtotal = cart.getSubtotalCents(mockProducts);
+      // Only product_1 counted: 1 * 2500
+      expect(subtotal).toBe(2500);
     });
   });
 });

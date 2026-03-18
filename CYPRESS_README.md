@@ -6,7 +6,7 @@ This project includes comprehensive end-to-end tests using Cypress to ensure the
 
 ### Prerequisites
 
-- Node.js 14+ (currently using Node 14.19.0)
+- Node.js 20+ (currently using Node 20.20.1)
 - npm 6+
 
 ### Installation
@@ -106,6 +106,78 @@ Comprehensive test adding all products and all variants to cart
 - Verifies correct product counts
 - Calculates and verifies cart totals
 
+### 7. **checkout-api-payload.cy.js**
+
+Tests the checkout API payload and Stripe redirect flow
+
+- Verifies correct payload sent during purchase
+- Tests Stripe redirect behavior
+
+### 8. **checkout-error-handling.cy.js**
+
+Tests error handling in checkout flow
+
+- API 500 error handling
+- Friendly error message display
+
+### 9. **checkout-simple.cy.js**
+
+Tests basic checkout flow
+
+- Adding items to cart
+- Checkout button display and state
+
+### 10. **error-paths.cy.js**
+
+Tests error paths and edge cases
+
+- Empty cart scenarios
+- Disabled checkout button behavior
+
+### 11. **merch-page-products.cy.js**
+
+Tests product visibility on the merch page
+
+- Product grid display
+- Product names and details
+
+### 12. **purchase-flow.cy.js**
+
+Tests the complete customer purchase flow
+
+- Browse merch to cart to payment redirect
+- Shipping country selection
+- End-to-end purchase journey
+
+### 13. **responsive-devices.cy.js**
+
+Tests responsive design at specific device viewports
+
+- Mobile (375x667)
+- Tablet viewports
+
+### 14. **responsive.cy.js**
+
+Tests responsive layout across all breakpoints
+
+- Mobile (375x667)
+- Tablet (768x1024)
+- Desktop (1280x800)
+
+### 15. **site-experience.cy.js**
+
+Tests overall site functionality
+
+- Home page loading
+- Console error detection
+
+### 16. **stripe-integration.cy.js**
+
+Tests Stripe integration readiness
+
+- Checkout button availability
+- Test mode verification
+
 ## Test Data Attributes
 
 The tests rely on the following `data-testid` attributes in your HTML:
@@ -164,14 +236,17 @@ To ensure tests can find elements, add test IDs to your HTML:
 
 Cypress configuration is in `cypress.config.js`:
 
-- **baseUrl**: `http://localhost:5500` - Update this to your local dev server
+- **baseUrl**: `http://localhost:5500` - Used by Cypress and CI (`npx serve -s . -p 5500`). Note: the dev server (`npm run dev`) runs on port 3000.
 - **specPattern**: `cypress/e2e/**/*.cy.js` - Test file pattern
 
 - **viewportWidth/Height**: 1280x720 (default Cypress viewport)
 
 ## Running Tests Locally
 
-1. Start your local development server on port 5500
+1. Start a local server on port 5500 (Cypress expects this port):
+   ```bash
+   npx serve -s . -p 5500
+   ```
 2. Open a new terminal and run:
 
    ```bash

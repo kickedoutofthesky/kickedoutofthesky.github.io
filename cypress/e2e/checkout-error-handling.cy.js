@@ -15,6 +15,11 @@ function selectFirstRealSize() {
   });
 }
 
+// Helper function to select a shipping country on the cart page
+function selectShippingCountry(countryCode = "US") {
+  cy.get("#shipping-country").should("exist").select(countryCode);
+}
+
 describe("Checkout Flow — Modified Error Handling", () => {
   beforeEach(() => {
     cy.window().then(win => {
@@ -43,7 +48,8 @@ describe("Checkout Flow — Modified Error Handling", () => {
       cy.get("a[href*='cart.html']").click();
       cy.url().should("include", "cart.html");
 
-      // Click checkout
+      // Select shipping country and click checkout
+      selectShippingCountry();
       cy.get("button").contains("Proceed to Checkout").click();
 
       // Wait for error response
@@ -73,6 +79,7 @@ describe("Checkout Flow — Modified Error Handling", () => {
       cy.get("#add-to-cart-btn").click();
 
       cy.get("a[href*='cart.html']").click();
+      selectShippingCountry();
       cy.get("button").contains("Proceed to Checkout").click();
 
       cy.wait("@checkoutErrorBadRequest");
@@ -101,6 +108,7 @@ describe("Checkout Flow — Modified Error Handling", () => {
       cy.get("#add-to-cart-btn").click();
 
       cy.get("a[href*='cart.html']").click();
+      selectShippingCountry();
       cy.get("button").contains("Proceed to Checkout").click();
 
       cy.wait("@checkoutErrorWithMessage");
@@ -133,6 +141,7 @@ describe("Checkout Flow — Modified Error Handling", () => {
       cy.get("#add-to-cart-btn").click();
 
       cy.get("a[href*='cart.html']").click();
+      selectShippingCountry();
       cy.get("button").contains("Proceed to Checkout").click();
 
       // Wait for timeout error (poll for message instead of waiting full 35s)
@@ -163,6 +172,7 @@ describe("Checkout Flow — Modified Error Handling", () => {
       cy.get("#add-to-cart-btn").click();
 
       cy.get("a[href*='cart.html']").click();
+      selectShippingCountry();
       cy.get("button").contains("Proceed to Checkout").click();
 
       // Verify user-friendly timeout message
@@ -193,7 +203,8 @@ describe("Checkout Flow — Modified Error Handling", () => {
 
       cy.get("a[href*='cart.html']").click();
 
-      // Rapid double-click on checkout button
+      // Select country then rapid double-click on checkout button
+      selectShippingCountry();
       cy.get("button").contains("Proceed to Checkout").click();
       cy.get("button").contains("Proceed to Checkout").click();
 
@@ -229,7 +240,8 @@ describe("Checkout Flow — Modified Error Handling", () => {
 
       cy.get("a[href*='cart.html']").click();
 
-      // Click checkout button
+      // Select country and click checkout button
+      selectShippingCountry();
       cy.get("button").contains("Proceed to Checkout").click();
 
       // Verify button is disabled after click
@@ -261,7 +273,8 @@ describe("Checkout Flow — Modified Error Handling", () => {
 
       cy.get("a[href*='cart.html']").click();
 
-      // Click checkout
+      // Select country and click checkout
+      selectShippingCountry();
       cy.get("button").contains("Proceed to Checkout").click();
 
       // Verify button is disabled during processing
@@ -304,7 +317,8 @@ describe("Checkout Flow — Modified Error Handling", () => {
 
       cy.get("a[href*='cart.html']").click();
 
-      // Click checkout and immediately check for loading state
+      // Select country, click checkout, and immediately check for loading state
+      selectShippingCountry();
       cy.get("button").contains("Proceed to Checkout").click();
 
       // Look for processing indicator (could be text, spinner, or disabled state)
@@ -356,6 +370,7 @@ describe("Checkout Flow — Modified Error Handling", () => {
       });
 
       // Click checkout
+      selectShippingCountry();
       cy.get("button").contains("Proceed to Checkout").click();
 
       cy.wait("@checkoutAPI");
@@ -396,6 +411,7 @@ describe("Checkout Flow — Modified Error Handling", () => {
         });
       });
 
+      selectShippingCountry();
       cy.get("button").contains("Proceed to Checkout").click();
 
       cy.wait("@checkoutForRedirect");
@@ -511,6 +527,7 @@ describe("Checkout Flow — Modified Error Handling", () => {
 
       cy.get("a[href*='cart.html']").click();
 
+      selectShippingCountry();
       cy.get("button").contains("Proceed to Checkout").click();
 
       // Should show error instead of hanging
@@ -565,12 +582,13 @@ describe("Checkout Flow — Modified Error Handling", () => {
       cy.get("a[href*='cart.html']").click();
 
       // First attempt - should fail
+      selectShippingCountry();
       cy.get("button").contains("Proceed to Checkout").click();
 
       cy.wait("@checkoutWithRetry");
       cy.contains(/error|failed/i).should("be.visible");
 
-      // Retry - should succeed
+      // Retry - should succeed (country still selected)
       cy.get("button").contains("Proceed to Checkout").click();
 
       cy.wait("@checkoutWithRetry");

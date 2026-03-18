@@ -1,5 +1,7 @@
 # Stripe Hosted Checkout Implementation Guide
 
+> **Note:** This document describes the backend implementation in the separate [`kickedoutofthesky-store`](https://kickedoutofthesky-store.vercel.app) Vercel repository.
+
 This document outlines the complete backend implementation required to move from custom shipping/payment forms to Stripe's hosted checkout page with automatic tax calculation.
 
 ## Overview

@@ -18,13 +18,8 @@ function selectFirstRealSize() {
 
 // Helper function to fill shipping form
 function fillShippingForm() {
-  cy.get("[data-testid='shipping-name'], input[name='name']").type("John Doe");
-  cy.get("[data-testid='shipping-email'], input[name='email']").type("john@example.com");
-  cy.get("[data-testid='shipping-address'], input[name='address']").type("123 Main St");
-  cy.get("[data-testid='shipping-city'], input[name='city']").type("New York");
-  cy.get("[data-testid='shipping-state'], input[name='state']").type("NY");
-  cy.get("[data-testid='shipping-zip'], input[name='zip']").type("10001");
-  cy.get("[data-testid='shipping-country'], input[name='country']").type("USA");
+  // Select shipping country from dropdown (replaces old address form)
+  cy.get("#shipping-country").select("US");
 }
 
 describe("Complete Purchase Flow - Customer Buying Merch", () => {
@@ -61,11 +56,12 @@ describe("Complete Purchase Flow - Customer Buying Merch", () => {
     cy.url().should("include", "cart.html");
     cy.get("[data-testid='cart-item']").should("have.length.greaterThan", 0);
 
-    // Step 6: Verify checkout button
-    cy.get("button").contains("Proceed to Checkout").should("exist").should("not.be.disabled");
+    // Step 6: Verify checkout button (disabled until country selected)
+    cy.get("button").contains("Proceed to Checkout").should("exist").should("be.disabled");
 
-    // Step 7: Click checkout (may redirect to Stripe or checkout page)
-    cy.get("button").contains("Proceed to Checkout").click();
+    // Step 7: Select shipping country and click checkout
+    cy.get("#shipping-country").select("US");
+    cy.get("button").contains("Proceed to Checkout").should("not.be.disabled").click();
 
     // Should either stay on checkout page or redirect to Stripe/payment
     cy.url().then(url => {

@@ -29,6 +29,9 @@ Tests the `ShoppingCart` class functionality:
 - Getting cart totals and subtotals
 - Retrieving item prices for specific variants
 - Persisting cart to localStorage
+- Clearing cart
+- Updating cart badge
+- Validating items for checkout
 
 **Key test cases:**
 
@@ -37,6 +40,13 @@ Tests the `ShoppingCart` class functionality:
 - ✅ Calculate correct totals across multiple items
 - ✅ Retrieve variant-specific pricing
 - ✅ Persist cart state to localStorage
+- ✅ Clear cart and persist empty state
+- ✅ Show/hide cart badge based on item count
+- ✅ Handle missing badge element gracefully
+- ✅ Validate items for checkout (product, color, size, variant_id)
+- ✅ Collect multiple validation errors
+- ✅ Handle null/undefined price_cents with display_price fallback
+- ✅ Skip non-matching products in subtotal calculation
 
 ### 2. **product-display.test.js** - Product Display Tests
 
@@ -55,26 +65,49 @@ Tests product rendering and pricing logic:
 - ✅ Fallback to main image when color unavailable
 - ✅ Validate available sizes per color
 - ✅ Verify required product fields
+- ✅ Fallback to display_price when no variants/sizes/price_cents
+- ✅ Return empty sizes for non-existent color
+- ✅ Auto-select size when only one available
+- ✅ Check form completeness (color + size)
+- ✅ Return specific variant price or null
+- ✅ Format price cents to dollars correctly
 
 ### 3. **checkout.test.js** - Checkout & API Tests
 
-Tests checkout validation and API communication:
+Tests checkout validation, country selection, and API communication:
 
+- Shipping country validation and selection
+- Country code format validation
 - Cart item validation
 - Color and size availability checks
 - Variant ID existence validation
 - Cart transformation for API
+- Checkout payload with country code
 - API response handling
 - Order confirmation data storage
 
 **Key test cases:**
 
+- ✅ Load shipping countries from JSON file
+- ✅ Validate country code format (2-letter uppercase codes)
+- ✅ Reject lowercase, too-long, too-short country codes
+- ✅ Require country selection before checkout
+- ✅ Populate select element with countries
+- ✅ Enable checkout button when country selected
 - ✅ Validate all items exist in product catalog
 - ✅ Validate colors are available for selected items
 - ✅ Validate sizes exist for colors
-- ✅ Transform cart to API format correctly
+- ✅ Include shippingCountry in checkout payload
+- ✅ Transform cart to API format with country
+- ✅ Filter null items after transformation
 - ✅ Handle API success and error responses
+- ✅ Handle missing checkout URL in response
 - ✅ Store order data for success page
+- ✅ Reject checkout if country code missing
+- ✅ Disable button during processing
+- ✅ Restore button state on error
+- ✅ Handle empty cart checkout attempt
+- ✅ Handle missing country selection error
 
 ### 4. **fetch.test.js** - Product Fetch Tests
 
@@ -156,12 +189,12 @@ test("description of what is tested", () => {
 
 ## Current Test Coverage
 
-- **Cart Management**: 100% of core functions
-- **Product Display**: 100% of pricing and image logic
-- **Checkout Validation**: 100% of validation functions
+- **Cart Management**: 100% of core functions (clear, badge, validateItemsForCheckout, edge cases)
+- **Product Display**: 100% of pricing, image, and form logic
+- **Checkout Validation**: 100% of validation, country, button state, and error handling
 - **Product Fetch**: 100% of transformation logic
 
-**Total**: 53 tests passing ✅
+**Total**: 92 tests passing ✅
 
 ## Continuous Testing
 

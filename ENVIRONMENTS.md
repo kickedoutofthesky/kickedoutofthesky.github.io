@@ -95,9 +95,24 @@ This document provides a high-level overview of how code flows through different
 Your code stays the same. The variables change:
 
 ```javascript
-// This exact code runs everywhere:
-const apiUrl = window.__API_URL__ || "https://kickedoutofthesky-store.vercel.app";
-fetch(`${apiUrl}/api/create-checkout-session`, ...);
+// This exact code runs everywhere (from store/js/api-config.js):
+(function () {
+  const hostname = window.location.hostname;
+  let backendUrl;
+
+  if (hostname === "localhost" || hostname === "127.0.0.1") {
+    backendUrl = "http://localhost:3001";
+  } else if (hostname.includes("vercel.app")) {
+    backendUrl = window.location.origin;
+  } else {
+    backendUrl = "https://kickedoutofthesky-store.vercel.app";
+  }
+
+  window.__API_URL__ = backendUrl;
+})();
+
+// Then used in checkout:
+fetch(`${window.__API_URL__}/api/create-checkout-session`, ...);
 ```
 
 | Variable             | Local                   | Preview                         | Production                                       |

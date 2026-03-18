@@ -1,5 +1,7 @@
 # Backend Implementation Checklist
 
+> **Note:** This document describes the backend implementation in the separate [`kickedoutofthesky-store`](https://kickedoutofthesky-store.vercel.app) Vercel repository, not this frontend repo.
+
 Use this checklist to track your backend implementation. Check off items as you complete them.
 
 ## Pre-Work

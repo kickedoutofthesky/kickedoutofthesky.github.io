@@ -1,5 +1,7 @@
 # Stripe Hosted Checkout - Quick Reference
 
+> **Note:** Backend sections of this document refer to the separate [`kickedoutofthesky-store`](https://kickedoutofthesky-store.vercel.app) Vercel repository.
+
 ## What Changed
 
 ### Frontend (This Repo)

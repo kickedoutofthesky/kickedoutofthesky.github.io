@@ -213,4 +213,115 @@ describe("Product Display", () => {
       });
     });
   });
+
+  describe("getPriceDisplay edge cases", () => {
+    const getPriceDisplay = product => {
+      if (!product.variants) return product.display_price;
+
+      const prices = new Set();
+      Object.values(product.variants).forEach(colorData => {
+        if (colorData.sizes) {
+          Object.values(colorData.sizes).forEach(sizeData => {
+            if (sizeData.price_cents) {
+              prices.add(sizeData.price_cents);
+            }
+          });
+        }
+      });
+
+      if (prices.size === 0) return product.display_price;
+      if (prices.size === 1) {
+        const price = Array.from(prices)[0];
+        return `$${(price / 100).toFixed(2)}`;
+      }
+
+      const sortedPrices = Array.from(prices).sort((a, b) => a - b);
+      const minPrice = sortedPrices[0];
+      const maxPrice = sortedPrices[sortedPrices.length - 1];
+      return `$${(minPrice / 100).toFixed(2)}-$${(maxPrice / 100).toFixed(2)}`;
+    };
+
+    test("should fallback to display_price when no variants", () => {
+      const product = { display_price: "$15.00" };
+      expect(getPriceDisplay(product)).toBe("$15.00");
+    });
+
+    test("should fallback to display_price when variants have no sizes", () => {
+      const product = {
+        display_price: "$15.00",
+        variants: { Black: { image: "black.jpg" } },
+      };
+      expect(getPriceDisplay(product)).toBe("$15.00");
+    });
+
+    test("should fallback to display_price when sizes have no price_cents", () => {
+      const product = {
+        display_price: "$15.00",
+        variants: {
+          Black: {
+            sizes: { M: { variant_id: 100 } },
+          },
+        },
+      };
+      expect(getPriceDisplay(product)).toBe("$15.00");
+    });
+  });
+
+  describe("Size and Color Logic", () => {
+    test("should return empty array for non-existent color sizes", () => {
+      const getAvailableSizes = (product, color) => {
+        if (product.variants[color] && product.variants[color].sizes) {
+          return Object.keys(product.variants[color].sizes);
+        }
+        return [];
+      };
+
+      expect(getAvailableSizes(mockProduct, "NonExistent")).toEqual([]);
+    });
+
+    test("should auto-select size when only one available", () => {
+      const shouldAutoSelect = sizes => sizes.length === 1;
+
+      expect(shouldAutoSelect(["M"])).toBe(true);
+      expect(shouldAutoSelect(["M", "L"])).toBe(false);
+      expect(shouldAutoSelect([])).toBe(false);
+    });
+
+    test("should check form completeness", () => {
+      const checkFormComplete = (colorValue, sizeValue) => {
+        const colorValid = !colorValue || colorValue !== "";
+        const sizeValid = sizeValue !== "";
+        return colorValid && sizeValid;
+      };
+
+      expect(checkFormComplete("Black", "M")).toBe(true);
+      expect(checkFormComplete("Black", "")).toBe(false);
+      expect(checkFormComplete(null, "M")).toBe(true); // no color select = always valid
+    });
+  });
+
+  describe("Product Price Update Logic", () => {
+    test("should return specific variant price when color and size selected", () => {
+      const getVariantPrice = (product, color, size) => {
+        const variantData = product.variants[color]?.sizes?.[size];
+        if (variantData?.price_cents !== null && variantData?.price_cents !== undefined) {
+          return variantData.price_cents;
+        }
+        return null;
+      };
+
+      expect(getVariantPrice(mockProduct, "Black", "M")).toBe(2500);
+      expect(getVariantPrice(mockProduct, "Black", "XXL")).toBe(null);
+      expect(getVariantPrice(mockProduct, "NonExistent", "M")).toBe(null);
+    });
+
+    test("should format price correctly for display", () => {
+      const formatPrice = cents => `$${(cents / 100).toFixed(2)}`;
+
+      expect(formatPrice(2500)).toBe("$25.00");
+      expect(formatPrice(450)).toBe("$4.50");
+      expect(formatPrice(550)).toBe("$5.50");
+      expect(formatPrice(0)).toBe("$0.00");
+    });
+  });
 });

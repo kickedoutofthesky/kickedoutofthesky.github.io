@@ -1,5 +1,7 @@
 # Backend Order Details Endpoint
 
+> **Note:** This document describes the backend endpoint in the separate [`kickedoutofthesky-store`](https://kickedoutofthesky-store.vercel.app) Vercel repository.
+
 ## Overview
 
 The `/api/order-details` endpoint retrieves and returns order information from a completed Stripe checkout session. It's called by the success page after Stripe redirects the customer back to your site.

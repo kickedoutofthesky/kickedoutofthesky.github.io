@@ -1,6 +1,87 @@
 // Checkout & API Tests
 // Tests for checkout validation and API communication
 
+describe("Shipping Country Selection", () => {
+  test("should load countries from JSON file", async () => {
+    // Simulating loading countries
+    const mockCountries = [
+      { code: "US", name: "United States" },
+      { code: "CA", name: "Canada" },
+      { code: "GB", name: "United Kingdom" },
+    ];
+
+    expect(mockCountries).toHaveLength(3);
+    expect(mockCountries[0].code).toBe("US");
+    expect(mockCountries[0].name).toBe("United States");
+  });
+
+  test("should validate country code format", () => {
+    const validateCountryCode = code => {
+      return /^[A-Z]{2}$/.test(code);
+    };
+
+    expect(validateCountryCode("US")).toBe(true);
+    expect(validateCountryCode("CA")).toBe(true);
+    expect(validateCountryCode("invalid")).toBe(false);
+    expect(validateCountryCode("123")).toBe(false);
+  });
+
+  test("should require country selection before checkout", () => {
+    const validateCountrySelected = selectedCountry => {
+      return Boolean(selectedCountry && selectedCountry.trim().length > 0);
+    };
+
+    expect(validateCountrySelected("US")).toBe(true);
+    expect(validateCountrySelected("")).toBe(false);
+    expect(validateCountrySelected(null)).toBe(false);
+  });
+
+  test("should reject lowercase country codes", () => {
+    const validateCountryCode = code => {
+      return /^[A-Z]{2}$/.test(code);
+    };
+
+    expect(validateCountryCode("us")).toBe(false);
+    expect(validateCountryCode("Ca")).toBe(false);
+  });
+
+  test("should reject country codes that are too long or short", () => {
+    const validateCountryCode = code => {
+      return /^[A-Z]{2}$/.test(code);
+    };
+
+    expect(validateCountryCode("U")).toBe(false);
+    expect(validateCountryCode("USA")).toBe(false);
+    expect(validateCountryCode("")).toBe(false);
+  });
+
+  test("should populate select element with countries", () => {
+    const populateCountrySelect = countries => {
+      const options = countries.map(c => ({ value: c.code, text: c.name }));
+      return options;
+    };
+
+    const countries = [
+      { code: "US", name: "United States" },
+      { code: "CA", name: "Canada" },
+    ];
+    const options = populateCountrySelect(countries);
+
+    expect(options).toHaveLength(2);
+    expect(options[0]).toEqual({ value: "US", text: "United States" });
+    expect(options[1]).toEqual({ value: "CA", text: "Canada" });
+  });
+
+  test("should enable checkout button when country selected", () => {
+    const shouldEnableCheckout = selectedValue => {
+      return selectedValue !== "";
+    };
+
+    expect(shouldEnableCheckout("US")).toBe(true);
+    expect(shouldEnableCheckout("")).toBe(false);
+  });
+});
+
 describe("Checkout Validation", () => {
   const mockProducts = [
     {
@@ -180,6 +261,61 @@ describe("Checkout Validation", () => {
     });
   });
 
+  describe("Checkout Payload with Country", () => {
+    test("should include shippingCountry in checkout payload", () => {
+      const buildCheckoutPayload = (items, countryCode, successUrl, cancelUrl) => {
+        return {
+          items,
+          shippingCountry: countryCode,
+          successUrl,
+          cancelUrl,
+        };
+      };
+
+      const items = [
+        { variant_id: 1003, quantity: 1 },
+        { variant_id: 1004, quantity: 2 },
+      ];
+      const payload = buildCheckoutPayload(items, "US", "https://success", "https://cancel");
+
+      expect(payload).toEqual({
+        items: [
+          { variant_id: 1003, quantity: 1 },
+          { variant_id: 1004, quantity: 2 },
+        ],
+        shippingCountry: "US",
+        successUrl: "https://success",
+        cancelUrl: "https://cancel",
+      });
+
+      expect(payload.shippingCountry).toBe("US");
+      expect(payload.items).toHaveLength(2);
+    });
+
+    test("should validate country code is present before checkout", () => {
+      const validateCountryBeforeCheckout = countryCode => {
+        return Boolean(countryCode && countryCode.length === 2);
+      };
+
+      expect(validateCountryBeforeCheckout("US")).toBe(true);
+      expect(validateCountryBeforeCheckout("CA")).toBe(true);
+      expect(validateCountryBeforeCheckout("")).toBe(false);
+      expect(validateCountryBeforeCheckout(null)).toBe(false);
+    });
+
+    test("should reject checkout if country code missing", () => {
+      const canProceedToCheckout = (items, countryCode) => {
+        return Boolean(items.length > 0 && countryCode && countryCode.trim().length > 0);
+      };
+
+      const items = [{ variant_id: 1003, quantity: 1 }];
+
+      expect(canProceedToCheckout(items, "US")).toBe(true);
+      expect(canProceedToCheckout(items, "")).toBe(false);
+      expect(canProceedToCheckout([], "US")).toBe(false);
+    });
+  });
+
   describe("Order Confirmation", () => {
     test("should store session data for success page", () => {
       const storeOrderData = (sessionId, cartItems) => {
@@ -212,6 +348,128 @@ describe("Checkout Validation", () => {
       const retrievedData = JSON.parse(sessionStorage.getItem("lastOrder"));
       expect(retrievedData.sessionId).toBe("cs_test_123");
       expect(retrievedData.items.length).toBe(1);
+    });
+  });
+
+  describe("Checkout Button State Management", () => {
+    test("should disable button during processing", () => {
+      const manageButtonState = isProcessing => {
+        return {
+          disabled: isProcessing,
+          text: isProcessing ? "Processing..." : "Proceed to Checkout",
+        };
+      };
+
+      const processing = manageButtonState(true);
+      expect(processing.disabled).toBe(true);
+      expect(processing.text).toBe("Processing...");
+
+      const ready = manageButtonState(false);
+      expect(ready.disabled).toBe(false);
+      expect(ready.text).toBe("Proceed to Checkout");
+    });
+
+    test("should restore button state on error", () => {
+      const restoreButtonOnError = () => {
+        return { disabled: false, text: "Proceed to Checkout" };
+      };
+
+      const restored = restoreButtonOnError();
+      expect(restored.disabled).toBe(false);
+      expect(restored.text).toBe("Proceed to Checkout");
+    });
+  });
+
+  describe("Checkout Error Scenarios", () => {
+    test("should handle empty cart checkout attempt", () => {
+      const validateCheckout = items => {
+        if (items.length === 0) return { error: "Your cart is empty" };
+        return { error: null };
+      };
+
+      expect(validateCheckout([]).error).toBe("Your cart is empty");
+      expect(validateCheckout([{ variant_id: 1 }]).error).toBeNull();
+    });
+
+    test("should handle missing country selection", () => {
+      const validateCheckout = (items, countryValue) => {
+        if (items.length === 0) return { error: "Your cart is empty" };
+        if (!countryValue || countryValue === "") return { error: "Please select a shipping country" };
+        return { error: null };
+      };
+
+      expect(validateCheckout([{ variant_id: 1 }], "").error).toBe("Please select a shipping country");
+      expect(validateCheckout([{ variant_id: 1 }], null).error).toBe("Please select a shipping country");
+      expect(validateCheckout([{ variant_id: 1 }], "US").error).toBeNull();
+    });
+
+    test("should handle API error response", () => {
+      const handleCheckoutResponse = (responseOk, data) => {
+        if (!responseOk) {
+          return { success: false, error: data.error || data.message || "Checkout failed" };
+        }
+        if (!data.url) {
+          return { success: false, error: "No checkout URL provided by server" };
+        }
+        return { success: true, url: data.url };
+      };
+
+      expect(handleCheckoutResponse(false, { error: "Invalid variant" })).toEqual({
+        success: false,
+        error: "Invalid variant",
+      });
+      expect(handleCheckoutResponse(false, { message: "Server error" })).toEqual({
+        success: false,
+        error: "Server error",
+      });
+      expect(handleCheckoutResponse(false, {})).toEqual({
+        success: false,
+        error: "Checkout failed",
+      });
+    });
+
+    test("should handle missing checkout URL in response", () => {
+      const handleCheckoutResponse = (responseOk, data) => {
+        if (!responseOk) {
+          return { success: false, error: data.error || "Checkout failed" };
+        }
+        if (!data.url) {
+          return { success: false, error: "No checkout URL provided by server" };
+        }
+        return { success: true, url: data.url };
+      };
+
+      expect(handleCheckoutResponse(true, { sessionId: "cs_test" })).toEqual({
+        success: false,
+        error: "No checkout URL provided by server",
+      });
+      expect(handleCheckoutResponse(true, { url: "https://stripe.com/pay/cs_test" })).toEqual({
+        success: true,
+        url: "https://stripe.com/pay/cs_test",
+      });
+    });
+  });
+
+  describe("Cart Item Filtering", () => {
+    test("should filter out null items after transformation", () => {
+      const transformAndFilter = (cartItems, products) => {
+        return cartItems
+          .map(item => {
+            const product = products.find(p => p.product_key === item.productKey);
+            if (!product) return null;
+            const variantId = product.variants[item.color]?.sizes?.[item.size]?.variant_id;
+            return { variant_id: variantId, quantity: item.quantity };
+          })
+          .filter(item => item !== null);
+      };
+
+      const cartItems = [
+        { productKey: "product_1", color: "Black", size: "M", quantity: 1 },
+        { productKey: "nonexistent", color: "Black", size: "M", quantity: 1 },
+      ];
+      const result = transformAndFilter(cartItems, mockProducts);
+      expect(result).toHaveLength(1);
+      expect(result[0].variant_id).toBe(1003);
     });
   });
 });

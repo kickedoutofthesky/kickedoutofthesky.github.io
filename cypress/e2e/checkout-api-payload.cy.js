@@ -15,6 +15,11 @@ function selectFirstRealSize() {
   });
 }
 
+// Helper function to select a shipping country on the cart page
+function selectShippingCountry(countryCode = "US") {
+  cy.get("#shipping-country").should("exist").select(countryCode);
+}
+
 describe("Checkout API Payload Tests", () => {
   beforeEach(() => {
     // Clear localStorage and sessionStorage before each test
@@ -54,7 +59,8 @@ describe("Checkout API Payload Tests", () => {
         });
       });
 
-      // Click checkout button
+      // Select shipping country and click checkout
+      selectShippingCountry();
       cy.get("button").contains("Proceed to Checkout").click();
 
       // Verify checkout API was called
@@ -72,6 +78,9 @@ describe("Checkout API Payload Tests", () => {
         const body = req.body;
 
         expect(body).to.have.property("items");
+        expect(body).to.have.property("shippingCountry");
+        expect(body.shippingCountry).to.be.a("string");
+        expect(body.shippingCountry).to.have.length(2);
         expect(Array.isArray(body.items)).to.be.true;
 
         body.items.forEach(item => {
@@ -111,6 +120,7 @@ describe("Checkout API Payload Tests", () => {
       // Go to cart and click checkout
       cy.get("a[href*='cart.html']").click();
       cy.url().should("include", "cart.html");
+      selectShippingCountry();
       cy.get("button").contains("Proceed to Checkout").click();
 
       // Verify the API was called with correct payload
@@ -153,6 +163,7 @@ describe("Checkout API Payload Tests", () => {
       selectFirstRealSize();
       cy.get("#add-to-cart-btn").click();
       cy.get("a[href*='cart.html']").click();
+      selectShippingCountry();
       cy.get("button").contains("Proceed to Checkout").click();
 
       cy.wait("@noShippingCheck");
@@ -195,6 +206,7 @@ describe("Checkout API Payload Tests", () => {
       selectFirstRealSize();
       cy.get("#add-to-cart-btn").click();
       cy.get("a[href*='cart.html']").click();
+      selectShippingCountry();
       cy.get("button").contains("Proceed to Checkout").click();
 
       // Verify API was called
@@ -461,10 +473,78 @@ describe("Checkout API Payload Tests", () => {
 
         // Navigate to cart and checkout
         cy.get("a[href*='cart.html']").click();
+        selectShippingCountry();
         cy.get("button").contains("Proceed to Checkout").click();
 
         cy.wait("@multiItemCheckout");
       });
+    });
+  });
+
+  describe("Shipping Country Selector", () => {
+    it("should display country dropdown on cart page", () => {
+      cy.visit("/store");
+      cy.get("[data-testid='product-card']").first().click();
+      selectFirstRealSize();
+      cy.get("#add-to-cart-btn").click();
+      cy.get("a[href*='cart.html']").click();
+
+      cy.get("#shipping-country").should("exist");
+      cy.get("#shipping-country option").should("have.length.greaterThan", 1);
+    });
+
+    it("should disable checkout button until country is selected", () => {
+      cy.visit("/store");
+      cy.get("[data-testid='product-card']").first().click();
+      selectFirstRealSize();
+      cy.get("#add-to-cart-btn").click();
+      cy.get("a[href*='cart.html']").click();
+
+      // Button should be disabled initially
+      cy.get("button").contains("Proceed to Checkout").should("be.disabled");
+
+      // Select a country
+      cy.get("#shipping-country").select("US");
+
+      // Button should now be enabled
+      cy.get("button").contains("Proceed to Checkout").should("not.be.disabled");
+    });
+
+    it("should send shippingCountry in checkout API payload", () => {
+      cy.intercept("POST", "**/api/create-checkout-session", req => {
+        expect(req.body).to.have.property("shippingCountry", "CA");
+        req.reply({
+          statusCode: 200,
+          body: { url: "https://checkout.stripe.com/test", sessionId: "cs_test_123" },
+        });
+      }).as("countryPayloadCheck");
+
+      cy.visit("/store");
+      cy.get("[data-testid='product-card']").first().click();
+      selectFirstRealSize();
+      cy.get("#add-to-cart-btn").click();
+      cy.get("a[href*='cart.html']").click();
+
+      selectShippingCountry("CA");
+      cy.get("button").contains("Proceed to Checkout").click();
+
+      cy.wait("@countryPayloadCheck");
+    });
+
+    it("should re-disable checkout button if country selection is reset", () => {
+      cy.visit("/store");
+      cy.get("[data-testid='product-card']").first().click();
+      selectFirstRealSize();
+      cy.get("#add-to-cart-btn").click();
+      cy.get("a[href*='cart.html']").click();
+
+      // Select a country
+      cy.get("#shipping-country").select("US");
+      cy.get("button").contains("Proceed to Checkout").should("not.be.disabled");
+
+      // Reset to placeholder
+      cy.get("#shipping-country").select("");
+      cy.get("button").contains("Proceed to Checkout").should("be.disabled");
     });
   });
 });

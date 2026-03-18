@@ -116,7 +116,7 @@ This requires a CI/CD workflow. Option A is simpler for GitHub Pages.
 ## Step 6: Test Sentry Locally
 
 1. Start dev server: `npm run dev`
-2. Open http://localhost:5500/store
+2. Open http://localhost:3000/store
 3. Open browser console and trigger a test error:
 
 ```javascript
