@@ -3,6 +3,7 @@
 /* global cart, updateCartQuantity, removeFromCart, showCartBadgeBurst */
 
 let products = [];
+let countries = [];
 
 // Make sure cart is ready before displaying
 function waitForCart(callback) {
@@ -28,7 +29,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     await loadProducts();
+    await loadCountries();
     displayCart();
+    setupCountrySelector();
     setupCheckout();
   });
 });
@@ -40,6 +43,42 @@ async function loadProducts() {
     products = await response.json();
   } catch (error) {
     console.error("Error loading products:", error);
+  }
+}
+
+async function loadCountries() {
+  try {
+    const response = await fetch("./data/printful-shipping-countries.json");
+    if (!response.ok) throw new Error("Failed to load countries");
+    countries = await response.json();
+    populateCountrySelect();
+  } catch (error) {
+    console.error("Error loading countries:", error);
+  }
+}
+
+function populateCountrySelect() {
+  const select = document.getElementById("shipping-country");
+  if (!select) return;
+
+  // Add all countries as options
+  countries.forEach(country => {
+    const option = document.createElement("option");
+    option.value = country.code;
+    option.textContent = country.name;
+    select.appendChild(option);
+  });
+}
+
+function setupCountrySelector() {
+  const select = document.getElementById("shipping-country");
+  const checkoutBtn = document.getElementById("checkout-btn");
+
+  if (select && checkoutBtn) {
+    select.addEventListener("change", () => {
+      // Enable checkout button only if a country is selected
+      checkoutBtn.disabled = select.value === "";
+    });
   }
 }
 
@@ -159,6 +198,13 @@ async function proceedToCheckout() {
     return;
   }
 
+  // Check if country is selected
+  const countrySelect = document.getElementById("shipping-country");
+  if (!countrySelect || countrySelect.value === "") {
+    alert("Please select a shipping country");
+    return;
+  }
+
   // Validate cart items before proceeding
   const validation = cart.validateItemsForCheckout(products);
   if (!validation.valid) {
@@ -168,6 +214,11 @@ async function proceedToCheckout() {
   }
 
   try {
+    // Disable checkout button during processing
+    const checkoutBtn = document.getElementById("checkout-btn");
+    checkoutBtn.disabled = true;
+    checkoutBtn.textContent = "Processing...";
+
     // Transform cart items for backend
     const items = cart.items
       .map(item => {
@@ -192,6 +243,7 @@ async function proceedToCheckout() {
       },
       body: JSON.stringify({
         items,
+        shippingCountry: countrySelect.value,
         successUrl: window.location.origin + "/store/success.html?session_id={CHECKOUT_SESSION_ID}",
         cancelUrl: window.location.href,
       }),
@@ -204,6 +256,11 @@ async function proceedToCheckout() {
       const errorMessage = data.error || data.message || "Checkout failed";
       console.error("Checkout error:", errorMessage);
       alert("Checkout failed: " + errorMessage);
+
+      // Restore button state on error
+      const checkoutBtn = document.getElementById("checkout-btn");
+      checkoutBtn.disabled = false;
+      checkoutBtn.textContent = "Proceed to Checkout";
       return;
     }
 
@@ -219,5 +276,10 @@ async function proceedToCheckout() {
   } catch (error) {
     console.error("Checkout error:", error);
     alert("Checkout failed: " + (error.message || "Please try again."));
+
+    // Restore button state on error
+    const checkoutBtn = document.getElementById("checkout-btn");
+    checkoutBtn.disabled = false;
+    checkoutBtn.textContent = "Proceed to Checkout";
   }
 }

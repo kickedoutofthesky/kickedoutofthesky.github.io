@@ -300,10 +300,32 @@
             <p style="color: #999; font-size: 0.9rem; margin-top: 15px; padding-top: 15px; border-top: 1px solid #333">
               Shipping address and taxes will be calculated during checkout.
             </p>
+            <div style="margin-top: 20px">
+              <label for="shipping-country" style="color: #ccc; display: block; margin-bottom: 8px; text-align: left">
+                Shipping Country
+                <span style="color: #ff6b6b">*</span>
+              </label>
+              <select
+                id="shipping-country"
+                data-testid="shipping-country-select"
+                style="
+                  width: 100%;
+                  padding: 12px;
+                  background-color: #1a1a1a;
+                  color: #ccc;
+                  border: 1px solid #333;
+                  border-radius: 4px;
+                  font-size: 1rem;
+                "
+              >
+                <option value="">Select a country...</option>
+              </select>
+            </div>
             <button
               id="checkout-btn"
               class="btn btn-warning w-100"
               style="margin-top: 20px; font-weight: bold; padding: 15px"
+              disabled
             >
               Proceed to Checkout
             </button>

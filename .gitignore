@@ -6,3 +6,4 @@ package-lock.json
 coverage/
 cypress/videos/
 cypress/screenshots/
+.vercel
