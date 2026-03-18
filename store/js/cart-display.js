@@ -75,6 +75,15 @@ function setupCountrySelector() {
   const checkoutBtn = document.getElementById("checkout-btn");
 
   if (select && checkoutBtn) {
+    // Restore previously selected country from localStorage
+    const savedCountry = localStorage.getItem("selectedShippingCountry");
+    if (savedCountry) {
+      select.value = savedCountry;
+      checkoutBtn.disabled = false;
+    } else {
+      checkoutBtn.disabled = select.value === "";
+    }
+
     select.addEventListener("change", () => {
       // Enable checkout button only if a country is selected
       checkoutBtn.disabled = select.value === "";
@@ -214,6 +223,9 @@ async function proceedToCheckout() {
   }
 
   try {
+    // Save the selected country to localStorage
+    localStorage.setItem("selectedShippingCountry", countrySelect.value);
+
     // Disable checkout button during processing
     const checkoutBtn = document.getElementById("checkout-btn");
     checkoutBtn.disabled = true;

@@ -101,100 +101,48 @@
     <div style="margin-top: 100px">
       <div class="container">
         <main>
-          <div class="success-message" style="text-align: center; padding: 60px 20px">
+          <div style="text-align: center; margin-bottom: 40px">
             <h1 style="color: #fff; margin-bottom: 20px">✓ Order Successful</h1>
-            <p style="color: #ccc; margin-bottom: 30px; font-size: 1.1rem">Thank you for your purchase!</p>
+            <p style="color: #ccc; margin-bottom: 10px; font-size: 1.1rem">Thank you for your purchase!</p>
+            <p id="order-id-display" style="color: #ffc107; font-family: monospace; font-size: 0.9rem; margin: 0"></p>
+          </div>
 
-            <!-- Order Reference Section -->
+          <!-- Two Column Layout: Order (Left) + Shipping (Right) -->
+          <div
+            style="
+              display: grid;
+              grid-template-columns: 1fr 1fr;
+              gap: 30px;
+              margin-bottom: 40px;
+            "
+            class="order-shipping-grid"
+          >
+            <!-- LEFT COLUMN: Order Items -->
             <div
-              id="order-ref"
+              id="order-section"
               style="
-                margin-bottom: 30px;
-                padding: 20px;
                 background: #1a1a1a;
+                padding: 30px;
                 border-radius: 8px;
                 border: 1px solid #333;
                 display: none;
               "
             >
-              <p style="color: #999; margin: 0 0 10px 0; font-size: 0.9rem">Order Reference:</p>
-              <p
-                id="session-id"
-                style="color: #ffc107; margin: 0; font-weight: bold; font-family: monospace; font-size: 1rem"
-              ></p>
-            </div>
+              <h3 style="color: #fff; margin-bottom: 25px; margin-top: 0">Order Items</h3>
 
-            <!-- Customer Info Section -->
-            <div
-              id="customer-info"
-              style="
-                margin-bottom: 30px;
-                padding: 20px;
-                background: #1a1a1a;
-                border-radius: 8px;
-                border: 1px solid #333;
-                display: none;
-                text-align: left;
-              "
-            >
-              <p style="color: #999; margin: 0 0 15px 0; font-size: 0.9rem; font-weight: bold">
-                Order Confirmation Sent To:
-              </p>
-              <div style="color: #ccc; margin-bottom: 12px; font-size: 0.95rem">
-                <div id="customer-name" style="font-weight: 500; margin-bottom: 5px"></div>
-                <div id="customer-email" style="color: #ffc107"></div>
-                <div id="customer-phone" style="color: #999; font-size: 0.9rem; margin-top: 5px"></div>
-              </div>
-            </div>
-
-            <!-- Shipping Details Section -->
-            <div
-              id="shipping-details"
-              style="
-                margin-bottom: 30px;
-                padding: 20px;
-                background: #1a1a1a;
-                border-radius: 8px;
-                border: 1px solid #333;
-                display: none;
-                text-align: left;
-              "
-            >
-              <p style="color: #999; margin: 0 0 15px 0; font-size: 0.9rem; font-weight: bold">Shipping To:</p>
-              <div id="shipping-address" style="color: #ccc; margin-bottom: 20px; font-size: 0.95rem; line-height: 1.8">
-                <!-- Address populated by script -->
-              </div>
-              <p style="color: #999; margin: 0 0 8px 0; font-size: 0.9rem; font-weight: bold">Shipping Method:</p>
-              <p id="shipping-method" style="color: #ffc107; margin: 0; font-size: 0.95rem">
-                <!-- Shipping method populated by script -->
-              </p>
-            </div>
-
-            <!-- Order Items Section -->
-            <div
-              id="order-summary"
-              style="
-                margin-bottom: 30px;
-                padding: 20px;
-                background: #1a1a1a;
-                border-radius: 8px;
-                border: 1px solid #333;
-                display: none;
-                text-align: left;
-              "
-            >
-              <p style="color: #999; margin: 0 0 15px 0; font-size: 0.9rem; font-weight: bold">Order Items:</p>
-              <div id="order-items" style="color: #ccc; margin-bottom: 20px; font-size: 0.95rem">
+              <!-- Order Items List -->
+              <div id="order-items" style="margin-bottom: 25px; max-height: 300px; overflow-y: auto">
                 <!-- Items populated by script -->
               </div>
 
-              <div style="border-top: 1px solid #333; padding-top: 15px">
+              <!-- Cost Breakdown -->
+              <div style="border-top: 1px solid #333; padding-top: 20px; margin-top: 20px">
                 <div
                   style="
                     display: flex;
                     justify-content: space-between;
                     color: #ccc;
-                    margin-bottom: 8px;
+                    margin-bottom: 12px;
                     font-size: 0.95rem;
                   "
                 >
@@ -206,7 +154,7 @@
                     display: flex;
                     justify-content: space-between;
                     color: #ccc;
-                    margin-bottom: 8px;
+                    margin-bottom: 12px;
                     font-size: 0.95rem;
                   "
                 >
@@ -231,7 +179,7 @@
                     justify-content: space-between;
                     color: #ffc107;
                     font-weight: bold;
-                    font-size: 1.1rem;
+                    font-size: 1.15rem;
                     border-top: 1px solid #333;
                     padding-top: 15px;
                   "
@@ -241,6 +189,50 @@
                 </div>
               </div>
             </div>
+
+            <!-- RIGHT COLUMN: Customer & Shipping Info -->
+            <div style="display: flex; flex-direction: column; gap: 20px">
+              <!-- Customer Info Card -->
+              <div
+                id="customer-section"
+                style="
+                  background: #1a1a1a;
+                  padding: 25px;
+                  border-radius: 8px;
+                  border: 1px solid #333;
+                  display: none;
+                "
+              >
+                <h4 style="color: #fff; margin-bottom: 15px; margin-top: 0; font-size: 0.95rem">
+                  Order Confirmation Sent To:
+                </h4>
+                <div id="customer-name" style="color: #ffc107; font-weight: 500; margin-bottom: 8px"></div>
+                <div id="customer-email" style="color: #ccc; font-size: 0.9rem; margin-bottom: 5px"></div>
+                <div id="customer-phone" style="color: #999; font-size: 0.9rem"></div>
+              </div>
+
+              <!-- Shipping Info Card -->
+              <div
+                id="shipping-section"
+                style="
+                  background: #1a1a1a;
+                  padding: 25px;
+                  border-radius: 8px;
+                  border: 1px solid #333;
+                  display: none;
+                "
+              >
+                <h4 style="color: #fff; margin-bottom: 15px; margin-top: 0; font-size: 0.95rem">Shipping Address</h4>
+                <div id="shipping-address" style="color: #ccc; font-size: 0.9rem; line-height: 1.8">
+                  <!-- Address populated by script -->
+                </div>
+                <div id="shipping-method-section" style="margin-top: 15px; border-top: 1px solid #333; padding-top: 15px; display: none">
+                  <div style="color: #999; font-size: 0.85rem; margin-bottom: 5px">Shipping Method:</div>
+                  <div id="shipping-method" style="color: #ffc107; font-weight: 500"></div>
+                </div>
+              </div>
+            </div>
+          </div>
 
             <a href="index.html" class="btn btn-warning btn-sm">Return to Store</a>
           </div>
@@ -291,107 +283,194 @@
           }
 
           const data = await response.json();
+          console.log("Order details API response:", data);
+
+          // Update order reference with orderId if available
+          if (data.orderId) {
+            document.getElementById("session-id").textContent = data.orderId;
+            // Also update the order ID display
+            document.getElementById("order-id-display").textContent = `Order #${data.orderId}`;
+            document.getElementById("order-id-display").style.display = "block";
+          }
 
           // Validate response contains expected data
           // Display if we have any order data (items, summary, shipping, etc)
-          if (data.lineItems || data.orderSummary || data.shippingDetails) {
+          if (data.lineItems || data.orderSummary || data.shippingDetails || data.shippingAddress) {
             displayOrderDetails(data);
-            // Clear cart now that payment is confirmed
-            cart.clear();
+            // Clear cart and saved country now that payment is confirmed
+            if (typeof cart !== "undefined" && cart && typeof cart.clear === "function") {
+              cart.clear();
+            }
+            localStorage.removeItem("selectedShippingCountry");
           } else {
             // Fallback if no meaningful data returned
+            console.warn("No order data found in response");
             showGenericThanks();
           }
         } catch (error) {
           console.error("Error fetching order details:", error);
+          console.error("Error details:", {
+            message: error.message,
+            status: error.status,
+            stack: error.stack
+          });
           // API failed, but order was placed — show reassuring message
           showApiErrorMessage();
         }
       });
 
       function displayOrderDetails(data) {
-        const shippingDetails = data.shippingDetails;
-        const shippingOption = data.shippingOption;
-        const orderSummary = data.orderSummary;
-        const lineItems = data.lineItems;
-        const customerDetails = data.customerDetails || {};
+        console.log("displayOrderDetails called with:", data);
+
+        // Map API response fields (may vary based on backend implementation)
+        const customer = data.customer || data.customerDetails || {};
+        let shippingAddress = data.shippingAddress;
+        if (!shippingAddress && data.shippingDetails?.address) {
+          shippingAddress = {
+            name: data.shippingDetails.name,
+            line1: data.shippingDetails.address.line1,
+            line2: data.shippingDetails.address.line2,
+            city: data.shippingDetails.address.city,
+            state: data.shippingDetails.address.state,
+            postal_code: data.shippingDetails.address.postal_code,
+            country: data.shippingDetails.address.country
+          };
+        }
+        shippingAddress = shippingAddress || {};
+
+        const shippingMethod = data.shippingMethod || data.shippingOption;
+        const orderSummary = data.orderSummary || {};
+        let lineItems = data.lineItems || [];
+
+        // Map line items if they use 'description' and 'amount_total' instead of 'name' and 'amount'
+        lineItems = lineItems.map(item => ({
+          name: item.name || item.description || "Item",
+          quantity: item.quantity || 1,
+          unitPrice: item.unitPrice !== undefined ? item.unitPrice : item.unit_price,
+          amount: item.amount !== undefined ? item.amount : item.amount_total
+        }));
+
         const currency = data.currency || "USD";
+        const currencySymbol = currency === "USD" ? "$" : currency;
+
+        console.log("Parsed data:", {
+          customer,
+          shippingAddress,
+          orderSummary,
+          lineItems: lineItems.length,
+          currency
+        });
 
         // Display customer info
-        if (customerDetails.email || customerDetails.name || customerDetails.phone) {
-          if (customerDetails.name) {
-            document.getElementById("customer-name").textContent = customerDetails.name;
+        if (customer.email || customer.name || customer.phone) {
+          console.log("Displaying customer info");
+          if (customer.name) {
+            document.getElementById("customer-name").textContent = customer.name;
           }
-          if (customerDetails.email) {
-            document.getElementById("customer-email").textContent = customerDetails.email;
+          if (customer.email) {
+            document.getElementById("customer-email").textContent = customer.email;
           }
-          if (customerDetails.phone) {
-            document.getElementById("customer-phone").textContent = customerDetails.phone;
+          if (customer.phone) {
+            document.getElementById("customer-phone").textContent = customer.phone;
           }
-          document.getElementById("customer-info").style.display = "block";
+          const customerSection = document.getElementById("customer-section");
+          if (customerSection) {
+            customerSection.style.display = "block";
+          }
         }
 
-        // Display shipping details
-        if (shippingDetails) {
+        // Display shipping address
+        if (shippingAddress.line1 || shippingAddress.city || shippingAddress.country) {
+          console.log("Displaying shipping address");
           const addressDiv = document.getElementById("shipping-address");
-          const address = shippingDetails.address || {};
+          if (addressDiv) {
+            const parts = [];
 
-          addressDiv.innerHTML = `
-            <div>
-              <strong>${shippingDetails.name || ""}</strong><br>
-              ${address.line1 || ""}<br>
-              ${address.line2 ? address.line2 + "<br>" : ""}
-              ${address.city || ""}, ${address.state || ""} ${address.postal_code || ""}<br>
-              ${address.country || ""}
-            </div>
-          `;
+            if (shippingAddress.name) parts.push(`<strong>${shippingAddress.name}</strong>`);
+            if (shippingAddress.line1) parts.push(shippingAddress.line1);
+            if (shippingAddress.line2) parts.push(shippingAddress.line2);
 
-          document.getElementById("shipping-details").style.display = "block";
+            const cityStateZip = [shippingAddress.city, shippingAddress.state, shippingAddress.postal_code]
+              .filter(Boolean)
+              .join(" ");
+            if (cityStateZip) parts.push(cityStateZip);
+
+            if (shippingAddress.country) parts.push(shippingAddress.country);
+
+            console.log("Address parts:", parts);
+            addressDiv.innerHTML = parts.join("<br>");
+            const shippingSection = document.getElementById("shipping-section");
+            if (shippingSection) {
+              shippingSection.style.display = "block";
+            }
+          }
         }
 
-        if (shippingOption) {
-          const methodEl = document.getElementById("shipping-method");
-          methodEl.textContent = shippingOption;
-          document.getElementById("shipping-details").style.display = "block";
+        // Display shipping method if available
+        if (shippingMethod) {
+          console.log("Displaying shipping method:", shippingMethod);
+          const methodSection = document.getElementById("shipping-method-section");
+          if (methodSection) {
+            document.getElementById("shipping-method").textContent = shippingMethod;
+            methodSection.style.display = "block";
+          }
+          const shippingSection = document.getElementById("shipping-section");
+          if (shippingSection) {
+            shippingSection.style.display = "block";
+          }
         }
 
         // Display order items with unit prices and line totals
-        if (lineItems && lineItems.length > 0) {
+        if (lineItems.length > 0) {
+          console.log("Displaying order items:", lineItems.length);
           const itemsDiv = document.getElementById("order-items");
-          const currencySymbol = currency === "USD" ? "$" : currency;
-
-          itemsDiv.innerHTML = lineItems
-            .map(item => {
-              const unitPrice = (item.unitPrice || 0) / 100;
-              const lineTotal = (item.amount_total || 0) / 100;
-              return `<div style="margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid #333">
-                <div style="display: flex; justify-content: space-between; margin-bottom: 6px">
-                  <div>${item.description || item.name || "Item"}</div>
-                  <div style="font-weight: bold">${currencySymbol}${lineTotal.toFixed(2)}</div>
-                </div>
-                <div style="display: flex; justify-content: space-between; color: #999; font-size: 0.85rem">
-                  <div>Qty: ${item.quantity || 1} × ${currencySymbol}${unitPrice.toFixed(2)} each</div>
-                </div>
-              </div>`;
-            })
-            .join("");
-
-          document.getElementById("order-summary").style.display = "block";
+          if (itemsDiv) {
+            itemsDiv.innerHTML = lineItems
+              .map(item => {
+                const unitPrice = (item.unitPrice || 0) / 100;
+                const lineTotal = (item.amount || 0) / 100;
+                return `<div style="margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid #333">
+                  <div style="display: flex; justify-content: space-between; margin-bottom: 6px">
+                    <div>${item.name || "Item"}</div>
+                    <div style="font-weight: bold">${currencySymbol}${lineTotal.toFixed(2)}</div>
+                  </div>
+                  <div style="display: flex; justify-content: space-between; color: #999; font-size: 0.85rem">
+                    <div>Qty: ${item.quantity || 1} × ${currencySymbol}${unitPrice.toFixed(2)} each</div>
+                  </div>
+                </div>`;
+              })
+              .join("");
+          }
         }
 
         // Display cost breakdown
-        if (orderSummary) {
-          const currencySymbol = currency === "USD" ? "$" : currency;
-          document.getElementById("summary-subtotal").textContent =
-            `${currencySymbol}${((orderSummary.subtotal || 0) / 100).toFixed(2)}`;
-          document.getElementById("summary-shipping").textContent =
-            `${currencySymbol}${((orderSummary.shipping || 0) / 100).toFixed(2)}`;
-          document.getElementById("summary-tax").textContent =
-            `${currencySymbol}${((orderSummary.tax || 0) / 100).toFixed(2)}`;
-          document.getElementById("summary-total").textContent =
-            `${currencySymbol}${((orderSummary.total || 0) / 100).toFixed(2)}`;
+        if (orderSummary.subtotal !== undefined || orderSummary.shipping !== undefined || orderSummary.tax !== undefined || orderSummary.total !== undefined) {
+          console.log("Displaying cost breakdown");
+          const summarySubtotal = document.getElementById("summary-subtotal");
+          if (summarySubtotal) {
+            summarySubtotal.textContent = `${currencySymbol}${((orderSummary.subtotal || 0) / 100).toFixed(2)}`;
+          }
+          const summaryShipping = document.getElementById("summary-shipping");
+          if (summaryShipping) {
+            summaryShipping.textContent = `${currencySymbol}${((orderSummary.shipping || 0) / 100).toFixed(2)}`;
+          }
+          const summaryTax = document.getElementById("summary-tax");
+          if (summaryTax) {
+            summaryTax.textContent = `${currencySymbol}${((orderSummary.tax || 0) / 100).toFixed(2)}`;
+          }
+          const summaryTotal = document.getElementById("summary-total");
+          if (summaryTotal) {
+            summaryTotal.textContent = `${currencySymbol}${((orderSummary.total || 0) / 100).toFixed(2)}`;
+          }
+        }
 
-          document.getElementById("order-summary").style.display = "block";
+        // Show order section
+        if (lineItems.length > 0 || orderSummary.total !== undefined) {
+          console.log("Showing order section");
+          const orderSection = document.getElementById("order-section");
+          if (orderSection) {
+            orderSection.style.display = "block";
+          }
         }
       }
 
