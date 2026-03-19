@@ -173,6 +173,17 @@ async function fetchProducts() {
             variantsByColor[color].image = variant.files[imageIndex].preview_url;
           }
 
+          // Assign local sleeve images for Star + Typewriter Text Sleeve product
+          if (product.name.includes("Star + Typewriter Text Sleeve") && !variantsByColor[color].sleeve_mockup) {
+            const sleeveImages = {
+              Black: "assets/images/unisex-long-sleeve-tee-black-left-69bc2f354b9af.jpg",
+              "Dark Grey Heather": "assets/images/unisex-long-sleeve-tee-dark-grey-heather-left-69bc2f354bd82.jpg",
+            };
+            if (sleeveImages[color]) {
+              variantsByColor[color].sleeve_mockup = sleeveImages[color];
+            }
+          }
+
           // Capture first variant's preview image if available
           if (!variantPreviewImage && variant.files && variant.files.length > imageIndex) {
             variantPreviewImage = variant.files[imageIndex].preview_url;

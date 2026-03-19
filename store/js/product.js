@@ -1,6 +1,313 @@
 /* global cart, playDingSound, createCartBurst */
 // Product Detail Page
 let currentProduct = null;
+let currentImageIndex = 0; // Track carousel position (0 = main, 1 = sleeve mockup)
+
+// Zoom and Pan state
+let zoomLevel = 1;
+let panX = 0;
+let panY = 0;
+let isDragging = false;
+let dragStartX = 0;
+let dragStartY = 0;
+let dragStartPanX = 0;
+let dragStartPanY = 0;
+const MAX_ZOOM = 3;
+const MIN_ZOOM = 1;
+const ZOOM_STEP = 0.2;
+
+// Check if current product and color have a sleeve mockup
+function hasSleeveMockup() {
+  if (!currentProduct) return false;
+  const colorSelect = document.getElementById("color");
+  const selectedColor = colorSelect?.value || Object.keys(currentProduct.variants)[0];
+
+  return (
+    currentProduct.title.includes("Long Sleeve") &&
+    selectedColor &&
+    currentProduct.variants[selectedColor] &&
+    currentProduct.variants[selectedColor].sleeve_mockup
+  );
+}
+
+// Get the current display image based on index
+function getCurrentDisplayImage() {
+  if (!currentProduct) return currentProduct?.image;
+  const colorSelect = document.getElementById("color");
+  const selectedColor = colorSelect?.value || Object.keys(currentProduct.variants)[0];
+  const colorData = currentProduct.variants[selectedColor];
+
+  if (currentImageIndex === 0) {
+    return colorData?.image || currentProduct.image;
+  } else if (currentImageIndex === 1 && hasSleeveMockup()) {
+    return currentProduct.variants[selectedColor].sleeve_mockup;
+  }
+
+  return colorData?.image || currentProduct.image;
+}
+
+// Update the carousel UI (show/hide arrows)
+function updateCarouselUI() {
+  const prevBtn = document.getElementById("carousel-prev");
+  const nextBtn = document.getElementById("carousel-next");
+
+  if (!hasSleeveMockup()) {
+    if (prevBtn) prevBtn.style.display = "none";
+    if (nextBtn) nextBtn.style.display = "none";
+    return;
+  }
+
+  if (prevBtn) prevBtn.style.display = currentImageIndex > 0 ? "flex" : "none";
+  if (nextBtn) nextBtn.style.display = currentImageIndex < 1 ? "flex" : "none";
+}
+
+// Navigate to previous image
+// eslint-disable-next-line no-unused-vars
+function showPreviousImage() {
+  if (currentImageIndex > 0) {
+    currentImageIndex--;
+    resetZoom();
+    updateProductImage();
+    updateCarouselUI();
+  }
+}
+
+// Navigate to next image
+// eslint-disable-next-line no-unused-vars
+function showNextImage() {
+  if (hasSleeveMockup() && currentImageIndex < 1) {
+    currentImageIndex++;
+    resetZoom();
+    updateProductImage();
+    updateCarouselUI();
+  }
+}
+
+// Update the product image display
+function updateProductImage() {
+  const img = document.getElementById("product-image");
+  if (img) {
+    img.src = getCurrentDisplayImage();
+  }
+}
+
+// Zoom and Pan Functions
+
+// Apply zoom and pan transform to image
+function applyImageTransform() {
+  const img = document.getElementById("product-image");
+  if (img) {
+    img.style.transform = `scale(${zoomLevel}) translate(${panX}px, ${panY}px)`;
+
+    const zoomDisplay = document.getElementById("zoom-level");
+    if (zoomDisplay) {
+      zoomDisplay.style.display = zoomLevel > 1 ? "block" : "none";
+    }
+
+    const panControls = document.getElementById("pan-controls");
+    if (panControls) {
+      panControls.style.display = zoomLevel > 1 ? "block" : "none";
+    }
+  }
+}
+
+// eslint-disable-next-line no-unused-vars
+function zoomIn() {
+  if (zoomLevel < MAX_ZOOM) {
+    zoomLevel = Math.min(zoomLevel + ZOOM_STEP, MAX_ZOOM);
+    updateZoomDisplay();
+    applyImageTransform();
+  }
+}
+
+// eslint-disable-next-line no-unused-vars
+function zoomOut() {
+  if (zoomLevel > MIN_ZOOM) {
+    zoomLevel = Math.max(zoomLevel - ZOOM_STEP, MIN_ZOOM);
+    updateZoomDisplay();
+    applyImageTransform();
+    if (zoomLevel === MIN_ZOOM) {
+      panX = 0;
+      panY = 0;
+    }
+  }
+}
+
+// eslint-disable-next-line no-unused-vars
+function resetZoom() {
+  zoomLevel = 1;
+  panX = 0;
+  panY = 0;
+  updateZoomDisplay();
+  applyImageTransform();
+}
+
+// eslint-disable-next-line no-unused-vars
+function panImage(deltaX, deltaY) {
+  if (zoomLevel <= 1) return;
+
+  const container = document.getElementById("product-image-container");
+  if (!container) return;
+
+  const containerWidth = container.clientWidth;
+  const containerHeight = container.clientHeight;
+  const maxPanX = (containerWidth * (zoomLevel - 1)) / (2 * zoomLevel);
+  const maxPanY = (containerHeight * (zoomLevel - 1)) / (2 * zoomLevel);
+
+  panX = Math.max(-maxPanX, Math.min(maxPanX, panX + deltaX));
+  panY = Math.max(-maxPanY, Math.min(maxPanY, panY + deltaY));
+
+  applyImageTransform();
+}
+
+function updateZoomDisplay() {
+  const zoomDisplay = document.getElementById("zoom-level");
+  if (zoomDisplay) {
+    zoomDisplay.textContent = Math.round(zoomLevel * 100) + "%";
+  }
+}
+
+function handleImageWheel(e) {
+  if (zoomLevel <= 1 && e.deltaY > 0) {
+    return;
+  }
+
+  e.preventDefault();
+
+  const oldZoom = zoomLevel;
+  const delta = e.deltaY > 0 ? -ZOOM_STEP : ZOOM_STEP;
+  zoomLevel = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, zoomLevel + delta));
+
+  if (zoomLevel === MIN_ZOOM) {
+    panX = 0;
+    panY = 0;
+  }
+
+  if (zoomLevel !== oldZoom) {
+    updateZoomDisplay();
+    applyImageTransform();
+  }
+}
+
+function handleImageMouseDown(e) {
+  if (zoomLevel > 1) {
+    isDragging = true;
+    dragStartX = e.clientX;
+    dragStartY = e.clientY;
+    dragStartPanX = panX;
+    dragStartPanY = panY;
+    document.getElementById("product-image-container").style.cursor = "grabbing";
+  }
+}
+
+function handleImageMouseMove(e) {
+  if (isDragging && zoomLevel > 1) {
+    const deltaX = e.clientX - dragStartX;
+    const deltaY = e.clientY - dragStartY;
+
+    const container = document.getElementById("product-image-container");
+    const containerWidth = container.clientWidth;
+    const containerHeight = container.clientHeight;
+    const maxPanX = (containerWidth * (zoomLevel - 1)) / (2 * zoomLevel);
+    const maxPanY = (containerHeight * (zoomLevel - 1)) / (2 * zoomLevel);
+
+    panX = Math.max(-maxPanX, Math.min(maxPanX, dragStartPanX + deltaX / zoomLevel));
+    panY = Math.max(-maxPanY, Math.min(maxPanY, dragStartPanY + deltaY / zoomLevel));
+
+    applyImageTransform();
+  }
+}
+
+function handleImageMouseUp() {
+  isDragging = false;
+  const container = document.getElementById("product-image-container");
+  if (container) container.style.cursor = "default";
+}
+
+let touchDistance = 0;
+
+function handleImageTouchStart(e) {
+  if (e.touches.length === 2) {
+    const touch1 = e.touches[0];
+    const touch2 = e.touches[1];
+    touchDistance = Math.hypot(touch2.clientX - touch1.clientX, touch2.clientY - touch1.clientY);
+  } else if (e.touches.length === 1 && zoomLevel > 1) {
+    isDragging = true;
+    dragStartX = e.touches[0].clientX;
+    dragStartY = e.touches[0].clientY;
+    dragStartPanX = panX;
+    dragStartPanY = panY;
+  }
+}
+
+function handleImageTouchMove(e) {
+  if (e.touches.length === 2) {
+    e.preventDefault();
+    const touch1 = e.touches[0];
+    const touch2 = e.touches[1];
+    const newDistance = Math.hypot(touch2.clientX - touch1.clientX, touch2.clientY - touch1.clientY);
+
+    if (touchDistance > 0) {
+      const scale = newDistance / touchDistance;
+      const oldZoom = zoomLevel;
+      zoomLevel = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, zoomLevel * scale));
+
+      if (zoomLevel !== oldZoom) {
+        updateZoomDisplay();
+        applyImageTransform();
+      }
+
+      touchDistance = newDistance;
+    }
+  } else if (isDragging && zoomLevel > 1 && e.touches.length === 1) {
+    const deltaX = e.touches[0].clientX - dragStartX;
+    const deltaY = e.touches[0].clientY - dragStartY;
+
+    const container = document.getElementById("product-image-container");
+    const containerWidth = container.clientWidth;
+    const containerHeight = container.clientHeight;
+    const maxPanX = (containerWidth * (zoomLevel - 1)) / (2 * zoomLevel);
+    const maxPanY = (containerHeight * (zoomLevel - 1)) / (2 * zoomLevel);
+
+    panX = Math.max(-maxPanX, Math.min(maxPanX, dragStartPanX + deltaX / zoomLevel));
+    panY = Math.max(-maxPanY, Math.min(maxPanY, dragStartPanY + deltaY / zoomLevel));
+
+    applyImageTransform();
+  }
+}
+
+function handleImageTouchEnd() {
+  isDragging = false;
+  touchDistance = 0;
+}
+
+function initializeZoomPan() {
+  const img = document.getElementById("product-image");
+  const container = document.getElementById("product-image-container");
+
+  if (container && img) {
+    img.addEventListener("wheel", handleImageWheel, { passive: false });
+    img.addEventListener("mousedown", handleImageMouseDown);
+    document.addEventListener("mousemove", handleImageMouseMove);
+    document.addEventListener("mouseup", handleImageMouseUp);
+
+    img.addEventListener("touchstart", handleImageTouchStart, { passive: true });
+    img.addEventListener("touchmove", handleImageTouchMove, { passive: false });
+    img.addEventListener("touchend", handleImageTouchEnd);
+
+    img.addEventListener("mouseenter", function () {
+      if (zoomLevel > 1) {
+        this.style.cursor = "grab";
+      }
+    });
+
+    img.addEventListener("mouseleave", function () {
+      if (!isDragging) {
+        this.style.cursor = "default";
+      }
+    });
+  }
+}
 
 document.addEventListener("DOMContentLoaded", async () => {
   const detail = document.getElementById("product-detail");
@@ -55,8 +362,57 @@ document.addEventListener("DOMContentLoaded", async () => {
     detail.innerHTML = `
       <div class="row">
         <div class="col-md-7">
-            <div class="product-detail-image">
-              <img id="product-image" data-testid="product-image" src="${defaultImage}" alt="${product.title}" class="img-fluid rounded">
+            <div class="product-detail-image" style="position: relative;">
+              <div id="product-image-container" style="position: relative; overflow: hidden; border-radius: 0.375rem; width: 100%; height: 100%;">
+                <img id="product-image" data-testid="product-image" src="${defaultImage}" alt="${product.title}" class="rounded" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.1s ease; transform-origin: center center; user-select: none; -webkit-user-drag: none;">
+              </div>
+
+              <!-- Zoom Level Display (above zoom controls) -->
+              <div id="zoom-level" style="display: none; position: absolute; bottom: 130px; right: 10px; background: rgba(0,0,0,0.6); color: #fff; padding: 4px 10px; border-radius: 6px; font-size: 13px; z-index: 10;">100%</div>
+
+              <!-- Zoom Controls -->
+              <div id="zoom-controls" style="position: absolute; bottom: 10px; right: 10px; display: flex; flex-direction: column; gap: 4px; z-index: 10;">
+                <button onclick="zoomIn()" title="Zoom In" style="width: 36px; height: 36px; border: none; border-radius: 6px; background: rgba(0,0,0,0.6); color: #fff; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s;">
+                  <i class="fas fa-search-plus"></i>
+                </button>
+                <button onclick="zoomOut()" title="Zoom Out" style="width: 36px; height: 36px; border: none; border-radius: 6px; background: rgba(0,0,0,0.6); color: #fff; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s;">
+                  <i class="fas fa-search-minus"></i>
+                </button>
+                <button onclick="resetZoom()" title="Reset Zoom" style="width: 36px; height: 36px; border: none; border-radius: 6px; background: rgba(0,0,0,0.6); color: #fff; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s;">
+                  <i class="fas fa-compress-arrows-alt"></i>
+                </button>
+              </div>
+
+              <!-- Pan Controls (visible only when zoomed) -->
+              <div id="pan-controls" style="display: none; position: absolute; bottom: 10px; left: 10px; z-index: 10;">
+                <div style="display: grid; grid-template-columns: 30px 30px 30px; grid-template-rows: 30px 30px 30px; gap: 2px;">
+                  <div></div>
+                  <button onclick="panImage(0, 20)" title="Pan Up" style="width: 30px; height: 30px; border: none; border-radius: 4px; background: rgba(0,0,0,0.6); color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 12px;">
+                    <i class="fas fa-chevron-up"></i>
+                  </button>
+                  <div></div>
+                  <button onclick="panImage(20, 0)" title="Pan Left" style="width: 30px; height: 30px; border: none; border-radius: 4px; background: rgba(0,0,0,0.6); color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 12px;">
+                    <i class="fas fa-chevron-left"></i>
+                  </button>
+                  <div></div>
+                  <button onclick="panImage(-20, 0)" title="Pan Right" style="width: 30px; height: 30px; border: none; border-radius: 4px; background: rgba(0,0,0,0.6); color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 12px;">
+                    <i class="fas fa-chevron-right"></i>
+                  </button>
+                  <div></div>
+                  <button onclick="panImage(0, -20)" title="Pan Down" style="width: 30px; height: 30px; border: none; border-radius: 4px; background: rgba(0,0,0,0.6); color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 12px;">
+                    <i class="fas fa-chevron-down"></i>
+                  </button>
+                  <div></div>
+                </div>
+              </div>
+
+              <!-- Carousel Arrows for sleeve mockup images -->
+              <button id="carousel-prev" onclick="showPreviousImage()" style="display: none; position: absolute; left: 10px; top: 50%; transform: translateY(-50%); width: 40px; height: 40px; border: none; border-radius: 50%; background: rgba(0,0,0,0.6); color: #fff; font-size: 18px; cursor: pointer; align-items: center; justify-content: center; z-index: 10; transition: background 0.2s;">
+                <i class="fas fa-chevron-left"></i>
+              </button>
+              <button id="carousel-next" onclick="showNextImage()" style="display: none; position: absolute; right: 10px; top: 50%; transform: translateY(-50%); width: 40px; height: 40px; border: none; border-radius: 50%; background: rgba(0,0,0,0.6); color: #fff; font-size: 18px; cursor: pointer; align-items: center; justify-content: center; z-index: 10; transition: background 0.2s;">
+                <i class="fas fa-chevron-right"></i>
+              </button>
             </div>
           </div>
           <div class="col-md-5">
@@ -136,6 +492,10 @@ function updateSizes(selectedColor) {
   }
 
   checkFormComplete();
+
+  // Initialize zoom/pan and carousel
+  initializeZoomPan();
+  updateCarouselUI();
 }
 
 // eslint-disable-next-line no-unused-vars
@@ -148,6 +508,11 @@ function updateColorAndPrice() {
     const colorData = currentProduct.variants[selectedColor];
     const colorImage = colorData.image || currentProduct.image;
     document.getElementById("product-image").src = colorImage;
+
+    // Reset carousel and zoom on color change
+    currentImageIndex = 0;
+    resetZoom();
+    updateCarouselUI();
 
     // Reset sizes
     updateSizes(selectedColor);
@@ -180,6 +545,11 @@ function selectColorThumbnail(color) {
       thumb.style.border = "2px solid #333";
     }
   });
+
+  // Reset carousel and zoom on color change
+  currentImageIndex = 0;
+  resetZoom();
+  updateCarouselUI();
 
   // Update sizes and price
   updateSizes(color);
