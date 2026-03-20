@@ -1,12 +1,140 @@
 [
   {
+    "product_key": "product_424725213",
+    "title": "Unisex Tee w/ Kicked Out Of The Sky Vintage",
+    "image": "assets/images/Unisex Tee w Kicked Out Of The Sky Vintage - Front - Oxblood Black.jpg",
+    "display_price": "$25.00",
+    "variants": {
+      "Oxblood Black": {
+        "image": "assets/images/Unisex Tee w Kicked Out Of The Sky Vintage - Front - Oxblood Black.jpg",
+        "sizes": {
+          "S": {
+            "variant_id": 5239865631,
+            "price_cents": 2500
+          },
+          "M": {
+            "variant_id": 5239865632,
+            "price_cents": 2500
+          },
+          "L": {
+            "variant_id": 5239865633,
+            "price_cents": 2500
+          },
+          "XL": {
+            "variant_id": 5239865634,
+            "price_cents": 2500
+          },
+          "2XL": {
+            "variant_id": 5239865635,
+            "price_cents": 2500
+          }
+        },
+        "mockups": ["assets/images/Unisex Tee w Kicked Out Of The Sky Vintage - Front - Oxblood Black.jpg"]
+      },
+      "Natural": {
+        "image": "assets/images/Unisex Tee w Kicked Out Of The Sky Vintage - Front - Natural.jpg",
+        "sizes": {
+          "XS": {
+            "variant_id": 5239865636,
+            "price_cents": 2500
+          },
+          "S": {
+            "variant_id": 5239865637,
+            "price_cents": 2500
+          },
+          "M": {
+            "variant_id": 5239865638,
+            "price_cents": 2500
+          },
+          "L": {
+            "variant_id": 5239865639,
+            "price_cents": 2500
+          },
+          "XL": {
+            "variant_id": 5239865640,
+            "price_cents": 2500
+          },
+          "2XL": {
+            "variant_id": 5239865641,
+            "price_cents": 2500
+          }
+        },
+        "mockups": ["assets/images/Unisex Tee w Kicked Out Of The Sky Vintage - Front - Natural.jpg"]
+      }
+    }
+  },
+  {
+    "product_key": "product_424724921",
+    "title": "Unisex Tee w/ Wasting My Life Away Vintage",
+    "image": "assets/images/Unisex Tee w Wasting My Life Away Vintage - Front - Oxblood Black.jpg",
+    "display_price": "$25.00",
+    "variants": {
+      "Oxblood Black": {
+        "image": "assets/images/Unisex Tee w Wasting My Life Away Vintage - Front - Oxblood Black.jpg",
+        "sizes": {
+          "S": {
+            "variant_id": 5239864387,
+            "price_cents": 2500
+          },
+          "M": {
+            "variant_id": 5239864388,
+            "price_cents": 2500
+          },
+          "L": {
+            "variant_id": 5239864389,
+            "price_cents": 2500
+          },
+          "XL": {
+            "variant_id": 5239864390,
+            "price_cents": 2500
+          },
+          "2XL": {
+            "variant_id": 5239864391,
+            "price_cents": 2500
+          }
+        },
+        "mockups": ["assets/images/Unisex Tee w Wasting My Life Away Vintage - Front - Oxblood Black.jpg"]
+      },
+      "Natural": {
+        "image": "assets/images/Unisex Tee w Wasting My Life Away Vintage - Front - Natural.jpg",
+        "sizes": {
+          "XS": {
+            "variant_id": 5239864392,
+            "price_cents": 2500
+          },
+          "S": {
+            "variant_id": 5239864393,
+            "price_cents": 2500
+          },
+          "M": {
+            "variant_id": 5239864394,
+            "price_cents": 2500
+          },
+          "L": {
+            "variant_id": 5239864395,
+            "price_cents": 2500
+          },
+          "XL": {
+            "variant_id": 5239864396,
+            "price_cents": 2500
+          },
+          "2XL": {
+            "variant_id": 5239864397,
+            "price_cents": 2500
+          }
+        },
+        "mockups": ["assets/images/Unisex Tee w Wasting My Life Away Vintage - Front - Natural.jpg"]
+      }
+    }
+  },
+  {
     "product_key": "product_424594852",
     "title": "Unisex Tee w/ Star Logo",
-    "image": "https://files.cdn.printful.com/files/2cc/2cce4c53c8494068f18725e87edc8df9_preview.png",
+    "image": "assets/images/Unisex Tee w Star Logo - Front - Black.jpg",
     "display_price": "$25.00",
     "variants": {
       "Black": {
-        "image": "https://files.cdn.printful.com/files/2cc/2cce4c53c8494068f18725e87edc8df9_preview.png",
+        "image": "assets/images/Unisex Tee w Star Logo - Front - Black.jpg",
         "sizes": {
           "XS": {
             "variant_id": 5238969563,
@@ -32,10 +160,11 @@
             "variant_id": 5238969568,
             "price_cents": 2500
           }
-        }
+        },
+        "mockups": ["assets/images/Unisex Tee w Star Logo - Front - Black.jpg"]
       },
       "Dark Grey Heather": {
-        "image": "https://files.cdn.printful.com/files/61d/61dc1b98308a08b3d4f25d21d5b1574d_preview.png",
+        "image": "assets/images/Unisex Tee w Star Logo - Front - Dark Grey Heather.jpg",
         "sizes": {
           "XS": {
             "variant_id": 5238969569,
@@ -61,386 +190,171 @@
             "variant_id": 5238969574,
             "price_cents": 2500
           }
-        }
+        },
+        "mockups": ["assets/images/Unisex Tee w Star Logo - Front - Dark Grey Heather.jpg"]
       }
     }
   },
   {
     "product_key": "product_424594333",
     "title": "Unisex Tee w/ Wasting My Life Away Cover",
-    "image": "https://files.cdn.printful.com/files/482/482bac33e2231db54d56c146848bf43c_preview.png",
+    "image": "assets/images/Unisex Tee w Wasting My Life Away Cover - Front - Black.jpg",
     "display_price": "$25.00",
     "variants": {
-      "XS": {
-        "image": "https://files.cdn.printful.com/files/482/482bac33e2231db54d56c146848bf43c_preview.png",
+      "Black": {
+        "image": "assets/images/Unisex Tee w Wasting My Life Away Cover - Front - Black.jpg",
         "sizes": {
-          "One Size": {
+          "XS": {
             "variant_id": 5238966523,
             "price_cents": 2500
-          }
-        }
-      },
-      "S": {
-        "image": "https://files.cdn.printful.com/files/482/482bac33e2231db54d56c146848bf43c_preview.png",
-        "sizes": {
-          "One Size": {
+          },
+          "S": {
             "variant_id": 5238966524,
             "price_cents": 2500
-          }
-        }
-      },
-      "M": {
-        "image": "https://files.cdn.printful.com/files/482/482bac33e2231db54d56c146848bf43c_preview.png",
-        "sizes": {
-          "One Size": {
+          },
+          "M": {
             "variant_id": 5238966525,
             "price_cents": 2500
-          }
-        }
-      },
-      "L": {
-        "image": "https://files.cdn.printful.com/files/482/482bac33e2231db54d56c146848bf43c_preview.png",
-        "sizes": {
-          "One Size": {
+          },
+          "L": {
             "variant_id": 5238966526,
             "price_cents": 2500
-          }
-        }
-      },
-      "XL": {
-        "image": "https://files.cdn.printful.com/files/482/482bac33e2231db54d56c146848bf43c_preview.png",
-        "sizes": {
-          "One Size": {
+          },
+          "XL": {
             "variant_id": 5238966527,
             "price_cents": 2500
-          }
-        }
-      },
-      "2XL": {
-        "image": "https://files.cdn.printful.com/files/482/482bac33e2231db54d56c146848bf43c_preview.png",
-        "sizes": {
-          "One Size": {
+          },
+          "2XL": {
             "variant_id": 5238966528,
             "price_cents": 2500
           }
-        }
+        },
+        "mockups": ["assets/images/Unisex Tee w Wasting My Life Away Cover - Front - Black.jpg"]
       }
     }
   },
   {
     "product_key": "product_424594115",
     "title": "Unisex Tee w/ Kicked Out Of The Sky Cover",
-    "image": "https://files.cdn.printful.com/files/304/3045af40b58ad923df901994f4721449_preview.png",
+    "image": "assets/images/Unisex Tee w Kicked Out Of The Sky Cover - Front - Black.jpg",
     "display_price": "$25.00",
     "variants": {
-      "XS": {
-        "image": "https://files.cdn.printful.com/files/304/3045af40b58ad923df901994f4721449_preview.png",
+      "Black": {
+        "image": "assets/images/Unisex Tee w Kicked Out Of The Sky Cover - Front - Black.jpg",
         "sizes": {
-          "One Size": {
+          "XS": {
             "variant_id": 5238965284,
             "price_cents": 2500
-          }
-        }
-      },
-      "S": {
-        "image": "https://files.cdn.printful.com/files/304/3045af40b58ad923df901994f4721449_preview.png",
-        "sizes": {
-          "One Size": {
+          },
+          "S": {
             "variant_id": 5238965285,
             "price_cents": 2500
-          }
-        }
-      },
-      "M": {
-        "image": "https://files.cdn.printful.com/files/304/3045af40b58ad923df901994f4721449_preview.png",
-        "sizes": {
-          "One Size": {
+          },
+          "M": {
             "variant_id": 5238965286,
             "price_cents": 2500
-          }
-        }
-      },
-      "L": {
-        "image": "https://files.cdn.printful.com/files/304/3045af40b58ad923df901994f4721449_preview.png",
-        "sizes": {
-          "One Size": {
+          },
+          "L": {
             "variant_id": 5238965287,
             "price_cents": 2500
-          }
-        }
-      },
-      "XL": {
-        "image": "https://files.cdn.printful.com/files/304/3045af40b58ad923df901994f4721449_preview.png",
-        "sizes": {
-          "One Size": {
+          },
+          "XL": {
             "variant_id": 5238965288,
             "price_cents": 2500
-          }
-        }
-      },
-      "2XL": {
-        "image": "https://files.cdn.printful.com/files/304/3045af40b58ad923df901994f4721449_preview.png",
-        "sizes": {
-          "One Size": {
+          },
+          "2XL": {
             "variant_id": 5238965289,
             "price_cents": 2500
           }
-        }
-      }
-    }
-  },
-  {
-    "product_key": "product_424593977",
-    "title": "Unisex Tee w/ Wasting My Life Away Vintage",
-    "image": "https://files.cdn.printful.com/files/883/883fdbd7351bc2e2e10af0590b0b77dd_preview.png",
-    "display_price": "$25.00",
-    "variants": {
-      "Oxblood Black": {
-        "image": "https://files.cdn.printful.com/files/883/883fdbd7351bc2e2e10af0590b0b77dd_preview.png",
-        "sizes": {
-          "S": {
-            "variant_id": 5238964465,
-            "price_cents": 2500
-          },
-          "M": {
-            "variant_id": 5238964466,
-            "price_cents": 2500
-          },
-          "L": {
-            "variant_id": 5238964467,
-            "price_cents": 2500
-          },
-          "XL": {
-            "variant_id": 5238964468,
-            "price_cents": 2500
-          },
-          "2XL": {
-            "variant_id": 5238964469,
-            "price_cents": 2500
-          }
-        }
-      },
-      "Natural": {
-        "image": "https://files.cdn.printful.com/files/3c7/3c781b5aeb5971bf40125976e225856f_preview.png",
-        "sizes": {
-          "XS": {
-            "variant_id": 5238964470,
-            "price_cents": 2500
-          },
-          "S": {
-            "variant_id": 5238964471,
-            "price_cents": 2500
-          },
-          "M": {
-            "variant_id": 5238964472,
-            "price_cents": 2500
-          },
-          "L": {
-            "variant_id": 5238964473,
-            "price_cents": 2500
-          },
-          "XL": {
-            "variant_id": 5238964474,
-            "price_cents": 2500
-          },
-          "2XL": {
-            "variant_id": 5238964476,
-            "price_cents": 2500
-          }
-        }
+        },
+        "mockups": ["assets/images/Unisex Tee w Kicked Out Of The Sky Cover - Front - Black.jpg"]
       }
     }
   },
   {
     "product_key": "product_424593898",
-    "title": "Unisex Tee w/ Levity Of Lives Cover",
-    "image": "https://files.cdn.printful.com/files/56d/56d77bbb804a22d00f61ffea92353577_preview.png",
+    "title": "Unisex Tee w/ Levity Of Lies Cover",
+    "image": "assets/images/Unisex Tee w Levity Of Lies Cover - Front - Black.jpg",
     "display_price": "$25.00",
     "variants": {
-      "XS": {
-        "image": "https://files.cdn.printful.com/files/56d/56d77bbb804a22d00f61ffea92353577_preview.png",
+      "Black": {
+        "image": "assets/images/Unisex Tee w Levity Of Lies Cover - Front - Black.jpg",
         "sizes": {
-          "One Size": {
+          "XS": {
             "variant_id": 5238964072,
             "price_cents": 2500
-          }
-        }
-      },
-      "S": {
-        "image": "https://files.cdn.printful.com/files/56d/56d77bbb804a22d00f61ffea92353577_preview.png",
-        "sizes": {
-          "One Size": {
+          },
+          "S": {
             "variant_id": 5238964073,
             "price_cents": 2500
-          }
-        }
-      },
-      "M": {
-        "image": "https://files.cdn.printful.com/files/56d/56d77bbb804a22d00f61ffea92353577_preview.png",
-        "sizes": {
-          "One Size": {
+          },
+          "M": {
             "variant_id": 5238964074,
             "price_cents": 2500
-          }
-        }
-      },
-      "L": {
-        "image": "https://files.cdn.printful.com/files/56d/56d77bbb804a22d00f61ffea92353577_preview.png",
-        "sizes": {
-          "One Size": {
+          },
+          "L": {
             "variant_id": 5238964075,
             "price_cents": 2500
-          }
-        }
-      },
-      "XL": {
-        "image": "https://files.cdn.printful.com/files/56d/56d77bbb804a22d00f61ffea92353577_preview.png",
-        "sizes": {
-          "One Size": {
+          },
+          "XL": {
             "variant_id": 5238964076,
             "price_cents": 2500
-          }
-        }
-      },
-      "2XL": {
-        "image": "https://files.cdn.printful.com/files/56d/56d77bbb804a22d00f61ffea92353577_preview.png",
-        "sizes": {
-          "One Size": {
+          },
+          "2XL": {
             "variant_id": 5238964077,
             "price_cents": 2500
           }
-        }
-      }
-    }
-  },
-  {
-    "product_key": "product_424592840",
-    "title": "Unisex Tee w/ Kicked Out Of The Sky Vintage",
-    "image": "https://files.cdn.printful.com/files/0b8/0b8543d0ac763728b903df55b9e51e80_preview.png",
-    "display_price": "$25.00",
-    "variants": {
-      "Oxblood Black": {
-        "image": "https://files.cdn.printful.com/files/0b8/0b8543d0ac763728b903df55b9e51e80_preview.png",
-        "sizes": {
-          "S": {
-            "variant_id": 5238956747,
-            "price_cents": 2500
-          },
-          "M": {
-            "variant_id": 5238956748,
-            "price_cents": 2500
-          },
-          "L": {
-            "variant_id": 5238956749,
-            "price_cents": 2500
-          },
-          "XL": {
-            "variant_id": 5238956750,
-            "price_cents": 2500
-          },
-          "2XL": {
-            "variant_id": 5238956751,
-            "price_cents": 2500
-          }
-        }
-      },
-      "Natural": {
-        "image": "https://files.cdn.printful.com/files/0da/0da7b78a4b40746d1ec80f253177fd3a_preview.png",
-        "sizes": {
-          "S": {
-            "variant_id": 5238956752,
-            "price_cents": 2500
-          },
-          "M": {
-            "variant_id": 5238956753,
-            "price_cents": 2500
-          },
-          "L": {
-            "variant_id": 5238956754,
-            "price_cents": 2500
-          },
-          "XL": {
-            "variant_id": 5238956756,
-            "price_cents": 2500
-          },
-          "2XL": {
-            "variant_id": 5238956757,
-            "price_cents": 2500
-          }
-        }
+        },
+        "mockups": ["assets/images/Unisex Tee w Levity Of Lies Cover - Front - Black.jpg"]
       }
     }
   },
   {
     "product_key": "product_424592649",
     "title": "Unisex Tee w/ Color Block Graphic",
-    "image": "https://files.cdn.printful.com/files/359/3599d7964929f78f4d2a74361f745767_preview.png",
+    "image": "assets/images/Unisex Tee w Color Block Graphic - Front - Black.jpg",
     "display_price": "$25.00",
     "variants": {
-      "XS": {
-        "image": "https://files.cdn.printful.com/files/359/3599d7964929f78f4d2a74361f745767_preview.png",
+      "Black": {
+        "image": "assets/images/Unisex Tee w Color Block Graphic - Front - Black.jpg",
         "sizes": {
-          "One Size": {
+          "XS": {
             "variant_id": 5238956184,
             "price_cents": 2500
-          }
-        }
-      },
-      "S": {
-        "image": "https://files.cdn.printful.com/files/359/3599d7964929f78f4d2a74361f745767_preview.png",
-        "sizes": {
-          "One Size": {
+          },
+          "S": {
             "variant_id": 5238956185,
             "price_cents": 2500
-          }
-        }
-      },
-      "M": {
-        "image": "https://files.cdn.printful.com/files/359/3599d7964929f78f4d2a74361f745767_preview.png",
-        "sizes": {
-          "One Size": {
+          },
+          "M": {
             "variant_id": 5238956186,
             "price_cents": 2500
-          }
-        }
-      },
-      "L": {
-        "image": "https://files.cdn.printful.com/files/359/3599d7964929f78f4d2a74361f745767_preview.png",
-        "sizes": {
-          "One Size": {
+          },
+          "L": {
             "variant_id": 5238956187,
             "price_cents": 2500
-          }
-        }
-      },
-      "XL": {
-        "image": "https://files.cdn.printful.com/files/359/3599d7964929f78f4d2a74361f745767_preview.png",
-        "sizes": {
-          "One Size": {
+          },
+          "XL": {
             "variant_id": 5238956188,
             "price_cents": 2500
-          }
-        }
-      },
-      "2XL": {
-        "image": "https://files.cdn.printful.com/files/359/3599d7964929f78f4d2a74361f745767_preview.png",
-        "sizes": {
-          "One Size": {
+          },
+          "2XL": {
             "variant_id": 5238956189,
             "price_cents": 2500
           }
-        }
+        },
+        "mockups": ["assets/images/Unisex Tee w Color Block Graphic - Front - Black.jpg"]
       }
     }
   },
   {
     "product_key": "product_421297487",
     "title": "Unisex Tee w/ Typewriter Text",
-    "image": "https://files.cdn.printful.com/files/3ba/3ba73218f1eda3cb09bdab18ec861768_preview.png",
+    "image": "assets/images/Unisex Tee w Typewriter Text - Front - Black.jpg",
     "display_price": "$25.00",
     "variants": {
       "Black": {
-        "image": "https://files.cdn.printful.com/files/3ba/3ba73218f1eda3cb09bdab18ec861768_preview.png",
+        "image": "assets/images/Unisex Tee w Typewriter Text - Front - Black.jpg",
         "sizes": {
           "XS": {
             "variant_id": 5211359594,
@@ -466,10 +380,11 @@
             "variant_id": 5211359599,
             "price_cents": 2500
           }
-        }
+        },
+        "mockups": ["assets/images/Unisex Tee w Typewriter Text - Front - Black.jpg"]
       },
       "Dark Grey Heather": {
-        "image": "https://files.cdn.printful.com/files/84a/84a197f9bf3f30986e25372cc4afd6cd_preview.png",
+        "image": "assets/images/Unisex Tee w Typewriter Text - Front - Dark Grey Heather.jpg",
         "sizes": {
           "XS": {
             "variant_id": 5211359600,
@@ -495,18 +410,19 @@
             "variant_id": 5211359605,
             "price_cents": 2500
           }
-        }
+        },
+        "mockups": ["assets/images/Unisex Tee w Typewriter Text - Front - Dark Grey Heather.jpg"]
       }
     }
   },
   {
     "product_key": "product_421296994",
     "title": "Unisex Tee w/ Text",
-    "image": "https://files.cdn.printful.com/files/7bc/7bc6cc490a000ed8778b566925e34f9e_preview.png",
+    "image": "assets/images/Unisex Tee w Text - Front - Black.jpg",
     "display_price": "$25.00",
     "variants": {
       "Black": {
-        "image": "https://files.cdn.printful.com/files/7bc/7bc6cc490a000ed8778b566925e34f9e_preview.png",
+        "image": "assets/images/Unisex Tee w Text - Front - Black.jpg",
         "sizes": {
           "XS": {
             "variant_id": 5211354648,
@@ -532,10 +448,11 @@
             "variant_id": 5211354653,
             "price_cents": 2500
           }
-        }
+        },
+        "mockups": ["assets/images/Unisex Tee w Text - Front - Black.jpg"]
       },
       "Dark Grey Heather": {
-        "image": "https://files.cdn.printful.com/files/015/015a9b584b2197733d02576fb35bcd1e_preview.png",
+        "image": "assets/images/Unisex Tee w Text - Front - Dark Grey Heather.jpg",
         "sizes": {
           "XS": {
             "variant_id": 5211354654,
@@ -561,7 +478,8 @@
             "variant_id": 5211354659,
             "price_cents": 2500
           }
-        }
+        },
+        "mockups": ["assets/images/Unisex Tee w Text - Front - Dark Grey Heather.jpg"]
       }
     }
   },
@@ -654,11 +572,11 @@
   {
     "product_key": "product_424594773",
     "title": "Unisex Long Sleeve Tee w/ Star Logo",
-    "image": "https://files.cdn.printful.com/files/275/275c50536b6d98d4d0738633ae02e659_preview.png",
+    "image": "assets/images/Unisex Long Sleeve Tee w Star Logo - Front - Black.jpg",
     "display_price": "$35.00",
     "variants": {
       "Black": {
-        "image": null,
+        "image": "assets/images/Unisex Long Sleeve Tee w Star Logo - Front - Black.jpg",
         "sizes": {
           "XS": {
             "variant_id": 5238968907,
@@ -684,10 +602,11 @@
             "variant_id": 5238968912,
             "price_cents": 3500
           }
-        }
+        },
+        "mockups": ["assets/images/Unisex Long Sleeve Tee w Star Logo - Front - Black.jpg"]
       },
       "Dark Grey Heather": {
-        "image": null,
+        "image": "assets/images/Unisex Long Sleeve Tee w Star Logo - Front - Dark Grey Heather.jpg",
         "sizes": {
           "XS": {
             "variant_id": 5238968913,
@@ -713,18 +632,19 @@
             "variant_id": 5238968918,
             "price_cents": 3500
           }
-        }
+        },
+        "mockups": ["assets/images/Unisex Long Sleeve Tee w Star Logo - Front - Dark Grey Heather.jpg"]
       }
     }
   },
   {
     "product_key": "product_424594667",
     "title": "Unisex Long Sleeve Tee w/ Text",
-    "image": "https://files.cdn.printful.com/files/801/8017bff449cba3e03301b72499c903ea_preview.png",
+    "image": "assets/images/Unisex Long Sleeve Tee w Text - Front - Black.jpg",
     "display_price": "$35.00",
     "variants": {
       "Black": {
-        "image": "https://files.cdn.printful.com/files/801/8017bff449cba3e03301b72499c903ea_preview.png",
+        "image": "assets/images/Unisex Long Sleeve Tee w Text - Front - Black.jpg",
         "sizes": {
           "XS": {
             "variant_id": 5238968297,
@@ -750,10 +670,11 @@
             "variant_id": 5238968302,
             "price_cents": 3500
           }
-        }
+        },
+        "mockups": ["assets/images/Unisex Long Sleeve Tee w Text - Front - Black.jpg"]
       },
       "Dark Grey Heather": {
-        "image": "https://files.cdn.printful.com/files/af9/af94577fdab61c30a46ba4b4e21a317e_preview.png",
+        "image": "assets/images/Unisex Long Sleeve Tee w Text - Front - Dark Grey Heather.jpg",
         "sizes": {
           "XS": {
             "variant_id": 5238968303,
@@ -779,18 +700,19 @@
             "variant_id": 5238968308,
             "price_cents": 3500
           }
-        }
+        },
+        "mockups": ["assets/images/Unisex Long Sleeve Tee w Text - Front - Dark Grey Heather.jpg"]
       }
     }
   },
   {
     "product_key": "product_421297848",
     "title": "Unisex Long Sleeve Tee w/ Star + Typewriter Text Sleeve",
-    "image": "https://files.cdn.printful.com/files/a44/a4438d87b52a53ddc81b48edaefda72e_preview.png",
+    "image": "assets/images/Unisex Long Sleeve Tee w Star + Typewriter Text Sleeve - Front - Black.jpg",
     "display_price": "$40.00",
     "variants": {
       "Black": {
-        "image": "https://files.cdn.printful.com/files/a44/a4438d87b52a53ddc81b48edaefda72e_preview.png",
+        "image": "assets/images/Unisex Long Sleeve Tee w Star + Typewriter Text Sleeve - Front - Black.jpg",
         "sizes": {
           "XS": {
             "variant_id": 5211363564,
@@ -817,10 +739,13 @@
             "price_cents": 4000
           }
         },
-        "sleeve_mockup": "assets/images/unisex-long-sleeve-tee-black-left-69bc2f354b9af.jpg"
+        "mockups": [
+          "assets/images/Unisex Long Sleeve Tee w Star + Typewriter Text Sleeve - Front - Black.jpg",
+          "assets/images/Unisex Long Sleeve Tee w Star + Typewriter Text Sleeve - Sleeve - Black.jpg"
+        ]
       },
       "Dark Grey Heather": {
-        "image": "https://files.cdn.printful.com/files/f81/f81b94588d1ae04e265cc2cebded34a9_preview.png",
+        "image": "assets/images/Unisex Long Sleeve Tee w Star + Typewriter Text Sleeve - Front - Dark Grey Heather.jpg",
         "sizes": {
           "XS": {
             "variant_id": 5211363571,
@@ -847,18 +772,21 @@
             "price_cents": 4000
           }
         },
-        "sleeve_mockup": "assets/images/unisex-long-sleeve-tee-dark-grey-heather-left-69bc2f354bd82.jpg"
+        "mockups": [
+          "assets/images/Unisex Long Sleeve Tee w Star + Typewriter Text Sleeve - Front - Dark Grey Heather.jpg",
+          "assets/images/Unisex Long Sleeve Tee w Star + Typewriter Text Sleeve - Sleeve - Dark Grey Heather.jpg"
+        ]
       }
     }
   },
   {
     "product_key": "product_421297606",
     "title": "Unisex Long Sleeve Tee w/ Typewriter Text",
-    "image": "https://files.cdn.printful.com/files/b83/b839b15c26f293984c29f85f6ee81d4d_preview.png",
+    "image": "assets/images/Unisex Long Sleeve Tee w Typewriter Text - Front - Black.jpg",
     "display_price": "$35.00",
     "variants": {
       "Black": {
-        "image": "https://files.cdn.printful.com/files/b83/b839b15c26f293984c29f85f6ee81d4d_preview.png",
+        "image": "assets/images/Unisex Long Sleeve Tee w Typewriter Text - Front - Black.jpg",
         "sizes": {
           "XS": {
             "variant_id": 5211361270,
@@ -884,10 +812,11 @@
             "variant_id": 5211361275,
             "price_cents": 3500
           }
-        }
+        },
+        "mockups": ["assets/images/Unisex Long Sleeve Tee w Typewriter Text - Front - Black.jpg"]
       },
       "Dark Grey Heather": {
-        "image": "https://files.cdn.printful.com/files/db7/db7a00c49510f5376ea577440ed8d891_preview.png",
+        "image": "assets/images/Unisex Long Sleeve Tee w Typewriter Text - Front - Dark Grey Heather.jpg",
         "sizes": {
           "XS": {
             "variant_id": 5211361276,
@@ -913,18 +842,19 @@
             "variant_id": 5211361281,
             "price_cents": 3500
           }
-        }
+        },
+        "mockups": ["assets/images/Unisex Long Sleeve Tee w Typewriter Text - Front - Dark Grey Heather.jpg"]
       }
     }
   },
   {
     "product_key": "product_424594559",
     "title": "Unisex Hoodie w/ Typewriter Text",
-    "image": "https://files.cdn.printful.com/files/e17/e173fc6e4ded38958cc4808fc45b79c2_preview.png",
+    "image": "assets/images/Unisex Hoodie w Typewriter Text - Front - Black.jpg",
     "display_price": "$45.00",
     "variants": {
       "Black": {
-        "image": "https://files.cdn.printful.com/files/e17/e173fc6e4ded38958cc4808fc45b79c2_preview.png",
+        "image": "assets/images/Unisex Hoodie w Typewriter Text - Front - Black.jpg",
         "sizes": {
           "S": {
             "variant_id": 5238967666,
@@ -946,7 +876,8 @@
             "variant_id": 5238967670,
             "price_cents": 4500
           }
-        }
+        },
+        "mockups": ["assets/images/Unisex Hoodie w Typewriter Text - Front - Black.jpg"]
       }
     }
   },

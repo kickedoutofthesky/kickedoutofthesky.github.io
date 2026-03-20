@@ -124,6 +124,31 @@ describe("Product Fetch & Transform", () => {
       expect(result2.color).toBe("Dark Grey Heather");
       expect(result2.size).toBe("L");
     });
+
+    test("should parse single-color product variants (2-part names)", () => {
+      const KNOWN_SIZES = /^(XS|S|M|L|XL|2XL|3XL|4XL|5XL|One Size)$/;
+
+      const parseVariant = name => {
+        const parts = name.split(" / ");
+        if (parts.length === 2 && KNOWN_SIZES.test(parts[1])) {
+          return { color: "Black", size: parts[1] };
+        }
+        return { color: parts[1] || "Default", size: parts[2] || "One Size" };
+      };
+
+      const result = parseVariant("Unisex Tee w/ Wasting My Life Away Cover / XS");
+      expect(result.color).toBe("Black");
+      expect(result.size).toBe("XS");
+
+      const result2 = parseVariant("Unisex Tee w/ Color Block Graphic / 2XL");
+      expect(result2.color).toBe("Black");
+      expect(result2.size).toBe("2XL");
+
+      // 3-part names should still parse normally
+      const result3 = parseVariant("Unisex Tee w/ Text / Dark Grey Heather / M");
+      expect(result3.color).toBe("Dark Grey Heather");
+      expect(result3.size).toBe("M");
+    });
   });
 
   describe("Product Data Structure", () => {
@@ -247,6 +272,86 @@ describe("Product Fetch & Transform", () => {
       expect(products[2].title).toBe("Unisex Long Sleeve Tee");
       expect(products[3].title).toBe("Unisex Hoodie");
       expect(products[4].title).toBe("Sticker Pack");
+    });
+  });
+
+  describe("Local Mockup Map", () => {
+    test("should parse mockup filenames into product+color keys", () => {
+      const parseMockupFilename = filename => {
+        const match = filename.match(/^(.+?) - (Front|Sleeve) - (.+)\.jpg$/i);
+        if (!match) return null;
+        return { productName: match[1], placement: match[2].toLowerCase(), color: match[3] };
+      };
+
+      const result = parseMockupFilename("Unisex Tee w Star Logo - Front - Black.jpg");
+      expect(result.productName).toBe("Unisex Tee w Star Logo");
+      expect(result.placement).toBe("front");
+      expect(result.color).toBe("Black");
+
+      const result2 = parseMockupFilename(
+        "Unisex Long Sleeve Tee w Star + Typewriter Text Sleeve - Sleeve - Dark Grey Heather.jpg"
+      );
+      expect(result2.productName).toBe("Unisex Long Sleeve Tee w Star + Typewriter Text Sleeve");
+      expect(result2.placement).toBe("sleeve");
+      expect(result2.color).toBe("Dark Grey Heather");
+    });
+
+    test("should return null for non-matching filenames", () => {
+      const parseMockupFilename = filename => {
+        const match = filename.match(/^(.+?) - (Front|Sleeve) - (.+)\.jpg$/i);
+        if (!match) return null;
+        return { productName: match[1], placement: match[2].toLowerCase(), color: match[3] };
+      };
+
+      expect(parseMockupFilename("random-file.png")).toBeNull();
+      expect(parseMockupFilename("no-placement.jpg")).toBeNull();
+    });
+
+    test("should build mockup map with front images first", () => {
+      const buildMockupMap = files => {
+        const mockupMap = {};
+        for (const file of files) {
+          const match = file.match(/^(.+?) - (Front|Sleeve) - (.+)\.jpg$/i);
+          if (!match) continue;
+          const [, productName, placement, color] = match;
+          const key = `${productName}|${color}`;
+          if (!mockupMap[key]) mockupMap[key] = [];
+          const entry = { placement: placement.toLowerCase(), path: `assets/images/${file}` };
+          if (placement.toLowerCase() === "front") {
+            mockupMap[key].unshift(entry);
+          } else {
+            mockupMap[key].push(entry);
+          }
+        }
+        return mockupMap;
+      };
+
+      const files = [
+        "Unisex Long Sleeve Tee w Star + Typewriter Text Sleeve - Sleeve - Black.jpg",
+        "Unisex Tee w Star Logo - Front - Black.jpg",
+        "Unisex Long Sleeve Tee w Star + Typewriter Text Sleeve - Front - Black.jpg",
+      ];
+
+      const map = buildMockupMap(files);
+
+      // Front should always be first in the array
+      const sleeveKey = "Unisex Long Sleeve Tee w Star + Typewriter Text Sleeve|Black";
+      expect(map[sleeveKey]).toHaveLength(2);
+      expect(map[sleeveKey][0].placement).toBe("front");
+      expect(map[sleeveKey][1].placement).toBe("sleeve");
+
+      const teeKey = "Unisex Tee w Star Logo|Black";
+      expect(map[teeKey]).toHaveLength(1);
+      expect(map[teeKey][0].placement).toBe("front");
+    });
+
+    test("should strip forward slashes from product title for matching", () => {
+      const toMockupTitle = title => title.replace(/\//g, "");
+
+      expect(toMockupTitle("Unisex Tee w/ Star Logo")).toBe("Unisex Tee w Star Logo");
+      expect(toMockupTitle("Unisex Long Sleeve Tee w/ Star + Typewriter Text Sleeve")).toBe(
+        "Unisex Long Sleeve Tee w Star + Typewriter Text Sleeve"
+      );
     });
   });
 });

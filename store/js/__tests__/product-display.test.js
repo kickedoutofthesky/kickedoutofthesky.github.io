@@ -324,4 +324,153 @@ describe("Product Display", () => {
       expect(formatPrice(0)).toBe("$0.00");
     });
   });
+
+  describe("Mockup Image Carousel", () => {
+    const mockProductWithMockups = {
+      product_key: "product_3",
+      title: "Unisex Long Sleeve Tee w/ Star + Typewriter Text Sleeve",
+      image: "assets/images/front-black.jpg",
+      display_price: "$30.00",
+      variants: {
+        Black: {
+          image: "assets/images/front-black.jpg",
+          mockups: ["assets/images/front-black.jpg", "assets/images/sleeve-black.jpg"],
+          sizes: {
+            S: { variant_id: 3001, price_cents: 3000 },
+            M: { variant_id: 3002, price_cents: 3000 },
+          },
+        },
+        "Dark Grey Heather": {
+          image: "assets/images/front-dgh.jpg",
+          mockups: ["assets/images/front-dgh.jpg"],
+          sizes: {
+            S: { variant_id: 3003, price_cents: 3000 },
+            M: { variant_id: 3004, price_cents: 3000 },
+          },
+        },
+      },
+    };
+
+    test("should return mockups array when present", () => {
+      const getColorImages = (product, color) => {
+        const colorData = product.variants[color];
+        if (!colorData) return [product.image];
+        if (colorData.mockups && colorData.mockups.length > 0) return colorData.mockups;
+        return [colorData.image || product.image];
+      };
+
+      const images = getColorImages(mockProductWithMockups, "Black");
+      expect(images).toEqual(["assets/images/front-black.jpg", "assets/images/sleeve-black.jpg"]);
+      expect(images).toHaveLength(2);
+    });
+
+    test("should return single-element array when no mockups", () => {
+      const getColorImages = (product, color) => {
+        const colorData = product.variants[color];
+        if (!colorData) return [product.image];
+        if (colorData.mockups && colorData.mockups.length > 0) return colorData.mockups;
+        return [colorData.image || product.image];
+      };
+
+      const images = getColorImages(mockProduct, "Black");
+      expect(images).toEqual(["black.jpg"]);
+      expect(images).toHaveLength(1);
+    });
+
+    test("should fallback to product image for unknown color", () => {
+      const getColorImages = (product, color) => {
+        const colorData = product.variants[color];
+        if (!colorData) return [product.image];
+        if (colorData.mockups && colorData.mockups.length > 0) return colorData.mockups;
+        return [colorData.image || product.image];
+      };
+
+      const images = getColorImages(mockProduct, "NonExistent");
+      expect(images).toEqual(["main.jpg"]);
+    });
+
+    test("should show carousel arrows only when multiple images exist", () => {
+      const shouldShowCarousel = images => images.length > 1;
+
+      expect(shouldShowCarousel(["front.jpg", "sleeve.jpg"])).toBe(true);
+      expect(shouldShowCarousel(["front.jpg"])).toBe(false);
+      expect(shouldShowCarousel([])).toBe(false);
+    });
+
+    test("should clamp image index within bounds", () => {
+      const getImageAtIndex = (images, index) => {
+        if (index >= 0 && index < images.length) return images[index];
+        return images[0];
+      };
+
+      const images = ["front.jpg", "sleeve.jpg"];
+      expect(getImageAtIndex(images, 0)).toBe("front.jpg");
+      expect(getImageAtIndex(images, 1)).toBe("sleeve.jpg");
+      expect(getImageAtIndex(images, 5)).toBe("front.jpg"); // Out of bounds falls back
+    });
+  });
+
+  describe("Color-Driven Size Dropdown", () => {
+    const mockProductDifferentSizes = {
+      product_key: "product_4",
+      title: "Unisex Tee w/ Vintage Design",
+      image: "main.jpg",
+      display_price: "$28.00",
+      variants: {
+        "Oxblood Black": {
+          image: "oxblood.jpg",
+          sizes: {
+            S: { variant_id: 4001, price_cents: 2800 },
+            M: { variant_id: 4002, price_cents: 2800 },
+            L: { variant_id: 4003, price_cents: 2800 },
+            XL: { variant_id: 4004, price_cents: 2800 },
+            "2XL": { variant_id: 4005, price_cents: 2800 },
+          },
+        },
+        Natural: {
+          image: "natural.jpg",
+          sizes: {
+            XS: { variant_id: 4006, price_cents: 2800 },
+            S: { variant_id: 4007, price_cents: 2800 },
+            M: { variant_id: 4008, price_cents: 2800 },
+            L: { variant_id: 4009, price_cents: 2800 },
+            XL: { variant_id: 4010, price_cents: 2800 },
+            "2XL": { variant_id: 4011, price_cents: 2800 },
+          },
+        },
+      },
+    };
+
+    test("should return different sizes for different colors", () => {
+      const getAvailableSizes = (product, color) => {
+        if (product.variants[color] && product.variants[color].sizes) {
+          return Object.keys(product.variants[color].sizes);
+        }
+        return [];
+      };
+
+      const oxbloodSizes = getAvailableSizes(mockProductDifferentSizes, "Oxblood Black");
+      const naturalSizes = getAvailableSizes(mockProductDifferentSizes, "Natural");
+
+      expect(oxbloodSizes).toEqual(["S", "M", "L", "XL", "2XL"]);
+      expect(naturalSizes).toEqual(["XS", "S", "M", "L", "XL", "2XL"]);
+      expect(naturalSizes).toContain("XS");
+      expect(oxbloodSizes).not.toContain("XS");
+    });
+
+    test("should reset size selection when color changes", () => {
+      const onColorChange = (product, newColor) => {
+        const sizes = Object.keys(product.variants[newColor]?.sizes || {});
+        return { sizes, selectedSize: "" }; // Always reset to empty
+      };
+
+      const result = onColorChange(mockProductDifferentSizes, "Oxblood Black");
+      expect(result.selectedSize).toBe("");
+      expect(result.sizes).not.toContain("XS");
+
+      const result2 = onColorChange(mockProductDifferentSizes, "Natural");
+      expect(result2.selectedSize).toBe("");
+      expect(result2.sizes).toContain("XS");
+    });
+  });
 });

@@ -14,6 +14,32 @@ if (!PRINTFUL_API_KEY) {
 }
 
 const API_BASE = "https://api.printful.com";
+const IMAGES_DIR = path.join(__dirname, "../store/assets/images");
+
+// Scan local mockup images directory and build a lookup map
+// Naming convention: "{Product Title with / removed} - {Front|Sleeve} - {Color}.jpg"
+function buildLocalMockupMap() {
+  const mockupMap = {};
+  if (!fs.existsSync(IMAGES_DIR)) return mockupMap;
+
+  const files = fs.readdirSync(IMAGES_DIR);
+  for (const file of files) {
+    // Parse: "Product Name - Placement - Color.jpg"
+    const match = file.match(/^(.+?) - (Front|Sleeve) - (.+)\.jpg$/i);
+    if (!match) continue;
+    const [, productName, placement, color] = match;
+    const key = `${productName}|${color}`;
+    if (!mockupMap[key]) mockupMap[key] = [];
+    // Front always comes before Sleeve
+    const entry = { placement: placement.toLowerCase(), path: `assets/images/${file}` };
+    if (placement.toLowerCase() === "front") {
+      mockupMap[key].unshift(entry);
+    } else {
+      mockupMap[key].push(entry);
+    }
+  }
+  return mockupMap;
+}
 
 // Helper to determine image index based on product type
 function getImageIndex(productTitle) {
@@ -90,6 +116,10 @@ async function fetchProducts() {
       throw new Error(`Invalid API response: result is not an array. Got: ${typeof listResponse.result}`);
     }
 
+    // Build local mockup lookup
+    const mockupMap = buildLocalMockupMap();
+    console.log(`🖼️  Found ${Object.keys(mockupMap).length} local mockup entries\n`);
+
     // Fetch variants for each product
     const products = [];
     for (const product of listResponse.result) {
@@ -118,12 +148,11 @@ async function fetchProducts() {
         const isSticker = product.name.includes("Sticker");
         const isHoodie = product.name.includes("Hoodie");
         const isTruckerCap = product.name.includes("Trucker Cap");
+        const KNOWN_SIZES = /^(XS|S|M|L|XL|2XL|3XL|4XL|5XL|One Size)$/;
 
         variants.forEach(variant => {
           // Parse name like "Unisex Tee w/ Text / Black Heather / XS"
-          // For Stickers: "Die-cut Sticker w/ Text / 2″×2″"
-          // For Hoodies: "Unisex Hoodie w/ Text / S"
-          // For Trucker Caps: "Trucker Cap w/ Text / One Size"
+          // Some single-color products only have 2 parts: "Product / Size"
           const parts = variant.name.split(" / ");
 
           let color, size;
@@ -138,6 +167,10 @@ async function fetchProducts() {
           } else if (isTruckerCap) {
             color = "Black & White"; // Trucker Cap is always Black & White
             size = parts[1] || "One Size";
+          } else if (parts.length === 2 && KNOWN_SIZES.test(parts[1])) {
+            // Single-color product: "Product Name / Size"
+            color = "Black";
+            size = parts[1];
           } else {
             color = parts[1] || "Default";
             size = parts[2] || "One Size";
@@ -168,20 +201,9 @@ async function fetchProducts() {
             });
           }
 
-          // Capture image for this color at the correct index
+          // Capture Printful image for this color at the correct index
           if (!variantsByColor[color].image && variant.files && variant.files.length > imageIndex) {
             variantsByColor[color].image = variant.files[imageIndex].preview_url;
-          }
-
-          // Assign local sleeve images for Star + Typewriter Text Sleeve product
-          if (product.name.includes("Star + Typewriter Text Sleeve") && !variantsByColor[color].sleeve_mockup) {
-            const sleeveImages = {
-              Black: "assets/images/unisex-long-sleeve-tee-black-left-69bc2f354b9af.jpg",
-              "Dark Grey Heather": "assets/images/unisex-long-sleeve-tee-dark-grey-heather-left-69bc2f354bd82.jpg",
-            };
-            if (sleeveImages[color]) {
-              variantsByColor[color].sleeve_mockup = sleeveImages[color];
-            }
           }
 
           // Capture first variant's preview image if available
@@ -190,11 +212,32 @@ async function fetchProducts() {
           }
         });
 
+        // Map local mockup images to each color variant
+        // Product title in filenames has "/" removed
+        const mockupTitle = product.name.replace(/\//g, "");
+        for (const [color, colorData] of Object.entries(variantsByColor)) {
+          const key = `${mockupTitle}|${color}`;
+          const localMockups = mockupMap[key];
+          if (localMockups && localMockups.length > 0) {
+            // Use local front mockup as the main image, keep Printful as fallback
+            colorData.mockups = localMockups.map(m => m.path);
+            const frontMockup = localMockups.find(m => m.placement === "front");
+            if (frontMockup) {
+              colorData.image = frontMockup.path;
+            }
+            console.log(`    🖼️  ${color}: ${localMockups.length} local mockup(s)`);
+          }
+        }
+
         const displayPrice = baseRetailPrice ? `$${parseFloat(baseRetailPrice).toFixed(2)}` : "Contact for Price";
 
-        // For Trucker Caps, use the variant image instead of thumbnail
+        // For main product image, prefer the first color's local mockup
+        const firstColor = Object.keys(variantsByColor)[0];
+        const firstColorData = variantsByColor[firstColor];
         let mainImage;
-        if (isTruckerCap) {
+        if (firstColorData?.mockups?.length > 0) {
+          mainImage = firstColorData.mockups[0];
+        } else if (isTruckerCap) {
           mainImage = variantPreviewImage || product.thumbnail_url || "/store/assets/images/placeholder.png";
         } else {
           mainImage = product.thumbnail_url || variantPreviewImage || "/store/assets/images/placeholder.png";

@@ -56,6 +56,8 @@ Tests product rendering and pricing logic:
 - Color-specific image selection
 - Color and size dropdown population
 - Product data validation
+- Mockup image carousel (multi-image browsing)
+- Color-driven size dropdown (different sizes per color)
 
 **Key test cases:**
 
@@ -71,6 +73,13 @@ Tests product rendering and pricing logic:
 - ✅ Check form completeness (color + size)
 - ✅ Return specific variant price or null
 - ✅ Format price cents to dollars correctly
+- ✅ Return mockups array when present for color
+- ✅ Return single-element array when no mockups
+- ✅ Fallback to product image for unknown color
+- ✅ Show carousel arrows only when multiple images exist
+- ✅ Clamp image index within bounds
+- ✅ Return different sizes for different colors (color-driven dropdown)
+- ✅ Reset size selection when color changes
 
 ### 3. **checkout.test.js** - Checkout & API Tests
 
@@ -114,10 +123,11 @@ Tests checkout validation, country selection, and API communication:
 Tests Printful product data fetching and transformation:
 
 - Image index selection by product type
-- Variant name parsing (stickers, hoodies, tees)
+- Variant name parsing (stickers, hoodies, tees, single-color products)
 - Product data structure formatting
 - Variant information storage
 - Product sorting by category
+- Local mockup image map building and filename parsing
 
 **Key test cases:**
 
@@ -127,6 +137,11 @@ Tests Printful product data fetching and transformation:
 - ✅ Store variant_id and price_cents
 - ✅ Select images by index with fallback
 - ✅ Sort products by category
+- ✅ Parse single-color product variants (2-part names with size detection)
+- ✅ Parse mockup filenames into product+color keys
+- ✅ Return null for non-matching mockup filenames
+- ✅ Build mockup map with front images ordered first
+- ✅ Strip forward slashes from product title for matching
 
 ### 5. **success-page.test.js** - Order Confirmation Tests
 
@@ -230,6 +245,33 @@ test("description of what is tested", () => {
 ## End-to-End Tests (Cypress)
 
 Comprehensive e2e test coverage for user workflows:
+
+### product-images.cy.js - Product Images and Carousel Tests
+
+Tests local mockup image display, carousel navigation, and color-driven size dropdowns:
+
+**Local Mockup Images:**
+
+- ✅ Display local images (assets/images/) for products with mockups
+- ✅ Display Printful CDN images for products without mockups (hats, stickers)
+- ✅ Update to local image when color changes
+
+**Carousel Navigation:**
+
+- ✅ Show carousel arrows for products with multiple mockups (front + sleeve)
+- ✅ Hide carousel arrows for products with single mockup
+- ✅ Hide carousel arrows for products with no mockups
+- ✅ Navigate to sleeve image when clicking next arrow
+- ✅ Navigate back to front image when clicking prev arrow
+- ✅ Reset carousel to first image when color changes
+- ✅ Hide next arrow on last image and show prev arrow
+
+**Color-Driven Size Dropdown:**
+
+- ✅ Display sizes for the selected color
+- ✅ Update size options when color changes
+- ✅ Reset size selection when color changes
+- ✅ Show only "One Size" for hat products (auto-selected)
 
 ### success-page.cy.js - Order Confirmation Tests
 

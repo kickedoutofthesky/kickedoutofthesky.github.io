@@ -16,49 +16,44 @@ const MAX_ZOOM = 3;
 const MIN_ZOOM = 1;
 const ZOOM_STEP = 0.2;
 
-// Check if current product and color have a sleeve mockup
-function hasSleeveMockup() {
-  if (!currentProduct) return false;
+// Get the list of images for the current color (mockups array or fallback to single image)
+function getColorImages() {
+  if (!currentProduct) return [];
   const colorSelect = document.getElementById("color");
   const selectedColor = colorSelect?.value || Object.keys(currentProduct.variants)[0];
+  const colorData = currentProduct.variants[selectedColor];
+  if (!colorData) return [currentProduct.image];
 
-  return (
-    currentProduct.title.includes("Long Sleeve") &&
-    selectedColor &&
-    currentProduct.variants[selectedColor] &&
-    currentProduct.variants[selectedColor].sleeve_mockup
-  );
+  if (colorData.mockups && colorData.mockups.length > 0) {
+    return colorData.mockups;
+  }
+  return [colorData.image || currentProduct.image];
 }
 
 // Get the current display image based on index
 function getCurrentDisplayImage() {
-  if (!currentProduct) return currentProduct?.image;
-  const colorSelect = document.getElementById("color");
-  const selectedColor = colorSelect?.value || Object.keys(currentProduct.variants)[0];
-  const colorData = currentProduct.variants[selectedColor];
-
-  if (currentImageIndex === 0) {
-    return colorData?.image || currentProduct.image;
-  } else if (currentImageIndex === 1 && hasSleeveMockup()) {
-    return currentProduct.variants[selectedColor].sleeve_mockup;
+  const images = getColorImages();
+  if (currentImageIndex < images.length) {
+    return images[currentImageIndex];
   }
-
-  return colorData?.image || currentProduct.image;
+  return images[0];
 }
 
 // Update the carousel UI (show/hide arrows)
 function updateCarouselUI() {
   const prevBtn = document.getElementById("carousel-prev");
   const nextBtn = document.getElementById("carousel-next");
+  const images = getColorImages();
+  const maxIndex = images.length - 1;
 
-  if (!hasSleeveMockup()) {
+  if (maxIndex < 1) {
     if (prevBtn) prevBtn.style.display = "none";
     if (nextBtn) nextBtn.style.display = "none";
     return;
   }
 
   if (prevBtn) prevBtn.style.display = currentImageIndex > 0 ? "flex" : "none";
-  if (nextBtn) nextBtn.style.display = currentImageIndex < 1 ? "flex" : "none";
+  if (nextBtn) nextBtn.style.display = currentImageIndex < maxIndex ? "flex" : "none";
 }
 
 // Navigate to previous image
@@ -75,7 +70,8 @@ function showPreviousImage() {
 // Navigate to next image
 // eslint-disable-next-line no-unused-vars
 function showNextImage() {
-  if (hasSleeveMockup() && currentImageIndex < 1) {
+  const images = getColorImages();
+  if (currentImageIndex < images.length - 1) {
     currentImageIndex++;
     resetZoom();
     updateProductImage();
@@ -406,7 +402,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 </div>
               </div>
 
-              <!-- Carousel Arrows for sleeve mockup images -->
+              <!-- Carousel Arrows for multiple mockup images -->
               <button id="carousel-prev" onclick="showPreviousImage()" style="display: none; position: absolute; left: 10px; top: 50%; transform: translateY(-50%); width: 40px; height: 40px; border: none; border-radius: 50%; background: rgba(0,0,0,0.6); color: #fff; font-size: 18px; cursor: pointer; align-items: center; justify-content: center; z-index: 10; transition: background 0.2s;">
                 <i class="fas fa-chevron-left"></i>
               </button>
@@ -455,8 +451,9 @@ document.addEventListener("DOMContentLoaded", async () => {
         </div>
     `;
 
-    // Initialize sizes for default color
+    // Initialize sizes for default color and update image
     updateSizes(defaultColor);
+    updateColorImage(defaultColor);
   } catch (error) {
     console.error("Error loading product:", error);
     loading.style.display = "none";
@@ -476,7 +473,9 @@ function updateSizes(selectedColor) {
 
   if (color && currentProduct.variants[color]) {
     const colorData = currentProduct.variants[color];
-    const sizes = colorData.sizes ? Object.keys(colorData.sizes) : Object.keys(colorData).filter(k => k !== "image");
+    const sizes = colorData.sizes
+      ? Object.keys(colorData.sizes)
+      : Object.keys(colorData).filter(k => k !== "image" && k !== "mockups");
 
     sizes.forEach(size => {
       const option = document.createElement("option");
@@ -498,24 +497,27 @@ function updateSizes(selectedColor) {
   updateCarouselUI();
 }
 
+// Update the displayed image based on color selection
+function updateColorImage(selectedColor) {
+  if (!currentProduct) return;
+  const color = selectedColor || document.getElementById("color")?.value;
+  if (!color || !currentProduct.variants[color]) return;
+
+  currentImageIndex = 0;
+  resetZoom();
+  updateProductImage();
+  updateCarouselUI();
+}
+
 // eslint-disable-next-line no-unused-vars
 function updateColorAndPrice() {
   const colorSelect = document.getElementById("color");
   const selectedColor = colorSelect.value;
 
   if (currentProduct && selectedColor && currentProduct.variants[selectedColor]) {
-    // Use color-specific image if available
-    const colorData = currentProduct.variants[selectedColor];
-    const colorImage = colorData.image || currentProduct.image;
-    document.getElementById("product-image").src = colorImage;
-
-    // Reset carousel and zoom on color change
-    currentImageIndex = 0;
-    resetZoom();
-    updateCarouselUI();
-
-    // Reset sizes
+    // Reset sizes for the selected color (different colors may have different sizes)
     updateSizes(selectedColor);
+    updateColorImage(selectedColor);
     updatePrice();
   }
 }
@@ -526,13 +528,6 @@ function selectColorThumbnail(color) {
   const colorSelect = document.getElementById("color");
   if (colorSelect) {
     colorSelect.value = color;
-  }
-
-  // Update main image
-  if (currentProduct && currentProduct.variants[color]) {
-    const colorData = currentProduct.variants[color];
-    const colorImage = colorData.image || currentProduct.image;
-    document.getElementById("product-image").src = colorImage;
   }
 
   // Update thumbnail highlights
@@ -546,13 +541,9 @@ function selectColorThumbnail(color) {
     }
   });
 
-  // Reset carousel and zoom on color change
-  currentImageIndex = 0;
-  resetZoom();
-  updateCarouselUI();
-
-  // Update sizes and price
+  // Reset sizes for selected color and update image
   updateSizes(color);
+  updateColorImage(color);
   updatePrice();
 }
 
