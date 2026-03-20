@@ -348,7 +348,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Get first color as default
     const availableColors = Object.keys(product.variants);
-    const defaultColor = availableColors[0];
     const defaultImage = product.image;
 
     // Get price range for display
@@ -451,9 +450,40 @@ document.addEventListener("DOMContentLoaded", async () => {
         </div>
     `;
 
-    // Initialize sizes for default color and update image
-    updateSizes(defaultColor);
-    updateColorImage(defaultColor);
+    // Check for pre-selected variant from URL (e.g. from cart click)
+    const urlColor = params.get("color");
+    const urlSize = params.get("size");
+    const urlQuantity = params.get("quantity");
+
+    // Set color if specified in URL and valid
+    if (urlColor && availableColors.includes(urlColor)) {
+      document.getElementById("color").value = urlColor;
+    }
+
+    const selectedColor = document.getElementById("color").value;
+
+    // Initialize sizes for selected color and update image
+    updateSizes(selectedColor);
+    updateColorImage(selectedColor);
+
+    // Set size if specified in URL and valid
+    if (urlSize) {
+      const sizeSelect = document.getElementById("size");
+      const sizeOption = Array.from(sizeSelect.options).find(o => o.value === urlSize);
+      if (sizeOption) {
+        sizeSelect.value = urlSize;
+      }
+    }
+
+    // Set quantity if specified in URL
+    if (urlQuantity) {
+      const qty = parseInt(urlQuantity, 10);
+      if (qty > 0) {
+        document.getElementById("quantity").value = qty;
+      }
+    }
+
+    checkFormComplete();
   } catch (error) {
     console.error("Error loading product:", error);
     loading.style.display = "none";

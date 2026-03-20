@@ -126,11 +126,25 @@ function displayCart() {
     const itemCard = document.createElement("div");
     itemCard.setAttribute("data-testid", "cart-item");
     itemCard.style.cssText =
-      "background: #0f0f0f; padding: 20px; border-radius: 8px; border: 1px solid #1a1a1a; display: flex; gap: 20px;";
+      "background: #0f0f0f; padding: 20px; border-radius: 8px; border: 1px solid #1a1a1a; display: flex; gap: 20px; cursor: pointer; transition: background 0.2s;";
+
+    const productUrl = `product.html?key=${encodeURIComponent(item.productKey)}&color=${encodeURIComponent(item.color)}&size=${encodeURIComponent(item.size)}&quantity=${item.quantity}`;
+
+    // Make entire card clickable, but let buttons/inputs handle their own clicks
+    itemCard.addEventListener("click", e => {
+      if (e.target.closest("button") || e.target.closest("input")) return;
+      window.location.href = productUrl;
+    });
+    itemCard.addEventListener("mouseenter", () => {
+      itemCard.style.background = "#1a1a1a";
+    });
+    itemCard.addEventListener("mouseleave", () => {
+      itemCard.style.background = "#0f0f0f";
+    });
 
     itemCard.innerHTML = `
       <div style="width: 120px; height: 120px; flex-shrink: 0; background: #1a1a1a; border-radius: 4px; overflow: hidden;">
-        <img src="${image}" alt="${product.title}" style="width: 100%; height: 100%; object-fit: cover;">
+        <img src="${image}" alt="${product.title}" style="width: 100%; height: 100%; object-fit: cover; image-rendering: auto;">
       </div>
       <div style="flex: 1; text-align: left;">
         <h4 style="color: #fff; margin-bottom: 8px;" data-testid="item-name">${product.title}</h4>

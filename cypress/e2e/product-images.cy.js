@@ -190,4 +190,78 @@ describe("Product Images and Carousel", () => {
       cy.get("[data-testid='size-select']").should("have.value", "One Size");
     });
   });
+
+  describe("URL Parameter Pre-selection", () => {
+    it("should pre-select color, size, and quantity from URL params", () => {
+      cy.visit(`/store/product.html?key=${singleMockupProductKey}&color=Natural&size=M&quantity=3`);
+      cy.get("[data-testid='product-detail']").should("be.visible");
+
+      cy.get("[data-testid='color-select']").should("have.value", "Natural");
+      cy.get("[data-testid='size-select']").should("have.value", "M");
+      cy.get("#quantity").should("have.value", "3");
+      cy.get("#add-to-cart-btn").should("not.be.disabled");
+    });
+
+    it("should show correct image for pre-selected color", () => {
+      cy.visit(`/store/product.html?key=${singleMockupProductKey}&color=Natural`);
+      cy.get("[data-testid='product-detail']").should("be.visible");
+
+      cy.get("#product-image").should("have.attr", "src").and("include", "Natural");
+    });
+
+    it("should fall back to default color if URL color is invalid", () => {
+      cy.visit(`/store/product.html?key=${singleMockupProductKey}&color=InvalidColor`);
+      cy.get("[data-testid='product-detail']").should("be.visible");
+
+      // Should use the first color (Oxblood Black)
+      cy.get("[data-testid='color-select']").should("have.value", "Oxblood Black");
+    });
+  });
+
+  describe("Cart Item Navigation", () => {
+    beforeEach(() => {
+      cy.visit("/store");
+      cy.window().then(win => {
+        win.localStorage.clear();
+      });
+    });
+
+    it("should have clickable cart items that link to product page", () => {
+      // Add a product to cart
+      cy.get("[data-testid='product-card']").first().click();
+      cy.get("[data-testid='product-detail']").should("be.visible");
+
+      // Select second color
+      cy.get("[data-testid='color-select'] option")
+        .eq(1)
+        .invoke("attr", "value")
+        .then(color => {
+          cy.get("[data-testid='color-select']").select(color, { force: true });
+
+          // Select a size
+          cy.get("[data-testid='size-select'] option")
+            .eq(1)
+            .invoke("attr", "value")
+            .then(size => {
+              cy.get("[data-testid='size-select']").select(size);
+              cy.get("#add-to-cart-btn").should("not.be.disabled").click();
+
+              // Go to cart
+              cy.visit("/store/cart.html");
+              cy.get("[data-testid='cart-item']").should("have.length", 1);
+
+              // Click the cart item card (entire card is clickable)
+              cy.get("[data-testid='cart-item'] [data-testid='item-name']").first().click({ force: true });
+
+              // Should be on product page with correct selections
+              cy.url().should("include", "product.html");
+              cy.url().should("include", `color=${encodeURIComponent(color)}`);
+              cy.url().should("include", `size=${encodeURIComponent(size)}`);
+              cy.get("[data-testid='product-detail']").should("be.visible");
+              cy.get("[data-testid='color-select']").should("have.value", color);
+              cy.get("[data-testid='size-select']").should("have.value", size);
+            });
+        });
+    });
+  });
 });
