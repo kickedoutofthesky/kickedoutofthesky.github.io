@@ -270,8 +270,6 @@ async function proceedToCheckout() {
       body: JSON.stringify({
         items,
         shippingCountry: countrySelect.value,
-        successUrl: window.location.origin + "/store/success.html?session_id={CHECKOUT_SESSION_ID}",
-        cancelUrl: window.location.href,
       }),
     });
 
