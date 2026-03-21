@@ -20,6 +20,10 @@ Designed for a dark/urban aesthetic. Feel free to ask for edits (fonts, spacing,
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Kicked Out of the Sky — EPK</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://open.spotify.com" />
+    <link rel="preconnect" href="https://www.youtube.com" />
     <link
       href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Playfair+Display:wght@400;700&display=swap"
       rel="stylesheet"
@@ -205,6 +209,38 @@ Designed for a dark/urban aesthetic. Feel free to ask for edits (fonts, spacing,
         height: 100%;
       }
 
+      /* Embed facades */
+      .facade {
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        padding: 16px;
+        border-radius: 6px;
+        font-weight: 600;
+        transition: background 0.2s;
+      }
+      .facade-spotify {
+        background: #1db954;
+        color: #fff;
+        height: 80px;
+      }
+      .facade-spotify:hover {
+        background: #1ed760;
+      }
+      .facade-youtube {
+        background: #282828;
+        color: #fff;
+        aspect-ratio: 16/9;
+      }
+      .facade-youtube:hover {
+        background: #383838;
+      }
+      .facade svg {
+        flex-shrink: 0;
+      }
+
       /* Photos */
       .photo-row {
         display: flex;
@@ -269,7 +305,7 @@ Designed for a dark/urban aesthetic. Feel free to ask for edits (fonts, spacing,
       footer {
         padding: 28px 0;
         text-align: center;
-        color: #777;
+        color: #999;
       }
 
       @media (max-width: 900px) {
@@ -300,7 +336,13 @@ Designed for a dark/urban aesthetic. Feel free to ask for edits (fonts, spacing,
     <div class="topbar">
       <div class="nav-inner">
         <div style="display: flex; gap: 12px; align-items: center">
-          <img class="logo" src="Kicked-Out-Of-The-Sky_transparent.png" alt="logo" />
+          <img
+            class="logo"
+            src="Kicked-Out-Of-The-Sky_transparent.png"
+            alt="Kicked Out of the Sky logo"
+            width="260"
+            height="22"
+          />
         </div>
         <div class="nav-links">
           <a href="#about">About</a>
@@ -312,7 +354,13 @@ Designed for a dark/urban aesthetic. Feel free to ask for edits (fonts, spacing,
 
     <header class="hero">
       <div class="hero-inner container">
-        <img class="large-logo" src="Kicked-Out-Of-The-Sky_transparent.png" alt="logo" />
+        <img
+          class="large-logo"
+          src="Kicked-Out-Of-The-Sky_transparent.png"
+          alt="Kicked Out of the Sky logo"
+          width="420"
+          height="35"
+        />
         <div class="tagline">Pop Punk / Indie Rock from Lisbon by way of Los Angeles</div>
         <div class="sub">Single — "Wasting My Life Away" • Released August 22, 2025 • 3:44</div>
         <div style="margin-top: 18px">
@@ -400,25 +448,38 @@ Designed for a dark/urban aesthetic. Feel free to ask for edits (fonts, spacing,
               <div style="margin-bottom: 10px">Embedded players and quick links.</div>
               <div class="players">
                 <div class="embed">
-                  <!-- Spotify embed -->
-                  <iframe
-                    src="https://open.spotify.com/embed/track/4yt5M4iMAEPSkBVjdJT6NW"
-                    width="100%"
-                    height="80"
-                    frameborder="0"
-                    allowtransparency="true"
-                    allow="encrypted-media"
-                  ></iframe>
+                  <!-- Spotify facade -->
+                  <div
+                    class="facade facade-spotify"
+                    role="button"
+                    tabindex="0"
+                    aria-label="Load Spotify player"
+                    data-embed-src="https://open.spotify.com/embed/track/4yt5M4iMAEPSkBVjdJT6NW"
+                    data-embed-type="spotify"
+                  >
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                      <path
+                        d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"
+                      />
+                    </svg>
+                    Play on Spotify
+                  </div>
                 </div>
                 <div class="embed">
-                  <!-- YouTube embed -->
-                  <div class="youtube-container">
-                    <iframe
-                      src="https://www.youtube.com/embed/Rb7_To1AFD4"
-                      frameborder="0"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      allowfullscreen
-                    ></iframe>
+                  <!-- YouTube facade -->
+                  <div
+                    class="facade facade-youtube"
+                    role="button"
+                    tabindex="0"
+                    aria-label="Load YouTube video"
+                    data-embed-src="https://www.youtube.com/embed/Rb7_To1AFD4"
+                    data-embed-type="youtube"
+                  >
+                    <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+                      <rect width="48" height="48" rx="24" fill="#FF0000" />
+                      <path d="M33 24L19 33V15L33 24Z" fill="white" />
+                    </svg>
+                    Watch on YouTube
                   </div>
                 </div>
               </div>
@@ -491,12 +552,12 @@ Designed for a dark/urban aesthetic. Feel free to ask for edits (fonts, spacing,
             </section>
           </div>
           <div class="artist-photo" style="flex: 0 0 50%; max-width: 50%">
-            <img src="alfama-1041.jpg" alt="promo photo" />
+            <img src="alfama-1041.jpg" alt="Matt Bachman promo photo" width="1367" height="2048" />
           </div>
         </div>
       </section>
       <footer>
-        <div style="max-width: var(--max-width); margin: 0 auto; padding: 18px 20px; color: #777">
+        <div style="max-width: var(--max-width); margin: 0 auto; padding: 18px 20px; color: #999">
           ©
           <strong>Kicked Out of the Sky</strong>
           — All rights reserved. Designed for promoters, radio programmers, and press.
@@ -513,6 +574,40 @@ Designed for a dark/urban aesthetic. Feel free to ask for edits (fonts, spacing,
           var target = document.querySelector(this.getAttribute("href"));
           if (target) {
             target.scrollIntoView({ behavior: "smooth", block: "start" });
+          }
+        });
+      });
+
+      // Click-to-load facades for third-party embeds
+      document.querySelectorAll(".facade").forEach(function (facade) {
+        function loadEmbed() {
+          var src = facade.getAttribute("data-embed-src");
+          var type = facade.getAttribute("data-embed-type");
+          var iframe = document.createElement("iframe");
+          iframe.src = src;
+          iframe.style.border = "0";
+          if (type === "spotify") {
+            iframe.title = "Spotify player - Wasting My Life Away";
+            iframe.width = "100%";
+            iframe.height = "80";
+            iframe.allow = "encrypted-media";
+          } else if (type === "youtube") {
+            iframe.title = "YouTube video - Wasting My Life Away";
+            iframe.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
+            iframe.allowFullscreen = true;
+            var container = document.createElement("div");
+            container.className = "youtube-container";
+            container.appendChild(iframe);
+            facade.replaceWith(container);
+            return;
+          }
+          facade.replaceWith(iframe);
+        }
+        facade.addEventListener("click", loadEmbed);
+        facade.addEventListener("keydown", function (e) {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            loadEmbed();
           }
         });
       });

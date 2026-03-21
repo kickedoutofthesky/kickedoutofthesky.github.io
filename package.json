@@ -15,7 +15,10 @@
     "lint": "eslint --ext .js .",
     "lint:fix": "eslint --ext .js . --fix",
     "format": "prettier --write . '!store/data/products.json'",
-    "format:check": "prettier --check . '!store/data/products.json'"
+    "format:check": "prettier --check . '!store/data/products.json'",
+    "lighthouse": "lhci autorun",
+    "lighthouse:collect": "lhci collect",
+    "lighthouse:assert": "lhci assert"
   },
   "dependencies": {
     "@sentry/browser": "^10.43.0",
@@ -24,6 +27,7 @@
   },
   "devDependencies": {
     "@babel/preset-env": "^7.29.0",
+    "@lhci/cli": "^0.15.1",
     "babel-jest": "^26.6.3",
     "cypress": "^10.11.0",
     "eslint": "^7.32.0",

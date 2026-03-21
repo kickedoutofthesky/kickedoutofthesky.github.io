@@ -7,3 +7,4 @@ coverage/
 cypress/videos/
 cypress/screenshots/
 .vercel
+.lighthouseci/
