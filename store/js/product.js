@@ -683,3 +683,8 @@ function getPriceDisplay(product) {
   // If prices differ, show range
   return `$${(minPrice / 100).toFixed(2)} - $${(maxPrice / 100).toFixed(2)}`;
 }
+
+// Allow importing in Node.js (Jest tests) while keeping browser globals
+if (typeof module !== "undefined" && module.exports) {
+  module.exports = { getPriceDisplay };
+}

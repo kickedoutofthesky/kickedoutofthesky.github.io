@@ -145,3 +145,8 @@ class ShoppingCart {
 // Initialize global cart instance
 // eslint-disable-next-line no-unused-vars
 var cart = new ShoppingCart();
+
+// Allow importing in Node.js (Jest tests) while keeping browser globals
+if (typeof module !== "undefined" && module.exports) {
+  module.exports = { ShoppingCart };
+}

@@ -1,5 +1,7 @@
 // Product Display Tests
 // Tests for product.js and store.js functionality
+const { getPriceDisplay } = require("../store");
+const { getProductImage } = require("../cart-display");
 
 describe("Product Display", () => {
   const mockProduct = {
@@ -49,98 +51,25 @@ describe("Product Display", () => {
 
   describe("getPriceDisplay", () => {
     test("should return single price if all variants have same price", () => {
-      const getPriceDisplay = product => {
-        if (!product.variants) return product.display_price;
-
-        const prices = new Set();
-        Object.values(product.variants).forEach(colorData => {
-          if (colorData.sizes) {
-            Object.values(colorData.sizes).forEach(sizeData => {
-              if (sizeData.price_cents) {
-                prices.add(sizeData.price_cents);
-              }
-            });
-          }
-        });
-
-        if (prices.size === 0) return product.display_price;
-        if (prices.size === 1) {
-          const price = Array.from(prices)[0];
-          return `$${(price / 100).toFixed(2)}`;
-        }
-
-        const sortedPrices = Array.from(prices).sort((a, b) => a - b);
-        const minPrice = sortedPrices[0];
-        const maxPrice = sortedPrices[sortedPrices.length - 1];
-        return `$${(minPrice / 100).toFixed(2)}-$${(maxPrice / 100).toFixed(2)}`;
-      };
-
       expect(getPriceDisplay(mockProduct)).toBe("$25.00");
     });
 
     test("should return price range for products with different prices", () => {
-      const getPriceDisplay = product => {
-        if (!product.variants) return product.display_price;
-
-        const prices = new Set();
-        Object.values(product.variants).forEach(colorData => {
-          if (colorData.sizes) {
-            Object.values(colorData.sizes).forEach(sizeData => {
-              if (sizeData.price_cents) {
-                prices.add(sizeData.price_cents);
-              }
-            });
-          }
-        });
-
-        if (prices.size === 0) return product.display_price;
-        if (prices.size === 1) {
-          const price = Array.from(prices)[0];
-          return `$${(price / 100).toFixed(2)}`;
-        }
-
-        const sortedPrices = Array.from(prices).sort((a, b) => a - b);
-        const minPrice = sortedPrices[0];
-        const maxPrice = sortedPrices[sortedPrices.length - 1];
-        return `$${(minPrice / 100).toFixed(2)}-$${(maxPrice / 100).toFixed(2)}`;
-      };
-
-      expect(getPriceDisplay(mockStickerProduct)).toBe("$4.50-$5.50");
+      expect(getPriceDisplay(mockStickerProduct)).toBe("$4.50 - $5.50");
     });
   });
 
   describe("getProductImage", () => {
     test("should return color-specific image if available", () => {
-      const getProductImage = (product, color) => {
-        if (color && product.variants[color] && product.variants[color].image) {
-          return product.variants[color].image;
-        }
-        return product.image;
-      };
-
       expect(getProductImage(mockProduct, "Black")).toBe("black.jpg");
       expect(getProductImage(mockProduct, "Dark Grey Heather")).toBe("grey.jpg");
     });
 
     test("should fallback to main product image if color not found", () => {
-      const getProductImage = (product, color) => {
-        if (color && product.variants[color] && product.variants[color].image) {
-          return product.variants[color].image;
-        }
-        return product.image;
-      };
-
       expect(getProductImage(mockProduct, "NonExistent")).toBe("main.jpg");
     });
 
     test("should return main image if color is null", () => {
-      const getProductImage = (product, color) => {
-        if (color && product.variants[color] && product.variants[color].image) {
-          return product.variants[color].image;
-        }
-        return product.image;
-      };
-
       expect(getProductImage(mockProduct, null)).toBe("main.jpg");
     });
   });
@@ -215,32 +144,6 @@ describe("Product Display", () => {
   });
 
   describe("getPriceDisplay edge cases", () => {
-    const getPriceDisplay = product => {
-      if (!product.variants) return product.display_price;
-
-      const prices = new Set();
-      Object.values(product.variants).forEach(colorData => {
-        if (colorData.sizes) {
-          Object.values(colorData.sizes).forEach(sizeData => {
-            if (sizeData.price_cents) {
-              prices.add(sizeData.price_cents);
-            }
-          });
-        }
-      });
-
-      if (prices.size === 0) return product.display_price;
-      if (prices.size === 1) {
-        const price = Array.from(prices)[0];
-        return `$${(price / 100).toFixed(2)}`;
-      }
-
-      const sortedPrices = Array.from(prices).sort((a, b) => a - b);
-      const minPrice = sortedPrices[0];
-      const maxPrice = sortedPrices[sortedPrices.length - 1];
-      return `$${(minPrice / 100).toFixed(2)}-$${(maxPrice / 100).toFixed(2)}`;
-    };
-
     test("should fallback to display_price when no variants", () => {
       const product = { display_price: "$15.00" };
       expect(getPriceDisplay(product)).toBe("$15.00");

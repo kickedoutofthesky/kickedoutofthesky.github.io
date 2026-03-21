@@ -305,3 +305,8 @@ async function proceedToCheckout() {
     checkoutBtn.textContent = "Proceed to Checkout";
   }
 }
+
+// Allow importing in Node.js (Jest tests) while keeping browser globals
+if (typeof module !== "undefined" && module.exports) {
+  module.exports = { getProductImage };
+}

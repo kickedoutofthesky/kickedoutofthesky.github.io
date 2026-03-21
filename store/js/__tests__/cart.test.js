@@ -1,5 +1,6 @@
 // Cart Module Tests
 // Tests for the ShoppingCart class functionality
+const { ShoppingCart } = require("../cart");
 
 describe("ShoppingCart", () => {
   let cart;
@@ -46,139 +47,10 @@ describe("ShoppingCart", () => {
   beforeEach(() => {
     // Clear localStorage before each test
     localStorage.clear();
+    document.body.innerHTML = "";
 
-    // Create a new cart instance
-    cart = {
-      storageKey: "kots_cart",
-      items: [],
-
-      loadCart() {
-        const saved = localStorage.getItem(this.storageKey);
-        return saved ? JSON.parse(saved) : [];
-      },
-
-      saveCart(_skipBadgeUpdate = false) {
-        localStorage.setItem(this.storageKey, JSON.stringify(this.items));
-      },
-
-      addItem(productKey, color, size, quantity, _skipBadgeUpdate = false) {
-        const existingItem = this.items.find(
-          item => item.productKey === productKey && item.color === color && item.size === size
-        );
-
-        if (existingItem) {
-          existingItem.quantity += quantity;
-        } else {
-          this.items.push({ productKey, color, size, quantity });
-        }
-
-        this.saveCart(_skipBadgeUpdate);
-        return true;
-      },
-
-      removeItem(index) {
-        this.items.splice(index, 1);
-        this.saveCart();
-      },
-
-      updateQuantity(index, quantity) {
-        if (quantity <= 0) {
-          this.removeItem(index);
-        } else {
-          this.items[index].quantity = quantity;
-          this.saveCart();
-        }
-      },
-
-      getTotal() {
-        return this.items.reduce((sum, item) => sum + item.quantity, 0);
-      },
-
-      getSubtotalCents(products) {
-        let subtotal = 0;
-        this.items.forEach(item => {
-          const product = products.find(p => p.product_key === item.productKey);
-          if (product) {
-            const price = this.getPriceForVariant(product, item.color, item.size);
-            subtotal += price * item.quantity;
-          }
-        });
-        return subtotal;
-      },
-
-      getPriceForVariant(product, color, size) {
-        if (
-          product.variants &&
-          product.variants[color] &&
-          product.variants[color].sizes &&
-          product.variants[color].sizes[size]
-        ) {
-          const variantPrice = product.variants[color].sizes[size].price_cents;
-          if (variantPrice !== null && variantPrice !== undefined) {
-            return variantPrice;
-          }
-        }
-        const displayPrice = product.display_price;
-        if (displayPrice && typeof displayPrice === "string") {
-          const match = displayPrice.match(/\d+/);
-          if (match) {
-            return parseInt(match[0]) * 100;
-          }
-        }
-        return 0;
-      },
-
-      updateCartBadge() {
-        const badge = document.getElementById("cart-badge");
-        const total = this.getTotal();
-        if (badge) {
-          if (total > 0) {
-            badge.textContent = total;
-            badge.style.display = "flex";
-          } else {
-            badge.style.display = "none";
-          }
-        }
-      },
-
-      clear() {
-        this.items = [];
-        this.saveCart();
-      },
-
-      validateItemsForCheckout(products) {
-        const errors = [];
-
-        this.items.forEach((item, index) => {
-          const product = products.find(p => p.product_key === item.productKey);
-
-          if (!product) {
-            errors.push(`Item ${index + 1}: Product not found`);
-            return;
-          }
-
-          if (!product.variants[item.color]) {
-            errors.push(`Item ${index + 1}: Color "${item.color}" not available for ${product.title}`);
-            return;
-          }
-
-          if (!product.variants[item.color].sizes[item.size]) {
-            errors.push(`Item ${index + 1}: Size "${item.size}" not available for ${product.title} in ${item.color}`);
-            return;
-          }
-
-          const variantId = product.variants[item.color].sizes[item.size].variant_id;
-          if (!variantId) {
-            errors.push(`Item ${index + 1}: Variant ID missing for ${product.title}`);
-          }
-        });
-
-        return {
-          valid: errors.length === 0,
-          errors,
-        };
-      },
-    };
+    // Create a new cart instance using the real ShoppingCart class
+    cart = new ShoppingCart();
   });
 
   describe("addItem", () => {

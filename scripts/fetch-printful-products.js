@@ -8,7 +8,7 @@ const https = require("https");
 const PRINTFUL_API_KEY = process.env.PRINTFUL_API_KEY;
 // const STORE_ID = process.env.PRINTFUL_STORE_ID; // Currently unused
 
-if (!PRINTFUL_API_KEY) {
+if (!PRINTFUL_API_KEY && require.main === module) {
   console.error("❌ Error: PRINTFUL_API_KEY not found in .env file");
   process.exit(1);
 }
@@ -285,5 +285,9 @@ async function fetchProducts() {
   }
 }
 
-// Run
-fetchProducts();
+// Run only when executed directly (not when imported for testing)
+if (require.main === module) {
+  fetchProducts();
+}
+
+module.exports = { getImageIndex, buildLocalMockupMap };

@@ -1,70 +1,23 @@
 // Product Fetch Tests
 // Tests for fetching and transforming product data from Printful
+const { getImageIndex } = require("../../../scripts/fetch-printful-products");
 
 describe("Product Fetch & Transform", () => {
   describe("getImageIndex", () => {
     test("should return correct image index for long sleeves", () => {
-      const getImageIndex = productTitle => {
-        if (productTitle.includes("Long Sleeve")) {
-          if (productTitle.includes("Star")) return 3;
-          return 2;
-        }
-        if (productTitle.includes("Hoodie")) return 2;
-        if (productTitle.includes("Hat") || productTitle.includes("Cap")) return 1;
-        if (productTitle.includes("Sticker")) return 1;
-        if (productTitle.includes("Tee")) return 2;
-        return 0;
-      };
-
       expect(getImageIndex("Unisex Long Sleeve Tee w/ Typewriter Text")).toBe(2);
       expect(getImageIndex("Unisex Long Sleeve Tee w/ Star + Typewriter Sleeve")).toBe(3);
     });
 
     test("should return correct image index for hoodies", () => {
-      const getImageIndex = productTitle => {
-        if (productTitle.includes("Long Sleeve")) {
-          if (productTitle.includes("Star")) return 3;
-          return 2;
-        }
-        if (productTitle.includes("Hoodie")) return 2;
-        if (productTitle.includes("Hat") || productTitle.includes("Cap")) return 1;
-        if (productTitle.includes("Sticker")) return 1;
-        if (productTitle.includes("Tee")) return 2;
-        return 0;
-      };
-
       expect(getImageIndex("Unisex Hoodie w/ Text")).toBe(2);
     });
 
     test("should return correct image index for stickers", () => {
-      const getImageIndex = productTitle => {
-        if (productTitle.includes("Long Sleeve")) {
-          if (productTitle.includes("Star")) return 3;
-          return 2;
-        }
-        if (productTitle.includes("Hoodie")) return 2;
-        if (productTitle.includes("Hat") || productTitle.includes("Cap")) return 1;
-        if (productTitle.includes("Sticker")) return 1;
-        if (productTitle.includes("Tee")) return 2;
-        return 0;
-      };
-
       expect(getImageIndex("Die-cut Sticker w/ Text")).toBe(1);
     });
 
     test("should return correct image index for regular tees", () => {
-      const getImageIndex = productTitle => {
-        if (productTitle.includes("Long Sleeve")) {
-          if (productTitle.includes("Star")) return 3;
-          return 2;
-        }
-        if (productTitle.includes("Hoodie")) return 2;
-        if (productTitle.includes("Hat") || productTitle.includes("Cap")) return 1;
-        if (productTitle.includes("Sticker")) return 1;
-        if (productTitle.includes("Tee")) return 2;
-        return 0;
-      };
-
       expect(getImageIndex("Unisex Tee w/ Text")).toBe(2);
     });
   });
