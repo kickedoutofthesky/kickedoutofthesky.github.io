@@ -30,7 +30,7 @@
       property="og:description"
       content="Official site of Kicked Out of the Sky — indie pop punk with heart, hooks, and high-voltage vibes. Buy music and view videos."
     />
-    <meta property="og:image" content="https://www.kickedoutofthesky.com/img/wasting_my_life_away-cover.jpg" />
+    <meta property="og:image" content="https://www.kickedoutofthesky.com/img/wasting_my_life_away-cover-600x600.jpg" />
     <meta property="og:url" content="https://www.kickedoutofthesky.com" />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Kicked Out Of The Sky" />
@@ -40,13 +40,21 @@
     <link rel="icon" href="img/star-64.ico" />
     <link rel="apple-touch-icon" href="img/star-64.ico" />
 
-    <!-- FONT AWESOME -->
-    <link async rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
+    <!-- FONT AWESOME (async load) -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+      media="print"
+      onload="this.media = 'all'"
+    />
+    <noscript>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
+    </noscript>
 
     <!-- Custom styles for this template -->
     <link rel="stylesheet" media="screen" href="css/ui.css" />
 
-    <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,700" rel="stylesheet" type="text/css" />
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,700&display=swap" rel="stylesheet" />
 
     <!-- MusicGroup Schema -->
     <script type="application/ld+json">
@@ -57,7 +65,7 @@
         "url": "https://www.kickedoutofthesky.com",
         "genre": ["Indie Rock", "Pop Punk"],
         "foundingLocation": "Burbank, California",
-        "image": "https://www.kickedoutofthesky.com/img/wasting_my_life_away-cover.jpg",
+        "image": "https://www.kickedoutofthesky.com/img/wasting_my_life_away-cover-600x600.jpg",
         "sameAs": [
           "https://instagram.com/kickedoutofthesky",
           "https://bandcamp.com/kickedoutofthesky",
@@ -120,7 +128,7 @@
         "duration": "PT3M9S",
         "datePublished": "2020-01-20",
         "genre": ["Pop Punk", "Indie Rock"],
-        "image": "https://www.kickedoutofthesky.com/img/koots_single_cover.jpg"
+        "image": "https://www.kickedoutofthesky.com/img/koots_single_cover-600x600.jpg"
       }
     </script>
 
@@ -186,7 +194,7 @@
         "datePublished": "2025-08-22",
         "duration": "PT2M59S",
         "genre": ["Pop Punk", "Indie Rock"],
-        "image": "https://www.kickedoutofthesky.com/img/wasting_my_life_away-cover.jpg",
+        "image": "https://www.kickedoutofthesky.com/img/wasting_my_life_away-cover-600x600.jpg",
         "creditText": "Executive Producer: Christa Bachman; Artwork By: Christa Bachman"
       }
     </script>
@@ -461,7 +469,14 @@
             <div class="col text-center d-flex flex-column align-items-center mb-4 mb-md-0">
               <div class="ratio ratio-1x1 album_cover mb-3">
                 <a href="https://kickedoutofthesky.bandcamp.com/track/wasting-my-life-away" target="_blank">
-                  <img src="img/wasting_my_life_away-cover.jpg" class="img-fluid" alt="Wasting My Life Away - Single" />
+                  <img
+                    src="img/wasting_my_life_away-cover-600x600.jpg"
+                    class="img-fluid"
+                    alt="Wasting My Life Away - Single"
+                    width="600"
+                    height="600"
+                    loading="lazy"
+                  />
                 </a>
               </div>
               <a
@@ -476,7 +491,14 @@
             <div class="col text-center d-flex flex-column align-items-center mb-4 mb-md-0">
               <div class="ratio ratio-1x1 album_cover mb-3">
                 <a href="https://kickedoutofthesky.bandcamp.com/album/levity-of-lies" target="_blank">
-                  <img src="img/levity-of-lies-ep-cover.jpg" class="img-fluid" alt="Levity Of Lies - EP" />
+                  <img
+                    src="img/levity-of-lies-ep-cover-600x600.jpg"
+                    class="img-fluid"
+                    alt="Levity Of Lies - EP"
+                    width="600"
+                    height="600"
+                    loading="lazy"
+                  />
                 </a>
               </div>
               <a
@@ -491,7 +513,14 @@
             <div class="col text-center d-flex flex-column align-items-center">
               <div class="ratio ratio-1x1 album_cover mb-3">
                 <a href="https://kickedoutofthesky.bandcamp.com/track/kicked-out-of-the-sky" target="_blank">
-                  <img src="img/koots_single_cover.jpg" class="img-fluid" alt="Kicked Out Of The Sky - Single" />
+                  <img
+                    src="img/koots_single_cover-600x600.jpg"
+                    class="img-fluid"
+                    alt="Kicked Out Of The Sky - Single"
+                    width="600"
+                    height="600"
+                    loading="lazy"
+                  />
                 </a>
               </div>
               <a
@@ -676,7 +705,15 @@
           <div>&copy; 2025 Let Go Media</div>
           <div style="margin-top: 15px">
             <a href="https://www.letgomedia.com" target="_blank">
-              <img src="img/letgomedia-logo.png" class="img-fluid" alt="Let Go Media Logo" style="max-width: 150px" />
+              <img
+                src="img/letgomedia-logo.png"
+                class="img-fluid"
+                alt="Let Go Media Logo"
+                width="174"
+                height="75"
+                loading="lazy"
+                style="max-width: 150px"
+              />
             </a>
           </div>
         </div>
