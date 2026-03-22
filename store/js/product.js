@@ -93,6 +93,7 @@ function updateProductImage() {
 function applyImageTransform() {
   const img = document.getElementById("product-image");
   if (img) {
+    if (isSticker()) return;
     img.style.transform = `scale(${zoomLevel}) translate(${panX}px, ${panY}px)`;
 
     const zoomDisplay = document.getElementById("zoom-level");
@@ -131,6 +132,7 @@ function zoomOut() {
 
 // eslint-disable-next-line no-unused-vars
 function resetZoom() {
+  if (isSticker()) return;
   zoomLevel = 1;
   panX = 0;
   panY = 0;
@@ -277,11 +279,27 @@ function handleImageTouchEnd() {
   touchDistance = 0;
 }
 
+function isSticker() {
+  return currentProduct && currentProduct.title.toLowerCase().includes("sticker");
+}
+
 function initializeZoomPan() {
   const img = document.getElementById("product-image");
   const container = document.getElementById("product-image-container");
 
   if (container && img) {
+    // For stickers: apply 175% zoom and hide all zoom/pan controls
+    if (isSticker()) {
+      img.style.transform = "scale(1.75)";
+      const zoomControls = document.getElementById("zoom-controls");
+      const panControls = document.getElementById("pan-controls");
+      const zoomDisplay = document.getElementById("zoom-level");
+      if (zoomControls) zoomControls.style.display = "none";
+      if (panControls) panControls.style.display = "none";
+      if (zoomDisplay) zoomDisplay.style.display = "none";
+      return;
+    }
+
     img.addEventListener("wheel", handleImageWheel, { passive: false });
     img.addEventListener("mousedown", handleImageMouseDown);
     document.addEventListener("mousemove", handleImageMouseMove);

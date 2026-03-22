@@ -624,22 +624,23 @@
                 const { productTitle, color, size } = parseItemName(item.name);
                 const product = findProductByTitle(productTitle);
                 const imageUrl = product ? getProductImage(product, color) : null;
+                const itemIsSticker = product && product.title.toLowerCase().includes("sticker");
 
                 // Build item HTML with image
                 let itemHtml = `<div style="margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid #333; display: flex; gap: 16px; flex-wrap: wrap;">`;
 
                 // Add product image if available
                 if (imageUrl) {
-                  itemHtml += `<div style="flex-shrink: 0;">
-                    <img src="${imageUrl}" alt="${item.name}" style="width: 80px; height: 80px; object-fit: cover; border-radius: 4px;">
+                  itemHtml += `<div style="flex-shrink: 0; width: 80px; height: 80px; overflow: hidden; border-radius: 4px;">
+                    <img src="${imageUrl}" alt="${item.name}" style="width: 100%; height: 100%; object-fit: cover;${itemIsSticker ? " transform: scale(1.75);" : ""}">
                   </div>`;
                 }
 
                 // Add item details
                 itemHtml += `<div style="flex: 1;">
-                  <div style="display: flex; justify-content: space-between; margin-bottom: 6px">
+                  <div style="display: flex; justify-content: space-between; gap: 10px; margin-bottom: 6px">
                     <div>${item.name || "Item"}</div>
-                    <div style="font-weight: bold">${currencySymbol}${lineTotal.toFixed(2)}</div>
+                    <div style="font-weight: bold; white-space: nowrap">${currencySymbol}${lineTotal.toFixed(2)}</div>
                   </div>
                   <div style="display: flex; justify-content: space-between; color: #999; font-size: 0.85rem">
                     <div>Qty: ${item.quantity || 1} × ${currencySymbol}${unitPrice.toFixed(2)} each</div>
