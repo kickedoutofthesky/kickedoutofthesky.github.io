@@ -5,6 +5,44 @@
 let products = [];
 let countries = [];
 
+// CSRF Token Management
+function generateCSRFToken() {
+  // Generate a random token (in production, get this from server)
+  if (typeof crypto !== "undefined" && crypto.getRandomValues) {
+    return Array.from(crypto.getRandomValues(new Uint8Array(32)))
+      .map(b => b.toString(16).padStart(2, "0"))
+      .join("");
+  }
+  // Fallback for Node.js environment (tests)
+  return Math.random().toString(36).substr(2) + Math.random().toString(36).substr(2);
+}
+
+function getCSRFToken() {
+  // Only try to use sessionStorage in browser environment
+  if (typeof sessionStorage === "undefined") {
+    return generateCSRFToken();
+  }
+
+  let token = sessionStorage.getItem("csrf_token");
+  if (!token) {
+    token = generateCSRFToken();
+    sessionStorage.setItem("csrf_token", token);
+    // Also set in meta tag if it doesn't exist
+    if (!document.querySelector('meta[name="csrf-token"]')) {
+      const meta = document.createElement("meta");
+      meta.name = "csrf-token";
+      meta.content = token;
+      document.head.appendChild(meta);
+    }
+  }
+  return token;
+}
+
+// Initialize CSRF token on page load (only in browser environment)
+if (typeof sessionStorage !== "undefined") {
+  getCSRFToken();
+}
+
 // Make sure cart is ready before displaying
 function waitForCart(callback) {
   if (typeof cart !== "undefined" && cart) {
@@ -249,12 +287,14 @@ async function proceedToCheckout() {
       })
       .filter(item => item !== null);
 
-    // Call backend checkout endpoint
+    // Call backend checkout endpoint with CSRF token
     const backendUrl = window.__API_URL__ || "https://kickedoutofthesky-store.vercel.app";
+    const csrfToken = getCSRFToken();
     const response = await fetch(backendUrl + "/api/create-checkout-session", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "X-CSRF-Token": csrfToken,
       },
       body: JSON.stringify({
         items,
