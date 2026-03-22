@@ -364,6 +364,31 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Clear loading state
     loading.style.display = "none";
 
+    // Add ProductSchema markup
+    try {
+      const priceRange = getPriceRange(product);
+      const schemaScript = document.createElement("script");
+      schemaScript.type = "application/ld+json";
+      schemaScript.textContent = JSON.stringify({
+        "@context": "https://schema.org/",
+        "@type": "Product",
+        name: product.title,
+        description: `${product.title} - Available in multiple colors and sizes`,
+        image: product.image,
+        offers: {
+          "@type": "AggregateOffer",
+          priceCurrency: "USD",
+          lowPrice: priceRange.min.toFixed(2),
+          highPrice: priceRange.max.toFixed(2),
+          offerCount: Object.keys(product.variants).length,
+          availability: "https://schema.org/InStock",
+        },
+      });
+      document.head.appendChild(schemaScript);
+    } catch (e) {
+      console.error("Failed to add product schema markup:", e);
+    }
+
     // Get first color as default
     const availableColors = Object.keys(product.variants);
     const defaultImage = product.image;
@@ -377,7 +402,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         <div class="col-md-7">
             <div class="product-detail-image" style="position: relative;">
               <div id="product-image-container" style="position: relative; overflow: hidden; border-radius: 0.375rem; width: 100%; height: 100%;">
-                <img id="product-image" data-testid="product-image" src="${defaultImage}" alt="${product.title}" class="rounded" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.1s ease; transform-origin: center center; user-select: none; -webkit-user-drag: none;">
+                <img loading="lazy" id="product-image" data-testid="product-image" src="${defaultImage}" alt="${product.title}" class="rounded" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.1s ease; transform-origin: center center; user-select: none; -webkit-user-drag: none;">
               </div>
 
               <!-- Zoom Level Display (above zoom controls) -->
@@ -702,7 +727,37 @@ function getPriceDisplay(product) {
   return `$${(minPrice / 100).toFixed(2)} - $${(maxPrice / 100).toFixed(2)}`;
 }
 
+// Helper function to get numeric price range for schema markup
+function getPriceRange(product) {
+  const prices = [];
+
+  // Collect all prices from all variants and sizes
+  if (product.variants && typeof product.variants === "object") {
+    Object.values(product.variants).forEach(colorData => {
+      if (colorData.sizes && typeof colorData.sizes === "object") {
+        Object.values(colorData.sizes).forEach(sizeData => {
+          if (sizeData.price_cents !== null && sizeData.price_cents !== undefined) {
+            prices.push(sizeData.price_cents);
+          }
+        });
+      }
+    });
+  }
+
+  // If no prices found, use display_price or default
+  if (prices.length === 0) {
+    const fallbackPrice = product.display_price ? parseFloat(product.display_price.replace("$", "")) * 100 : 0;
+    return { min: fallbackPrice / 100, max: fallbackPrice / 100 };
+  }
+
+  prices.sort((a, b) => a - b);
+  return {
+    min: prices[0] / 100,
+    max: prices[prices.length - 1] / 100,
+  };
+}
+
 // Allow importing in Node.js (Jest tests) while keeping browser globals
 if (typeof module !== "undefined" && module.exports) {
-  module.exports = { getPriceDisplay };
+  module.exports = { getPriceDisplay, getPriceRange };
 }

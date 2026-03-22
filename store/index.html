@@ -128,17 +128,20 @@
         border-bottom: 1px solid #1a1a1a;
       "
     >
-      <button class="filter-btn active" data-category="all">All</button>
-      <button class="filter-btn" data-category="tees">Tees</button>
-      <button class="filter-btn" data-category="long-sleeve">Long Sleeve Tees</button>
-      <button class="filter-btn" data-category="hoodies">Hoodies</button>
-      <button class="filter-btn" data-category="hats">Hats</button>
-      <button class="filter-btn" data-category="stickers">Stickers</button>
+      <button class="filter-btn active" data-category="all" aria-label="Filter products by All categories">All</button>
+      <button class="filter-btn" data-category="tees" aria-label="Filter products by Tees">Tees</button>
+      <button class="filter-btn" data-category="long-sleeve" aria-label="Filter products by Long Sleeve Tees">
+        Long Sleeve Tees
+      </button>
+      <button class="filter-btn" data-category="hoodies" aria-label="Filter products by Hoodies">Hoodies</button>
+      <button class="filter-btn" data-category="hats" aria-label="Filter products by Hats">Hats</button>
+      <button class="filter-btn" data-category="stickers" aria-label="Filter products by Stickers">Stickers</button>
     </div>
 
     <div id="main-content">
       <div class="container">
         <main>
+          <h1 class="text-light mb-40" style="margin-top: 40px">Store</h1>
           <!-- Product Grid -->
           <div class="products-grid" id="products-grid" data-testid="product-grid">
             <div style="text-align: center; grid-column: 1 / -1; padding: 40px">

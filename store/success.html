@@ -589,7 +589,7 @@
                 // Add product image if available
                 if (imageUrl) {
                   itemHtml += `<div style="flex-shrink: 0; width: 80px; height: 80px; overflow: hidden; border-radius: 4px;">
-                    <img src="${imageUrl}" alt="${item.name}" style="width: 100%; height: 100%; object-fit: cover;${itemIsSticker ? " transform: scale(1.75);" : ""}">
+                    <img loading="lazy" src="${imageUrl}" alt="${item.name}" style="width: 100%; height: 100%; object-fit: cover;${itemIsSticker ? " transform: scale(1.75);" : ""}">
                   </div>`;
                 }
 

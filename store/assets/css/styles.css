@@ -385,6 +385,334 @@ nav .container-fluid {
   margin-left: 10px !important;
 }
 
+/* ===== UTILITY & COMPONENT CLASSES ===== */
+
+/* Card Styles */
+.card-dark {
+  background: #1a1a1a;
+  padding: 30px;
+  border-radius: 8px;
+  border: 1px solid #262626;
+}
+
+.card-dark-sm {
+  background: #1a1a1a;
+  padding: 25px;
+  border-radius: 8px;
+  border: 1px solid #262626;
+}
+
+/* Text Color Utilities */
+.text-light {
+  color: #fff;
+}
+
+.text-secondary {
+  color: #ccc;
+}
+
+.text-tertiary {
+  color: #999;
+}
+
+.text-accent {
+  color: #ffc107;
+}
+
+.text-error {
+  color: #cb2431;
+}
+
+/* Text Sizing */
+.text-sm {
+  font-size: 0.9rem;
+}
+
+.text-xs {
+  font-size: 0.85rem;
+}
+
+/* Margin & Padding */
+.mt-100 {
+  margin-top: 100px;
+}
+
+.mt-40 {
+  margin-top: 40px;
+}
+
+.mt-20 {
+  margin-top: 20px;
+}
+
+.mb-40 {
+  margin-bottom: 40px;
+}
+
+.mb-20 {
+  margin-bottom: 20px;
+}
+
+.mb-15 {
+  margin-bottom: 15px;
+}
+
+.mb-10 {
+  margin-bottom: 10px;
+}
+
+.mb-8 {
+  margin-bottom: 8px;
+}
+
+.mb-6 {
+  margin-bottom: 6px;
+}
+
+.mb-5 {
+  margin-bottom: 5px;
+}
+
+.mt-0 {
+  margin-top: 0;
+}
+
+.my-0 {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.p-40 {
+  padding: 40px;
+}
+
+.p-30 {
+  padding: 30px;
+}
+
+.p-25 {
+  padding: 25px;
+}
+
+.p-20 {
+  padding: 20px;
+}
+
+.pt-20 {
+  padding-top: 20px;
+}
+
+.pt-15 {
+  padding-top: 15px;
+}
+
+.pb-15 {
+  padding-bottom: 15px;
+}
+
+.pb-20 {
+  padding-bottom: 20px;
+}
+
+.px-20 {
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+/* Layout Utilities */
+.flex-row {
+  display: flex;
+  flex-direction: row;
+}
+
+.flex-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.flex-between {
+  display: flex;
+  justify-content: space-between;
+}
+
+.flex-end {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.flex-center {
+  display: flex;
+  align-items: center;
+}
+
+.gap-30 {
+  gap: 30px;
+}
+
+.gap-20 {
+  gap: 20px;
+}
+
+.gap-15 {
+  gap: 15px;
+}
+
+.gap-10 {
+  gap: 10px;
+}
+
+.gap-8 {
+  gap: 8px;
+}
+
+.grid-gap-30 {
+  display: grid;
+  gap: 30px;
+}
+
+.grid-gap-20 {
+  display: grid;
+  gap: 20px;
+}
+
+/* Border Utilities */
+.border-bottom-dark {
+  border-bottom: 1px solid #333;
+}
+
+.border-top-dark {
+  border-top: 1px solid #333;
+}
+
+.border-dark {
+  border: 1px solid #262626;
+}
+
+/* Text Alignment */
+.text-center {
+  text-align: center;
+}
+
+.text-left {
+  text-align: left;
+}
+
+/* Display Utilities */
+.hidden {
+  display: none;
+}
+
+/* Common Containers */
+.loading-container {
+  text-align: center;
+  padding: 40px;
+}
+
+.error-container {
+  display: none;
+  text-align: center;
+  padding: 40px;
+  color: #cb2431;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 40px;
+}
+
+/* Order Summary / Receipt Utilities */
+.order-item {
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #333;
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.order-item-image {
+  flex-shrink: 0;
+  width: 80px;
+  height: 80px;
+  overflow: hidden;
+  border-radius: 4px;
+}
+
+.order-item-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.order-item-details {
+  flex: 1;
+}
+
+.order-item-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.order-item-price {
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+.order-item-specs {
+  display: flex;
+  justify-content: space-between;
+  color: #999;
+  font-size: 0.85rem;
+}
+
+/* Divider */
+.divider-dark {
+  border-top: 1px solid #333;
+  padding-top: 20px;
+  margin-top: 20px;
+}
+
+/* Form Elements Utilities */
+.form-group-label {
+  color: #ccc;
+  display: block;
+  margin-bottom: 8px;
+  text-align: left;
+}
+
+.form-group-label .required {
+  color: #ff6b6b;
+}
+
+/* Width Utilities */
+.w-100 {
+  width: 100%;
+}
+
+.flex-shrink-0 {
+  flex-shrink: 0;
+}
+
+.flex-wrap {
+  flex-wrap: wrap;
+}
+
+/* Line Height */
+.lh-1-8 {
+  line-height: 1.8;
+}
+
+/* Font Weight */
+.fw-bold {
+  font-weight: bold;
+}
+
+.fw-500 {
+  font-weight: 500;
+}
+
 @media (max-width: 768px) {
   .brand {
     max-height: 35px;

@@ -133,7 +133,7 @@ function displayCart() {
 
     itemCard.innerHTML = `
       <div style="width: 120px; height: 120px; flex-shrink: 0; background: #1a1a1a; border-radius: 4px; overflow: hidden;">
-        <img src="${image}" alt="${product.title}" style="width: 100%; height: 100%; object-fit: cover; image-rendering: auto;${itemIsSticker ? " transform: scale(1.75);" : ""}">
+        <img loading="lazy" src="${image}" alt="${product.title}" style="width: 100%; height: 100%; object-fit: cover; image-rendering: auto;${itemIsSticker ? " transform: scale(1.75);" : ""}">
       </div>
       <div style="flex: 1; text-align: left;">
         <h4 style="color: #fff; margin-bottom: 8px;" data-testid="item-name">${product.title}</h4>

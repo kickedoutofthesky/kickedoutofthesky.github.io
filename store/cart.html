@@ -233,89 +233,51 @@
 
     <div style="margin-top: 100px">
       <div class="container" data-testid="cart-page">
-        <h1 style="color: #fff; margin-bottom: 40px">Shopping Cart</h1>
+        <h1 class="text-light mb-40">Shopping Cart</h1>
 
         <!-- Empty Cart Message -->
-        <div id="empty-cart" data-testid="empty-cart-message" style="text-align: center; padding: 40px">
-          <p style="color: #ccc">Your cart is empty</p>
+        <div id="empty-cart" data-testid="empty-cart-message" class="empty-state">
+          <p class="text-secondary">Your cart is empty</p>
           <a href="index.html" class="btn btn-primary">Continue Shopping</a>
         </div>
 
         <!-- Cart Container -->
         <div class="cart-container">
           <!-- Cart Items -->
-          <div id="cart-items" data-testid="cart-page" style="display: grid; gap: 20px; margin-bottom: 40px">
+          <div id="cart-items" data-testid="cart-page" class="grid-gap-20 mb-40">
             <!-- Cart items will be rendered here -->
           </div>
 
           <!-- Order Summary -->
-          <div
-            id="cart-summary"
-            style="
-              display: none;
-              background: #1a1a1a;
-              padding: 30px;
-              border-radius: 8px;
-              border: 1px solid #262626;
-              margin-top: 40px;
-            "
-          >
-            <h3 style="color: #fff; margin-bottom: 20px">Order Summary</h3>
-            <div
-              style="
-                display: flex;
-                justify-content: space-between;
-                color: #ccc;
-                margin-bottom: 15px;
-                padding-bottom: 15px;
-                border-bottom: 1px solid #333;
-              "
-            >
+          <div id="cart-summary" class="card-dark hidden mt-40">
+            <h3 class="text-light mb-20 mt-0">Order Summary</h3>
+            <div class="flex-between text-secondary mb-15 pb-15 border-bottom-dark">
               <span>Subtotal:</span>
               <span id="subtotal" data-testid="cart-subtotal">$0.00</span>
             </div>
-            <div
-              style="
-                display: flex;
-                justify-content: space-between;
-                color: #ccc;
-                margin-bottom: 15px;
-                padding-bottom: 15px;
-                border-bottom: 1px solid #333;
-              "
-            >
+            <div class="flex-between text-secondary mb-15 pb-15 border-bottom-dark">
               <span>Tax:</span>
               <span>TBD</span>
             </div>
-            <div
-              style="
-                display: flex;
-                justify-content: space-between;
-                color: #ccc;
-                margin-bottom: 15px;
-                padding-bottom: 15px;
-                border-bottom: 1px solid #333;
-              "
-            >
+            <div class="flex-between text-secondary mb-15 pb-15 border-bottom-dark">
               <span>Shipping:</span>
               <span>TBD</span>
             </div>
-            <div
-              style="display: flex; justify-content: space-between; color: #fff; font-size: 1.2rem; font-weight: bold"
-            >
+            <div class="flex-between text-light fw-bold" style="font-size: 1.2rem">
               <span>Total:</span>
               <span id="total">$0.00</span>
             </div>
-            <p style="color: #999; font-size: 0.9rem; margin-top: 15px; padding-top: 15px; border-top: 1px solid #333">
+            <p class="text-tertiary text-sm divider-dark">
               Shipping address and taxes will be calculated during checkout.
             </p>
-            <div style="margin-top: 20px">
-              <label for="shipping-country" style="color: #ccc; display: block; margin-bottom: 8px; text-align: left">
+            <div class="mt-20">
+              <label for="shipping-country" class="form-group-label">
                 Shipping Country
-                <span style="color: #ff6b6b">*</span>
+                <span class="required">*</span>
               </label>
               <select
                 id="shipping-country"
+                aria-label="Select shipping country"
                 data-testid="shipping-country-select"
                 style="
                   width: 100%;
