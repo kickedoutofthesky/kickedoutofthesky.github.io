@@ -18,6 +18,30 @@ body {
   padding: 20px;
 }
 
+/* Category Filter Buttons */
+.filter-btn {
+  background: transparent;
+  color: #999;
+  border: 1px solid #333;
+  padding: 8px 20px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.filter-btn:hover {
+  color: #fff;
+  border-color: #666;
+}
+
+.filter-btn.active {
+  background: #ffc107;
+  color: #000;
+  border-color: #ffc107;
+  font-weight: 600;
+}
+
 header {
   text-align: center;
   margin-bottom: 40px;
@@ -362,6 +386,15 @@ nav .container-fluid {
 
   .product-detail-info h1 {
     margin-top: 20px;
+  }
+
+  .products-grid {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+
+  .product-image {
+    height: 450px;
   }
 }
 

@@ -1,4 +1,15 @@
 // Store - Product Grid
+
+function getProductCategory(title) {
+  const t = title.toLowerCase();
+  if (t.includes("sticker")) return "stickers";
+  if (t.includes("hoodie")) return "hoodies";
+  if (t.includes("long sleeve")) return "long-sleeve";
+  if (t.includes("snapback") || t.includes("trucker") || t.includes("cap") || t.includes("hat")) return "hats";
+  if (t.includes("tee")) return "tees";
+  return "other";
+}
+
 document.addEventListener("DOMContentLoaded", async () => {
   const grid = document.getElementById("products-grid");
   const errorState = document.getElementById("error-state");
@@ -25,6 +36,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       const card = document.createElement("div");
       card.className = "product-card";
       card.setAttribute("data-testid", "product-card");
+      card.setAttribute("data-category", getProductCategory(product.title));
       card.style.cursor = "pointer";
 
       // Get display price (single price or range)
@@ -49,6 +61,24 @@ document.addEventListener("DOMContentLoaded", async () => {
       });
 
       grid.appendChild(card);
+    });
+
+    // Set up category filter buttons
+    const filterBtns = document.querySelectorAll(".filter-btn");
+    filterBtns.forEach(btn => {
+      btn.addEventListener("click", () => {
+        filterBtns.forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        const category = btn.getAttribute("data-category");
+        const cards = grid.querySelectorAll(".product-card");
+        cards.forEach(card => {
+          if (category === "all" || card.getAttribute("data-category") === category) {
+            card.style.display = "";
+          } else {
+            card.style.display = "none";
+          }
+        });
+      });
     });
   } catch (error) {
     console.error("Error loading products:", error);
