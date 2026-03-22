@@ -17,15 +17,9 @@ function waitForCart(callback) {
 document.addEventListener("DOMContentLoaded", async () => {
   // Wait for cart to be ready
   waitForCart(async () => {
-    // Debug: Check if cart exists
-    console.log("cart object exists:", typeof cart !== "undefined");
-    console.log("cart object:", typeof cart !== "undefined" ? cart : "UNDEFINED");
-
     // Force reload cart from localStorage to ensure we have latest items
     if (typeof cart !== "undefined" && cart && typeof cart.loadCart === "function") {
-      const freshItems = cart.loadCart();
-      console.log("Fresh items from localStorage:", freshItems);
-      cart.items = freshItems;
+      cart.items = cart.loadCart();
     }
 
     await loadProducts();
@@ -96,12 +90,6 @@ function displayCart() {
   const cartSummary = document.getElementById("cart-summary");
   const emptyCart = document.getElementById("empty-cart");
 
-  // Debug logging
-  console.log("displayCart called");
-  console.log("cart object:", cart);
-  console.log("cart.items:", cart?.items);
-  console.log("localStorage content:", localStorage.getItem("kots_cart"));
-
   if (!cart || !cart.items || cart.items.length === 0) {
     cartItems.style.display = "none";
     emptyCart.style.display = "block";
@@ -127,7 +115,7 @@ function displayCart() {
     const itemCard = document.createElement("div");
     itemCard.setAttribute("data-testid", "cart-item");
     itemCard.style.cssText =
-      "background: #0f0f0f; padding: 20px; border-radius: 8px; border: 1px solid #1a1a1a; display: flex; gap: 20px; cursor: pointer; transition: background 0.2s;";
+      "background: #1a1a1a; padding: 20px; border-radius: 8px; border: 1px solid #262626; display: flex; gap: 20px; cursor: pointer; transition: background 0.2s;";
 
     const productUrl = `product.html?key=${encodeURIComponent(item.productKey)}&color=${encodeURIComponent(item.color)}&size=${encodeURIComponent(item.size)}&quantity=${item.quantity}`;
 
@@ -137,10 +125,10 @@ function displayCart() {
       window.location.href = productUrl;
     });
     itemCard.addEventListener("mouseenter", () => {
-      itemCard.style.background = "#1a1a1a";
+      itemCard.style.background = "#262626";
     });
     itemCard.addEventListener("mouseleave", () => {
-      itemCard.style.background = "#0f0f0f";
+      itemCard.style.background = "#1a1a1a";
     });
 
     itemCard.innerHTML = `

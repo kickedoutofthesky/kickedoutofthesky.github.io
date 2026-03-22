@@ -211,6 +211,18 @@ main {
   cursor: not-allowed !important;
 }
 
+/* Disabled buttons (all types) */
+button:disabled,
+button[disabled],
+.btn:disabled,
+.btn-warning:disabled,
+.btn-outline-secondary:disabled,
+input[type="button"]:disabled,
+input[type="submit"]:disabled,
+[disabled] {
+  cursor: not-allowed !important;
+}
+
 /* Product Detail */
 .product-detail {
   background: #1a1a1a;

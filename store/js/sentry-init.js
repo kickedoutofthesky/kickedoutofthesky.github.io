@@ -24,7 +24,6 @@ export function initSentry() {
   }
 
   if (isDev) {
-    console.log("Development environment detected. Sentry disabled for local testing.");
     return null;
   }
 
@@ -47,9 +46,8 @@ export function initSentry() {
       // Release version (can be set during build)
       release: window.SENTRY_RELEASE || "unknown",
 
-      // Sample 100% of transactions in production (all errors)
-      // For heavy traffic, reduce to 0.1 (10%) or 0.01 (1%)
-      tracesSampleRate: process.env.NODE_ENV === "production" ? 0.1 : 1.0,
+      // Sample 10% of transactions in production, 100% in staging/dev
+      tracesSampleRate: window.location.hostname.includes("github.io") ? 0.1 : 1.0,
 
       // Sample 10% of replays overall
       // If you're not already sampling the entire session, change the sample rates to 100% then to a lower sample rate
@@ -108,7 +106,6 @@ export function initSentry() {
     // Set Sentry instance globally for use in other scripts
     window.Sentry = Sentry;
 
-    console.log("Sentry initialized for error tracking");
     return Sentry;
   } catch (error) {
     console.error("Failed to initialize Sentry:", error);

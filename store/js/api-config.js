@@ -23,6 +23,4 @@
 
   // Make globally available
   window.__API_URL__ = backendUrl;
-
-  console.log(`🔗 API URL: ${backendUrl}`);
 })();

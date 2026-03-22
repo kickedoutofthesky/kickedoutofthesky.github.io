@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Shopping Cart - Kicked Out of the Sky</title>
+    <meta name="description" content="Review your cart and checkout. Official Kicked Out of the Sky merch store." />
     <link rel="icon" href="../img/star-64.ico" />
     <link rel="apple-touch-icon" href="../img/star-64.ico" />
     <link
@@ -12,7 +13,12 @@
       integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
       crossorigin="anonymous"
     />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+      media="print"
+      onload="this.media = 'all'"
+    />
     <link rel="stylesheet" href="../css/ui.css" />
     <link rel="stylesheet" href="assets/css/styles.css" />
     <style>
@@ -139,9 +145,10 @@
         }
       }
     </style>
-    <script src="js/api-config.js"></script>
+    <script defer src="js/api-config.js"></script>
   </head>
   <body class="text-center">
+    <a href="#cart-items" class="skip-nav">Skip to content</a>
     <!-- Navbar -->
     <nav
       id="navbarMain"
@@ -246,10 +253,10 @@
             id="cart-summary"
             style="
               display: none;
-              background: #0f0f0f;
+              background: #1a1a1a;
               padding: 30px;
               border-radius: 8px;
-              border: 1px solid #1a1a1a;
+              border: 1px solid #262626;
               margin-top: 40px;
             "
           >
@@ -326,14 +333,18 @@
             <button
               id="checkout-btn"
               class="btn btn-warning w-100"
-              style="margin-top: 20px; font-weight: bold; padding: 15px"
+              style="margin-top: 20px; font-weight: bold; padding: 15px; cursor: not-allowed"
               disabled
             >
               Proceed to Checkout
             </button>
-            <button class="btn btn-outline-secondary w-100" style="margin-top: 10px; padding: 15px">
-              <a href="index.html" style="text-decoration: none; color: inherit">Continue Shopping</a>
-            </button>
+            <a
+              href="index.html"
+              class="btn btn-outline-secondary w-100"
+              style="margin-top: 10px; padding: 15px; text-decoration: none"
+            >
+              Continue Shopping
+            </a>
           </div>
         </div>
       </div>

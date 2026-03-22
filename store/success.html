@@ -4,6 +4,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Order Successful - Kicked Out of the Sky</title>
+    <meta
+      name="description"
+      content="Your order has been placed successfully. Thank you for supporting Kicked Out of the Sky!"
+    />
     <link rel="icon" href="../img/star-64.ico" />
     <link rel="apple-touch-icon" href="../img/star-64.ico" />
     <link
@@ -12,10 +16,15 @@
       integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
       crossorigin="anonymous"
     />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+      media="print"
+      onload="this.media = 'all'"
+    />
     <link rel="stylesheet" href="../css/ui.css" />
     <link rel="stylesheet" href="assets/css/styles.css" />
-    <script src="js/api-config.js"></script>
+    <script defer src="js/api-config.js"></script>
     <style>
       .order-shipping-grid {
         display: grid;
@@ -88,6 +97,7 @@
     </style>
   </head>
   <body>
+    <a href="#main-content" class="skip-nav">Skip to content</a>
     <!-- Navbar -->
     <nav
       id="navbarMain"
@@ -172,7 +182,7 @@
 
     <div style="margin-top: 100px">
       <div class="container">
-        <main>
+        <main id="main-content">
           <div style="text-align: center; margin-bottom: 40px">
             <h1 style="color: #fff; margin-bottom: 20px">✓ Order Successful</h1>
             <p style="color: #ccc; margin-bottom: 10px; font-size: 1.1rem">Thank you for your purchase!</p>
@@ -211,7 +221,7 @@
             <!-- LEFT COLUMN: Order Items -->
             <div
               id="order-section"
-              style="background: #1a1a1a; padding: 30px; border-radius: 8px; border: 1px solid #333; display: none"
+              style="background: #1a1a1a; padding: 30px; border-radius: 8px; border: 1px solid #262626; display: none"
             >
               <h3 style="color: #fff; margin-bottom: 25px; margin-top: 0">Order Items</h3>
 
@@ -280,7 +290,7 @@
               <!-- Customer Info Card -->
               <div
                 id="customer-section"
-                style="background: #1a1a1a; padding: 25px; border-radius: 8px; border: 1px solid #333; display: none"
+                style="background: #1a1a1a; padding: 25px; border-radius: 8px; border: 1px solid #262626; display: none"
               >
                 <h4 style="color: #fff; margin-bottom: 15px; margin-top: 0; font-size: 0.95rem">
                   Order Confirmation Sent To:
@@ -293,7 +303,7 @@
               <!-- Shipping Info Card -->
               <div
                 id="shipping-section"
-                style="background: #1a1a1a; padding: 25px; border-radius: 8px; border: 1px solid #333; display: none"
+                style="background: #1a1a1a; padding: 25px; border-radius: 8px; border: 1px solid #262626; display: none"
               >
                 <h4 style="color: #fff; margin-bottom: 15px; margin-top: 0; font-size: 0.95rem">Shipping Address</h4>
                 <div id="shipping-address" style="color: #ccc; font-size: 0.9rem; line-height: 1.8">
@@ -332,7 +342,6 @@
           countries.forEach(country => {
             countryNameMap[country.code] = country.name;
           });
-          console.log("Countries loaded:", Object.keys(countryNameMap).length);
         } catch (error) {
           console.error("Error loading countries:", error);
         }
@@ -349,7 +358,6 @@
           const response = await fetch("./data/products.json");
           if (!response.ok) throw new Error("Failed to load products");
           productsData = await response.json();
-          console.log("Products loaded:", productsData.length);
         } catch (error) {
           console.error("Error loading products:", error);
         }
@@ -360,7 +368,6 @@
         // Example: "Unisex Tee w/ Man Falling - Black / S"
         const parts = itemName.split(" - ");
         if (parts.length < 2) {
-          console.warn("Could not parse item name:", itemName);
           return { productTitle: itemName, color: null, size: null };
         }
 
@@ -370,7 +377,6 @@
         const color = colorSizeSplit[0];
         const size = colorSizeSplit[1] || null;
 
-        console.log("Parsed item name:", { itemName, productTitle, color, size });
         return { productTitle, color, size };
       }
 
@@ -415,13 +421,8 @@
         const params = new URLSearchParams(window.location.search);
         const sessionId = params.get("session_id");
 
-        console.log("Success page loaded");
-        console.log("Session ID from URL:", sessionId);
-        console.log("Full URL:", window.location.href);
-
         if (!sessionId) {
           // No session ID provided — customer navigated here directly or session expired
-          console.warn("No session ID found in URL");
           showGenericThanks();
           return;
         }
@@ -432,14 +433,8 @@
         showLoadingIndicator();
         try {
           const backendUrl = window.__API_URL__ || "https://kickedoutofthesky-store.vercel.app";
-          console.log("Backend URL:", backendUrl);
-          console.log("window.__API_URL__:", window.__API_URL__);
-          console.log("Fetching from:", `${backendUrl}/api/order-details?session_id=${encodeURIComponent(sessionId)}`);
 
           const response = await fetch(`${backendUrl}/api/order-details?session_id=${encodeURIComponent(sessionId)}`);
-
-          console.log("Response status:", response.status);
-          console.log("Response ok:", response.ok);
 
           if (!response.ok) {
             hideLoadingIndicator();
@@ -459,28 +454,13 @@
           }
 
           const data = await response.json();
-          console.log("Order details API response:", data);
-          console.log("Response keys:", Object.keys(data));
-          console.log("Data type:", typeof data);
-          console.log("Data is null:", data === null);
-          console.log("Data is undefined:", data === undefined);
 
           // orderId logged but not displayed on page per user request
-          if (data.orderId) {
-            console.log("Found orderId:", data.orderId);
-          }
 
           // Validate response contains expected data
           // Display if we have any order data (items, summary, shipping, etc)
-          console.log("Checking for order data:", {
-            hasLineItems: !!data.lineItems,
-            hasOrderSummary: !!data.orderSummary,
-            hasShippingDetails: !!data.shippingDetails,
-            hasShippingAddress: !!data.shippingAddress,
-          });
 
           if (data.lineItems || data.orderSummary || data.shippingDetails || data.shippingAddress) {
-            console.log("Displaying order details");
             displayOrderDetails(data);
             hideLoadingIndicator();
             // Clear cart and saved country now that payment is confirmed
@@ -490,28 +470,18 @@
             localStorage.removeItem("selectedShippingCountry");
           } else {
             // Fallback if no meaningful data returned
-            console.warn("No order data found in response");
-            console.warn("Data:", JSON.stringify(data, null, 2));
             hideLoadingIndicator();
             showGenericThanks();
           }
         } catch (error) {
           hideLoadingIndicator();
           console.error("Error fetching order details:", error);
-          console.error("Error type:", error.constructor.name);
-          console.error("Error details:", {
-            message: error.message,
-            status: error.status,
-            stack: error.stack,
-          });
           // API failed, but order was placed — show reassuring message
           showApiErrorMessage();
         }
       });
 
       function displayOrderDetails(data) {
-        console.log("displayOrderDetails called with:", data);
-
         // Map API response fields (may vary based on backend implementation)
         const customer = data.customer || data.customerDetails || {};
         let shippingAddress = data.shippingAddress;
@@ -543,17 +513,8 @@
         const currency = data.currency || "USD";
         const currencySymbol = currency === "USD" ? "$" : currency;
 
-        console.log("Parsed data:", {
-          customer,
-          shippingAddress,
-          orderSummary,
-          lineItems: lineItems.length,
-          currency,
-        });
-
         // Display customer info
         if (customer.email || customer.name || customer.phone) {
-          console.log("Displaying customer info");
           if (customer.name) {
             document.getElementById("customer-name").textContent = customer.name;
           }
@@ -571,7 +532,6 @@
 
         // Display shipping address
         if (shippingAddress.line1 || shippingAddress.city || shippingAddress.country) {
-          console.log("Displaying shipping address");
           const addressDiv = document.getElementById("shipping-address");
           if (addressDiv) {
             const parts = [];
@@ -587,7 +547,6 @@
 
             if (shippingAddress.country) parts.push(getCountryName(shippingAddress.country));
 
-            console.log("Address parts:", parts);
             addressDiv.innerHTML = parts.join("<br>");
             const shippingSection = document.getElementById("shipping-section");
             if (shippingSection) {
@@ -598,7 +557,6 @@
 
         // Display shipping method if available
         if (shippingMethod) {
-          console.log("Displaying shipping method:", shippingMethod);
           const methodSection = document.getElementById("shipping-method-section");
           if (methodSection) {
             document.getElementById("shipping-method").textContent = shippingMethod;
@@ -612,7 +570,6 @@
 
         // Display order items with unit prices and line totals
         if (lineItems.length > 0) {
-          console.log("Displaying order items:", lineItems.length);
           const itemsDiv = document.getElementById("order-items");
           if (itemsDiv) {
             itemsDiv.innerHTML = lineItems
@@ -661,7 +618,6 @@
           orderSummary.tax !== undefined ||
           orderSummary.total !== undefined
         ) {
-          console.log("Displaying cost breakdown");
           const summarySubtotal = document.getElementById("summary-subtotal");
           if (summarySubtotal) {
             summarySubtotal.textContent = `${currencySymbol}${((orderSummary.subtotal || 0) / 100).toFixed(2)}`;
@@ -682,7 +638,6 @@
 
         // Show order section
         if (lineItems.length > 0 || orderSummary.total !== undefined) {
-          console.log("Showing order section");
           const orderSection = document.getElementById("order-section");
           if (orderSection) {
             orderSection.style.display = "block";
@@ -692,7 +647,6 @@
 
       function showGenericThanks() {
         // Show success page without order details
-        console.log("Showing generic thank you message");
       }
 
       function showOrderNotFoundError() {

@@ -20,6 +20,10 @@ Designed for a dark/urban aesthetic. Feel free to ask for edits (fonts, spacing,
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Kicked Out of the Sky — EPK</title>
+    <meta
+      name="description"
+      content="Electronic Press Kit for Kicked Out of the Sky. Bio, music, videos, press photos, and booking info for promoters, radio programmers, and press."
+    />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="preconnect" href="https://open.spotify.com" />
@@ -330,9 +334,24 @@ Designed for a dark/urban aesthetic. Feel free to ask for edits (fonts, spacing,
           padding: 6px;
         }
       }
+      .skip-nav {
+        position: absolute;
+        top: -100%;
+        left: 0;
+        background: var(--gold);
+        color: #000;
+        padding: 8px 16px;
+        z-index: 10000;
+        font-weight: 600;
+        text-decoration: none;
+      }
+      .skip-nav:focus {
+        top: 0;
+      }
     </style>
   </head>
   <body>
+    <a href="#about" class="skip-nav">Skip to content</a>
     <div class="topbar">
       <div class="nav-inner">
         <div style="display: flex; gap: 12px; align-items: center">
@@ -368,6 +387,7 @@ Designed for a dark/urban aesthetic. Feel free to ask for edits (fonts, spacing,
             class="btn"
             href="https://open.spotify.com/track/4yt5M4iMAEPSkBVjdJT6NW?si=8ff0da60a5f24bb9"
             target="_blank"
+            rel="noopener noreferrer"
           >
             Listen on Spotify
           </a>
@@ -381,6 +401,7 @@ Designed for a dark/urban aesthetic. Feel free to ask for edits (fonts, spacing,
             "
             href="https://www.youtube.com/watch?v=Rb7_To1AFD4"
             target="_blank"
+            rel="noopener noreferrer"
           >
             Watch on YouTube
           </a>
@@ -510,14 +531,34 @@ Designed for a dark/urban aesthetic. Feel free to ask for edits (fonts, spacing,
                   class="btn"
                   href="https://open.spotify.com/track/4yt5M4iMAEPSkBVjdJT6NW?si=8ff0da60a5f24bb9"
                   target="_blank"
+                  rel="noopener noreferrer"
                 >
                   Listen on Spotify
                 </a>
-                <a class="btn" href="https://www.youtube.com/watch?v=Rb7_To1AFD4" target="_blank">Watch on YouTube</a>
-                <a class="btn btn-outline" href="http://itunes.apple.com/album/id/1827225059" target="_blank">
+                <a
+                  class="btn"
+                  href="https://www.youtube.com/watch?v=Rb7_To1AFD4"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Watch on YouTube
+                </a>
+                <a
+                  class="btn btn-outline"
+                  href="https://itunes.apple.com/album/id/1827225059"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
                   Open in Apple Music
                 </a>
-                <a class="btn btn-outline" href="Kicked-Out-of-the-Sky-EPK.pdf" target="_blank">Download PDF EPK</a>
+                <a
+                  class="btn btn-outline"
+                  href="Kicked-Out-of-the-Sky-EPK.pdf"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Download PDF EPK
+                </a>
               </div>
             </section>
             <section id="contact">
@@ -530,19 +571,25 @@ Designed for a dark/urban aesthetic. Feel free to ask for edits (fonts, spacing,
                   </p>
                   <p class="contact-info">
                     <strong>WhatsApp:</strong>
-                    <a href="https://wa.me/18183889228" target="_blank">+1 818 388 9228</a>
+                    <a href="https://wa.me/18183889228" target="_blank" rel="noopener noreferrer">+1 818 388 9228</a>
                   </p>
                   <p class="contact-info">
                     <strong>Website:</strong>
-                    <a href="https://www.kickedoutofthesky.com" target="_blank">kickedoutofthesky.com</a>
+                    <a href="https://www.kickedoutofthesky.com" target="_blank" rel="noopener noreferrer">
+                      kickedoutofthesky.com
+                    </a>
                   </p>
                   <p class="contact-info">
                     <strong>Instagram:</strong>
-                    <a href="https://www.instagram.com/kicked_out_of_the_sky" target="_blank">@kicked_out_of_the_sky</a>
+                    <a href="https://www.instagram.com/kicked_out_of_the_sky" target="_blank" rel="noopener noreferrer">
+                      @kicked_out_of_the_sky
+                    </a>
                   </p>
                   <p class="contact-info">
                     <strong>TikTok:</strong>
-                    <a href="https://www.tiktok.com/@kickedoutofthesky" target="_blank">@kickedoutofthesky</a>
+                    <a href="https://www.tiktok.com/@kickedoutofthesky" target="_blank" rel="noopener noreferrer">
+                      @kickedoutofthesky
+                    </a>
                   </p>
                   <p style="margin-top: 8px; color: var(--muted)">
                     <em>Available for European tour support slots and festival bookings in 2026.</em>
@@ -561,7 +608,9 @@ Designed for a dark/urban aesthetic. Feel free to ask for edits (fonts, spacing,
           ©
           <strong>Kicked Out of the Sky</strong>
           — All rights reserved. Designed for promoters, radio programmers, and press.
-          <a href="https://www.kickedoutofthesky.com" target="_blank">kickedoutofthesky.com</a>
+          <a href="https://www.kickedoutofthesky.com" target="_blank" rel="noopener noreferrer">
+            kickedoutofthesky.com
+          </a>
         </div>
       </footer>
     </main>

@@ -6,20 +6,16 @@ class ShoppingCart {
   constructor() {
     this.storageKey = "kots_cart";
     this.items = this.loadCart();
-    console.log("ShoppingCart initialized with items:", this.items);
     this.updateCartBadge();
   }
 
   loadCart() {
     const saved = localStorage.getItem(this.storageKey);
-    console.log("loadCart - localStorage content:", saved);
     return saved ? JSON.parse(saved) : [];
   }
 
   saveCart(skipBadgeUpdate = false) {
-    console.log("saveCart - saving items:", this.items);
     localStorage.setItem(this.storageKey, JSON.stringify(this.items));
-    console.log("saveCart - localStorage now contains:", localStorage.getItem(this.storageKey));
     if (!skipBadgeUpdate) {
       this.updateCartBadge();
     }
