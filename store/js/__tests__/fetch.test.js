@@ -202,29 +202,64 @@ describe("Product Fetch & Transform", () => {
   describe("Product Sorting", () => {
     test("should sort products by category", () => {
       const getCategory = title => {
-        if (title.includes("Long Sleeve")) return 3;
-        if (title.includes("Hoodie")) return 4;
-        if (title.includes("Hat") || title.includes("Cap")) return 2;
-        if (title.includes("Sticker")) return 5;
-        if (title.includes("Tee")) return 1;
-        return 6;
+        if (title.includes("Long Sleeve")) return 30;
+        if (title.includes("Hoodie")) return 40;
+        if (title.includes("Hat") || title.includes("Cap")) return 20;
+        if (title.includes("Sticker")) return 50;
+        if (title.includes("Tee")) {
+          if (title.includes("Color")) return 11;
+          if (title.includes("Cover")) return 12;
+          if (title.includes("Vintage")) return 14;
+          return 13;
+        }
+        return 60;
       };
 
       const products = [
         { title: "Sticker Pack" },
         { title: "Unisex Long Sleeve Tee" },
-        { title: "Unisex Tee" },
+        { title: "Unisex Tee w/ Text" },
         { title: "Unisex Hoodie" },
         { title: "Hat" },
       ];
 
       products.sort((a, b) => getCategory(a.title) - getCategory(b.title));
 
-      expect(products[0].title).toBe("Unisex Tee");
+      expect(products[0].title).toBe("Unisex Tee w/ Text");
       expect(products[1].title).toBe("Hat");
       expect(products[2].title).toBe("Unisex Long Sleeve Tee");
       expect(products[3].title).toBe("Unisex Hoodie");
       expect(products[4].title).toBe("Sticker Pack");
+    });
+
+    test("should sort tees: Color first, Cover second, other third, Vintage last", () => {
+      const getCategory = title => {
+        if (title.includes("Long Sleeve")) return 30;
+        if (title.includes("Hoodie")) return 40;
+        if (title.includes("Hat") || title.includes("Cap")) return 20;
+        if (title.includes("Sticker")) return 50;
+        if (title.includes("Tee")) {
+          if (title.includes("Color")) return 11;
+          if (title.includes("Cover")) return 12;
+          if (title.includes("Vintage")) return 14;
+          return 13;
+        }
+        return 60;
+      };
+
+      const tees = [
+        { title: "Unisex Tee w/ Wasting My Life Away Vintage" },
+        { title: "Unisex Tee w/ Star Logo" },
+        { title: "Unisex Tee w/ Kicked Out Of The Sky Cover" },
+        { title: "Unisex Tee w/ Color Block Graphic" },
+      ];
+
+      tees.sort((a, b) => getCategory(a.title) - getCategory(b.title));
+
+      expect(tees[0].title).toBe("Unisex Tee w/ Color Block Graphic");
+      expect(tees[1].title).toBe("Unisex Tee w/ Kicked Out Of The Sky Cover");
+      expect(tees[2].title).toBe("Unisex Tee w/ Star Logo");
+      expect(tees[3].title).toBe("Unisex Tee w/ Wasting My Life Away Vintage");
     });
   });
 

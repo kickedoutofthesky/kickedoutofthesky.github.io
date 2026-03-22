@@ -260,15 +260,20 @@ async function fetchProducts() {
 
     console.log(`\n✅ Found ${products.length} products with variants`);
 
-    // Sort products: Tees, Hats, Long Sleeve, Hoodie, Stickers
+    // Sort products: Tees (Color, Cover, other, Vintage), Hats, Long Sleeve, Hoodie, Stickers
     products.sort((a, b) => {
       const getCategory = title => {
-        if (title.includes("Long Sleeve")) return 3;
-        if (title.includes("Hoodie")) return 4;
-        if (title.includes("Hat") || title.includes("Cap")) return 2;
-        if (title.includes("Sticker")) return 5;
-        if (title.includes("Tee")) return 1;
-        return 6;
+        if (title.includes("Long Sleeve")) return 30;
+        if (title.includes("Hoodie")) return 40;
+        if (title.includes("Hat") || title.includes("Cap")) return 20;
+        if (title.includes("Sticker")) return 50;
+        if (title.includes("Tee")) {
+          if (title.includes("Color")) return 11;
+          if (title.includes("Cover")) return 12;
+          if (title.includes("Vintage")) return 14;
+          return 13;
+        }
+        return 60;
       };
       return getCategory(a.title) - getCategory(b.title);
     });
