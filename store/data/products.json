@@ -486,86 +486,92 @@
   {
     "product_key": "product_421115406",
     "title": "Snapback Hat w/ Embroidery Star Logo",
-    "image": "https://files.cdn.printful.com/files/b3e/b3e4ba97a7d53611bc8a2a16f8d39242_preview.png",
+    "image": "assets/images/Snapback Hat w Embroidery Star Logo - Front - Black.jpg",
     "display_price": "$25.00",
     "variants": {
       "Black": {
-        "image": "https://files.cdn.printful.com/files/b3e/b3e4ba97a7d53611bc8a2a16f8d39242_preview.png",
+        "image": "assets/images/Snapback Hat w Embroidery Star Logo - Front - Black.jpg",
         "sizes": {
           "One Size": {
             "variant_id": 5209549705,
             "price_cents": 2500
           }
-        }
+        },
+        "mockups": ["assets/images/Snapback Hat w Embroidery Star Logo - Front - Black.jpg"]
       },
       "Black/ Silver": {
-        "image": "https://files.cdn.printful.com/files/c6a/c6ad47ae28eec8f73a0c5bb31d851287_preview.png",
+        "image": "assets/images/Snapback Hat w Embroidery Star Logo - Front - Black Silver.jpg",
         "sizes": {
           "One Size": {
             "variant_id": 5209549706,
             "price_cents": 2500
           }
-        }
+        },
+        "mockups": ["assets/images/Snapback Hat w Embroidery Star Logo - Front - Black Silver.jpg"]
       }
     }
   },
   {
     "product_key": "product_421115401",
     "title": "Snapback Hat w/ Embroidery Text",
-    "image": "https://files.cdn.printful.com/files/225/225de8de71e6be4a2a09753307cd1933_preview.png",
+    "image": "assets/images/Snapback Hat w Embroidery Text - Front - Black.jpg",
     "display_price": "$25.00",
     "variants": {
       "Black": {
-        "image": "https://files.cdn.printful.com/files/225/225de8de71e6be4a2a09753307cd1933_preview.png",
+        "image": "assets/images/Snapback Hat w Embroidery Text - Front - Black.jpg",
         "sizes": {
           "One Size": {
             "variant_id": 5209549648,
             "price_cents": 2500
           }
-        }
+        },
+        "mockups": ["assets/images/Snapback Hat w Embroidery Text - Front - Black.jpg"]
       },
       "Black/ Silver": {
-        "image": "https://files.cdn.printful.com/files/4a8/4a85fd531cfb49ae8fd1c1de7f9a50e5_preview.png",
+        "image": "assets/images/Snapback Hat w Embroidery Text - Front - Black Silver.jpg",
         "sizes": {
           "One Size": {
             "variant_id": 5209549649,
             "price_cents": 2500
           }
-        }
+        },
+        "mockups": ["assets/images/Snapback Hat w Embroidery Text - Front - Black Silver.jpg"]
       }
     }
   },
   {
     "product_key": "product_421115397",
     "title": "Trucker Cap w/ Star Logo",
-    "image": "https://files.cdn.printful.com/files/afd/afdab1b11718123b0ca165ff58b1946e_preview.png",
+    "image": "assets/images/Trucker Cap w Star Logo - Front - Black & White.jpg",
     "display_price": "$22.00",
     "variants": {
       "Black & White": {
-        "image": "https://files.cdn.printful.com/files/afd/afdab1b11718123b0ca165ff58b1946e_preview.png",
+        "image": "assets/images/Trucker Cap w Star Logo - Front - Black & White.jpg",
         "sizes": {
           "One Size": {
             "variant_id": 5209549634,
             "price_cents": 2200
           }
-        }
+        },
+        "mockups": ["assets/images/Trucker Cap w Star Logo - Front - Black & White.jpg"]
       }
     }
   },
   {
     "product_key": "product_421115396",
     "title": "Trucker Cap w/ Text",
-    "image": "https://files.cdn.printful.com/files/ba1/ba14d7cd4397c15b58974a0ad3c43558_preview.png",
+    "image": "assets/images/Trucker Cap w Text - Front - Black & White.jpg",
     "display_price": "$22.00",
     "variants": {
       "Black & White": {
-        "image": "https://files.cdn.printful.com/files/ba1/ba14d7cd4397c15b58974a0ad3c43558_preview.png",
+        "image": "assets/images/Trucker Cap w Text - Front - Black & White.jpg",
         "sizes": {
           "One Size": {
             "variant_id": 5209549633,
             "price_cents": 2200
           }
-        }
+        },
+        "mockups": ["assets/images/Trucker Cap w Text - Front - Black & White.jpg"]
       }
     }
   },
@@ -884,11 +890,11 @@
   {
     "product_key": "product_421115395",
     "title": "Die-cut Sticker w/ Text",
-    "image": "https://files.cdn.printful.com/files/bce/bcef073ae4dd804e9000dbcc7149db28_preview.png",
+    "image": "assets/images/Die-cut Sticker w Text - Front - Satin.jpg",
     "display_price": "$4.50",
     "variants": {
       "Satin": {
-        "image": "https://files.cdn.printful.com/files/bce/bcef073ae4dd804e9000dbcc7149db28_preview.png",
+        "image": "assets/images/Die-cut Sticker w Text - Front - Satin.jpg",
         "sizes": {
           "2x2": {
             "variant_id": 5209549629,
@@ -898,18 +904,19 @@
             "variant_id": 5209549630,
             "price_cents": 550
           }
-        }
+        },
+        "mockups": ["assets/images/Die-cut Sticker w Text - Front - Satin.jpg"]
       }
     }
   },
   {
     "product_key": "product_421115394",
     "title": "Die-cut Sticker w/ Star + Text",
-    "image": "https://files.cdn.printful.com/files/744/744be123c5dbb2666e037a47e79dc2b7_preview.png",
+    "image": "assets/images/Die-cut Sticker w Star + Text - Front - Satin.jpg",
     "display_price": "$4.50",
     "variants": {
       "Satin": {
-        "image": "https://files.cdn.printful.com/files/744/744be123c5dbb2666e037a47e79dc2b7_preview.png",
+        "image": "assets/images/Die-cut Sticker w Star + Text - Front - Satin.jpg",
         "sizes": {
           "2x2": {
             "variant_id": 5209549609,
@@ -919,7 +926,8 @@
             "variant_id": 5209549613,
             "price_cents": 550
           }
-        }
+        },
+        "mockups": ["assets/images/Die-cut Sticker w Star + Text - Front - Satin.jpg"]
       }
     }
   }

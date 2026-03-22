@@ -216,7 +216,7 @@ async function fetchProducts() {
         // Product title in filenames has "/" removed
         const mockupTitle = product.name.replace(/\//g, "");
         for (const [color, colorData] of Object.entries(variantsByColor)) {
-          const key = `${mockupTitle}|${color}`;
+          const key = `${mockupTitle}|${color.replace(/\//g, "")}`;
           const localMockups = mockupMap[key];
           if (localMockups && localMockups.length > 0) {
             // Use local front mockup as the main image, keep Printful as fallback
