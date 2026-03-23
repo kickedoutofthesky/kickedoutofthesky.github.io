@@ -4,6 +4,7 @@ function getProductCategory(title) {
   const t = title.toLowerCase();
   if (t.includes("sticker")) return "stickers";
   if (t.includes("hoodie")) return "hoodies";
+  if (t.includes("sweatshirt") || t.includes("crewneck")) return "sweatshirts";
   if (t.includes("long sleeve")) return "long-sleeve";
   if (t.includes("snapback") || t.includes("trucker") || t.includes("cap") || t.includes("hat")) return "hats";
   if (t.includes("tee")) return "tees";
