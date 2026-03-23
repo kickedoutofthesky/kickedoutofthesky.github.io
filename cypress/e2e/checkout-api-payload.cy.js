@@ -438,7 +438,7 @@ describe("Checkout API Payload Tests", () => {
       });
 
       // Add second product (different color/size)
-      cy.get("a[href*='index.html']").click();
+      cy.get("a[href*='index.html']").first().click();
       cy.get("[data-testid='product-card']").eq(1).click();
       selectFirstRealSize();
       cy.get("#add-to-cart-btn").click();

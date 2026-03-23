@@ -267,11 +267,13 @@ describe("Shopping Cart", () => {
                 cy.wrap($input).clear().type("3");
               } else {
                 // If input is readonly, use increment buttons if available
-                cy.get("[data-testid='quantity-increase'], button[aria-label*='increase']").then($btn => {
-                  if ($btn.length > 0) {
-                    cy.wrap($btn).click().click(); // Click twice to increase from 1 to 3
-                  }
-                });
+                cy.get("[data-testid='quantity-increase'], button[aria-label*='increase']")
+                  .first()
+                  .then($btn => {
+                    if ($btn.length > 0) {
+                      cy.wrap($btn).click().click(); // Click twice to increase from 1 to 3
+                    }
+                  });
               }
             });
           });
