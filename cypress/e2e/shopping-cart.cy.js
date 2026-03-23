@@ -38,18 +38,18 @@ describe("Shopping Cart", () => {
   });
 
   it("should navigate to cart page", () => {
-    cy.get("a[href*='cart.html']").click();
+    cy.get("a[href*='cart.html']").first().click();
     cy.url().should("include", "cart.html");
     cy.get("[data-testid='cart-page']").should("exist");
   });
 
   it("should display cart items", () => {
-    cy.get("a[href*='cart.html']").click();
+    cy.get("a[href*='cart.html']").first().click();
     cy.get("[data-testid='cart-item']").should("have.length.greaterThan", 0);
   });
 
   it("should display product info in cart", () => {
-    cy.get("a[href*='cart.html']").click();
+    cy.get("a[href*='cart.html']").first().click();
     cy.get("[data-testid='cart-item']")
       .first()
       .within(() => {
@@ -59,18 +59,18 @@ describe("Shopping Cart", () => {
   });
 
   it("should show cart subtotal", () => {
-    cy.get("a[href*='cart.html']").click();
+    cy.get("a[href*='cart.html']").first().click();
     cy.get("[data-testid='cart-subtotal']").should("exist");
     cy.get("[data-testid='cart-subtotal']").invoke("text").should("include", "$");
   });
 
   it("should have checkout button", () => {
-    cy.get("a[href*='cart.html']").click();
+    cy.get("a[href*='cart.html']").first().click();
     cy.get("button").contains("Proceed to Checkout").should("exist");
   });
 
   it("should remove item from cart", () => {
-    cy.get("a[href*='cart.html']").click();
+    cy.get("a[href*='cart.html']").first().click();
 
     // Verify we have items
     cy.get("[data-testid='cart-item']").should("have.length.greaterThan", 0);

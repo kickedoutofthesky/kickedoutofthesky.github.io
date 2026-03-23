@@ -30,7 +30,7 @@ describe("Checkout Flow", () => {
     cy.get("#add-to-cart-btn").should("not.be.disabled").click();
 
     // Navigate to cart
-    cy.get("a[href*='cart.html']").click();
+    cy.get("a[href*='cart.html']").first().click();
   });
 
   it("should have items in cart before checkout", () => {

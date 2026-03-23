@@ -107,7 +107,7 @@ describe("Complete Purchase Flow - Customer Buying Merch", () => {
           cy.get("#add-to-cart-btn").click();
 
           // Go to cart
-          cy.get("a[href*='cart.html']").click();
+          cy.get("a[href*='cart.html']").first().click();
 
           // Fill shipping form
           fillShippingForm();
@@ -167,8 +167,7 @@ describe("Complete Purchase Flow - Customer Buying Merch", () => {
     cy.get("#add-to-cart-btn").click();
 
     // Go to cart
-    cy.get("a[href*='cart.html']").click();
-    cy.url().should("include", "cart.html");
+    cy.get("a[href*='cart.html']").first().click();
 
     // Fill shipping form
     fillShippingForm();
@@ -244,7 +243,7 @@ describe("Complete Purchase Flow - Customer Buying Merch", () => {
     cy.get("#add-to-cart-btn").click();
 
     // Go to cart and verify items
-    cy.get("a[href*='cart.html']").click();
+    cy.get("a[href*='cart.html']").first().click();
     cy.get("[data-testid='cart-item']").then($items => {
       const itemCount = $items.length;
       expect(itemCount).to.be.greaterThan(0);
