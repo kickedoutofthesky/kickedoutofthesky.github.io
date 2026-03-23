@@ -18,7 +18,6 @@
 
 // Shared test helpers for all Cypress tests
 
-// eslint-disable-next-line no-unused-vars
 function selectFirstRealSize() {
   // Wait for size options to be populated (not just the placeholder)
   cy.get("[data-testid='size-select'] option").should("have.length.greaterThan", 1);
@@ -37,7 +36,6 @@ function selectFirstRealSize() {
   });
 }
 
-// eslint-disable-next-line no-unused-vars
 function selectFirstRealColor() {
   // Wait for color select to be visible and have options
   cy.get("[data-testid='color-select']").should("exist");
@@ -58,10 +56,14 @@ function selectFirstRealColor() {
   });
 }
 
-// eslint-disable-next-line no-unused-vars
 function selectShippingCountry(countryCode = "US") {
   cy.get("#shipping-country").should("exist").select(countryCode);
 }
+
+// Make helpers available globally
+window.selectFirstRealSize = selectFirstRealSize;
+window.selectFirstRealColor = selectFirstRealColor;
+window.selectShippingCountry = selectShippingCountry;
 
 // Ignore cross-origin script errors from CDN resources (Bootstrap, Font Awesome)
 // These are expected and don't affect test functionality
