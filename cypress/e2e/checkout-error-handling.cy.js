@@ -45,7 +45,7 @@ describe("Checkout Flow — Modified Error Handling", () => {
       cy.get("#add-to-cart-btn").click();
 
       // Go to cart
-      cy.get("a[href*='cart.html']").click();
+      cy.get("a[href*='cart.html']").first().click();
       cy.url().should("include", "cart.html");
 
       // Select shipping country and click checkout
@@ -78,7 +78,7 @@ describe("Checkout Flow — Modified Error Handling", () => {
       selectFirstRealSize();
       cy.get("#add-to-cart-btn").click();
 
-      cy.get("a[href*='cart.html']").click();
+      cy.get("a[href*='cart.html']").first().click();
       selectShippingCountry();
       cy.get("button").contains("Proceed to Checkout").click();
 
@@ -107,7 +107,7 @@ describe("Checkout Flow — Modified Error Handling", () => {
       selectFirstRealSize();
       cy.get("#add-to-cart-btn").click();
 
-      cy.get("a[href*='cart.html']").click();
+      cy.get("a[href*='cart.html']").first().click();
       selectShippingCountry();
       cy.get("button").contains("Proceed to Checkout").click();
 
@@ -140,7 +140,7 @@ describe("Checkout Flow — Modified Error Handling", () => {
       selectFirstRealSize();
       cy.get("#add-to-cart-btn").click();
 
-      cy.get("a[href*='cart.html']").click();
+      cy.get("a[href*='cart.html']").first().click();
       selectShippingCountry();
       cy.get("button").contains("Proceed to Checkout").click();
 
@@ -171,7 +171,7 @@ describe("Checkout Flow — Modified Error Handling", () => {
       selectFirstRealSize();
       cy.get("#add-to-cart-btn").click();
 
-      cy.get("a[href*='cart.html']").click();
+      cy.get("a[href*='cart.html']").first().click();
       selectShippingCountry();
       cy.get("button").contains("Proceed to Checkout").click();
 
@@ -201,7 +201,7 @@ describe("Checkout Flow — Modified Error Handling", () => {
       selectFirstRealSize();
       cy.get("#add-to-cart-btn").click();
 
-      cy.get("a[href*='cart.html']").click();
+      cy.get("a[href*='cart.html']").first().click();
 
       // Select country then rapid double-click on checkout button
       selectShippingCountry();
@@ -238,7 +238,7 @@ describe("Checkout Flow — Modified Error Handling", () => {
       selectFirstRealSize();
       cy.get("#add-to-cart-btn").click();
 
-      cy.get("a[href*='cart.html']").click();
+      cy.get("a[href*='cart.html']").first().click();
 
       // Select country and click checkout button
       selectShippingCountry();
@@ -271,7 +271,7 @@ describe("Checkout Flow — Modified Error Handling", () => {
       selectFirstRealSize();
       cy.get("#add-to-cart-btn").click();
 
-      cy.get("a[href*='cart.html']").click();
+      cy.get("a[href*='cart.html']").first().click();
 
       // Select country and click checkout
       selectShippingCountry();
@@ -315,7 +315,7 @@ describe("Checkout Flow — Modified Error Handling", () => {
       selectFirstRealSize();
       cy.get("#add-to-cart-btn").click();
 
-      cy.get("a[href*='cart.html']").click();
+      cy.get("a[href*='cart.html']").first().click();
 
       // Select country, click checkout, and immediately check for loading state
       selectShippingCountry();
@@ -353,7 +353,7 @@ describe("Checkout Flow — Modified Error Handling", () => {
       selectFirstRealSize();
       cy.get("#add-to-cart-btn").click();
 
-      cy.get("a[href*='cart.html']").click();
+      cy.get("a[href*='cart.html']").first().click();
 
       // Stub window.location.href to throw an error when assigned
       cy.window().then(win => {
@@ -397,7 +397,7 @@ describe("Checkout Flow — Modified Error Handling", () => {
       selectFirstRealSize();
       cy.get("#add-to-cart-btn").click();
 
-      cy.get("a[href*='cart.html']").click();
+      cy.get("a[href*='cart.html']").first().click();
 
       // Make redirect throw an error
       cy.window().then(win => {
@@ -525,7 +525,7 @@ describe("Checkout Flow — Modified Error Handling", () => {
       selectFirstRealSize();
       cy.get("#add-to-cart-btn").click();
 
-      cy.get("a[href*='cart.html']").click();
+      cy.get("a[href*='cart.html']").first().click();
 
       selectShippingCountry();
       cy.get("button").contains("Proceed to Checkout").click();
@@ -579,7 +579,7 @@ describe("Checkout Flow — Modified Error Handling", () => {
       selectFirstRealSize();
       cy.get("#add-to-cart-btn").click();
 
-      cy.get("a[href*='cart.html']").click();
+      cy.get("a[href*='cart.html']").first().click();
 
       // First attempt - should fail
       selectShippingCountry();

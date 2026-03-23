@@ -107,7 +107,7 @@ describe("Responsive Design Tests", () => {
           cy.get("[data-testid='product-card']").first().click();
           selectFirstRealSize();
           cy.get("#add-to-cart-btn").click();
-          cy.get("a[href*='cart.html']").click();
+          cy.get("a[href*='cart.html']").first().click();
         });
 
         it("should display cart items responsively", () => {
@@ -244,7 +244,7 @@ describe("Responsive Design Tests", () => {
           cy.get("[data-testid='product-card']").first().click();
           selectFirstRealSize();
           cy.get("#add-to-cart-btn").click();
-          cy.get("a[href*='cart.html']").click();
+          cy.get("a[href*='cart.html']").first().click();
 
           cy.get("[data-testid='quantity-input']").then($input => {
             if ($input.length > 0) {
@@ -268,13 +268,13 @@ describe("Responsive Design Tests", () => {
 
       // Switch to tablet
       cy.viewport(768, 1024);
-      cy.get("a[href*='cart.html']").click();
+      cy.get("a[href*='cart.html']").first().click();
       cy.get("[data-testid='cart-item']").should("have.length.greaterThan", 0);
 
       // Switch to desktop
       cy.viewport(1280, 800);
       cy.get("a[href*='store'], a[href*='index.html']").first().click();
-      cy.get("a[href*='cart.html']").click();
+      cy.get("a[href*='cart.html']").first().click();
       cy.get("[data-testid='cart-item']").should("have.length.greaterThan", 0);
     });
   });

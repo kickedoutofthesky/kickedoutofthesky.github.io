@@ -60,7 +60,7 @@ describe("Add All Products and Variants to Cart", () => {
     cy.get("[data-testid='cart-count']").should("contain", "2");
 
     // Navigate to cart and verify items
-    cy.get("a[href*='cart.html']").click();
+    cy.get("a[href*='cart.html']").first().click();
     cy.get("[data-testid='cart-item']").should("have.length", 2);
   });
 
@@ -107,7 +107,7 @@ describe("Add All Products and Variants to Cart", () => {
         cy.get("#add-to-cart-btn").should("not.be.disabled").click();
 
         // Go to cart and verify subtotal
-        cy.get("a[href*='cart.html']").click();
+        cy.get("a[href*='cart.html']").first().click();
         cy.get("[data-testid='cart-subtotal']").should("exist");
         cy.get("[data-testid='cart-subtotal']").invoke("text").should("include", "$");
       });

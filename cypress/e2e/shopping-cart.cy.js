@@ -91,7 +91,7 @@ describe("Shopping Cart", () => {
   });
 
   it("should update item quantity", () => {
-    cy.get("a[href*='cart.html']").click();
+    cy.get("a[href*='cart.html']").first().click();
     cy.get("[data-testid='quantity-input']").then($input => {
       // Quantity input might be readonly, so use other cart update methods
       if ($input.prop("readonly")) {
@@ -171,7 +171,7 @@ describe("Shopping Cart", () => {
     cy.get("#add-to-cart-btn").click();
 
     // Go to cart
-    cy.get("a[href*='cart.html']").click();
+    cy.get("a[href*='cart.html']").first().click();
 
     // Should only have 1 line item with quantity 2, not 2 separate items
     cy.get("[data-testid='cart-item']").then($items => {
@@ -189,7 +189,7 @@ describe("Shopping Cart", () => {
 
   it("should decrease total and cart count when removing an item from cart", () => {
     // Add product and go to cart
-    cy.get("a[href*='cart.html']").click();
+    cy.get("a[href*='cart.html']").first().click();
 
     // Get initial subtotal
     cy.get("[data-testid='cart-subtotal']")
@@ -223,7 +223,7 @@ describe("Shopping Cart", () => {
 
   it("should retain cart items after navigating to another page and back", () => {
     // Get initial cart state
-    cy.get("a[href*='cart.html']").click();
+    cy.get("a[href*='cart.html']").first().click();
     cy.get("[data-testid='cart-item']").then($initialItems => {
       const initialItemCount = $initialItems.length;
       const initialItemNames = [];
@@ -241,7 +241,7 @@ describe("Shopping Cart", () => {
       cy.url().should("include", "index.html");
 
       // Navigate back to cart
-      cy.get("a[href*='cart.html']").click();
+      cy.get("a[href*='cart.html']").first().click();
 
       // Verify cart still has same items
       cy.get("[data-testid='cart-item']").should("have.length", initialItemCount);
@@ -250,7 +250,7 @@ describe("Shopping Cart", () => {
 
   it("should update both line total and cart total when changing item quantity from 1 to 3", () => {
     // Go to cart with 1 item
-    cy.get("a[href*='cart.html']").click();
+    cy.get("a[href*='cart.html']").first().click();
 
     // Get initial item price and total
     cy.get("[data-testid='cart-item']")
@@ -345,7 +345,7 @@ describe("Shopping Cart", () => {
                 cy.get("#add-to-cart-btn").click();
 
                 // Go to cart and verify total
-                cy.get("a[href*='cart.html']").click();
+                cy.get("a[href*='cart.html']").first().click();
                 const calculatedTotal = products[0].price * 1 + products[1].price * 2 + products[2].price * 3;
 
                 cy.get("[data-testid='cart-subtotal'], [data-testid='cart-total']").then($totalEl => {
@@ -388,7 +388,7 @@ describe("Shopping Cart", () => {
 
   it("should handle gracefully when API returns one fewer variant and item is in cart", () => {
     // First, add a product to cart
-    cy.get("a[href*='cart.html']").click();
+    cy.get("a[href*='cart.html']").first().click();
 
     // Mock the products API to return fewer variants
     cy.intercept("GET", "**/store/data/products.json", res => {

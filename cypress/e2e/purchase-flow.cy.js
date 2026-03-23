@@ -52,7 +52,7 @@ describe("Complete Purchase Flow - Customer Buying Merch", () => {
     cy.get("[data-testid='cart-count'], .cart-icon-count, .badge").should("be.visible");
 
     // Step 5: Navigate to cart
-    cy.get("a[href*='cart.html']").click();
+    cy.get("a[href*='cart.html']").first().click();
     cy.url().should("include", "cart.html");
     cy.get("[data-testid='cart-item']").should("have.length.greaterThan", 0);
 

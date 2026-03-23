@@ -87,7 +87,7 @@ describe("Responsive Design - Mobile and Tablet Viewports", () => {
       cy.get("#add-to-cart-btn").click();
 
       // Navigate to cart
-      cy.get("a[href*='cart.html']").click();
+      cy.get("a[href*='cart.html']").first().click();
       cy.url().should("include", "cart.html");
 
       // Cart should be visible
@@ -249,7 +249,7 @@ describe("Responsive Design - Mobile and Tablet Viewports", () => {
       cy.get("#add-to-cart-btn").click();
 
       // Navigate to cart
-      cy.get("a[href*='cart.html']").click();
+      cy.get("a[href*='cart.html']").first().click();
 
       // Cart page should be fully visible
       cy.get("[data-testid='cart-page']").should("be.visible");
@@ -363,7 +363,7 @@ describe("Responsive Design - Mobile and Tablet Viewports", () => {
       cy.get("#add-to-cart-btn").click();
 
       // Go to cart
-      cy.get("a[href*='cart.html']").click();
+      cy.get("a[href*='cart.html']").first().click();
       cy.url().should("include", "cart.html");
 
       // Cart should display as a comprehensive table or list

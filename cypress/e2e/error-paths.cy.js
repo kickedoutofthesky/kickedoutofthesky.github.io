@@ -76,7 +76,7 @@ describe("Error Paths and Edge Cases", () => {
       cy.get("[data-testid='product-detail']").should("be.visible");
       selectFirstRealSize();
       cy.get("#add-to-cart-btn").should("not.be.disabled").click();
-      cy.get("a[href*='cart.html']").click();
+      cy.get("a[href*='cart.html']").first().click();
     });
 
     it("should handle zero quantity gracefully", () => {
@@ -161,7 +161,7 @@ describe("Error Paths and Edge Cases", () => {
       cy.get("[data-testid='product-card']").first().click();
       selectFirstRealSize();
       cy.get("#add-to-cart-btn").click();
-      cy.get("a[href*='cart.html']").click();
+      cy.get("a[href*='cart.html']").first().click();
 
       // Verify item in cart
       cy.get("[data-testid='cart-item']").should("have.length.greaterThan", 0);
@@ -171,7 +171,7 @@ describe("Error Paths and Edge Cases", () => {
       cy.url().should("include", "store");
 
       // Navigate back to cart
-      cy.get("a[href*='cart.html']").click();
+      cy.get("a[href*='cart.html']").first().click();
 
       // Item should still be there
       cy.get("[data-testid='cart-item']").should("have.length.greaterThan", 0);
@@ -186,7 +186,7 @@ describe("Error Paths and Edge Cases", () => {
       // Rapidly navigate
       cy.get("a[href*='store'], a[href*='index.html']").first().click();
       cy.get("[data-testid='product-card']").first().click();
-      cy.get("a[href*='cart.html']").click();
+      cy.get("a[href*='cart.html']").first().click();
 
       // Cart should still have item
       cy.get("[data-testid='cart-item']").should("have.length.greaterThan", 0);
@@ -204,7 +204,7 @@ describe("Error Paths and Edge Cases", () => {
       cy.get("[data-testid='product-card']").first().click();
       selectFirstRealSize();
       cy.get("#add-to-cart-btn").click();
-      cy.get("a[href*='cart.html']").click();
+      cy.get("a[href*='cart.html']").first().click();
     });
 
     it("should handle special characters in quantity input", () => {
