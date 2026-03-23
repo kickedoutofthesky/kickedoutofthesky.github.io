@@ -13,6 +13,9 @@
 // https://on.cypress.io/configuration
 // ***********************************************************
 
+// Import shared test helpers
+import "./helpers.js";
+
 // Ignore cross-origin script errors from CDN resources (Bootstrap, Font Awesome)
 // These are expected and don't affect test functionality
 // eslint-disable-next-line no-undef

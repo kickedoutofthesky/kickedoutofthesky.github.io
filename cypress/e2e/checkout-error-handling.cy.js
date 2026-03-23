@@ -1,24 +1,5 @@
 /* eslint-disable no-undef */
-
-// Helper function to select first real size option
-function selectFirstRealSize() {
-  cy.get("[data-testid='size-select']").then($select => {
-    const value = $select.val();
-    if (!value || value === "") {
-      cy.get("[data-testid='size-select'] option")
-        .eq(1)
-        .invoke("attr", "value")
-        .then(sizeValue => {
-          cy.get("[data-testid='size-select']").select(sizeValue);
-        });
-    }
-  });
-}
-
 // Helper function to select a shipping country on the cart page
-function selectShippingCountry(countryCode = "US") {
-  cy.get("#shipping-country").should("exist").select(countryCode);
-}
 
 describe("Checkout Flow — Modified Error Handling", () => {
   beforeEach(() => {

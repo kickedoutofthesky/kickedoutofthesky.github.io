@@ -1,20 +1,5 @@
 /* eslint-disable no-undef */
 
-// Helper function to select first real size option
-function selectFirstRealSize() {
-  cy.get("[data-testid='size-select']").then($select => {
-    const value = $select.val();
-    if (!value || value === "") {
-      cy.get("[data-testid='size-select'] option")
-        .eq(1)
-        .invoke("attr", "value")
-        .then(sizeValue => {
-          cy.get("[data-testid='size-select']").select(sizeValue);
-        });
-    }
-  });
-}
-
 // Test viewports
 const viewports = [
   { name: "mobile", width: 375, height: 667 }, // iPhone SE

@@ -1,21 +1,4 @@
 /* eslint-disable no-undef */
-
-// Helper function to select first real size option
-function selectFirstRealSize() {
-  cy.get("[data-testid='size-select']").then($select => {
-    const value = $select.val();
-    // If placeholder is selected (empty value), select first real option
-    if (!value || value === "") {
-      cy.get("[data-testid='size-select'] option")
-        .eq(1)
-        .invoke("attr", "value")
-        .then(sizeValue => {
-          cy.get("[data-testid='size-select']").select(sizeValue);
-        });
-    }
-  });
-}
-
 describe("Shopping Cart", () => {
   beforeEach(() => {
     cy.visit("/store");

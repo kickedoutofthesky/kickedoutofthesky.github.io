@@ -1,27 +1,5 @@
 /* eslint-disable no-undef */
 
-// Helper function to select first real size option
-function selectFirstRealSize() {
-  cy.get("[data-testid='size-select']").then($select => {
-    const value = $select.val();
-    // If placeholder is selected (empty value), select first real option
-    if (!value || value === "") {
-      cy.get("[data-testid='size-select'] option")
-        .eq(1)
-        .invoke("attr", "value")
-        .then(sizeValue => {
-          cy.get("[data-testid='size-select']").select(sizeValue);
-        });
-    }
-  });
-}
-
-// Helper function to fill shipping form
-function fillShippingForm() {
-  // Select shipping country from dropdown (replaces old address form)
-  cy.get("#shipping-country").select("US");
-}
-
 describe("Complete Purchase Flow - Customer Buying Merch", () => {
   beforeEach(() => {
     // Start on merch page with clean cart
