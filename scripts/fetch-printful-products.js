@@ -107,10 +107,10 @@ async function fetchProducts() {
     console.log(`✅ Using store ID: ${storeId} (Type: ${storeType})\n`);
 
     console.log("📦 Fetching products...");
-    // Use /store/products endpoint
-    const listResponse = await makeRequest(`/store/products`);
+    // Use /store/products endpoint with limit to get all products
+    const listResponse = await makeRequest(`/store/products?limit=100`);
 
-    console.log(`📋 API Response: ${JSON.stringify(listResponse, null, 2)}`);
+    console.log(`📋 API Response summary: Found ${listResponse.result ? listResponse.result.length : 0} products`);
 
     if (!listResponse.result || !Array.isArray(listResponse.result)) {
       throw new Error(`Invalid API response: result is not an array. Got: ${typeof listResponse.result}`);
