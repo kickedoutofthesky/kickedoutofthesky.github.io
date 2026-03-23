@@ -9,6 +9,17 @@
       name="description"
       content="Your order has been placed successfully. Thank you for supporting Kicked Out of the Sky!"
     />
+    <meta property="og:title" content="Order Successful - Kicked Out of the Sky" />
+    <meta property="og:description" content="Your order has been placed successfully!" />
+    <meta property="og:url" content="https://www.kickedoutofthesky.com/store/success.html" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Order Successful - Kicked Out of the Sky" />
+    <meta name="twitter:description" content="Your order has been placed successfully!" />
+    <link rel="canonical" href="https://www.kickedoutofthesky.com/store/success.html" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; img-src 'self' https: data:; font-src 'self' https://cdnjs.cloudflare.com; connect-src 'self' http://localhost:3001 https://kickedoutofthesky-store.vercel.app https://cdn.jsdelivr.net"
+    />
     <link rel="icon" href="../img/star-64.ico" />
     <link rel="apple-touch-icon" href="../img/star-64.ico" />
     <link
@@ -20,8 +31,9 @@
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
-      media="print"
-      onload="this.media = 'all'"
+      integrity="sha512-Zmt8T7SZ7VRg8w4HhYFxHTZ0S1d/aKNrWW+dddyLKCiJz3A3vbN0PycYkM5wP2HYqKfO2nHECqYcRk5I6XnTOQ=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
     />
     <link rel="stylesheet" href="../css/ui.css" />
     <link rel="stylesheet" href="assets/css/styles.css" />
@@ -119,17 +131,7 @@
             <a
               class="nav-link"
               href="index.html"
-              style="
-                color: #999;
-                text-decoration: none;
-                font-size: 1.2rem;
-                display: flex;
-                align-items: center;
-                transition: ease-in-out color 0.15s;
-                cursor: pointer;
-              "
-              onmouseover="this.style.color = '#fff'"
-              onmouseout="this.style.color = '#999'"
+              style="text-decoration: none; font-size: 1.2rem; display: flex; align-items: center; cursor: pointer"
             >
               Merch
             </a>
@@ -139,17 +141,13 @@
               class="nav-link"
               href="cart.html"
               style="
-                color: #999;
                 text-decoration: none;
                 font-size: 1.2rem;
                 display: flex;
                 align-items: center;
                 gap: 8px;
-                transition: ease-in-out color 0.15s;
                 cursor: pointer;
               "
-              onmouseover="this.style.color = '#fff'"
-              onmouseout="this.style.color = '#999'"
             >
               <i class="fas fa-shopping-cart"></i>
               Cart

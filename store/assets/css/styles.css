@@ -28,11 +28,17 @@ body {
   font-size: 0.9rem;
   cursor: pointer;
   transition: all 0.2s ease;
+  outline: none;
 }
 
 .filter-btn:hover {
   color: #fff;
   border-color: #666;
+}
+
+.filter-btn:focus-visible {
+  outline: 2px solid #ffc107;
+  outline-offset: 2px;
 }
 
 .filter-btn.active {
@@ -154,9 +160,18 @@ main {
     color 0.3s,
     border-color 0.3s;
   font-weight: 600;
+  outline: none;
 }
 
 .btn:hover {
+  background-color: #cccccc;
+  color: #000000;
+  border-color: #cccccc;
+}
+
+.btn:focus-visible {
+  outline: 2px solid #ffc107;
+  outline-offset: 2px;
   background-color: #cccccc;
   color: #000000;
   border-color: #cccccc;
@@ -174,9 +189,22 @@ main {
   border-color: #cccccc;
 }
 
+.btn-primary:focus-visible {
+  outline: 2px solid #ffc107;
+  outline-offset: 2px;
+  background-color: #cccccc;
+  color: #000000;
+  border-color: #cccccc;
+}
+
 .btn-secondary {
   background-color: #666;
   color: #ffffff;
+}
+
+.btn-secondary:focus-visible {
+  outline: 2px solid #ffc107;
+  outline-offset: 2px;
 }
 
 .btn-outline-secondary {
@@ -190,6 +218,13 @@ main {
   color: #000000;
 }
 
+.btn-outline-secondary:focus-visible {
+  background-color: #ffffff;
+  color: #000000;
+  outline: 2px solid #ffc107;
+  outline-offset: -4px;
+}
+
 .btn-warning {
   background-color: #ffc107 !important;
   color: #000000 !important;
@@ -201,6 +236,11 @@ main {
   background-color: #e0a800 !important;
   border-color: #e0a800 !important;
   color: #000000 !important;
+}
+
+.btn-warning:focus-visible {
+  outline: 2px solid #000000 !important;
+  outline-offset: 2px;
 }
 
 .btn-warning:disabled {
@@ -344,14 +384,25 @@ input[type="submit"]:disabled,
   background-color: #0f0f0f;
   border-color: #333;
   color: #ffffff;
+  outline: none;
 }
 
 .form-select:focus,
 .form-control:focus {
   background-color: #0f0f0f;
-  border-color: #ffffff;
+  border-color: #555;
   color: #ffffff;
-  box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.25);
+  box-shadow: 0 0 0 0.1rem rgba(255, 255, 255, 0.1);
+}
+
+.form-select:focus-visible,
+.form-control:focus-visible {
+  background-color: #0f0f0f;
+  border-color: #999;
+  color: #ffffff;
+  outline: 1px solid #ffc107;
+  outline-offset: 1px;
+  box-shadow: 0 0 0 0.1rem rgba(255, 193, 7, 0.1);
 }
 
 .form-select option {
@@ -830,4 +881,88 @@ nav .container-fluid {
   .brand {
     height: 45px !important;
   }
+}
+
+/* Form Validation */
+.error-message {
+  color: #ff6b6b;
+  font-size: 0.875rem;
+  margin-top: 6px;
+  display: block;
+  font-weight: 500;
+}
+
+select[aria-invalid="true"],
+input[aria-invalid="true"],
+textarea[aria-invalid="true"] {
+  border-color: #ff6b6b !important;
+  background-color: rgba(255, 107, 107, 0.05);
+}
+
+select[aria-invalid="true"]:focus,
+input[aria-invalid="true"]:focus,
+textarea[aria-invalid="true"]:focus {
+  outline: 2px solid #ff6b6b;
+  outline-offset: 2px;
+}
+
+/* Touch Target Sizing - Minimum 44x44px for mobile accessibility */
+@media (pointer: coarse) {
+  button,
+  a.btn,
+  .btn,
+  .filter-btn,
+  input[type="button"],
+  input[type="submit"],
+  input[type="reset"],
+  a[role="button"] {
+    min-height: 44px;
+    min-width: 44px;
+    padding: max(10px, ((44px - 1em) / 2));
+  }
+
+  .nav-link {
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    padding: 8px 16px;
+  }
+
+  select,
+  input[type="text"],
+  input[type="email"],
+  input[type="number"],
+  input[type="tel"],
+  input[type="password"],
+  textarea {
+    min-height: 44px;
+    padding: 10px 12px;
+  }
+
+  .carousel-button,
+  [role="button"] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
+/* Subtle focus styling for cart fields */
+#shipping-country:focus,
+.quantity-input:focus {
+  background-color: #1a1a1a;
+  border-color: #555;
+  color: #ccc;
+  outline: 1px solid #ffc107;
+  outline-offset: 1px;
+  box-shadow: 0 0 0 0.1rem rgba(255, 193, 7, 0.1);
+}
+
+#shipping-country:focus-visible,
+.quantity-input:focus-visible {
+  background-color: #1a1a1a;
+  border-color: #999;
+  color: #ccc;
+  outline: 1px solid #ffc107;
+  outline-offset: 1px;
+  box-shadow: 0 0 0 0.1rem rgba(255, 193, 7, 0.1);
 }

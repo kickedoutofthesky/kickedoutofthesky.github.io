@@ -57,6 +57,10 @@ document.addEventListener("DOMContentLoaded", async () => {
       `;
 
       card.addEventListener("click", () => {
+        if (!product.product_key) {
+          console.error("Product key is missing for product:", product);
+          return;
+        }
         window.location.href = `product.html?key=${product.product_key}`;
       });
 

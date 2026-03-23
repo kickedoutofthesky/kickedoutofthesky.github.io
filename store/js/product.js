@@ -320,6 +320,30 @@ function initializeZoomPan() {
         this.style.cursor = "default";
       }
     });
+
+    // Attach zoom control button listeners
+    const zoomInBtn = document.querySelector("#zoom-controls button:nth-child(1)");
+    const zoomOutBtn = document.querySelector("#zoom-controls button:nth-child(2)");
+    const resetZoomBtn = document.querySelector("#zoom-controls button:nth-child(3)");
+
+    if (zoomInBtn) zoomInBtn.addEventListener("click", zoomIn);
+    if (zoomOutBtn) zoomOutBtn.addEventListener("click", zoomOut);
+    if (resetZoomBtn) resetZoomBtn.addEventListener("click", resetZoom);
+
+    // Attach pan button listeners
+    const panButtons = document.querySelectorAll("#pan-controls button");
+    if (panButtons.length >= 4) {
+      panButtons[0].addEventListener("click", () => panImage(0, 20)); // up
+      panButtons[1].addEventListener("click", () => panImage(20, 0)); // left
+      panButtons[2].addEventListener("click", () => panImage(-20, 0)); // right
+      panButtons[3].addEventListener("click", () => panImage(0, -20)); // down
+    }
+
+    // Attach carousel button listeners
+    const carouselPrev = document.getElementById("carousel-prev");
+    const carouselNext = document.getElementById("carousel-next");
+    if (carouselPrev) carouselPrev.addEventListener("click", showPreviousImage);
+    if (carouselNext) carouselNext.addEventListener("click", showNextImage);
   }
 }
 
@@ -333,6 +357,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const productKey = params.get("key");
 
   if (!productKey) {
+    console.error("No product key provided in URL");
     loading.style.display = "none";
     detail.style.display = "none";
     errorEl.style.display = "block";
@@ -352,6 +377,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     const product = products.find(p => p.product_key === productKey);
 
     if (!product) {
+      console.error(`Product not found with key: ${productKey}`);
+      console.error(
+        "Available products:",
+        products.map(p => p.product_key)
+      );
       loading.style.display = "none";
       detail.style.display = "none";
       errorEl.style.display = "block";
@@ -409,48 +439,30 @@ document.addEventListener("DOMContentLoaded", async () => {
               <div id="zoom-level" style="display: none; position: absolute; bottom: 130px; right: 10px; background: rgba(0,0,0,0.6); color: #fff; padding: 4px 10px; border-radius: 6px; font-size: 13px; z-index: 10;">100%</div>
 
               <!-- Zoom Controls -->
-              <div id="zoom-controls" style="position: absolute; bottom: 10px; right: 10px; display: flex; flex-direction: column; gap: 4px; z-index: 10;">
-                <button onclick="zoomIn()" title="Zoom In" style="width: 36px; height: 36px; border: none; border-radius: 6px; background: rgba(0,0,0,0.6); color: #fff; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s;">
-                  <i class="fas fa-search-plus"></i>
-                </button>
-                <button onclick="zoomOut()" title="Zoom Out" style="width: 36px; height: 36px; border: none; border-radius: 6px; background: rgba(0,0,0,0.6); color: #fff; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s;">
-                  <i class="fas fa-search-minus"></i>
-                </button>
-                <button onclick="resetZoom()" title="Reset Zoom" style="width: 36px; height: 36px; border: none; border-radius: 6px; background: rgba(0,0,0,0.6); color: #fff; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s;">
-                  <i class="fas fa-compress-arrows-alt"></i>
-                </button>
+              <div id="zoom-controls" style="position: absolute; bottom: 10px; right: 10px; display: flex; flex-direction: column; gap: 4px; z-index: 10; pointer-events: auto;">
+                <button type="button" onclick="zoomIn()" aria-label="Zoom in to see product details" title="Zoom In" style="width: 36px; height: 36px; border: none; border-radius: 6px; background: rgba(0,0,0,0.6); color: #fff; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; pointer-events: auto; padding: 0;"><i class="fas fa-search-plus"></i></button>
+                <button type="button" onclick="zoomOut()" aria-label="Zoom out to see full product" title="Zoom Out" style="width: 36px; height: 36px; border: none; border-radius: 6px; background: rgba(0,0,0,0.6); color: #fff; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; pointer-events: auto; padding: 0;"><i class="fas fa-search-minus"></i></button>
+                <button type="button" onclick="resetZoom()" aria-label="Reset product image zoom to original size" title="Reset Zoom" style="width: 36px; height: 36px; border: none; border-radius: 6px; background: rgba(0,0,0,0.6); color: #fff; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; pointer-events: auto; padding: 0;"><i class="fas fa-compress-arrows-alt"></i></button>
               </div>
 
               <!-- Pan Controls (visible only when zoomed) -->
-              <div id="pan-controls" style="display: none; position: absolute; bottom: 10px; left: 10px; z-index: 10;">
+              <div id="pan-controls" style="display: none; position: absolute; bottom: 10px; left: 10px; z-index: 10; pointer-events: auto;">
                 <div style="display: grid; grid-template-columns: 30px 30px 30px; grid-template-rows: 30px 30px 30px; gap: 2px;">
                   <div></div>
-                  <button onclick="panImage(0, 20)" title="Pan Up" style="width: 30px; height: 30px; border: none; border-radius: 4px; background: rgba(0,0,0,0.6); color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 12px;">
-                    <i class="fas fa-chevron-up"></i>
-                  </button>
+                  <button type="button" onclick="panImage(0, 20)" aria-label="Pan product image up" title="Pan Up" style="width: 30px; height: 30px; border: none; border-radius: 4px; background: rgba(0,0,0,0.6); color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 12px; pointer-events: auto; padding: 0;"><i class="fas fa-chevron-up"></i></button>
                   <div></div>
-                  <button onclick="panImage(20, 0)" title="Pan Left" style="width: 30px; height: 30px; border: none; border-radius: 4px; background: rgba(0,0,0,0.6); color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 12px;">
-                    <i class="fas fa-chevron-left"></i>
-                  </button>
+                  <button type="button" onclick="panImage(20, 0)" aria-label="Pan product image left" title="Pan Left" style="width: 30px; height: 30px; border: none; border-radius: 4px; background: rgba(0,0,0,0.6); color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 12px; pointer-events: auto; padding: 0;"><i class="fas fa-chevron-left"></i></button>
                   <div></div>
-                  <button onclick="panImage(-20, 0)" title="Pan Right" style="width: 30px; height: 30px; border: none; border-radius: 4px; background: rgba(0,0,0,0.6); color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 12px;">
-                    <i class="fas fa-chevron-right"></i>
-                  </button>
+                  <button type="button" onclick="panImage(-20, 0)" aria-label="Pan product image right" title="Pan Right" style="width: 30px; height: 30px; border: none; border-radius: 4px; background: rgba(0,0,0,0.6); color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 12px; pointer-events: auto; padding: 0;"><i class="fas fa-chevron-right"></i></button>
                   <div></div>
-                  <button onclick="panImage(0, -20)" title="Pan Down" style="width: 30px; height: 30px; border: none; border-radius: 4px; background: rgba(0,0,0,0.6); color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 12px;">
-                    <i class="fas fa-chevron-down"></i>
-                  </button>
+                  <button type="button" onclick="panImage(0, -20)" aria-label="Pan product image down" title="Pan Down" style="width: 30px; height: 30px; border: none; border-radius: 4px; background: rgba(0,0,0,0.6); color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 12px; pointer-events: auto; padding: 0;"><i class="fas fa-chevron-down"></i></button>
                   <div></div>
                 </div>
               </div>
 
               <!-- Carousel Arrows for multiple mockup images -->
-              <button id="carousel-prev" onclick="showPreviousImage()" style="display: none; position: absolute; left: 10px; top: 50%; transform: translateY(-50%); width: 40px; height: 40px; border: none; border-radius: 50%; background: rgba(0,0,0,0.6); color: #fff; font-size: 18px; cursor: pointer; align-items: center; justify-content: center; z-index: 10; transition: background 0.2s;">
-                <i class="fas fa-chevron-left"></i>
-              </button>
-              <button id="carousel-next" onclick="showNextImage()" style="display: none; position: absolute; right: 10px; top: 50%; transform: translateY(-50%); width: 40px; height: 40px; border: none; border-radius: 50%; background: rgba(0,0,0,0.6); color: #fff; font-size: 18px; cursor: pointer; align-items: center; justify-content: center; z-index: 10; transition: background 0.2s;">
-                <i class="fas fa-chevron-right"></i>
-              </button>
+              <button id="carousel-prev" type="button" aria-label="View previous product image" onclick="showPreviousImage()" style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); width: 40px; height: 40px; border: none; border-radius: 50%; background: #ffc107; color: #000; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 10; transition: all 0.2s; display: none; pointer-events: auto; padding: 0; font-weight: bold;">‹</button>
+              <button id="carousel-next" type="button" aria-label="View next product image" onclick="showNextImage()" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); width: 40px; height: 40px; border: none; border-radius: 50%; background: #ffc107; color: #000; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 10; transition: all 0.2s; display: none; pointer-events: auto; padding: 0; font-weight: bold;">›</button>
             </div>
           </div>
           <div class="col-md-5">
@@ -458,10 +470,11 @@ document.addEventListener("DOMContentLoaded", async () => {
               <h1 class="mb-3" data-testid="product-title">${product.title}</h1>
               <p class="product-detail-price fs-4 mb-4 text-warning" id="price-display" data-testid="product-price">${priceDisplay}</p>
 
-              <div class="mb-4">
-                ${
-                  availableColors.length >= 1
-                    ? `
+              <form style="margin-bottom: 30px;">
+                <div class="mb-4">
+                    ${
+                      availableColors.length >= 1
+                        ? `
                 <div class="mb-3">
                   <label for="color" class="form-label">Color</label>
                   <select id="color" data-testid="color-select" class="form-select" onchange="updateColorAndPrice(); checkFormComplete()">
@@ -469,8 +482,8 @@ document.addEventListener("DOMContentLoaded", async () => {
                   </select>
                 </div>
                 `
-                    : ""
-                }
+                        : ""
+                    }
 
                 <div class="mb-3">
                   <label for="size" class="form-label">Size</label>
@@ -485,7 +498,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 </div>
               </div>
 
-              <button id="add-to-cart-btn" class="btn btn-warning btn-lg fw-bold" onclick="addToCart()" disabled>
+              <button type="button" id="add-to-cart-btn" class="btn btn-warning btn-lg fw-bold" onclick="addToCart()" disabled>
                 Add to Cart
               </button>
             </div>
@@ -499,19 +512,20 @@ document.addEventListener("DOMContentLoaded", async () => {
     const urlQuantity = params.get("quantity");
 
     // Set color if specified in URL and valid
-    if (urlColor && availableColors.includes(urlColor)) {
-      document.getElementById("color").value = urlColor;
+    const colorSelect = document.getElementById("color");
+    if (urlColor && availableColors.includes(urlColor) && colorSelect) {
+      colorSelect.value = urlColor;
     }
 
-    const selectedColor = document.getElementById("color").value;
+    const selectedColor = colorSelect ? colorSelect.value : Object.keys(currentProduct.variants)[0];
 
     // Initialize sizes for selected color and update image
     updateSizes(selectedColor);
     updateColorImage(selectedColor);
 
     // Set size if specified in URL and valid
-    if (urlSize) {
-      const sizeSelect = document.getElementById("size");
+    const sizeSelect = document.getElementById("size");
+    if (urlSize && sizeSelect) {
       const sizeOption = Array.from(sizeSelect.options).find(o => o.value === urlSize);
       if (sizeOption) {
         sizeSelect.value = urlSize;
@@ -522,7 +536,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (urlQuantity) {
       const qty = parseInt(urlQuantity, 10);
       if (qty > 0) {
-        document.getElementById("quantity").value = qty;
+        const quantityInput = document.getElementById("quantity");
+        if (quantityInput) {
+          quantityInput.value = qty;
+        }
       }
     }
 
@@ -539,6 +556,8 @@ function updateSizes(selectedColor) {
   if (!currentProduct) return;
 
   const sizeSelect = document.getElementById("size");
+  if (!sizeSelect) return;
+
   const color = selectedColor || document.getElementById("color")?.value;
 
   // Clear existing sizes
@@ -648,6 +667,8 @@ function checkFormComplete() {
   const sizeSelect = document.getElementById("size");
   const button = document.getElementById("add-to-cart-btn");
 
+  if (!sizeSelect || !button) return;
+
   // Check if color is required (multiple colors) and selected
   const colorValid = !colorSelect || colorSelect.value !== "";
 
@@ -669,6 +690,8 @@ async function addToCart() {
   const colorSelect = document.getElementById("color");
   const sizeSelect = document.getElementById("size");
   const quantityInput = document.getElementById("quantity");
+
+  if (!sizeSelect || !quantityInput) return;
 
   const color = colorSelect?.value || Object.keys(currentProduct.variants)[0];
   const size = sizeSelect.value;

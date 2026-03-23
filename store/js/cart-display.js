@@ -180,9 +180,9 @@ function displayCart() {
         <div style="display: flex; gap: 10px; align-items: center; margin-top: 15px;">
           <span style="color: #ffc107; font-weight: bold;" data-testid="item-price">$${(pricePerItem / 100).toFixed(2)}</span>
           <span style="color: #ccc;">×</span>
-          <button onclick="updateCartQuantity(${index}, ${item.quantity - 1})" style="background: #333; color: #fff; border: none; width: 30px; height: 30px; cursor: pointer; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1rem;"><i class="fas fa-minus"></i></button>
-          <input type="text" data-testid="quantity-input" value="${item.quantity}" readonly style="width: 50px; padding: 5px; background: #1a1a1a; color: #fff; border: 1px solid #333; text-align: center; border-radius: 4px;">
-          <button onclick="updateCartQuantity(${index}, ${item.quantity + 1})" style="background: #333; color: #fff; border: none; width: 30px; height: 30px; cursor: pointer; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1rem;"><i class="fas fa-plus"></i></button>
+          <button onclick="updateCartQuantity(${index}, ${item.quantity - 1})" style="background: #3a3a3a; color: #fff; border: none; width: 30px; height: 30px; cursor: pointer; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1rem;"><i class="fas fa-minus"></i></button>
+          <input type="text" class="quantity-input" data-testid="quantity-input" value="${item.quantity}" readonly style="width: 50px; padding: 5px; background: #1a1a1a; color: #fff; border: 1px solid #333; text-align: center; border-radius: 4px;">
+          <button onclick="updateCartQuantity(${index}, ${item.quantity + 1})" style="background: #3a3a3a; color: #fff; border: none; width: 30px; height: 30px; cursor: pointer; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1rem;"><i class="fas fa-plus"></i></button>
           <span style="color: #ccc; margin-left: auto;">Total: <span style="color: #ffc107; font-weight: bold;">$${(lineTotal / 100).toFixed(2)}</span></span>
           <button onclick="removeFromCart(${index})" data-testid="remove-item" style="background: none; color: #fff; border: none; padding: 8px 0 8px 12px; cursor: pointer; font-size: 1.1rem;"><i class="fas fa-trash"></i></button>
         </div>
@@ -279,27 +279,47 @@ async function proceedToCheckout() {
         if (!product) return null;
 
         const variantId = product.variants[item.color]?.sizes?.[item.size]?.variant_id;
+        const image = getProductImage(product, item.color);
+
+        // Convert relative image URL to absolute URL
+        let fullImageUrl = image;
+        if (image && !image.startsWith("http")) {
+          fullImageUrl = window.location.origin + "/store/" + image;
+        }
 
         return {
           variant_id: variantId,
           quantity: item.quantity,
+          name: product.title,
+          image: fullImageUrl,
+          color: item.color,
+          size: item.size,
         };
       })
       .filter(item => item !== null);
 
-    // Call backend checkout endpoint with CSRF token
+    // Call backend checkout endpoint with CSRF token (skip for localhost)
     const backendUrl = window.__API_URL__ || "https://kickedoutofthesky-store.vercel.app";
-    const csrfToken = getCSRFToken();
+    const isLocalhost = backendUrl.includes("localhost");
+    const headers = {
+      "Content-Type": "application/json",
+    };
+
+    // Only add CSRF token for production URLs
+    if (!isLocalhost) {
+      const csrfToken = getCSRFToken();
+      headers["X-CSRF-Token"] = csrfToken;
+    }
+
+    const requestBody = {
+      items,
+      shippingCountry: countrySelect.value,
+    };
+
     const response = await fetch(backendUrl + "/api/create-checkout-session", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-CSRF-Token": csrfToken,
-      },
-      body: JSON.stringify({
-        items,
-        shippingCountry: countrySelect.value,
-      }),
+      headers,
+      body: JSON.stringify(requestBody),
     });
 
     const data = await response.json();

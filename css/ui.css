@@ -289,10 +289,18 @@ h2 {
 .nav-link {
   color: #999 !important;
   transition: color 0.15s ease-in-out;
+  outline: none;
 }
 
 .nav-link:hover {
   color: #ffffff !important;
+}
+
+.nav-link:focus-visible {
+  color: #ffffff !important;
+  outline: 2px solid #ffc107;
+  outline-offset: 2px;
+  border-radius: 2px;
 }
 
 .nav-link.active {
