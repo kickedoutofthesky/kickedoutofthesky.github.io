@@ -576,6 +576,66 @@
     }
   },
   {
+    "product_key": "product_425222391",
+    "title": "Unisex Long Sleeve Tee w/ Kicked Out Of The Sky Vintage",
+    "image": "assets/images/Unisex Long Sleeve Tee w Kicked Out Of The Sky Vintage - Front - Black Heather.jpg",
+    "display_price": "$35.00",
+    "variants": {
+      "Black Heather": {
+        "image": "assets/images/Unisex Long Sleeve Tee w Kicked Out Of The Sky Vintage - Front - Black Heather.jpg",
+        "sizes": {
+          "S": {
+            "variant_id": 5244999870,
+            "price_cents": 3500
+          },
+          "M": {
+            "variant_id": 5244999871,
+            "price_cents": 3500
+          },
+          "L": {
+            "variant_id": 5244999872,
+            "price_cents": 3500
+          },
+          "XL": {
+            "variant_id": 5244999873,
+            "price_cents": 3500
+          },
+          "2XL": {
+            "variant_id": 5244999874,
+            "price_cents": 3500
+          }
+        },
+        "mockups": ["assets/images/Unisex Long Sleeve Tee w Kicked Out Of The Sky Vintage - Front - Black Heather.jpg"]
+      },
+      "Gold": {
+        "image": "assets/images/Unisex Long Sleeve Tee w Kicked Out Of The Sky Vintage - Front - Gold.jpg",
+        "sizes": {
+          "S": {
+            "variant_id": 5244999875,
+            "price_cents": 3500
+          },
+          "M": {
+            "variant_id": 5244999876,
+            "price_cents": 3500
+          },
+          "L": {
+            "variant_id": 5244999877,
+            "price_cents": 3500
+          },
+          "XL": {
+            "variant_id": 5244999878,
+            "price_cents": 3500
+          },
+          "2XL": {
+            "variant_id": 5244999879,
+            "price_cents": 3500
+          }
+        },
+        "mockups": ["assets/images/Unisex Long Sleeve Tee w Kicked Out Of The Sky Vintage - Front - Gold.jpg"]
+      }
+    }
+  },
+  {
     "product_key": "product_425122887",
     "title": "Unisex Long Sleeve Tee w/ Star + Typewriter Text Sleeve",
     "image": "assets/images/Unisex Long Sleeve Tee w Star + Typewriter Text Sleeve - Front - Black.jpg",
@@ -752,69 +812,6 @@
           }
         },
         "mockups": ["assets/images/Unisex Long Sleeve Tee w Typewriter Text - Front - Dark Grey Heather.jpg"]
-      }
-    }
-  },
-  {
-    "product_key": "product_425120335",
-    "title": "Unisex Long Sleeve Tee w/ Kicked Out Of The Sky Vintage",
-    "image": "https://files.cdn.printful.com/files/66b/66b9e16ade96ff987ec6dc509a309b4d_preview.png",
-    "display_price": "$35.00",
-    "variants": {
-      "Black": {
-        "image": "https://files.cdn.printful.com/files/66b/66b9e16ade96ff987ec6dc509a309b4d_preview.png",
-        "sizes": {
-          "XS": {
-            "variant_id": 5244084667,
-            "price_cents": 3500
-          },
-          "S": {
-            "variant_id": 5244084668,
-            "price_cents": 3500
-          },
-          "M": {
-            "variant_id": 5244084669,
-            "price_cents": 3500
-          },
-          "L": {
-            "variant_id": 5244084670,
-            "price_cents": 3500
-          },
-          "XL": {
-            "variant_id": 5244084671,
-            "price_cents": 3500
-          },
-          "2XL": {
-            "variant_id": 5244084672,
-            "price_cents": 3500
-          }
-        }
-      },
-      "Gold": {
-        "image": "assets/images/Unisex Long Sleeve Tee w Kicked Out Of The Sky Vintage - Front - Gold.jpg",
-        "sizes": {
-          "S": {
-            "variant_id": 5244084673,
-            "price_cents": 3500
-          },
-          "M": {
-            "variant_id": 5244084674,
-            "price_cents": 3500
-          },
-          "L": {
-            "variant_id": 5244084675,
-            "price_cents": 3500
-          },
-          "XL": {
-            "variant_id": 5244084676,
-            "price_cents": 3500
-          },
-          "2XL": {
-            "variant_id": 5244084677,
-            "price_cents": 3500
-          }
-        },
-        "mockups": ["assets/images/Unisex Long Sleeve Tee w Kicked Out Of The Sky Vintage - Front - Gold.jpg"]
       }
     }
   },
@@ -1323,11 +1320,11 @@
   {
     "product_key": "product_425213122",
     "title": "Unisex Hoodie w/ Star + Typewriter Text Sleeve",
-    "image": "https://files.cdn.printful.com/files/827/827957ea8b111970d10ce15bc293b5a0_preview.png",
+    "image": "assets/images/Unisex Hoodie w Star + Typewriter Text Sleeve - Front - Black.jpg",
     "display_price": "$45.00",
     "variants": {
       "Black": {
-        "image": "https://files.cdn.printful.com/printfile-preview/959385386/375fac733657e9b056ac2d3beeaa94e7_preview.png",
+        "image": "assets/images/Unisex Hoodie w Star + Typewriter Text Sleeve - Front - Black.jpg",
         "sizes": {
           "S": {
             "variant_id": 5244898753,
@@ -1349,7 +1346,11 @@
             "variant_id": 5244898757,
             "price_cents": 4500
           }
-        }
+        },
+        "mockups": [
+          "assets/images/Unisex Hoodie w Star + Typewriter Text Sleeve - Front - Black.jpg",
+          "assets/images/Unisex Hoodie w Star + Typewriter Text Sleeve - Sleeve - Black.jpg"
+        ]
       }
     }
   },
