@@ -1313,40 +1313,6 @@
     }
   },
   {
-    "product_key": "product_424594559",
-    "title": "Unisex Hoodie w/ Typewriter Text",
-    "image": "assets/images/Unisex Hoodie w Typewriter Text - Front - Black.jpg",
-    "display_price": "$45.00",
-    "variants": {
-      "Black": {
-        "image": "assets/images/Unisex Hoodie w Typewriter Text - Front - Black.jpg",
-        "sizes": {
-          "S": {
-            "variant_id": 5238967666,
-            "price_cents": 4500
-          },
-          "M": {
-            "variant_id": 5238967667,
-            "price_cents": 4500
-          },
-          "L": {
-            "variant_id": 5238967668,
-            "price_cents": 4500
-          },
-          "XL": {
-            "variant_id": 5238967669,
-            "price_cents": 4500
-          },
-          "2XL": {
-            "variant_id": 5238967670,
-            "price_cents": 4500
-          }
-        },
-        "mockups": ["assets/images/Unisex Hoodie w Typewriter Text - Front - Black.jpg"]
-      }
-    }
-  },
-  {
     "product_key": "product_425213276",
     "title": "Unisex Hoodie w/ Kicked Out Of The Sky Vintage",
     "image": "assets/images/Unisex Hoodie w Kicked Out Of The Sky Vintage - Front - Maroon.jpg",

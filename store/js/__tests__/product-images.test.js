@@ -54,7 +54,7 @@ describe("Product Images", () => {
 
   test("products catalog is complete", () => {
     expect(products.length).toBeGreaterThan(0);
-    expect(products.length).toBe(46);
+    expect(products.length).toBe(45);
   });
 
   test("all product variants have at least one mockup", () => {
