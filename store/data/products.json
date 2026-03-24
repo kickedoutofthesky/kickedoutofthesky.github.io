@@ -484,154 +484,154 @@
     }
   },
   {
-    "product_key": "product_424963286",
-    "title": "Snapback Hat w/ Embroidery Star Logo",
-    "image": "assets/images/Snapback Hat w Embroidery Star Logo - Front - Black.jpg",
-    "display_price": "$25.00",
-    "variants": {
-      "Black": {
-        "image": "assets/images/Snapback Hat w Embroidery Star Logo - Front - Black.jpg",
-        "sizes": {
-          "One Size": {
-            "variant_id": 5242015846,
-            "price_cents": 2500
-          }
-        },
-        "mockups": ["assets/images/Snapback Hat w Embroidery Star Logo - Front - Black.jpg"]
-      },
-      "Black/ Silver": {
-        "image": "assets/images/Snapback Hat w Embroidery Star Logo - Front - Black Silver.jpg",
-        "sizes": {
-          "One Size": {
-            "variant_id": 5242015847,
-            "price_cents": 2500
-          }
-        },
-        "mockups": ["assets/images/Snapback Hat w Embroidery Star Logo - Front - Black Silver.jpg"]
-      }
-    }
-  },
-  {
-    "product_key": "product_421115401",
-    "title": "Snapback Hat w/ Embroidery Text",
-    "image": "assets/images/Snapback Hat w Embroidery Text - Front - Black.jpg",
-    "display_price": "$25.00",
-    "variants": {
-      "Black": {
-        "image": "assets/images/Snapback Hat w Embroidery Text - Front - Black.jpg",
-        "sizes": {
-          "One Size": {
-            "variant_id": 5209549648,
-            "price_cents": 2500
-          }
-        },
-        "mockups": ["assets/images/Snapback Hat w Embroidery Text - Front - Black.jpg"]
-      },
-      "Black/ Silver": {
-        "image": "assets/images/Snapback Hat w Embroidery Text - Front - Black Silver.jpg",
-        "sizes": {
-          "One Size": {
-            "variant_id": 5209549649,
-            "price_cents": 2500
-          }
-        },
-        "mockups": ["assets/images/Snapback Hat w Embroidery Text - Front - Black Silver.jpg"]
-      }
-    }
-  },
-  {
-    "product_key": "product_421115397",
-    "title": "Trucker Cap w/ Star Logo",
-    "image": "assets/images/Trucker Cap w Star Logo - Front - Black & White.jpg",
-    "display_price": "$22.00",
-    "variants": {
-      "Black & White": {
-        "image": "assets/images/Trucker Cap w Star Logo - Front - Black & White.jpg",
-        "sizes": {
-          "One Size": {
-            "variant_id": 5209549634,
-            "price_cents": 2200
-          }
-        },
-        "mockups": ["assets/images/Trucker Cap w Star Logo - Front - Black & White.jpg"]
-      }
-    }
-  },
-  {
-    "product_key": "product_421115396",
-    "title": "Trucker Cap w/ Text",
-    "image": "assets/images/Trucker Cap w Text - Front - Black & White.jpg",
-    "display_price": "$22.00",
-    "variants": {
-      "Black & White": {
-        "image": "assets/images/Trucker Cap w Text - Front - Black & White.jpg",
-        "sizes": {
-          "One Size": {
-            "variant_id": 5209549633,
-            "price_cents": 2200
-          }
-        },
-        "mockups": ["assets/images/Trucker Cap w Text - Front - Black & White.jpg"]
-      }
-    }
-  },
-  {
-    "product_key": "product_425222391",
-    "title": "Unisex Long Sleeve Tee w/ Kicked Out Of The Sky Vintage",
-    "image": "assets/images/Unisex Long Sleeve Tee w Kicked Out Of The Sky Vintage - Front - Black Heather.jpg",
+    "product_key": "product_425119947",
+    "title": "Unisex Long Sleeve Tee w/ Color Block Graphic",
+    "image": "assets/images/Unisex Long Sleeve Tee w Color Block Graphic - Front - Black.jpg",
     "display_price": "$35.00",
     "variants": {
-      "Black Heather": {
-        "image": "assets/images/Unisex Long Sleeve Tee w Kicked Out Of The Sky Vintage - Front - Black Heather.jpg",
+      "Black": {
+        "image": "assets/images/Unisex Long Sleeve Tee w Color Block Graphic - Front - Black.jpg",
         "sizes": {
+          "XS": {
+            "variant_id": 5244081141,
+            "price_cents": 3500
+          },
           "S": {
-            "variant_id": 5244999870,
+            "variant_id": 5244081142,
             "price_cents": 3500
           },
           "M": {
-            "variant_id": 5244999871,
+            "variant_id": 5244081143,
             "price_cents": 3500
           },
           "L": {
-            "variant_id": 5244999872,
+            "variant_id": 5244081144,
             "price_cents": 3500
           },
           "XL": {
-            "variant_id": 5244999873,
+            "variant_id": 5244081145,
             "price_cents": 3500
           },
           "2XL": {
-            "variant_id": 5244999874,
+            "variant_id": 5244081146,
             "price_cents": 3500
           }
         },
-        "mockups": ["assets/images/Unisex Long Sleeve Tee w Kicked Out Of The Sky Vintage - Front - Black Heather.jpg"]
-      },
-      "Gold": {
-        "image": "assets/images/Unisex Long Sleeve Tee w Kicked Out Of The Sky Vintage - Front - Gold.jpg",
+        "mockups": ["assets/images/Unisex Long Sleeve Tee w Color Block Graphic - Front - Black.jpg"]
+      }
+    }
+  },
+  {
+    "product_key": "product_425120401",
+    "title": "Unisex Long Sleeve Tee w/ Kicked Out Of The Sky Cover",
+    "image": "assets/images/Unisex Long Sleeve Tee w Kicked Out Of The Sky Cover - Front - Black.jpg",
+    "display_price": "$35.00",
+    "variants": {
+      "Black": {
+        "image": "assets/images/Unisex Long Sleeve Tee w Kicked Out Of The Sky Cover - Front - Black.jpg",
         "sizes": {
+          "XS": {
+            "variant_id": 5244085032,
+            "price_cents": 3500
+          },
           "S": {
-            "variant_id": 5244999875,
+            "variant_id": 5244085033,
             "price_cents": 3500
           },
           "M": {
-            "variant_id": 5244999876,
+            "variant_id": 5244085034,
             "price_cents": 3500
           },
           "L": {
-            "variant_id": 5244999877,
+            "variant_id": 5244085035,
             "price_cents": 3500
           },
           "XL": {
-            "variant_id": 5244999878,
+            "variant_id": 5244085036,
             "price_cents": 3500
           },
           "2XL": {
-            "variant_id": 5244999879,
+            "variant_id": 5244085037,
             "price_cents": 3500
           }
         },
-        "mockups": ["assets/images/Unisex Long Sleeve Tee w Kicked Out Of The Sky Vintage - Front - Gold.jpg"]
+        "mockups": ["assets/images/Unisex Long Sleeve Tee w Kicked Out Of The Sky Cover - Front - Black.jpg"]
+      }
+    }
+  },
+  {
+    "product_key": "product_425119898",
+    "title": "Unisex Long Sleeve Tee w/ Wasting My Life Away Cover",
+    "image": "assets/images/Unisex Long Sleeve Tee w Wasting My Life Away Cover - Front - Black.jpg",
+    "display_price": "$35.00",
+    "variants": {
+      "Black": {
+        "image": "assets/images/Unisex Long Sleeve Tee w Wasting My Life Away Cover - Front - Black.jpg",
+        "sizes": {
+          "XS": {
+            "variant_id": 5244080755,
+            "price_cents": 3500
+          },
+          "S": {
+            "variant_id": 5244080756,
+            "price_cents": 3500
+          },
+          "M": {
+            "variant_id": 5244080757,
+            "price_cents": 3500
+          },
+          "L": {
+            "variant_id": 5244080758,
+            "price_cents": 3500
+          },
+          "XL": {
+            "variant_id": 5244080759,
+            "price_cents": 3500
+          },
+          "2XL": {
+            "variant_id": 5244080760,
+            "price_cents": 3500
+          }
+        },
+        "mockups": ["assets/images/Unisex Long Sleeve Tee w Wasting My Life Away Cover - Front - Black.jpg"]
+      }
+    }
+  },
+  {
+    "product_key": "product_425119801",
+    "title": "Unisex Long Sleeve Tee w/ Levity Of Lies Cover",
+    "image": "assets/images/Unisex Long Sleeve Tee w Levity Of Lies Cover - Front - Black.jpg",
+    "display_price": "$35.00",
+    "variants": {
+      "Black": {
+        "image": "assets/images/Unisex Long Sleeve Tee w Levity Of Lies Cover - Front - Black.jpg",
+        "sizes": {
+          "XS": {
+            "variant_id": 5244079845,
+            "price_cents": 3500
+          },
+          "S": {
+            "variant_id": 5244079847,
+            "price_cents": 3500
+          },
+          "M": {
+            "variant_id": 5244079848,
+            "price_cents": 3500
+          },
+          "L": {
+            "variant_id": 5244079850,
+            "price_cents": 3500
+          },
+          "XL": {
+            "variant_id": 5244079851,
+            "price_cents": 3500
+          },
+          "2XL": {
+            "variant_id": 5244079852,
+            "price_cents": 3500
+          }
+        },
+        "mockups": ["assets/images/Unisex Long Sleeve Tee w Levity Of Lies Cover - Front - Black.jpg"]
       }
     }
   },
@@ -710,44 +710,6 @@
     }
   },
   {
-    "product_key": "product_425120401",
-    "title": "Unisex Long Sleeve Tee w/ Kicked Out Of The Sky Cover",
-    "image": "assets/images/Unisex Long Sleeve Tee w Kicked Out Of The Sky Cover - Front - Black.jpg",
-    "display_price": "$35.00",
-    "variants": {
-      "Black": {
-        "image": "assets/images/Unisex Long Sleeve Tee w Kicked Out Of The Sky Cover - Front - Black.jpg",
-        "sizes": {
-          "XS": {
-            "variant_id": 5244085032,
-            "price_cents": 3500
-          },
-          "S": {
-            "variant_id": 5244085033,
-            "price_cents": 3500
-          },
-          "M": {
-            "variant_id": 5244085034,
-            "price_cents": 3500
-          },
-          "L": {
-            "variant_id": 5244085035,
-            "price_cents": 3500
-          },
-          "XL": {
-            "variant_id": 5244085036,
-            "price_cents": 3500
-          },
-          "2XL": {
-            "variant_id": 5244085037,
-            "price_cents": 3500
-          }
-        },
-        "mockups": ["assets/images/Unisex Long Sleeve Tee w Kicked Out Of The Sky Cover - Front - Black.jpg"]
-      }
-    }
-  },
-  {
     "product_key": "product_425120355",
     "title": "Unisex Long Sleeve Tee w/ Typewriter Text",
     "image": "assets/images/Unisex Long Sleeve Tee w Typewriter Text - Front - Black.jpg",
@@ -812,70 +774,6 @@
           }
         },
         "mockups": ["assets/images/Unisex Long Sleeve Tee w Typewriter Text - Front - Dark Grey Heather.jpg"]
-      }
-    }
-  },
-  {
-    "product_key": "product_425120301",
-    "title": "Unisex Long Sleeve Tee w/ Wasting My Life Away Vintage",
-    "image": "assets/images/Unisex Long Sleeve Tee w Wasting My Life Away Vintage - Front - Black Heather.jpg",
-    "display_price": "$35.00",
-    "variants": {
-      "Black Heather": {
-        "image": "assets/images/Unisex Long Sleeve Tee w Wasting My Life Away Vintage - Front - Black Heather.jpg",
-        "sizes": {
-          "XS": {
-            "variant_id": 5244084403,
-            "price_cents": 3500
-          },
-          "S": {
-            "variant_id": 5244084404,
-            "price_cents": 3500
-          },
-          "M": {
-            "variant_id": 5244084405,
-            "price_cents": 3500
-          },
-          "L": {
-            "variant_id": 5244084406,
-            "price_cents": 3500
-          },
-          "XL": {
-            "variant_id": 5244084407,
-            "price_cents": 3500
-          },
-          "2XL": {
-            "variant_id": 5244084408,
-            "price_cents": 3500
-          }
-        },
-        "mockups": ["assets/images/Unisex Long Sleeve Tee w Wasting My Life Away Vintage - Front - Black Heather.jpg"]
-      },
-      "Gold": {
-        "image": "assets/images/Unisex Long Sleeve Tee w Wasting My Life Away Vintage - Front - Gold.jpg",
-        "sizes": {
-          "S": {
-            "variant_id": 5244084409,
-            "price_cents": 3500
-          },
-          "M": {
-            "variant_id": 5244084410,
-            "price_cents": 3500
-          },
-          "L": {
-            "variant_id": 5244084411,
-            "price_cents": 3500
-          },
-          "XL": {
-            "variant_id": 5244084412,
-            "price_cents": 3500
-          },
-          "2XL": {
-            "variant_id": 5244084413,
-            "price_cents": 3500
-          }
-        },
-        "mockups": ["assets/images/Unisex Long Sleeve Tee w Wasting My Life Away Vintage - Front - Gold.jpg"]
       }
     }
   },
@@ -1016,375 +914,126 @@
     }
   },
   {
-    "product_key": "product_425119947",
-    "title": "Unisex Long Sleeve Tee w/ Color Block Graphic",
-    "image": "assets/images/Unisex Long Sleeve Tee w Color Block Graphic - Front - Black.jpg",
+    "product_key": "product_425222391",
+    "title": "Unisex Long Sleeve Tee w/ Kicked Out Of The Sky Vintage",
+    "image": "assets/images/Unisex Long Sleeve Tee w Kicked Out Of The Sky Vintage - Front - Black Heather.jpg",
     "display_price": "$35.00",
     "variants": {
-      "Black": {
-        "image": "assets/images/Unisex Long Sleeve Tee w Color Block Graphic - Front - Black.jpg",
+      "Black Heather": {
+        "image": "assets/images/Unisex Long Sleeve Tee w Kicked Out Of The Sky Vintage - Front - Black Heather.jpg",
         "sizes": {
-          "XS": {
-            "variant_id": 5244081141,
-            "price_cents": 3500
-          },
           "S": {
-            "variant_id": 5244081142,
+            "variant_id": 5244999870,
             "price_cents": 3500
           },
           "M": {
-            "variant_id": 5244081143,
+            "variant_id": 5244999871,
             "price_cents": 3500
           },
           "L": {
-            "variant_id": 5244081144,
+            "variant_id": 5244999872,
             "price_cents": 3500
           },
           "XL": {
-            "variant_id": 5244081145,
+            "variant_id": 5244999873,
             "price_cents": 3500
           },
           "2XL": {
-            "variant_id": 5244081146,
+            "variant_id": 5244999874,
             "price_cents": 3500
           }
         },
-        "mockups": ["assets/images/Unisex Long Sleeve Tee w Color Block Graphic - Front - Black.jpg"]
-      }
-    }
-  },
-  {
-    "product_key": "product_425119898",
-    "title": "Unisex Long Sleeve Tee w/ Wasting My Life Away Cover",
-    "image": "assets/images/Unisex Long Sleeve Tee w Wasting My Life Away Cover - Front - Black.jpg",
-    "display_price": "$35.00",
-    "variants": {
-      "Black": {
-        "image": "assets/images/Unisex Long Sleeve Tee w Wasting My Life Away Cover - Front - Black.jpg",
-        "sizes": {
-          "XS": {
-            "variant_id": 5244080755,
-            "price_cents": 3500
-          },
-          "S": {
-            "variant_id": 5244080756,
-            "price_cents": 3500
-          },
-          "M": {
-            "variant_id": 5244080757,
-            "price_cents": 3500
-          },
-          "L": {
-            "variant_id": 5244080758,
-            "price_cents": 3500
-          },
-          "XL": {
-            "variant_id": 5244080759,
-            "price_cents": 3500
-          },
-          "2XL": {
-            "variant_id": 5244080760,
-            "price_cents": 3500
-          }
-        },
-        "mockups": ["assets/images/Unisex Long Sleeve Tee w Wasting My Life Away Cover - Front - Black.jpg"]
-      }
-    }
-  },
-  {
-    "product_key": "product_425119801",
-    "title": "Unisex Long Sleeve Tee w/ Levity Of Lies Cover",
-    "image": "assets/images/Unisex Long Sleeve Tee w Levity Of Lies Cover - Front - Black.jpg",
-    "display_price": "$35.00",
-    "variants": {
-      "Black": {
-        "image": "assets/images/Unisex Long Sleeve Tee w Levity Of Lies Cover - Front - Black.jpg",
-        "sizes": {
-          "XS": {
-            "variant_id": 5244079845,
-            "price_cents": 3500
-          },
-          "S": {
-            "variant_id": 5244079847,
-            "price_cents": 3500
-          },
-          "M": {
-            "variant_id": 5244079848,
-            "price_cents": 3500
-          },
-          "L": {
-            "variant_id": 5244079850,
-            "price_cents": 3500
-          },
-          "XL": {
-            "variant_id": 5244079851,
-            "price_cents": 3500
-          },
-          "2XL": {
-            "variant_id": 5244079852,
-            "price_cents": 3500
-          }
-        },
-        "mockups": ["assets/images/Unisex Long Sleeve Tee w Levity Of Lies Cover - Front - Black.jpg"]
-      }
-    }
-  },
-  {
-    "product_key": "product_425213293",
-    "title": "Unisex Hoodie w/ Typewriter Text",
-    "image": "assets/images/Unisex Hoodie w Typewriter Text - Front - Black.jpg",
-    "display_price": "$45.00",
-    "variants": {
-      "Black": {
-        "image": "assets/images/Unisex Hoodie w Typewriter Text - Front - Black.jpg",
-        "sizes": {
-          "S": {
-            "variant_id": 5244899967,
-            "price_cents": 4500
-          },
-          "M": {
-            "variant_id": 5244899968,
-            "price_cents": 4500
-          },
-          "L": {
-            "variant_id": 5244899969,
-            "price_cents": 4500
-          },
-          "XL": {
-            "variant_id": 5244899970,
-            "price_cents": 4500
-          },
-          "2XL": {
-            "variant_id": 5244899971,
-            "price_cents": 4500
-          }
-        },
-        "mockups": ["assets/images/Unisex Hoodie w Typewriter Text - Front - Black.jpg"]
-      }
-    }
-  },
-  {
-    "product_key": "product_425213276",
-    "title": "Unisex Hoodie w/ Kicked Out Of The Sky Vintage",
-    "image": "assets/images/Unisex Hoodie w Kicked Out Of The Sky Vintage - Front - Maroon.jpg",
-    "display_price": "$45.00",
-    "variants": {
-      "Maroon": {
-        "image": "assets/images/Unisex Hoodie w Kicked Out Of The Sky Vintage - Front - Maroon.jpg",
-        "sizes": {
-          "S": {
-            "variant_id": 5244899680,
-            "price_cents": 4500
-          },
-          "M": {
-            "variant_id": 5244899681,
-            "price_cents": 4500
-          },
-          "L": {
-            "variant_id": 5244899682,
-            "price_cents": 4500
-          },
-          "XL": {
-            "variant_id": 5244899683,
-            "price_cents": 4500
-          },
-          "2XL": {
-            "variant_id": 5244899684,
-            "price_cents": 4500
-          }
-        },
-        "mockups": ["assets/images/Unisex Hoodie w Kicked Out Of The Sky Vintage - Front - Maroon.jpg"]
+        "mockups": ["assets/images/Unisex Long Sleeve Tee w Kicked Out Of The Sky Vintage - Front - Black Heather.jpg"]
       },
-      "Sand": {
-        "image": "assets/images/Unisex Hoodie w Kicked Out Of The Sky Vintage - Front - Sand.jpg",
+      "Gold": {
+        "image": "assets/images/Unisex Long Sleeve Tee w Kicked Out Of The Sky Vintage - Front - Gold.jpg",
         "sizes": {
           "S": {
-            "variant_id": 5244899685,
-            "price_cents": 4500
+            "variant_id": 5244999875,
+            "price_cents": 3500
           },
           "M": {
-            "variant_id": 5244899686,
-            "price_cents": 4500
+            "variant_id": 5244999876,
+            "price_cents": 3500
           },
           "L": {
-            "variant_id": 5244899687,
-            "price_cents": 4500
+            "variant_id": 5244999877,
+            "price_cents": 3500
           },
           "XL": {
-            "variant_id": 5244899688,
-            "price_cents": 4500
+            "variant_id": 5244999878,
+            "price_cents": 3500
           },
           "2XL": {
-            "variant_id": 5244899689,
-            "price_cents": 4500
+            "variant_id": 5244999879,
+            "price_cents": 3500
           }
         },
-        "mockups": ["assets/images/Unisex Hoodie w Kicked Out Of The Sky Vintage - Front - Sand.jpg"]
+        "mockups": ["assets/images/Unisex Long Sleeve Tee w Kicked Out Of The Sky Vintage - Front - Gold.jpg"]
       }
     }
   },
   {
-    "product_key": "product_425213209",
-    "title": "Unisex Hoodie w/ Wasting My Life Away Vintage",
-    "image": "assets/images/Unisex Hoodie w Wasting My Life Away Vintage - Front - Maroon.jpg",
-    "display_price": "$45.00",
+    "product_key": "product_425120301",
+    "title": "Unisex Long Sleeve Tee w/ Wasting My Life Away Vintage",
+    "image": "assets/images/Unisex Long Sleeve Tee w Wasting My Life Away Vintage - Front - Black Heather.jpg",
+    "display_price": "$35.00",
     "variants": {
-      "Maroon": {
-        "image": "assets/images/Unisex Hoodie w Wasting My Life Away Vintage - Front - Maroon.jpg",
+      "Black Heather": {
+        "image": "assets/images/Unisex Long Sleeve Tee w Wasting My Life Away Vintage - Front - Black Heather.jpg",
         "sizes": {
+          "XS": {
+            "variant_id": 5244084403,
+            "price_cents": 3500
+          },
           "S": {
-            "variant_id": 5244899327,
-            "price_cents": 4500
+            "variant_id": 5244084404,
+            "price_cents": 3500
           },
           "M": {
-            "variant_id": 5244899328,
-            "price_cents": 4500
+            "variant_id": 5244084405,
+            "price_cents": 3500
           },
           "L": {
-            "variant_id": 5244899329,
-            "price_cents": 4500
+            "variant_id": 5244084406,
+            "price_cents": 3500
           },
           "XL": {
-            "variant_id": 5244899330,
-            "price_cents": 4500
+            "variant_id": 5244084407,
+            "price_cents": 3500
           },
           "2XL": {
-            "variant_id": 5244899331,
-            "price_cents": 4500
+            "variant_id": 5244084408,
+            "price_cents": 3500
           }
         },
-        "mockups": ["assets/images/Unisex Hoodie w Wasting My Life Away Vintage - Front - Maroon.jpg"]
+        "mockups": ["assets/images/Unisex Long Sleeve Tee w Wasting My Life Away Vintage - Front - Black Heather.jpg"]
       },
-      "Sand": {
-        "image": "assets/images/Unisex Hoodie w Wasting My Life Away Vintage - Front - Sand.jpg",
+      "Gold": {
+        "image": "assets/images/Unisex Long Sleeve Tee w Wasting My Life Away Vintage - Front - Gold.jpg",
         "sizes": {
           "S": {
-            "variant_id": 5244899332,
-            "price_cents": 4500
+            "variant_id": 5244084409,
+            "price_cents": 3500
           },
           "M": {
-            "variant_id": 5244899333,
-            "price_cents": 4500
+            "variant_id": 5244084410,
+            "price_cents": 3500
           },
           "L": {
-            "variant_id": 5244899334,
-            "price_cents": 4500
+            "variant_id": 5244084411,
+            "price_cents": 3500
           },
           "XL": {
-            "variant_id": 5244899335,
-            "price_cents": 4500
+            "variant_id": 5244084412,
+            "price_cents": 3500
           },
           "2XL": {
-            "variant_id": 5244899336,
-            "price_cents": 4500
+            "variant_id": 5244084413,
+            "price_cents": 3500
           }
         },
-        "mockups": ["assets/images/Unisex Hoodie w Wasting My Life Away Vintage - Front - Sand.jpg"]
-      }
-    }
-  },
-  {
-    "product_key": "product_425213155",
-    "title": "Unisex Hoodie w/ Text",
-    "image": "assets/images/Unisex Hoodie w Text - Front - Black.jpg",
-    "display_price": "$45.00",
-    "variants": {
-      "Black": {
-        "image": "assets/images/Unisex Hoodie w Text - Front - Black.jpg",
-        "sizes": {
-          "S": {
-            "variant_id": 5244898927,
-            "price_cents": 4500
-          },
-          "M": {
-            "variant_id": 5244898928,
-            "price_cents": 4500
-          },
-          "L": {
-            "variant_id": 5244898929,
-            "price_cents": 4500
-          },
-          "XL": {
-            "variant_id": 5244898930,
-            "price_cents": 4500
-          },
-          "2XL": {
-            "variant_id": 5244898931,
-            "price_cents": 4500
-          }
-        },
-        "mockups": ["assets/images/Unisex Hoodie w Text - Front - Black.jpg"]
-      }
-    }
-  },
-  {
-    "product_key": "product_425213122",
-    "title": "Unisex Hoodie w/ Star + Typewriter Text Sleeve",
-    "image": "assets/images/Unisex Hoodie w Star + Typewriter Text Sleeve - Front - Black.jpg",
-    "display_price": "$45.00",
-    "variants": {
-      "Black": {
-        "image": "assets/images/Unisex Hoodie w Star + Typewriter Text Sleeve - Front - Black.jpg",
-        "sizes": {
-          "S": {
-            "variant_id": 5244898753,
-            "price_cents": 4500
-          },
-          "M": {
-            "variant_id": 5244898754,
-            "price_cents": 4500
-          },
-          "L": {
-            "variant_id": 5244898755,
-            "price_cents": 4500
-          },
-          "XL": {
-            "variant_id": 5244898756,
-            "price_cents": 4500
-          },
-          "2XL": {
-            "variant_id": 5244898757,
-            "price_cents": 4500
-          }
-        },
-        "mockups": [
-          "assets/images/Unisex Hoodie w Star + Typewriter Text Sleeve - Front - Black.jpg",
-          "assets/images/Unisex Hoodie w Star + Typewriter Text Sleeve - Sleeve - Black.jpg"
-        ]
-      }
-    }
-  },
-  {
-    "product_key": "product_425213076",
-    "title": "Unisex Hoodie w/ Star Logo",
-    "image": "assets/images/Unisex Hoodie w Star Logo - Front - Black.jpg",
-    "display_price": "$45.00",
-    "variants": {
-      "Black": {
-        "image": "assets/images/Unisex Hoodie w Star Logo - Front - Black.jpg",
-        "sizes": {
-          "S": {
-            "variant_id": 5244898495,
-            "price_cents": 4500
-          },
-          "M": {
-            "variant_id": 5244898496,
-            "price_cents": 4500
-          },
-          "L": {
-            "variant_id": 5244898497,
-            "price_cents": 4500
-          },
-          "XL": {
-            "variant_id": 5244898498,
-            "price_cents": 4500
-          },
-          "2XL": {
-            "variant_id": 5244898499,
-            "price_cents": 4500
-          }
-        },
-        "mockups": ["assets/images/Unisex Hoodie w Star Logo - Front - Black.jpg"]
+        "mockups": ["assets/images/Unisex Long Sleeve Tee w Wasting My Life Away Vintage - Front - Gold.jpg"]
       }
     }
   },
@@ -1525,6 +1174,145 @@
     }
   },
   {
+    "product_key": "product_425213293",
+    "title": "Unisex Hoodie w/ Typewriter Text",
+    "image": "assets/images/Unisex Hoodie w Typewriter Text - Front - Black.jpg",
+    "display_price": "$45.00",
+    "variants": {
+      "Black": {
+        "image": "assets/images/Unisex Hoodie w Typewriter Text - Front - Black.jpg",
+        "sizes": {
+          "S": {
+            "variant_id": 5244899967,
+            "price_cents": 4500
+          },
+          "M": {
+            "variant_id": 5244899968,
+            "price_cents": 4500
+          },
+          "L": {
+            "variant_id": 5244899969,
+            "price_cents": 4500
+          },
+          "XL": {
+            "variant_id": 5244899970,
+            "price_cents": 4500
+          },
+          "2XL": {
+            "variant_id": 5244899971,
+            "price_cents": 4500
+          }
+        },
+        "mockups": ["assets/images/Unisex Hoodie w Typewriter Text - Front - Black.jpg"]
+      }
+    }
+  },
+  {
+    "product_key": "product_425213155",
+    "title": "Unisex Hoodie w/ Text",
+    "image": "assets/images/Unisex Hoodie w Text - Front - Black.jpg",
+    "display_price": "$45.00",
+    "variants": {
+      "Black": {
+        "image": "assets/images/Unisex Hoodie w Text - Front - Black.jpg",
+        "sizes": {
+          "S": {
+            "variant_id": 5244898927,
+            "price_cents": 4500
+          },
+          "M": {
+            "variant_id": 5244898928,
+            "price_cents": 4500
+          },
+          "L": {
+            "variant_id": 5244898929,
+            "price_cents": 4500
+          },
+          "XL": {
+            "variant_id": 5244898930,
+            "price_cents": 4500
+          },
+          "2XL": {
+            "variant_id": 5244898931,
+            "price_cents": 4500
+          }
+        },
+        "mockups": ["assets/images/Unisex Hoodie w Text - Front - Black.jpg"]
+      }
+    }
+  },
+  {
+    "product_key": "product_425213122",
+    "title": "Unisex Hoodie w/ Star + Typewriter Text Sleeve",
+    "image": "assets/images/Unisex Hoodie w Star + Typewriter Text Sleeve - Front - Black.jpg",
+    "display_price": "$45.00",
+    "variants": {
+      "Black": {
+        "image": "assets/images/Unisex Hoodie w Star + Typewriter Text Sleeve - Front - Black.jpg",
+        "sizes": {
+          "S": {
+            "variant_id": 5244898753,
+            "price_cents": 4500
+          },
+          "M": {
+            "variant_id": 5244898754,
+            "price_cents": 4500
+          },
+          "L": {
+            "variant_id": 5244898755,
+            "price_cents": 4500
+          },
+          "XL": {
+            "variant_id": 5244898756,
+            "price_cents": 4500
+          },
+          "2XL": {
+            "variant_id": 5244898757,
+            "price_cents": 4500
+          }
+        },
+        "mockups": [
+          "assets/images/Unisex Hoodie w Star + Typewriter Text Sleeve - Front - Black.jpg",
+          "assets/images/Unisex Hoodie w Star + Typewriter Text Sleeve - Sleeve - Black.jpg"
+        ]
+      }
+    }
+  },
+  {
+    "product_key": "product_425213076",
+    "title": "Unisex Hoodie w/ Star Logo",
+    "image": "assets/images/Unisex Hoodie w Star Logo - Front - Black.jpg",
+    "display_price": "$45.00",
+    "variants": {
+      "Black": {
+        "image": "assets/images/Unisex Hoodie w Star Logo - Front - Black.jpg",
+        "sizes": {
+          "S": {
+            "variant_id": 5244898495,
+            "price_cents": 4500
+          },
+          "M": {
+            "variant_id": 5244898496,
+            "price_cents": 4500
+          },
+          "L": {
+            "variant_id": 5244898497,
+            "price_cents": 4500
+          },
+          "XL": {
+            "variant_id": 5244898498,
+            "price_cents": 4500
+          },
+          "2XL": {
+            "variant_id": 5244898499,
+            "price_cents": 4500
+          }
+        },
+        "mockups": ["assets/images/Unisex Hoodie w Star Logo - Front - Black.jpg"]
+      }
+    }
+  },
+  {
     "product_key": "product_424594559",
     "title": "Unisex Hoodie w/ Typewriter Text",
     "image": "assets/images/Unisex Hoodie w Typewriter Text - Front - Black.jpg",
@@ -1559,46 +1347,258 @@
     }
   },
   {
-    "product_key": "product_421115395",
-    "title": "Die-cut Sticker w/ Text",
-    "image": "assets/images/Die-cut Sticker w Text - Front - Satin.jpg",
-    "display_price": "$4.50",
+    "product_key": "product_425213276",
+    "title": "Unisex Hoodie w/ Kicked Out Of The Sky Vintage",
+    "image": "assets/images/Unisex Hoodie w Kicked Out Of The Sky Vintage - Front - Maroon.jpg",
+    "display_price": "$45.00",
     "variants": {
-      "Satin": {
-        "image": "assets/images/Die-cut Sticker w Text - Front - Satin.jpg",
+      "Maroon": {
+        "image": "assets/images/Unisex Hoodie w Kicked Out Of The Sky Vintage - Front - Maroon.jpg",
         "sizes": {
-          "2x2": {
-            "variant_id": 5209549629,
-            "price_cents": 450
+          "S": {
+            "variant_id": 5244899680,
+            "price_cents": 4500
           },
-          "3x3": {
-            "variant_id": 5209549630,
-            "price_cents": 550
+          "M": {
+            "variant_id": 5244899681,
+            "price_cents": 4500
+          },
+          "L": {
+            "variant_id": 5244899682,
+            "price_cents": 4500
+          },
+          "XL": {
+            "variant_id": 5244899683,
+            "price_cents": 4500
+          },
+          "2XL": {
+            "variant_id": 5244899684,
+            "price_cents": 4500
           }
         },
-        "mockups": ["assets/images/Die-cut Sticker w Text - Front - Satin.jpg"]
+        "mockups": ["assets/images/Unisex Hoodie w Kicked Out Of The Sky Vintage - Front - Maroon.jpg"]
+      },
+      "Sand": {
+        "image": "assets/images/Unisex Hoodie w Kicked Out Of The Sky Vintage - Front - Sand.jpg",
+        "sizes": {
+          "S": {
+            "variant_id": 5244899685,
+            "price_cents": 4500
+          },
+          "M": {
+            "variant_id": 5244899686,
+            "price_cents": 4500
+          },
+          "L": {
+            "variant_id": 5244899687,
+            "price_cents": 4500
+          },
+          "XL": {
+            "variant_id": 5244899688,
+            "price_cents": 4500
+          },
+          "2XL": {
+            "variant_id": 5244899689,
+            "price_cents": 4500
+          }
+        },
+        "mockups": ["assets/images/Unisex Hoodie w Kicked Out Of The Sky Vintage - Front - Sand.jpg"]
       }
     }
   },
   {
-    "product_key": "product_421115394",
-    "title": "Die-cut Sticker w/ Star + Text",
-    "image": "assets/images/Die-cut Sticker w Star + Text - Front - Satin.jpg",
-    "display_price": "$4.50",
+    "product_key": "product_425213209",
+    "title": "Unisex Hoodie w/ Wasting My Life Away Vintage",
+    "image": "assets/images/Unisex Hoodie w Wasting My Life Away Vintage - Front - Maroon.jpg",
+    "display_price": "$45.00",
     "variants": {
-      "Satin": {
-        "image": "assets/images/Die-cut Sticker w Star + Text - Front - Satin.jpg",
+      "Maroon": {
+        "image": "assets/images/Unisex Hoodie w Wasting My Life Away Vintage - Front - Maroon.jpg",
         "sizes": {
-          "2x2": {
-            "variant_id": 5209549609,
-            "price_cents": 450
+          "S": {
+            "variant_id": 5244899327,
+            "price_cents": 4500
           },
-          "3x3": {
-            "variant_id": 5209549613,
-            "price_cents": 550
+          "M": {
+            "variant_id": 5244899328,
+            "price_cents": 4500
+          },
+          "L": {
+            "variant_id": 5244899329,
+            "price_cents": 4500
+          },
+          "XL": {
+            "variant_id": 5244899330,
+            "price_cents": 4500
+          },
+          "2XL": {
+            "variant_id": 5244899331,
+            "price_cents": 4500
           }
         },
-        "mockups": ["assets/images/Die-cut Sticker w Star + Text - Front - Satin.jpg"]
+        "mockups": ["assets/images/Unisex Hoodie w Wasting My Life Away Vintage - Front - Maroon.jpg"]
+      },
+      "Sand": {
+        "image": "assets/images/Unisex Hoodie w Wasting My Life Away Vintage - Front - Sand.jpg",
+        "sizes": {
+          "S": {
+            "variant_id": 5244899332,
+            "price_cents": 4500
+          },
+          "M": {
+            "variant_id": 5244899333,
+            "price_cents": 4500
+          },
+          "L": {
+            "variant_id": 5244899334,
+            "price_cents": 4500
+          },
+          "XL": {
+            "variant_id": 5244899335,
+            "price_cents": 4500
+          },
+          "2XL": {
+            "variant_id": 5244899336,
+            "price_cents": 4500
+          }
+        },
+        "mockups": ["assets/images/Unisex Hoodie w Wasting My Life Away Vintage - Front - Sand.jpg"]
+      }
+    }
+  },
+  {
+    "product_key": "product_425107540",
+    "title": "Unisex Crewneck Sweatshirt w/ Color Block Graphic",
+    "image": "assets/images/Unisex Crewneck Sweatshirt w Color Block Graphic - Front - Black.jpg",
+    "display_price": "$40.00",
+    "variants": {
+      "Black": {
+        "image": "assets/images/Unisex Crewneck Sweatshirt w Color Block Graphic - Front - Black.jpg",
+        "sizes": {
+          "S": {
+            "variant_id": 5243869924,
+            "price_cents": 4000
+          },
+          "M": {
+            "variant_id": 5243869925,
+            "price_cents": 4000
+          },
+          "L": {
+            "variant_id": 5243869926,
+            "price_cents": 4000
+          },
+          "XL": {
+            "variant_id": 5243869927,
+            "price_cents": 4000
+          },
+          "2XL": {
+            "variant_id": 5243869928,
+            "price_cents": 4000
+          }
+        },
+        "mockups": ["assets/images/Unisex Crewneck Sweatshirt w Color Block Graphic - Front - Black.jpg"]
+      }
+    }
+  },
+  {
+    "product_key": "product_425107299",
+    "title": "Unisex Crewneck Sweatshirt w/ Wasting My Life Away Cover",
+    "image": "assets/images/Unisex Crewneck Sweatshirt w Wasting My Life Away Cover - Front - Black.jpg",
+    "display_price": "$40.00",
+    "variants": {
+      "Black": {
+        "image": "assets/images/Unisex Crewneck Sweatshirt w Wasting My Life Away Cover - Front - Black.jpg",
+        "sizes": {
+          "S": {
+            "variant_id": 5243868811,
+            "price_cents": 4000
+          },
+          "M": {
+            "variant_id": 5243868812,
+            "price_cents": 4000
+          },
+          "L": {
+            "variant_id": 5243868813,
+            "price_cents": 4000
+          },
+          "XL": {
+            "variant_id": 5243868814,
+            "price_cents": 4000
+          },
+          "2XL": {
+            "variant_id": 5243868815,
+            "price_cents": 4000
+          }
+        },
+        "mockups": ["assets/images/Unisex Crewneck Sweatshirt w Wasting My Life Away Cover - Front - Black.jpg"]
+      }
+    }
+  },
+  {
+    "product_key": "product_425107217",
+    "title": "Unisex Crewneck Sweatshirt w/ Levity Of Lies Cover",
+    "image": "assets/images/Unisex Crewneck Sweatshirt w Levity Of Lies Cover - Front - Black.jpg",
+    "display_price": "$40.00",
+    "variants": {
+      "Black": {
+        "image": "assets/images/Unisex Crewneck Sweatshirt w Levity Of Lies Cover - Front - Black.jpg",
+        "sizes": {
+          "S": {
+            "variant_id": 5243868430,
+            "price_cents": 4000
+          },
+          "M": {
+            "variant_id": 5243868431,
+            "price_cents": 4000
+          },
+          "L": {
+            "variant_id": 5243868432,
+            "price_cents": 4000
+          },
+          "XL": {
+            "variant_id": 5243868433,
+            "price_cents": 4000
+          },
+          "2XL": {
+            "variant_id": 5243868434,
+            "price_cents": 4000
+          }
+        },
+        "mockups": ["assets/images/Unisex Crewneck Sweatshirt w Levity Of Lies Cover - Front - Black.jpg"]
+      }
+    }
+  },
+  {
+    "product_key": "product_425107172",
+    "title": "Unisex Crewneck Sweatshirt w/ Kicked Out Of The Sky Cover",
+    "image": "assets/images/Unisex Crewneck Sweatshirt w Kicked Out Of The Sky Cover - Front - Black.jpg",
+    "display_price": "$40.00",
+    "variants": {
+      "Black": {
+        "image": "assets/images/Unisex Crewneck Sweatshirt w Kicked Out Of The Sky Cover - Front - Black.jpg",
+        "sizes": {
+          "S": {
+            "variant_id": 5243868128,
+            "price_cents": 4000
+          },
+          "M": {
+            "variant_id": 5243868129,
+            "price_cents": 4000
+          },
+          "L": {
+            "variant_id": 5243868130,
+            "price_cents": 4000
+          },
+          "XL": {
+            "variant_id": 5243868131,
+            "price_cents": 4000
+          },
+          "2XL": {
+            "variant_id": 5243868132,
+            "price_cents": 4000
+          }
+        },
+        "mockups": ["assets/images/Unisex Crewneck Sweatshirt w Kicked Out Of The Sky Cover - Front - Black.jpg"]
       }
     }
   },
@@ -1789,142 +1789,6 @@
     }
   },
   {
-    "product_key": "product_425107540",
-    "title": "Unisex Crewneck Sweatshirt w/ Color Block Graphic",
-    "image": "assets/images/Unisex Crewneck Sweatshirt w Color Block Graphic - Front - Black.jpg",
-    "display_price": "$40.00",
-    "variants": {
-      "Black": {
-        "image": "assets/images/Unisex Crewneck Sweatshirt w Color Block Graphic - Front - Black.jpg",
-        "sizes": {
-          "S": {
-            "variant_id": 5243869924,
-            "price_cents": 4000
-          },
-          "M": {
-            "variant_id": 5243869925,
-            "price_cents": 4000
-          },
-          "L": {
-            "variant_id": 5243869926,
-            "price_cents": 4000
-          },
-          "XL": {
-            "variant_id": 5243869927,
-            "price_cents": 4000
-          },
-          "2XL": {
-            "variant_id": 5243869928,
-            "price_cents": 4000
-          }
-        },
-        "mockups": ["assets/images/Unisex Crewneck Sweatshirt w Color Block Graphic - Front - Black.jpg"]
-      }
-    }
-  },
-  {
-    "product_key": "product_425107299",
-    "title": "Unisex Crewneck Sweatshirt w/ Wasting My Life Away Cover",
-    "image": "assets/images/Unisex Crewneck Sweatshirt w Wasting My Life Away Cover - Front - Black.jpg",
-    "display_price": "$40.00",
-    "variants": {
-      "Black": {
-        "image": "assets/images/Unisex Crewneck Sweatshirt w Wasting My Life Away Cover - Front - Black.jpg",
-        "sizes": {
-          "S": {
-            "variant_id": 5243868811,
-            "price_cents": 4000
-          },
-          "M": {
-            "variant_id": 5243868812,
-            "price_cents": 4000
-          },
-          "L": {
-            "variant_id": 5243868813,
-            "price_cents": 4000
-          },
-          "XL": {
-            "variant_id": 5243868814,
-            "price_cents": 4000
-          },
-          "2XL": {
-            "variant_id": 5243868815,
-            "price_cents": 4000
-          }
-        },
-        "mockups": ["assets/images/Unisex Crewneck Sweatshirt w Wasting My Life Away Cover - Front - Black.jpg"]
-      }
-    }
-  },
-  {
-    "product_key": "product_425107217",
-    "title": "Unisex Crewneck Sweatshirt w/ Levity Of Lies Cover",
-    "image": "assets/images/Unisex Crewneck Sweatshirt w Levity Of Lies Cover - Front - Black.jpg",
-    "display_price": "$40.00",
-    "variants": {
-      "Black": {
-        "image": "assets/images/Unisex Crewneck Sweatshirt w Levity Of Lies Cover - Front - Black.jpg",
-        "sizes": {
-          "S": {
-            "variant_id": 5243868430,
-            "price_cents": 4000
-          },
-          "M": {
-            "variant_id": 5243868431,
-            "price_cents": 4000
-          },
-          "L": {
-            "variant_id": 5243868432,
-            "price_cents": 4000
-          },
-          "XL": {
-            "variant_id": 5243868433,
-            "price_cents": 4000
-          },
-          "2XL": {
-            "variant_id": 5243868434,
-            "price_cents": 4000
-          }
-        },
-        "mockups": ["assets/images/Unisex Crewneck Sweatshirt w Levity Of Lies Cover - Front - Black.jpg"]
-      }
-    }
-  },
-  {
-    "product_key": "product_425107172",
-    "title": "Unisex Crewneck Sweatshirt w/ Kicked Out Of The Sky Cover",
-    "image": "assets/images/Unisex Crewneck Sweatshirt w Kicked Out Of The Sky Cover - Front - Black.jpg",
-    "display_price": "$40.00",
-    "variants": {
-      "Black": {
-        "image": "assets/images/Unisex Crewneck Sweatshirt w Kicked Out Of The Sky Cover - Front - Black.jpg",
-        "sizes": {
-          "S": {
-            "variant_id": 5243868128,
-            "price_cents": 4000
-          },
-          "M": {
-            "variant_id": 5243868129,
-            "price_cents": 4000
-          },
-          "L": {
-            "variant_id": 5243868130,
-            "price_cents": 4000
-          },
-          "XL": {
-            "variant_id": 5243868131,
-            "price_cents": 4000
-          },
-          "2XL": {
-            "variant_id": 5243868132,
-            "price_cents": 4000
-          }
-        },
-        "mockups": ["assets/images/Unisex Crewneck Sweatshirt w Kicked Out Of The Sky Cover - Front - Black.jpg"]
-      }
-    }
-  },
-  {
     "product_key": "product_425107110",
     "title": "Unisex Crewneck Sweatshirt w/ Typewriter Text + Star",
     "image": "assets/images/Unisex Crewneck Sweatshirt w Typewriter Text + Star - Front - Black.jpg",
@@ -2101,6 +1965,142 @@
           }
         },
         "mockups": ["assets/images/Unisex Crewneck Sweatshirt w Wasting My Life Away Vintage - Front - Ivory.jpg"]
+      }
+    }
+  },
+  {
+    "product_key": "product_424963286",
+    "title": "Snapback Hat w/ Embroidery Star Logo",
+    "image": "assets/images/Snapback Hat w Embroidery Star Logo - Front - Black.jpg",
+    "display_price": "$25.00",
+    "variants": {
+      "Black": {
+        "image": "assets/images/Snapback Hat w Embroidery Star Logo - Front - Black.jpg",
+        "sizes": {
+          "One Size": {
+            "variant_id": 5242015846,
+            "price_cents": 2500
+          }
+        },
+        "mockups": ["assets/images/Snapback Hat w Embroidery Star Logo - Front - Black.jpg"]
+      },
+      "Black/ Silver": {
+        "image": "assets/images/Snapback Hat w Embroidery Star Logo - Front - Black Silver.jpg",
+        "sizes": {
+          "One Size": {
+            "variant_id": 5242015847,
+            "price_cents": 2500
+          }
+        },
+        "mockups": ["assets/images/Snapback Hat w Embroidery Star Logo - Front - Black Silver.jpg"]
+      }
+    }
+  },
+  {
+    "product_key": "product_421115401",
+    "title": "Snapback Hat w/ Embroidery Text",
+    "image": "assets/images/Snapback Hat w Embroidery Text - Front - Black.jpg",
+    "display_price": "$25.00",
+    "variants": {
+      "Black": {
+        "image": "assets/images/Snapback Hat w Embroidery Text - Front - Black.jpg",
+        "sizes": {
+          "One Size": {
+            "variant_id": 5209549648,
+            "price_cents": 2500
+          }
+        },
+        "mockups": ["assets/images/Snapback Hat w Embroidery Text - Front - Black.jpg"]
+      },
+      "Black/ Silver": {
+        "image": "assets/images/Snapback Hat w Embroidery Text - Front - Black Silver.jpg",
+        "sizes": {
+          "One Size": {
+            "variant_id": 5209549649,
+            "price_cents": 2500
+          }
+        },
+        "mockups": ["assets/images/Snapback Hat w Embroidery Text - Front - Black Silver.jpg"]
+      }
+    }
+  },
+  {
+    "product_key": "product_421115397",
+    "title": "Trucker Cap w/ Star Logo",
+    "image": "assets/images/Trucker Cap w Star Logo - Front - Black & White.jpg",
+    "display_price": "$22.00",
+    "variants": {
+      "Black & White": {
+        "image": "assets/images/Trucker Cap w Star Logo - Front - Black & White.jpg",
+        "sizes": {
+          "One Size": {
+            "variant_id": 5209549634,
+            "price_cents": 2200
+          }
+        },
+        "mockups": ["assets/images/Trucker Cap w Star Logo - Front - Black & White.jpg"]
+      }
+    }
+  },
+  {
+    "product_key": "product_421115396",
+    "title": "Trucker Cap w/ Text",
+    "image": "assets/images/Trucker Cap w Text - Front - Black & White.jpg",
+    "display_price": "$22.00",
+    "variants": {
+      "Black & White": {
+        "image": "assets/images/Trucker Cap w Text - Front - Black & White.jpg",
+        "sizes": {
+          "One Size": {
+            "variant_id": 5209549633,
+            "price_cents": 2200
+          }
+        },
+        "mockups": ["assets/images/Trucker Cap w Text - Front - Black & White.jpg"]
+      }
+    }
+  },
+  {
+    "product_key": "product_421115395",
+    "title": "Die-cut Sticker w/ Text",
+    "image": "assets/images/Die-cut Sticker w Text - Front - Satin.jpg",
+    "display_price": "$4.50",
+    "variants": {
+      "Satin": {
+        "image": "assets/images/Die-cut Sticker w Text - Front - Satin.jpg",
+        "sizes": {
+          "2x2": {
+            "variant_id": 5209549629,
+            "price_cents": 450
+          },
+          "3x3": {
+            "variant_id": 5209549630,
+            "price_cents": 550
+          }
+        },
+        "mockups": ["assets/images/Die-cut Sticker w Text - Front - Satin.jpg"]
+      }
+    }
+  },
+  {
+    "product_key": "product_421115394",
+    "title": "Die-cut Sticker w/ Star + Text",
+    "image": "assets/images/Die-cut Sticker w Star + Text - Front - Satin.jpg",
+    "display_price": "$4.50",
+    "variants": {
+      "Satin": {
+        "image": "assets/images/Die-cut Sticker w Star + Text - Front - Satin.jpg",
+        "sizes": {
+          "2x2": {
+            "variant_id": 5209549609,
+            "price_cents": 450
+          },
+          "3x3": {
+            "variant_id": 5209549613,
+            "price_cents": 550
+          }
+        },
+        "mockups": ["assets/images/Die-cut Sticker w Star + Text - Front - Satin.jpg"]
       }
     }
   }
