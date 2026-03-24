@@ -143,10 +143,8 @@ async function fetchProducts() {
 
         // Group variants by color, then by size parsing the name
         // For Stickers, there are no colors, just sizes
-        // For Hoodies, there is only one color (Black), and sizes
         // For Trucker Caps, there is only one color (Black & White), and One Size
         const isSticker = product.name.includes("Sticker");
-        const isHoodie = product.name.includes("Hoodie");
         const isTruckerCap = product.name.includes("Trucker Cap");
         const KNOWN_SIZES = /^(XS|S|M|L|XL|2XL|3XL|4XL|5XL|One Size)$/;
 
@@ -161,9 +159,6 @@ async function fetchProducts() {
             size = parts[1] || "One Size";
             // Normalize sticker sizes: "2″×2″" -> "2x2", "3″×3″" -> "3x3"
             size = size.replace(/″×″/g, "x").replace(/″/g, "").replace(/×/g, "x");
-          } else if (isHoodie) {
-            color = "Black"; // Hoodie is always Black
-            size = parts[1] || "One Size";
           } else if (isTruckerCap) {
             color = "Black & White"; // Trucker Cap is always Black & White
             size = parts[1] || "One Size";
@@ -172,6 +167,7 @@ async function fetchProducts() {
             color = "Black";
             size = parts[1];
           } else {
+            // Multi-color product: "Product Name / Color / Size"
             color = parts[1] || "Default";
             size = parts[2] || "One Size";
           }
@@ -260,20 +256,38 @@ async function fetchProducts() {
 
     console.log(`\n✅ Found ${products.length} products with variants`);
 
-    // Sort products: Tees (Color, Cover, other, Vintage), Hats, Long Sleeve, Hoodie, Stickers
+    // Sort products: Tees, Long Sleeve, Hoodie, Sweatshirt (each: Color, Cover, other, Vintage), Hats, Stickers
     products.sort((a, b) => {
       const getCategory = title => {
-        if (title.includes("Long Sleeve")) return 30;
-        if (title.includes("Hoodie")) return 40;
-        if (title.includes("Hat") || title.includes("Cap")) return 20;
-        if (title.includes("Sticker")) return 50;
+        if (title.includes("Hat") || title.includes("Cap")) return 50;
+        if (title.includes("Sticker")) return 60;
+
+        // Apply consistent sorting: Color, Cover, Other, Vintage for each type
+        if (title.includes("Long Sleeve")) {
+          if (title.includes("Color")) return 21;
+          if (title.includes("Cover")) return 22;
+          if (title.includes("Vintage")) return 24;
+          return 23;
+        }
+        if (title.includes("Hoodie")) {
+          if (title.includes("Color")) return 31;
+          if (title.includes("Cover")) return 32;
+          if (title.includes("Vintage")) return 34;
+          return 33;
+        }
+        if (title.includes("Crewneck") || title.includes("Sweatshirt")) {
+          if (title.includes("Color")) return 41;
+          if (title.includes("Cover")) return 42;
+          if (title.includes("Vintage")) return 44;
+          return 43;
+        }
         if (title.includes("Tee")) {
           if (title.includes("Color")) return 11;
           if (title.includes("Cover")) return 12;
           if (title.includes("Vintage")) return 14;
           return 13;
         }
-        return 60;
+        return 70;
       };
       return getCategory(a.title) - getCategory(b.title);
     });
