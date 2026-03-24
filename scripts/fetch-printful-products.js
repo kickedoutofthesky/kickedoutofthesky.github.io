@@ -17,7 +17,7 @@ const API_BASE = "https://api.printful.com";
 const IMAGES_DIR = path.join(__dirname, "../store/assets/images");
 
 // Scan local mockup images directory and build a lookup map
-// Naming convention: "{Product Title with / removed} - {Front|Sleeve} - {Color}.jpg"
+// Naming convention: "{Product Title with / removed} - {Front|Sleeve|Back} - {Color}.jpg"
 function buildLocalMockupMap() {
   const mockupMap = {};
   if (!fs.existsSync(IMAGES_DIR)) return mockupMap;
@@ -25,12 +25,12 @@ function buildLocalMockupMap() {
   const files = fs.readdirSync(IMAGES_DIR);
   for (const file of files) {
     // Parse: "Product Name - Placement - Color.jpg"
-    const match = file.match(/^(.+?) - (Front|Sleeve) - (.+)\.jpg$/i);
+    const match = file.match(/^(.+?) - (Front|Sleeve|Back) - (.+)\.jpg$/i);
     if (!match) continue;
     const [, productName, placement, color] = match;
     const key = `${productName}|${color}`;
     if (!mockupMap[key]) mockupMap[key] = [];
-    // Front always comes before Sleeve
+    // Front always comes first, Sleeve/Back are secondary (in that order)
     const entry = { placement: placement.toLowerCase(), path: `assets/images/${file}` };
     if (placement.toLowerCase() === "front") {
       mockupMap[key].unshift(entry);
