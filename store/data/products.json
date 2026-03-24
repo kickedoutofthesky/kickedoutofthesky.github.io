@@ -1169,42 +1169,120 @@
   {
     "product_key": "product_425213276",
     "title": "Unisex Hoodie w/ Kicked Out Of The Sky Vintage",
-    "image": "https://files.cdn.printful.com/files/a5e/a5ee766fd7ee39b5001354404ccaaa84_preview.png",
+    "image": "assets/images/Unisex Hoodie w Kicked Out Of The Sky Vintage - Front - Maroon.jpg",
     "display_price": "$45.00",
     "variants": {
-      "Black": {
-        "image": "https://files.cdn.printful.com/files/a5e/a5ee766fd7ee39b5001354404ccaaa84_preview.png",
+      "Maroon": {
+        "image": "assets/images/Unisex Hoodie w Kicked Out Of The Sky Vintage - Front - Maroon.jpg",
         "sizes": {
-          "Maroon": {
-            "variant_id": 5244899684,
+          "S": {
+            "variant_id": 5244899680,
             "price_cents": 4500
           },
-          "Sand": {
+          "M": {
+            "variant_id": 5244899681,
+            "price_cents": 4500
+          },
+          "L": {
+            "variant_id": 5244899682,
+            "price_cents": 4500
+          },
+          "XL": {
+            "variant_id": 5244899683,
+            "price_cents": 4500
+          },
+          "2XL": {
+            "variant_id": 5244899684,
+            "price_cents": 4500
+          }
+        },
+        "mockups": ["assets/images/Unisex Hoodie w Kicked Out Of The Sky Vintage - Front - Maroon.jpg"]
+      },
+      "Sand": {
+        "image": "assets/images/Unisex Hoodie w Kicked Out Of The Sky Vintage - Front - Sand.jpg",
+        "sizes": {
+          "S": {
+            "variant_id": 5244899685,
+            "price_cents": 4500
+          },
+          "M": {
+            "variant_id": 5244899686,
+            "price_cents": 4500
+          },
+          "L": {
+            "variant_id": 5244899687,
+            "price_cents": 4500
+          },
+          "XL": {
+            "variant_id": 5244899688,
+            "price_cents": 4500
+          },
+          "2XL": {
             "variant_id": 5244899689,
             "price_cents": 4500
           }
-        }
+        },
+        "mockups": ["assets/images/Unisex Hoodie w Kicked Out Of The Sky Vintage - Front - Sand.jpg"]
       }
     }
   },
   {
     "product_key": "product_425213209",
     "title": "Unisex Hoodie w/ Wasting My Life Away Vintage",
-    "image": "https://files.cdn.printful.com/files/1f6/1f607cb4bfbe2fbfc75c9187a784bb1a_preview.png",
+    "image": "assets/images/Unisex Hoodie w Wasting My Life Away Vintage - Front - Maroon.jpg",
     "display_price": "$45.00",
     "variants": {
-      "Black": {
-        "image": "https://files.cdn.printful.com/files/1f6/1f607cb4bfbe2fbfc75c9187a784bb1a_preview.png",
+      "Maroon": {
+        "image": "assets/images/Unisex Hoodie w Wasting My Life Away Vintage - Front - Maroon.jpg",
         "sizes": {
-          "Maroon": {
-            "variant_id": 5244899331,
+          "S": {
+            "variant_id": 5244899327,
             "price_cents": 4500
           },
-          "Sand": {
+          "M": {
+            "variant_id": 5244899328,
+            "price_cents": 4500
+          },
+          "L": {
+            "variant_id": 5244899329,
+            "price_cents": 4500
+          },
+          "XL": {
+            "variant_id": 5244899330,
+            "price_cents": 4500
+          },
+          "2XL": {
+            "variant_id": 5244899331,
+            "price_cents": 4500
+          }
+        },
+        "mockups": ["assets/images/Unisex Hoodie w Wasting My Life Away Vintage - Front - Maroon.jpg"]
+      },
+      "Sand": {
+        "image": "assets/images/Unisex Hoodie w Wasting My Life Away Vintage - Front - Sand.jpg",
+        "sizes": {
+          "S": {
+            "variant_id": 5244899332,
+            "price_cents": 4500
+          },
+          "M": {
+            "variant_id": 5244899333,
+            "price_cents": 4500
+          },
+          "L": {
+            "variant_id": 5244899334,
+            "price_cents": 4500
+          },
+          "XL": {
+            "variant_id": 5244899335,
+            "price_cents": 4500
+          },
+          "2XL": {
             "variant_id": 5244899336,
             "price_cents": 4500
           }
-        }
+        },
+        "mockups": ["assets/images/Unisex Hoodie w Wasting My Life Away Vintage - Front - Sand.jpg"]
       }
     }
   },
