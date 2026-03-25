@@ -121,6 +121,61 @@ describe("Responsive Design - Mobile and Tablet Viewports", () => {
       cy.get("#shipping-country").should("be.visible");
     });
 
+    it("should position product dropdowns within their parent container at mobile viewport", () => {
+      cy.visit("/store");
+      cy.get("[data-testid='product-card']").first().click();
+      cy.url().should("include", "product.html");
+      cy.get("[data-testid='product-detail']").should("be.visible");
+
+      // Get the product-detail-info container bounds
+      cy.get(".product-detail-info").then($info => {
+        const infoRect = $info[0].getBoundingClientRect();
+
+        // Color select should be inside the info container
+        cy.get("[data-testid='color-select']").then($select => {
+          if ($select.length > 0) {
+            const selectRect = $select[0].getBoundingClientRect();
+
+            // Select top should be at or below the info container top
+            expect(selectRect.top).to.be.at.least(infoRect.top);
+            // Select should not extend past the right edge of the viewport
+            expect(selectRect.right).to.be.at.most(375 + 5);
+            // Select left should be at or after the info container left
+            expect(selectRect.left).to.be.at.least(infoRect.left - 1);
+          }
+        });
+
+        // Size select should be inside the info container
+        cy.get("[data-testid='size-select']").then($select => {
+          const selectRect = $select[0].getBoundingClientRect();
+          expect(selectRect.top).to.be.at.least(infoRect.top);
+          expect(selectRect.right).to.be.at.most(375 + 5);
+          expect(selectRect.left).to.be.at.least(infoRect.left - 1);
+        });
+      });
+
+      // Verify no parent has overflow:hidden that could clip the form area
+      cy.get("[data-testid='color-select']").then($select => {
+        if ($select.length > 0) {
+          let el = $select[0].parentElement;
+          while (el && !el.classList.contains("product-detail")) {
+            const overflow = window.getComputedStyle(el).overflow;
+            expect(overflow, `overflow on ${el.className || el.tagName}`).to.not.equal("hidden");
+            el = el.parentElement;
+          }
+        }
+      });
+
+      // Verify the form tag is properly closed (no stray unclosed form)
+      cy.get(".product-detail-info form").should("have.length", 1);
+      cy.get(".product-detail-info form").then(() => {
+        // All selects should be inside the form
+        cy.get(".product-detail-info form [data-testid='size-select']").should("exist");
+        // Add to cart button should be inside the form
+        cy.get(".product-detail-info form #add-to-cart-btn").should("exist");
+      });
+    });
+
     it("should open navigation menu and make links functional at mobile viewport", () => {
       cy.visit("/store");
 

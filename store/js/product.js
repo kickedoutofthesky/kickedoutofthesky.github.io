@@ -533,6 +533,7 @@ document.addEventListener("DOMContentLoaded", async () => {
               <button type="button" id="add-to-cart-btn" class="btn btn-warning btn-lg fw-bold" onclick="addToCart()" disabled>
                 Add to Cart
               </button>
+              </form>
             </div>
           </div>
         </div>

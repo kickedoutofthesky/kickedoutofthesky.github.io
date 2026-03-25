@@ -494,6 +494,7 @@ h2 {
 
 /* Legal Footer */
 .legal-footer {
+  margin-top: 20px;
   background: #111;
   border-top: 1px solid #222;
   padding: 30px 20px;

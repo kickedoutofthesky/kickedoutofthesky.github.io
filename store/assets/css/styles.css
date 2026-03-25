@@ -299,6 +299,10 @@ input[type="submit"]:disabled,
   color: #ffffff;
 }
 
+.product-detail-info {
+  overflow: visible;
+}
+
 .product-detail-price {
   font-size: 1.5rem;
   color: #ffffff;
@@ -823,6 +827,10 @@ nav .container-fluid {
     height: 400px;
   }
 
+  .product-detail {
+    padding: 15px;
+  }
+
   /* Reorganize navbar for smallest screens - match main page wrapping */
   nav.site-header {
     padding: 0 !important;
@@ -908,7 +916,7 @@ textarea[aria-invalid="true"]:focus {
 
 /* Touch Target Sizing - Minimum 44x44px for mobile accessibility */
 @media (pointer: coarse) {
-  button,
+  button:not(.cart-qty-btn),
   a.btn,
   .btn,
   .filter-btn,
