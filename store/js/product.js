@@ -403,8 +403,12 @@ document.addEventListener("DOMContentLoaded", async () => {
         "@context": "https://schema.org/",
         "@type": "Product",
         name: product.title,
-        description: `${product.title} - Available in multiple colors and sizes`,
-        image: product.image,
+        description: `${product.title} - Official Kicked Out of the Sky merchandise. Available in multiple colors and sizes.`,
+        image: `https://www.kickedoutofthesky.com/store/${encodeURI(product.image)}`,
+        brand: {
+          "@type": "Brand",
+          name: "Kicked Out of the Sky",
+        },
         offers: {
           "@type": "AggregateOffer",
           priceCurrency: "USD",
@@ -417,6 +421,34 @@ document.addEventListener("DOMContentLoaded", async () => {
       document.head.appendChild(schemaScript);
     } catch (e) {
       console.error("Failed to add product schema markup:", e);
+    }
+
+    // Update meta tags dynamically for SEO
+    try {
+      const baseUrl = "https://www.kickedoutofthesky.com/store/";
+      const productUrl = `${baseUrl}product.html?key=${product.product_key}`;
+      const productImageUrl = `${baseUrl}${encodeURI(product.image)}`;
+      const productDescription = `${product.title} - Official Kicked Out of the Sky merchandise. Available in multiple colors and sizes.`;
+
+      document.title = `${product.title} | Kicked Out of the Sky Store`;
+
+      const metaUpdates = {
+        'meta[name="description"]': { attr: "content", value: productDescription },
+        'meta[property="og:title"]': { attr: "content", value: `${product.title} | Kicked Out of the Sky Store` },
+        'meta[property="og:description"]': { attr: "content", value: productDescription },
+        'meta[property="og:url"]': { attr: "content", value: productUrl },
+        'meta[property="og:image"]': { attr: "content", value: productImageUrl },
+        'meta[name="twitter:title"]': { attr: "content", value: `${product.title} | Kicked Out of the Sky Store` },
+        'meta[name="twitter:description"]': { attr: "content", value: productDescription },
+        'link[rel="canonical"]': { attr: "href", value: productUrl },
+      };
+
+      for (const [selector, update] of Object.entries(metaUpdates)) {
+        const el = document.querySelector(selector);
+        if (el) el.setAttribute(update.attr, update.value);
+      }
+    } catch (e) {
+      console.error("Failed to update meta tags:", e);
     }
 
     // Get first color as default

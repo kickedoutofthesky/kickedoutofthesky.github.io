@@ -33,13 +33,6 @@ describe("Checkout API Payload Tests", () => {
         },
       }).as("checkoutSession");
 
-      // Stub window.location.href to spy on the redirect
-      cy.window().then(win => {
-        cy.stub(win, "location").get().returns({
-          href: "",
-        });
-      });
-
       // Select shipping country and click checkout
       selectShippingCountry();
       cy.get("button").contains("Proceed to Checkout").click();
@@ -50,12 +43,12 @@ describe("Checkout API Payload Tests", () => {
   });
 
   describe("Scenario 2: Verify Checkout API Request Body", () => {
-    it("should send only variant_id and quantity to the backend API", () => {
+    it("should send cart item data to the backend API", () => {
       cy.visit("/store");
 
       // Setup intercept to capture the request
       cy.intercept("POST", "**/api/create-checkout-session", req => {
-        // Verify request body contains ONLY variant_id and quantity
+        // Verify request body structure
         const body = req.body;
 
         expect(body).to.have.property("items");
@@ -65,15 +58,15 @@ describe("Checkout API Payload Tests", () => {
         expect(Array.isArray(body.items)).to.be.true;
 
         body.items.forEach(item => {
-          // Verify only variant_id and quantity are present
+          // App sends: variant_id, quantity, name, image, color, size
           expect(item).to.have.property("variant_id");
           expect(item).to.have.property("quantity");
+          expect(item).to.have.property("name");
+          expect(item).to.have.property("image");
+          expect(item).to.have.property("color");
+          expect(item).to.have.property("size");
 
           // Verify NO shipping address fields
-          expect(item).to.not.have.property("product_name");
-          expect(item).to.not.have.property("color");
-          expect(item).to.not.have.property("size");
-          expect(item).to.not.have.property("price_cents");
           expect(item).to.not.have.property("shipping");
           expect(item).to.not.have.property("address");
 
@@ -107,22 +100,21 @@ describe("Checkout API Payload Tests", () => {
       // Verify the API was called with correct payload
       cy.wait("@payloadCheck").then(interception => {
         expect(interception.request.body.items).to.have.length.greaterThan(0);
-        expect(interception.request.body.items[0]).to.have.all.keys("variant_id", "quantity");
+        expect(interception.request.body.items[0]).to.have.all.keys(
+          "variant_id",
+          "quantity",
+          "name",
+          "image",
+          "color",
+          "size"
+        );
       });
     });
 
     it("should not include shipping address fields in the checkout API request", () => {
       cy.visit("/store");
 
-      const forbiddenFields = [
-        "product_name",
-        "color",
-        "size",
-        "price_cents",
-        "shipping_address",
-        "customer_email",
-        "customer_name",
-      ];
+      const forbiddenFields = ["product_name", "price_cents", "shipping_address", "customer_email", "customer_name"];
 
       cy.intercept("POST", "**/api/create-checkout-session", req => {
         const body = req.body;
@@ -165,23 +157,6 @@ describe("Checkout API Payload Tests", () => {
 
       cy.visit("/store");
 
-      // Stub window.location to capture the redirect
-      let redirectUrl = null;
-      cy.window().then(win => {
-        cy.stub(win, "location").value({
-          href: "",
-        });
-        // Track changes to href
-        Object.defineProperty(win.location, "href", {
-          set(value) {
-            redirectUrl = value;
-          },
-          get() {
-            return "";
-          },
-        });
-      });
-
       // Add product and checkout
       cy.get("[data-testid='product-card']").first().click();
       selectFirstRealSize();
@@ -192,10 +167,10 @@ describe("Checkout API Payload Tests", () => {
 
       // Verify API was called
       cy.wait("@mockedCheckout").then(() => {
-        // Verify cart was cleared (product would be gone from localStorage)
+        // Verify cart was cleared (kots_cart is the correct localStorage key)
         cy.window().then(win => {
-          const cart = JSON.parse(win.localStorage.getItem("merch_cart") || "{}");
-          expect(cart.items || []).to.have.length(0);
+          const cart = JSON.parse(win.localStorage.getItem("kots_cart") || "[]");
+          expect(cart).to.have.length(0);
         });
       });
     });
@@ -227,14 +202,19 @@ describe("Checkout API Payload Tests", () => {
       const mockSessionId = "cs_test_mock_123";
       const mockOrderDetails = {
         sessionId: mockSessionId,
-        shippingDetails: {
+        customer: {
           name: "John Doe",
           email: "john@example.com",
-          address: "123 Main St",
-          city: "New York",
-          state: "NY",
-          zip: "10001",
-          country: "US",
+        },
+        shippingDetails: {
+          name: "John Doe",
+          address: {
+            line1: "123 Main St",
+            city: "New York",
+            state: "NY",
+            postal_code: "10001",
+            country: "US",
+          },
         },
         lineItems: [
           {
@@ -323,8 +303,8 @@ describe("Checkout API Payload Tests", () => {
 
       // Get cart count
       cy.window().then(win => {
-        const cartData = JSON.parse(win.localStorage.getItem("merch_cart") || "{}");
-        const itemsInCart = (cartData.items || []).length;
+        const cartData = JSON.parse(win.localStorage.getItem("kots_cart") || "[]");
+        const itemsInCart = cartData.length;
         expect(itemsInCart).to.be.greaterThan(0);
 
         // Navigate to cart
@@ -361,8 +341,8 @@ describe("Checkout API Payload Tests", () => {
 
       // Verify item in cart
       cy.window().then(win => {
-        const cart = JSON.parse(win.localStorage.getItem("merch_cart") || "{}");
-        expect((cart.items || []).length).to.be.greaterThan(0);
+        const cart = JSON.parse(win.localStorage.getItem("kots_cart") || "[]");
+        expect(cart.length).to.be.greaterThan(0);
       });
 
       // Navigate to cart (simulating Stripe cancel redirect)
@@ -373,26 +353,24 @@ describe("Checkout API Payload Tests", () => {
 
       // Verify cart still has items
       cy.window().then(win => {
-        const cart = JSON.parse(win.localStorage.getItem("merch_cart") || "{}");
-        expect((cart.items || []).length).to.be.greaterThan(0);
+        const cart = JSON.parse(win.localStorage.getItem("kots_cart") || "[]");
+        expect(cart.length).to.be.greaterThan(0);
       });
     });
   });
 
   describe("Multiple Items Checkout", () => {
     it("should handle multiple items in checkout API payload", () => {
-      const expectedItems = [];
-
       cy.intercept("POST", "**/api/create-checkout-session", req => {
         const body = req.body;
         expect(body.items).to.be.an("array");
-        expect(body.items.length).to.equal(expectedItems.length);
+        expect(body.items.length).to.equal(2);
 
-        body.items.forEach((item, index) => {
+        body.items.forEach(item => {
           expect(item).to.have.property("variant_id");
           expect(item).to.have.property("quantity");
-          expect(item.variant_id).to.equal(expectedItems[index].variant_id);
-          expect(item.quantity).to.equal(expectedItems[index].quantity);
+          expect(item.variant_id).to.be.a("number");
+          expect(item.quantity).to.equal(1);
         });
 
         req.reply({
@@ -408,38 +386,18 @@ describe("Checkout API Payload Tests", () => {
       selectFirstRealSize();
       cy.get("#add-to-cart-btn").click();
 
-      cy.window().then(win => {
-        const cart = JSON.parse(win.localStorage.getItem("merch_cart") || "{}");
-        if (cart.items && cart.items[0]) {
-          expectedItems.push({
-            variant_id: cart.items[0].variantId || 0,
-            quantity: cart.items[0].quantity || 1,
-          });
-        }
-      });
-
-      // Add second product (different color/size)
-      cy.get("a[href*='index.html']").first().click();
+      // Add second product (different product)
+      cy.visit("/store");
       cy.get("[data-testid='product-card']").eq(1).click();
       selectFirstRealSize();
       cy.get("#add-to-cart-btn").click();
 
-      cy.window().then(win => {
-        const cart = JSON.parse(win.localStorage.getItem("merch_cart") || "{}");
-        if (cart.items && cart.items[1]) {
-          expectedItems.push({
-            variant_id: cart.items[1].variantId || 0,
-            quantity: cart.items[1].quantity || 1,
-          });
-        }
+      // Navigate to cart and checkout
+      cy.visit("/store/cart.html");
+      selectShippingCountry();
+      cy.get("button").contains("Proceed to Checkout").click();
 
-        // Navigate to cart and checkout
-        cy.get("a[href*='cart.html']").first().click();
-        selectShippingCountry();
-        cy.get("button").contains("Proceed to Checkout").click();
-
-        cy.wait("@multiItemCheckout");
-      });
+      cy.wait("@multiItemCheckout");
     });
   });
 

@@ -7,6 +7,7 @@
     "prepare": "husky install",
     "dev": "PORT=3000 node server.js",
     "fetch-products": "node scripts/fetch-printful-products.js",
+    "generate:sitemap": "node scripts/generate-sitemap.js",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",

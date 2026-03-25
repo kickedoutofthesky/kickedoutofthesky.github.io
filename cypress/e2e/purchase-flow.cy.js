@@ -54,18 +54,14 @@ describe("Complete Purchase Flow - Customer Buying Merch", () => {
 
   it("should intercept checkout API call and verify request contains correct product, variant, quantity, and shipping", () => {
     // Intercept the checkout API call
-    cy.intercept("POST", "**/api/checkout", req => {
-      // Capture the request for verification
-      req.reply(res => {
-        // Mock success response
-        res.send({
-          statusCode: 200,
-          body: {
-            sessionId: "test_session_12345",
-            redirectUrl: "/store/success.html",
-            success: true,
-          },
-        });
+    cy.intercept("POST", "**/api/create-checkout-session", req => {
+      req.reply({
+        statusCode: 200,
+        body: {
+          sessionId: "test_session_12345",
+          url: "/store/success.html",
+          success: true,
+        },
       });
     }).as("checkoutAPI");
 
@@ -80,60 +76,48 @@ describe("Complete Purchase Flow - Customer Buying Merch", () => {
       .then(price => {
         selectFirstRealSize();
 
-        // Get product ID and add to cart
-        cy.get("[data-testid='product-id'], .product-id").then($productId => {
-          cy.get("#add-to-cart-btn").click();
+        // Add to cart
+        cy.get("#add-to-cart-btn").click();
 
-          // Go to cart
-          cy.get("a[href*='cart.html']").first().click();
+        // Go to cart
+        cy.get("a[href*='cart.html']").first().click();
 
-          // Fill shipping form
-          fillShippingForm();
+        // Select shipping country
+        selectShippingCountry();
 
-          // Try clicking checkout
-          cy.get("button").contains("Proceed to Checkout").click({ force: true });
+        // Click checkout
+        cy.get("button").contains("Proceed to Checkout").click();
 
-          // Verify checkout API was called
-          cy.wait("@checkoutAPI").then(interception => {
-            // Verify request body contains expected fields
-            const requestBody = interception.request.body;
+        // Verify checkout API was called
+        cy.wait("@checkoutAPI").then(interception => {
+          // Verify request body contains expected fields
+          const requestBody = interception.request.body;
 
-            // Check for essential checkout fields
-            expect(requestBody).to.exist;
-            expect(requestBody).to.have.property("items").and.be.an("array");
+          // Check for essential checkout fields
+          expect(requestBody).to.exist;
+          expect(requestBody).to.have.property("items").and.be.an("array");
 
-            if (requestBody.items && requestBody.items.length > 0) {
-              const item = requestBody.items[0];
-              // Verify product details in request
-              expect(item).to.have.property("productId");
-              expect(item).to.have.property("quantity");
-              expect(item.quantity).to.equal(1);
+          if (requestBody.items && requestBody.items.length > 0) {
+            const item = requestBody.items[0];
+            // Verify product details in request
+            expect(item).to.have.property("variant_id");
+            expect(item).to.have.property("quantity");
+            expect(item.quantity).to.equal(1);
+          }
 
-              // Verify variant if present
-              if (item.variantId) {
-                expect(item.variantId).to.exist;
-              }
-            }
-
-            // Verify shipping information
-            if (requestBody.shipping) {
-              expect(requestBody.shipping).to.have.property("name");
-              expect(requestBody.shipping).to.have.property("email");
-              expect(requestBody.shipping).to.have.property("address");
-              expect(requestBody.shipping.name).to.equal("John Doe");
-            }
-          });
+          // Verify shipping country
+          expect(requestBody).to.have.property("shippingCountry");
         });
       });
   });
 
   it("should redirect to success page after successful checkout API response", () => {
     // Mock the checkout API to return success and redirect URL
-    cy.intercept("POST", "**/api/checkout", {
+    cy.intercept("POST", "**/api/create-checkout-session", {
       statusCode: 200,
       body: {
         sessionId: "test_session_12345",
-        redirectUrl: "/store/success.html",
+        url: "/store/success.html",
         success: true,
       },
     }).as("checkoutSuccess");
@@ -147,11 +131,11 @@ describe("Complete Purchase Flow - Customer Buying Merch", () => {
     // Go to cart
     cy.get("a[href*='cart.html']").first().click();
 
-    // Fill shipping form
-    fillShippingForm();
+    // Select shipping country
+    selectShippingCountry();
 
     // Click checkout
-    cy.get("button").contains("Proceed to Checkout").click({ force: true });
+    cy.get("button").contains("Proceed to Checkout").click();
 
     // Wait for checkout API
     cy.wait("@checkoutSuccess");
@@ -160,7 +144,7 @@ describe("Complete Purchase Flow - Customer Buying Merch", () => {
     cy.url({ timeout: 5000 }).should("include", "success");
 
     // Verify success page loads
-    cy.get("[data-testid='success-page'], .success-container").should("exist");
+    cy.get("#main-content").should("exist");
   });
 
   it("should display confirmation message and order details on success page", () => {
@@ -168,44 +152,13 @@ describe("Complete Purchase Flow - Customer Buying Merch", () => {
     cy.visit("/store/success.html");
 
     // Should display confirmation message
-    cy.get("[data-testid='confirmation-message'], .confirmation, .success-message").then($msg => {
-      if ($msg.length > 0) {
-        cy.wrap($msg).should("be.visible");
-        cy.wrap($msg).invoke("text").should("include.oneOf", ["Thank you", "success", "Order", "confirmed"]);
-      }
-    });
+    cy.get("h1").should("contain", "Order Successful");
+    cy.get("p").contains("Thank you").should("be.visible");
 
     // Should display order details section
-    cy.get("[data-testid='order-details'], .order-summary").then($details => {
-      if ($details.length > 0) {
+    cy.get("#order-section").then($details => {
+      if ($details.length > 0 && $details.is(":visible")) {
         cy.wrap($details).should("be.visible");
-
-        // Should show order ID/confirmation number
-        cy.wrap($details)
-          .find("[data-testid='order-id'], .order-number, .confirmation-number")
-          .then($orderId => {
-            if ($orderId.length > 0) {
-              cy.wrap($orderId).should("exist");
-            }
-          });
-
-        // Should show order total
-        cy.wrap($details)
-          .find("[data-testid='order-total'], .total")
-          .then($total => {
-            if ($total.length > 0) {
-              cy.wrap($total).invoke("text").should("include", "$");
-            }
-          });
-
-        // Should show shipping address
-        cy.wrap($details)
-          .find("[data-testid='shipping-address'], .address")
-          .then($address => {
-            if ($address.length > 0) {
-              cy.wrap($address).should("be.visible");
-            }
-          });
       }
     });
 

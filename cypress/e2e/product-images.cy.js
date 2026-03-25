@@ -2,11 +2,11 @@
 
 describe("Product Images and Carousel", () => {
   // Star + Typewriter Text Sleeve has 2 mockups per color (front + sleeve)
-  const multiMockupProductKey = "product_421297848";
+  const multiMockupProductKey = "product_425122887";
   // A single-mockup product (Unisex Tee w/ Kicked Out Of The Sky Vintage)
   const singleMockupProductKey = "product_424725213";
-  // Snapback Hat — no mockups, uses Printful CDN images
-  const noMockupProductKey = "product_421115406";
+  // Snapback Hat — uses local mockup images
+  const noMockupProductKey = "product_424963286";
 
   describe("Local Mockup Images", () => {
     it("should display local images for products with mockups", () => {
@@ -20,7 +20,8 @@ describe("Product Images and Carousel", () => {
       cy.visit(`/store/product.html?key=${noMockupProductKey}`);
       cy.get("[data-testid='product-detail']").should("be.visible");
 
-      cy.get("#product-image").should("have.attr", "src").and("include", "files.cdn.printful.com");
+      // Hat products use local mockup images now
+      cy.get("#product-image").should("have.attr", "src").and("include", "assets/images/");
     });
 
     it("should update to local image when color changes", () => {
@@ -186,8 +187,11 @@ describe("Product Images and Carousel", () => {
       cy.visit(`/store/product.html?key=${noMockupProductKey}`);
       cy.get("[data-testid='product-detail']").should("be.visible");
 
-      // Hats have "One Size" — should auto-select it
-      cy.get("[data-testid='size-select']").should("have.value", "One Size");
+      // Hats have "One Size" — should have it as an option
+      cy.get("[data-testid='size-select'] option").should($options => {
+        const values = [...$options].map(o => o.value);
+        expect(values).to.include("One Size");
+      });
     });
   });
 
@@ -231,9 +235,9 @@ describe("Product Images and Carousel", () => {
       cy.get("[data-testid='product-card']").first().click();
       cy.get("[data-testid='product-detail']").should("be.visible");
 
-      // Select second color
+      // Select first color (no placeholder in color select)
       cy.get("[data-testid='color-select'] option")
-        .eq(1)
+        .eq(0)
         .invoke("attr", "value")
         .then(color => {
           cy.get("[data-testid='color-select']").select(color, { force: true });

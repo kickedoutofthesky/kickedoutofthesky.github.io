@@ -23,6 +23,8 @@ describe("Stripe Integration Tests", () => {
     it("should have checkout button ready for Stripe integration", () => {
       // Verify we're on cart page ready for checkout
       cy.get("button").contains("Proceed to Checkout").should("exist");
+      // Button is disabled until country is selected
+      selectShippingCountry();
       cy.get("button").contains("Proceed to Checkout").should("not.be.disabled");
       // Stripe.js will be loaded on checkout page via backend
     });
@@ -42,6 +44,7 @@ describe("Stripe Integration Tests", () => {
       // Backend will create Stripe session and redirect
       // This test verifies the button is present and clickable
       cy.get("button").contains("Proceed to Checkout").should("exist");
+      selectShippingCountry();
       cy.get("button").contains("Proceed to Checkout").should("not.be.disabled");
       // Test flow: Button click → Backend creates session → Redirect to Stripe
     });
@@ -73,6 +76,7 @@ describe("Stripe Integration Tests", () => {
   describe("Payment Status Handling", () => {
     it("should have cart subtotal for payment calculation", () => {
       cy.get("[data-testid='cart-subtotal']").should("exist");
+      cy.get("[data-testid='cart-subtotal']").should("not.contain", "$0.00");
       cy.get("[data-testid='cart-subtotal']")
         .invoke("text")
         .then(total => {
@@ -104,6 +108,7 @@ describe("Stripe Integration Tests", () => {
       // Verify prerequisites for checkout
       cy.get("[data-testid='cart-item']").should("have.length.greaterThan", 0);
       cy.get("[data-testid='cart-subtotal']").should("exist");
+      selectShippingCountry();
       cy.get("button").contains("Proceed to Checkout").should("not.be.disabled");
     });
   });
@@ -125,6 +130,7 @@ describe("Stripe Integration Tests", () => {
 
     it("should structure order data for webhook processing", () => {
       // Verify order data has required fields for webhook
+      cy.get("[data-testid='cart-subtotal']").should("not.contain", "$0.00");
       cy.get("[data-testid='cart-subtotal']")
         .invoke("text")
         .then(total => {
@@ -138,6 +144,7 @@ describe("Stripe Integration Tests", () => {
 
     it("should have valid order total for Stripe session", () => {
       // Session data needed for webhook signature verification
+      cy.get("[data-testid='cart-subtotal']").should("not.contain", "$0.00");
       cy.get("[data-testid='cart-subtotal']")
         .invoke("text")
         .then(total => {

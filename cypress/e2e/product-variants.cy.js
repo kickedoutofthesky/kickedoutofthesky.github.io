@@ -5,7 +5,7 @@ function selectFirstRealColor() {
   cy.get("[data-testid='color-select']").then($select => {
     if ($select.length > 0) {
       cy.get("[data-testid='color-select'] option")
-        .eq(1)
+        .eq(0)
         .invoke("attr", "value")
         .then(colorValue => {
           // Use force:true to bypass navbar coverage issue
@@ -28,7 +28,8 @@ describe("Product Variants and Details", () => {
     cy.get("[data-testid='color-select']").then($select => {
       if ($select.length > 0) {
         cy.get("[data-testid='color-select']").should("exist");
-        cy.get("[data-testid='color-select'] option").should("have.length.greaterThan", 1);
+        // Color select has no placeholder — each option is a real color
+        cy.get("[data-testid='color-select'] option").should("have.length.greaterThan", 0);
       }
     });
   });

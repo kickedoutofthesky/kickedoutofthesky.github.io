@@ -5,7 +5,7 @@ function selectFirstRealColor() {
   cy.get("[data-testid='color-select']").then($select => {
     if ($select.length > 0) {
       cy.get("[data-testid='color-select'] option")
-        .eq(1)
+        .eq(0)
         .invoke("attr", "value")
         .then(colorValue => {
           cy.get("[data-testid='color-select']").select(colorValue, { force: true });
