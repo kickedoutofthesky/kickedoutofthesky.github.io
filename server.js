@@ -21,8 +21,9 @@ const mimeTypes = {
 };
 
 const server = http.createServer((req, res) => {
+  const parsedUrl = new URL(req.url, `http://localhost:${PORT}`);
   // Normalize URL and remove query strings
-  let filePath = decodeURIComponent(req.url.split("?")[0]);
+  let filePath = decodeURIComponent(parsedUrl.pathname);
 
   // Prevent directory traversal
   filePath = path.normalize(filePath);
@@ -98,6 +99,72 @@ const server = http.createServer((req, res) => {
         response.end("Server Error");
         console.error(`Error reading file ${file}:`, err);
         return;
+      }
+
+      // Inject dynamic OG tags for store page with ?type= filter
+      if (file.endsWith(path.join("store", "index.html")) && parsedUrl.searchParams.has("type")) {
+        const type = parsedUrl.searchParams.get("type");
+        try {
+          const productsPath = path.join(BASE_DIR, "store", "data", "products.json");
+          const products = JSON.parse(fs.readFileSync(productsPath, "utf8"));
+          const categoryLabels = {
+            tees: "Tees",
+            "long-sleeve": "Long Sleeve Tees",
+            hoodies: "Hoodies",
+            sweatshirts: "Sweatshirts",
+            hats: "Hats",
+            stickers: "Stickers",
+          };
+          const label = categoryLabels[type];
+          if (label) {
+            const getCategory = title => {
+              const t = title.toLowerCase();
+              if (t.includes("sticker")) return "stickers";
+              if (t.includes("hoodie")) return "hoodies";
+              if (t.includes("sweatshirt") || t.includes("crewneck")) return "sweatshirts";
+              if (t.includes("long sleeve")) return "long-sleeve";
+              if (t.includes("snapback") || t.includes("trucker") || t.includes("cap") || t.includes("hat"))
+                return "hats";
+              if (t.includes("tee")) return "tees";
+              return "other";
+            };
+            const firstProduct = products.find(p => getCategory(p.title) === type);
+            if (firstProduct) {
+              const ogTitle = `${label} - Kicked Out of the Sky Merch`;
+              const ogDesc = `Shop ${label} from Kicked Out of the Sky.`;
+              const ogImage = firstProduct.image.startsWith("http")
+                ? firstProduct.image
+                : `https://www.kickedoutofthesky.com/store/${firstProduct.image}`;
+              let html = data.toString();
+              html = html.replace(
+                /<meta property="og:title" content="[^"]*"\s*\/?>/,
+                `<meta property="og:title" content="${ogTitle}" />`
+              );
+              html = html.replace(
+                /<meta property="og:image" content="[^"]*"\s*\/?>/,
+                `<meta property="og:image" content="${ogImage}" />`
+              );
+              html = html.replace(
+                /<meta\s+property="og:description"[\s\S]*?\/>/,
+                `<meta property="og:description" content="${ogDesc}" />`
+              );
+              html = html.replace(
+                /<meta name="twitter:title" content="[^"]*"\s*\/?>/,
+                `<meta name="twitter:title" content="${ogTitle}" />`
+              );
+              html = html.replace(
+                /<meta\s+name="twitter:description"[\s\S]*?\/>/,
+                `<meta name="twitter:description" content="${ogDesc}" />`
+              );
+              response.writeHead(200, { "Content-Type": mimeType });
+              response.end(html);
+              console.log(`✅ ${req.url} (${mimeType}) [OG: ${label}]`);
+              return;
+            }
+          }
+        } catch (ogErr) {
+          console.error("OG tag injection error:", ogErr.message);
+        }
       }
 
       response.writeHead(200, { "Content-Type": mimeType });

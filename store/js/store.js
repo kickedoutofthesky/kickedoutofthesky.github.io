@@ -70,21 +70,53 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Set up category filter buttons
     const filterBtns = document.querySelectorAll(".filter-btn");
+    const validCategories = Array.from(filterBtns).map(b => b.getAttribute("data-category"));
+
+    const applyFilter = category => {
+      filterBtns.forEach(b => b.classList.remove("active"));
+      const activeBtn = Array.from(filterBtns).find(b => b.getAttribute("data-category") === category);
+      if (activeBtn) activeBtn.classList.add("active");
+
+      const cards = grid.querySelectorAll(".product-card");
+      cards.forEach(card => {
+        if (category === "all" || card.getAttribute("data-category") === category) {
+          card.style.display = "";
+        } else {
+          card.style.display = "none";
+        }
+      });
+
+      // Update URL and localStorage
+      const url = new URL(window.location);
+      if (category === "all") {
+        url.searchParams.delete("type");
+        localStorage.removeItem("kots_filter");
+      } else {
+        url.searchParams.set("type", category);
+        localStorage.setItem("kots_filter", category);
+      }
+      history.replaceState(null, "", url);
+    };
+
     filterBtns.forEach(btn => {
       btn.addEventListener("click", () => {
-        filterBtns.forEach(b => b.classList.remove("active"));
-        btn.classList.add("active");
-        const category = btn.getAttribute("data-category");
-        const cards = grid.querySelectorAll(".product-card");
-        cards.forEach(card => {
-          if (category === "all" || card.getAttribute("data-category") === category) {
-            card.style.display = "";
-          } else {
-            card.style.display = "none";
-          }
-        });
+        applyFilter(btn.getAttribute("data-category"));
       });
     });
+
+    // Restore filter: URL param takes priority, then localStorage
+    const urlType = new URL(window.location).searchParams.get("type");
+    const savedFilter = localStorage.getItem("kots_filter");
+    const initialFilter =
+      urlType && validCategories.includes(urlType)
+        ? urlType
+        : savedFilter && validCategories.includes(savedFilter)
+          ? savedFilter
+          : null;
+
+    if (initialFilter) {
+      applyFilter(initialFilter);
+    }
   } catch (error) {
     console.error("Error loading products:", error);
     grid.style.display = "none";
@@ -131,5 +163,5 @@ function getPriceDisplay(product) {
 
 // Allow importing in Node.js (Jest tests) while keeping browser globals
 if (typeof module !== "undefined" && module.exports) {
-  module.exports = { getPriceDisplay };
+  module.exports = { getPriceDisplay, getProductCategory };
 }
