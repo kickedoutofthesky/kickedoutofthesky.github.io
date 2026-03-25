@@ -491,3 +491,40 @@ h2 {
     min-height: 500px;
   }
 }
+
+/* Legal Footer */
+.legal-footer {
+  background: #111;
+  border-top: 1px solid #222;
+  padding: 30px 20px;
+  text-align: center;
+  color: #888;
+  font-size: 0.85rem;
+  line-height: 1.6;
+}
+
+.legal-footer a {
+  color: #f0c040;
+  text-decoration: none;
+  margin: 0 8px;
+}
+
+.legal-footer a:hover {
+  color: #fff;
+}
+
+.legal-links {
+  margin-bottom: 15px;
+}
+
+@media print {
+  .legal-footer {
+    background: #fff;
+    color: #000;
+    border-top-color: #999;
+  }
+  .legal-footer a {
+    color: #000;
+    text-decoration: underline;
+  }
+}
