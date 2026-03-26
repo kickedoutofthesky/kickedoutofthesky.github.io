@@ -34,7 +34,7 @@ describe("Site Experience - Overall Site Functionality", () => {
       cy.get("main, [data-testid='main-content'], body").should("be.visible");
 
       // Should have links to key sections
-      cy.get("a[href*='store'], a[href*='music'], a[href*='epk']").should("exist");
+      cy.get("a[href*='store'], a[href*='music']").should("exist");
 
       // Page should not have broken images
       cy.get("img").each($img => {
@@ -88,7 +88,8 @@ describe("Site Experience - Overall Site Functionality", () => {
       cy.get("[data-testid='product-grid'], .products").should("exist");
     });
 
-    it("should navigate to EPK page and load correctly", () => {
+    // EPK page is currently disabled
+    it.skip("should navigate to EPK page and load correctly", () => {
       cy.get("body").then($body => {
         const $link = $body.find("a[href*='epk']");
         if ($link.length > 0) {

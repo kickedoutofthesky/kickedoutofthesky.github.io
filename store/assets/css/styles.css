@@ -804,6 +804,11 @@ nav .container-fluid {
   .product-image {
     height: 450px;
   }
+
+  .filter-btn {
+    padding: 5px 12px;
+    font-size: 0.75rem;
+  }
 }
 
 @media (max-width: 576px) {

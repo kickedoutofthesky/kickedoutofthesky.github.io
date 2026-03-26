@@ -101,6 +101,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     filterBtns.forEach(btn => {
       btn.addEventListener("click", () => {
         applyFilter(btn.getAttribute("data-category"));
+        window.scrollTo({ top: 0, behavior: "smooth" });
       });
     });
 

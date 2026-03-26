@@ -12,7 +12,7 @@ function generateSitemap() {
 
   const staticPages = [
     { loc: "/", priority: "1.0" },
-    { loc: "/epk.html", priority: "0.8" },
+    // { loc: "/epk.html", priority: "0.8" },
     { loc: "/store/", priority: "0.9" },
     { loc: "/store/cart.html", priority: "0.5" },
   ];

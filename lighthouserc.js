@@ -7,7 +7,7 @@ module.exports = {
         "http://localhost:9222/",
         "http://localhost:9222/store/",
         "http://localhost:9222/store/cart.html",
-        "http://localhost:9222/epk.html",
+        // "http://localhost:9222/epk.html",
       ],
       numberOfRuns: 1,
       settings: {
