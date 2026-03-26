@@ -321,7 +321,7 @@ async function proceedToCheckout() {
       .filter(item => item !== null);
 
     // Call backend checkout endpoint with CSRF token (skip for localhost)
-    const backendUrl = window.__API_URL__ || "https://kickedoutofthesky-store.vercel.app";
+    const backendUrl = window.__API_URL__ || "https://api.kickedoutofthesky.com";
     const isLocalhost = backendUrl.includes("localhost");
     const headers = {
       "Content-Type": "application/json",

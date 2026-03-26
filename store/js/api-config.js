@@ -20,14 +20,13 @@
   let backendUrl;
 
   if (hostname === "localhost" || hostname === "127.0.0.1") {
-    // Local development: point to local Vercel dev server
+    // Local development: point to local Vercel dev server (vercel dev on port 3001)
     backendUrl = "http://localhost:3001";
-  } else if (hostname.includes("vercel.app")) {
-    // Preview environment: same origin (branch deployment)
-    backendUrl = window.location.origin;
+    // Local development: point to Vercel staging API via custom domain
+    // backendUrl = "https://api-staging.kickedoutofthesky.com";
   } else {
-    // Production: point to production backend
-    backendUrl = "https://kickedoutofthesky-store.vercel.app";
+    // Production: point to production API via custom domain
+    backendUrl = "https://api.kickedoutofthesky.com";
   }
 
   // Make globally available
