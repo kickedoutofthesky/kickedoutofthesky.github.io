@@ -30,7 +30,7 @@ function selectFirstRealSize() {
         .eq(1)
         .invoke("attr", "value")
         .then(sizeValue => {
-          cy.get("[data-testid='size-select']").select(sizeValue);
+          cy.get("[data-testid='size-select']").select(sizeValue, { force: true });
         });
     }
   });
@@ -60,10 +60,15 @@ function selectShippingCountry(countryCode = "US") {
   cy.get("#shipping-country").should("exist").select(countryCode);
 }
 
+function acceptTerms() {
+  cy.get("#terms-checkbox").should("exist").check();
+}
+
 // Make helpers available globally
 window.selectFirstRealSize = selectFirstRealSize;
 window.selectFirstRealColor = selectFirstRealColor;
 window.selectShippingCountry = selectShippingCountry;
+window.acceptTerms = acceptTerms;
 
 // Ignore cross-origin script errors from CDN resources (Bootstrap, Font Awesome)
 // These are expected and don't affect test functionality

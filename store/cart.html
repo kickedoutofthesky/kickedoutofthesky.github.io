@@ -285,6 +285,32 @@
                 <option value="">Select a country...</option>
               </select>
             </div>
+            <div class="mt-20" style="text-align: left">
+              <label for="terms-checkbox" style="cursor: pointer; color: #ccc; font-size: 0.9rem; line-height: 1.6">
+                <input
+                  type="checkbox"
+                  id="terms-checkbox"
+                  data-testid="terms-checkbox"
+                  style="accent-color: #ffc107; width: 16px; height: 16px; vertical-align: middle; margin-right: 6px"
+                />
+                I agree to the
+                <a
+                  href="../legal/terms-and-conditions.html"
+                  target="_blank"
+                  style="color: #ffc107; text-decoration: underline"
+                >
+                  Terms &amp; Conditions
+                </a>
+                and have read the
+                <a
+                  href="../legal/privacy-policy.html"
+                  target="_blank"
+                  style="color: #ffc107; text-decoration: underline"
+                >
+                  Privacy Policy
+                </a>
+              </label>
+            </div>
             <button
               id="checkout-btn"
               class="btn btn-warning w-100"
@@ -326,5 +352,7 @@
     <script src="js/cart.js"></script>
     <script src="js/cart-notification.js"></script>
     <script src="js/cart-display.js?v=20260323120009"></script>
+    <script src="../js/analytics.js"></script>
+    <script src="../js/cookie-consent.js"></script>
   </body>
 </html>

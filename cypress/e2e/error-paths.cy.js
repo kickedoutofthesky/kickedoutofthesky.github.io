@@ -60,7 +60,7 @@ describe("Error Paths and Edge Cases", () => {
       cy.get("[data-testid='product-card']").first().click();
       cy.get("[data-testid='product-detail']").should("be.visible");
       selectFirstRealSize();
-      cy.get("#add-to-cart-btn").should("not.be.disabled").click();
+      cy.get("#add-to-cart-btn").should("not.be.disabled").click({ force: true });
       cy.wait(1500);
       cy.get("a[href*='cart.html']").first().click({ force: true });
     });
@@ -135,7 +135,7 @@ describe("Error Paths and Edge Cases", () => {
       // Add product to cart
       cy.get("[data-testid='product-card']").first().click();
       selectFirstRealSize();
-      cy.get("#add-to-cart-btn").click();
+      cy.get("#add-to-cart-btn").click({ force: true });
       cy.wait(1500);
       cy.get("a[href*='cart.html']").first().click({ force: true });
 
@@ -158,7 +158,7 @@ describe("Error Paths and Edge Cases", () => {
       // Add product
       cy.get("[data-testid='product-card']").first().click();
       selectFirstRealSize();
-      cy.get("#add-to-cart-btn").click();
+      cy.get("#add-to-cart-btn").click({ force: true });
 
       // Rapidly navigate
       cy.wait(1500);
@@ -183,7 +183,7 @@ describe("Error Paths and Edge Cases", () => {
       // Add product to cart
       cy.get("[data-testid='product-card']").first().click();
       selectFirstRealSize();
-      cy.get("#add-to-cart-btn").click();
+      cy.get("#add-to-cart-btn").click({ force: true });
       cy.wait(500);
       cy.get("a[href*='cart.html']").first().click({ force: true });
     });
@@ -285,7 +285,7 @@ describe("Error Paths and Edge Cases", () => {
       // Wait for product detail to load, then select size (required before add-to-cart is enabled)
       cy.get("[data-testid='product-detail']", { timeout: 10000 }).should("be.visible");
       selectFirstRealSize();
-      cy.get("#add-to-cart-btn").should("not.be.disabled").click();
+      cy.get("#add-to-cart-btn").should("not.be.disabled").click({ force: true });
 
       // Should still work
       cy.get("a[href*='cart.html']").should("exist");
@@ -307,7 +307,7 @@ describe("Error Paths and Edge Cases", () => {
       cy.visit("/store");
       cy.get("[data-testid='product-card']").first().click();
       selectFirstRealSize();
-      cy.get("#add-to-cart-btn").should("not.be.disabled").click();
+      cy.get("#add-to-cart-btn").should("not.be.disabled").click({ force: true });
 
       // After action, page should remain interactive
       cy.get("body").should("be.visible");

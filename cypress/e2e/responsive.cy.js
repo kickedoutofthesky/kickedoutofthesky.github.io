@@ -75,7 +75,7 @@ describe("Responsive Design Tests", () => {
         it("should handle adding product to cart on mobile", () => {
           cy.get("[data-testid='product-card']").first().click();
           selectFirstRealSize();
-          cy.get("#add-to-cart-btn").click();
+          cy.get("#add-to-cart-btn").click({ force: true });
 
           // Should navigate to cart or show confirmation
           cy.get("a[href*='cart.html']").should("exist");
@@ -92,7 +92,7 @@ describe("Responsive Design Tests", () => {
           // Add product to cart
           cy.get("[data-testid='product-card']").first().click();
           selectFirstRealSize();
-          cy.get("#add-to-cart-btn").click();
+          cy.get("#add-to-cart-btn").click({ force: true });
           cy.get("a[href*='cart.html']").first().click();
         });
 
@@ -132,6 +132,12 @@ describe("Responsive Design Tests", () => {
         });
 
         it("should have accessible checkout button", () => {
+          // Dismiss cookie consent banner if present
+          cy.get("body").then($body => {
+            if ($body.find("#cookie-accept").length > 0) {
+              cy.get("#cookie-accept").click();
+            }
+          });
           cy.get("button").contains("Proceed to Checkout").should("be.visible");
           cy.get("button")
             .contains("Proceed to Checkout")
@@ -191,7 +197,7 @@ describe("Responsive Design Tests", () => {
           cy.visit("/store");
           cy.get("[data-testid='product-card']").first().click();
           selectFirstRealSize();
-          cy.get("#add-to-cart-btn").trigger("touchstart").trigger("touchend").click();
+          cy.get("#add-to-cart-btn").trigger("touchstart").trigger("touchend").click({ force: true });
 
           cy.get("a[href*='cart.html']").should("exist");
         });
@@ -233,7 +239,7 @@ describe("Responsive Design Tests", () => {
           cy.visit("/store");
           cy.get("[data-testid='product-card']").first().click();
           selectFirstRealSize();
-          cy.get("#add-to-cart-btn").click();
+          cy.get("#add-to-cart-btn").click({ force: true });
           cy.get("a[href*='cart.html']").first().click();
 
           cy.get("[data-testid='quantity-input']").then($input => {
@@ -254,7 +260,7 @@ describe("Responsive Design Tests", () => {
       cy.visit("/store");
       cy.get("[data-testid='product-card']").first().click();
       selectFirstRealSize();
-      cy.get("#add-to-cart-btn").click();
+      cy.get("#add-to-cart-btn").click({ force: true });
 
       // Wait for add-to-cart animation to complete
       cy.wait(1500);

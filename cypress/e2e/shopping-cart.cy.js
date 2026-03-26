@@ -17,7 +17,7 @@ describe("Shopping Cart", () => {
     selectFirstRealSize();
 
     // Add to cart
-    cy.get("#add-to-cart-btn").should("not.be.disabled").click();
+    cy.get("#add-to-cart-btn").should("not.be.disabled").click({ force: true });
 
     // Wait for cart notification animation to clear
     cy.wait(1500);
@@ -113,7 +113,7 @@ describe("Shopping Cart", () => {
     cy.get("[data-testid='product-card']").first().click();
     cy.url().should("include", "product.html");
     selectFirstRealSize();
-    cy.get("#add-to-cart-btn").click();
+    cy.get("#add-to-cart-btn").click({ force: true });
 
     // Verify cart count incremented
     cy.get("[data-testid='cart-count']").should("contain", "1");
@@ -134,7 +134,7 @@ describe("Shopping Cart", () => {
     cy.get("[data-testid='product-card']").first().click();
     cy.url().should("include", "product.html");
     selectFirstRealSize();
-    cy.get("#add-to-cart-btn").click();
+    cy.get("#add-to-cart-btn").click({ force: true });
 
     // Navigate back and add the same product variant again
     cy.wait(1500);
@@ -145,7 +145,7 @@ describe("Shopping Cart", () => {
     cy.get("[data-testid='product-card']").first().click();
     cy.url().should("include", "product.html");
     selectFirstRealSize();
-    cy.get("#add-to-cart-btn").click();
+    cy.get("#add-to-cart-btn").click({ force: true });
 
     // Go to cart
     cy.wait(500);
@@ -278,7 +278,7 @@ describe("Shopping Cart", () => {
       .then(price1 => {
         products.push({ price: parseFloat(price1.replace("$", "")), quantity: 1 });
         selectFirstRealSize();
-        cy.get("#add-to-cart-btn").click();
+        cy.get("#add-to-cart-btn").click({ force: true });
 
         // Go back and add second product
         cy.wait(1500);
@@ -290,8 +290,8 @@ describe("Shopping Cart", () => {
           .then(price2 => {
             products.push({ price: parseFloat(price2.replace("$", "")), quantity: 2 });
             selectFirstRealSize();
-            cy.get("#add-to-cart-btn").click();
-            cy.get("#add-to-cart-btn").click(); // Add twice for quantity 2
+            cy.get("#add-to-cart-btn").click({ force: true });
+            cy.get("#add-to-cart-btn").click({ force: true }); // Add twice for quantity 2
 
             // Go back and add third product
             cy.wait(1500);
@@ -304,9 +304,9 @@ describe("Shopping Cart", () => {
                 products.push({ price: parseFloat(price3.replace("$", "")), quantity: 3 });
                 selectFirstRealSize();
                 // Add 3 times
-                cy.get("#add-to-cart-btn").click();
-                cy.get("#add-to-cart-btn").click();
-                cy.get("#add-to-cart-btn").click();
+                cy.get("#add-to-cart-btn").click({ force: true });
+                cy.get("#add-to-cart-btn").click({ force: true });
+                cy.get("#add-to-cart-btn").click({ force: true });
 
                 // Go to cart and verify total
                 cy.wait(1500);

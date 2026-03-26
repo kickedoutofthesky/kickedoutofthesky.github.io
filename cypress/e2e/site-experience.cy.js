@@ -118,21 +118,26 @@ describe("Site Experience - Overall Site Functionality", () => {
     });
 
     it("should have working links to all main pages", () => {
-      // Collect all internal links
-      cy.get("a").each($link => {
-        const href = $link.attr("href");
+      // Collect all unique internal hrefs first, then visit each
+      cy.get("a").then($links => {
+        const hrefs = new Set();
+        $links.each((_i, link) => {
+          const href = link.getAttribute("href");
+          if (href && !href.startsWith("http") && !href.startsWith("#") && href !== "javascript:void(0)") {
+            hrefs.add(href);
+          }
+        });
 
-        // Check internal links (not external, not #, not javascript)
-        if (href && !href.startsWith("http") && !href.startsWith("#") && href !== "javascript:void(0)") {
+        // Visit each unique href and verify it loads
+        hrefs.forEach(href => {
+          cy.visit("/");
           cy.get(`a[href="${href}"]`).first().click({ force: true });
 
           // Page should load (not 404)
           cy.url().then(url => {
             expect(url).to.exist;
           });
-
-          cy.go("back");
-        }
+        });
       });
     });
   });

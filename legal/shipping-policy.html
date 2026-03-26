@@ -29,17 +29,6 @@
         margin: 0 auto;
         padding: 40px 20px 60px;
       }
-      .draft-banner {
-        background: #ff6600;
-        color: #000;
-        text-align: center;
-        padding: 10px;
-        font-weight: 700;
-        font-size: 14px;
-        position: sticky;
-        top: 0;
-        z-index: 999;
-      }
       .legal-nav {
         background: #111;
         border-bottom: 1px solid #222;
@@ -124,7 +113,6 @@
         margin-bottom: 15px;
       }
       @media print {
-        .draft-banner,
         .legal-nav {
           display: none;
         }
@@ -152,8 +140,6 @@
     </style>
   </head>
   <body>
-    <div class="draft-banner">DRAFT — FOR REVIEW — Not yet reviewed by legal counsel</div>
-
     <nav class="legal-nav">
       <a href="../index.html">Home</a>
       <a href="../store/index.html">Merch</a>
@@ -351,5 +337,7 @@
     <script>
       document.getElementById("last-updated").textContent = new Date().toLocaleDateString();
     </script>
+    <script src="../js/analytics.js"></script>
+    <script src="../js/cookie-consent.js"></script>
   </body>
 </html>

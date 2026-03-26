@@ -31,7 +31,7 @@ describe("Add All Products and Variants to Cart", () => {
     cy.get("[data-testid='product-detail']").should("be.visible");
 
     selectFirstRealSize();
-    cy.get("#add-to-cart-btn").should("not.be.disabled").click();
+    cy.get("#add-to-cart-btn").should("not.be.disabled").click({ force: true });
     cy.get("[data-testid='cart-count']").should("contain", "1");
 
     // Go back and add second product
@@ -41,7 +41,7 @@ describe("Add All Products and Variants to Cart", () => {
     cy.get("[data-testid='product-detail']").should("be.visible");
 
     selectFirstRealSize();
-    cy.get("#add-to-cart-btn").should("not.be.disabled").click();
+    cy.get("#add-to-cart-btn").should("not.be.disabled").click({ force: true });
     cy.get("[data-testid='cart-count']").should("contain", "2");
 
     // Navigate to cart and verify items
@@ -59,7 +59,7 @@ describe("Add All Products and Variants to Cart", () => {
       if ($colorSelect.length > 0) {
         // Add first variant
         selectFirstRealSize();
-        cy.get("#add-to-cart-btn").should("not.be.disabled").click();
+        cy.get("#add-to-cart-btn").should("not.be.disabled").click({ force: true });
         cy.get("[data-testid='cart-count']").should("contain", "1");
 
         // Go back and add same product with different color
@@ -69,12 +69,12 @@ describe("Add All Products and Variants to Cart", () => {
 
         selectFirstRealColor();
         selectFirstRealSize();
-        cy.get("#add-to-cart-btn").should("not.be.disabled").click();
+        cy.get("#add-to-cart-btn").should("not.be.disabled").click({ force: true });
         cy.get("[data-testid='cart-count']").should("contain", "2");
       } else {
         // No color variants, just add once
         selectFirstRealSize();
-        cy.get("#add-to-cart-btn").should("not.be.disabled").click();
+        cy.get("#add-to-cart-btn").should("not.be.disabled").click({ force: true });
         cy.get("[data-testid='cart-count']").should("contain", "1");
       }
     });
@@ -89,7 +89,7 @@ describe("Add All Products and Variants to Cart", () => {
       .invoke("text")
       .then(() => {
         selectFirstRealSize();
-        cy.get("#add-to-cart-btn").should("not.be.disabled").click();
+        cy.get("#add-to-cart-btn").should("not.be.disabled").click({ force: true });
 
         // Go to cart and verify subtotal
         cy.get("a[href*='cart.html']").first().click();

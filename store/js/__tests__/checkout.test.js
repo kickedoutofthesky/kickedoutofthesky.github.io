@@ -316,6 +316,55 @@ describe("Checkout Validation", () => {
     });
   });
 
+  describe("Terms & Conditions Agreement", () => {
+    test("should require terms acceptance before checkout", () => {
+      const validateCheckout = (items, countryValue, termsAccepted) => {
+        if (items.length === 0) return { error: "Your cart is empty" };
+        if (!countryValue || countryValue === "") return { error: "Please select a shipping country" };
+        if (!termsAccepted) return { error: "You must agree to the Terms & Conditions to place an order." };
+        return { error: null };
+      };
+
+      expect(validateCheckout([{ variant_id: 1 }], "US", true).error).toBeNull();
+      expect(validateCheckout([{ variant_id: 1 }], "US", false).error).toBe(
+        "You must agree to the Terms & Conditions to place an order."
+      );
+      expect(validateCheckout([{ variant_id: 1 }], "", true).error).toBe("Please select a shipping country");
+      expect(validateCheckout([], "US", true).error).toBe("Your cart is empty");
+    });
+
+    test("should include terms data in checkout request body", () => {
+      const buildCheckoutPayload = (items, countryCode, termsAccepted) => {
+        return {
+          items,
+          shippingCountry: countryCode,
+          termsAccepted,
+          termsVersion: "2026-03-25",
+          acceptedAt: new Date().toISOString(),
+        };
+      };
+
+      const items = [{ variant_id: 1003, quantity: 1 }];
+      const payload = buildCheckoutPayload(items, "US", true);
+
+      expect(payload.termsAccepted).toBe(true);
+      expect(payload.termsVersion).toBe("2026-03-25");
+      expect(payload.acceptedAt).toBeDefined();
+      expect(new Date(payload.acceptedAt).getTime()).not.toBeNaN();
+    });
+
+    test("should enable checkout button only when country selected AND terms accepted", () => {
+      const getCheckoutButtonState = (countrySelected, termsAccepted) => {
+        return !(countrySelected && termsAccepted);
+      };
+
+      expect(getCheckoutButtonState(true, true)).toBe(false); // enabled
+      expect(getCheckoutButtonState(true, false)).toBe(true); // disabled
+      expect(getCheckoutButtonState(false, true)).toBe(true); // disabled
+      expect(getCheckoutButtonState(false, false)).toBe(true); // disabled
+    });
+  });
+
   describe("Order Confirmation", () => {
     test("should store session data for success page", () => {
       const storeOrderData = (sessionId, cartItems) => {

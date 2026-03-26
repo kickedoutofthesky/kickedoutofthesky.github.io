@@ -42,8 +42,6 @@ describe("Product Variants and Details", () => {
     cy.get("[data-testid='color-select']").then($select => {
       if ($select.length > 0) {
         cy.get("[data-testid='product-image']").then(_$img => {
-          const _originalSrc = _$img.attr("src");
-
           // Change color
           selectFirstRealColor();
 

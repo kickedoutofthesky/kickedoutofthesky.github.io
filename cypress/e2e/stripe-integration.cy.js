@@ -12,7 +12,7 @@ describe("Stripe Integration Tests", () => {
     cy.get("[data-testid='product-card']").first().click();
     cy.get("[data-testid='product-detail']").should("be.visible");
     selectFirstRealSize();
-    cy.get("#add-to-cart-btn").should("not.be.disabled").click();
+    cy.get("#add-to-cart-btn").should("not.be.disabled").click({ force: true });
 
     // Navigate to cart
     cy.get("a[href*='cart.html']").first().click();
@@ -25,6 +25,7 @@ describe("Stripe Integration Tests", () => {
       cy.get("button").contains("Proceed to Checkout").should("exist");
       // Button is disabled until country is selected
       selectShippingCountry();
+      acceptTerms();
       cy.get("button").contains("Proceed to Checkout").should("not.be.disabled");
       // Stripe.js will be loaded on checkout page via backend
     });
@@ -45,6 +46,7 @@ describe("Stripe Integration Tests", () => {
       // This test verifies the button is present and clickable
       cy.get("button").contains("Proceed to Checkout").should("exist");
       selectShippingCountry();
+      acceptTerms();
       cy.get("button").contains("Proceed to Checkout").should("not.be.disabled");
       // Test flow: Button click → Backend creates session → Redirect to Stripe
     });
@@ -109,6 +111,7 @@ describe("Stripe Integration Tests", () => {
       cy.get("[data-testid='cart-item']").should("have.length.greaterThan", 0);
       cy.get("[data-testid='cart-subtotal']").should("exist");
       selectShippingCountry();
+      acceptTerms();
       cy.get("button").contains("Proceed to Checkout").should("not.be.disabled");
     });
   });

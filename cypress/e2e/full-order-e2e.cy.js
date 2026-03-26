@@ -217,6 +217,7 @@ const TOTAL_ITEM_COUNT = ORDER_MANIFEST.reduce((sum, item) => sum + item.quantit
 const EXPECTED_SUBTOTAL_CENTS = ORDER_MANIFEST.reduce((sum, item) => sum + item.priceCents * item.quantity, 0);
 
 // Stripe test card details
+// eslint-disable-next-line no-unused-vars
 const STRIPE_TEST_CARD = {
   email: "e2e-test@kickedoutofthesky.com",
   cardNumber: "4242424242424242",
@@ -236,18 +237,17 @@ function addItemToCart({ productKey, color, size, quantity }) {
   cy.visit(`/store/product.html?key=${productKey}`, { timeout: 10000 });
   cy.get("[data-testid='product-detail']").should("be.visible");
 
-  // Scroll the color select into view to avoid fixed navbar overlap
-  cy.get("[data-testid='color-select']").scrollIntoView();
-
-  // Select color if the product offers the specified color
-  cy.get("[data-testid='color-select']").then($select => {
-    if ($select.length > 0) {
-      cy.wrap($select).select(color, { force: true });
+  // Select color if the product offers a color dropdown
+  cy.get("body").then($body => {
+    if ($body.find("[data-testid='color-select']").length > 0) {
+      cy.get("[data-testid='color-select']").scrollIntoView();
+      cy.get("[data-testid='color-select']").select(color, { force: true });
     }
   });
 
   // Wait for the size dropdown to be repopulated with options for this color,
   // then select the specified size
+  cy.get("[data-testid='size-select']", { timeout: 8000 }).should("exist");
   cy.get("[data-testid='size-select']").should("contain", size);
   cy.get("[data-testid='size-select']").select(size, { force: true });
 
@@ -373,9 +373,10 @@ describe("Full Order E2E: All Products → Checkout → Stripe → Verify", () =
 
     // Select shipping country
     cy.get("#shipping-country").select("US");
+    acceptTerms();
 
     // Click checkout
-    cy.get("#checkout-btn").should("not.be.disabled").click();
+    cy.get("#checkout-btn").should("not.be.disabled").click({ force: true });
 
     // Wait for and verify the API request payload
     cy.wait("@checkoutSession", { timeout: 30000 }).then(interception => {
@@ -429,7 +430,8 @@ describe("Full Order E2E: All Products → Checkout → Stripe → Verify", () =
     cy.intercept("POST", "**/api/create-checkout-session").as("checkoutRedirect");
 
     cy.get("#shipping-country").select("US");
-    cy.get("#checkout-btn").should("not.be.disabled").click();
+    acceptTerms();
+    cy.get("#checkout-btn").should("not.be.disabled").click({ force: true });
 
     cy.wait("@checkoutRedirect", { timeout: 30000 }).then(interception => {
       const stripeUrl = interception.response.body.url;

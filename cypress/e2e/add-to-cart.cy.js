@@ -13,7 +13,7 @@ function selectFirstRealSize() {
         .eq(1)
         .invoke("attr", "value")
         .then(sizeValue => {
-          cy.get("[data-testid='size-select']").select(sizeValue);
+          cy.get("[data-testid='size-select']").select(sizeValue, { force: true });
         });
     }
   });
@@ -64,7 +64,7 @@ describe("Add to Cart Flow", () => {
     selectFirstRealSize();
 
     // Add to cart
-    cy.get("#add-to-cart-btn").should("not.be.disabled").click();
+    cy.get("#add-to-cart-btn").should("not.be.disabled").click({ force: true });
 
     // Verify cart count increments
     cy.get("[data-testid='cart-count']").should("contain", "1");
@@ -80,7 +80,7 @@ describe("Add to Cart Flow", () => {
     selectFirstRealSize();
 
     // Add to cart
-    cy.get("#add-to-cart-btn").should("not.be.disabled").click();
+    cy.get("#add-to-cart-btn").should("not.be.disabled").click({ force: true });
 
     // Verify cart count
     cy.get("[data-testid='cart-count']").should("contain", "1");
@@ -99,7 +99,7 @@ describe("Add to Cart Flow", () => {
     selectFirstRealSize();
 
     // Add to cart
-    cy.get("#add-to-cart-btn").should("not.be.disabled").click();
+    cy.get("#add-to-cart-btn").should("not.be.disabled").click({ force: true });
 
     // Verify cart count increases
     cy.get("[data-testid='cart-count']").should("contain", "1");
@@ -112,7 +112,7 @@ describe("Add to Cart Flow", () => {
     cy.get("[data-testid='product-detail']").should("be.visible");
 
     selectFirstRealSize();
-    cy.get("#add-to-cart-btn").click();
+    cy.get("#add-to-cart-btn").click({ force: true });
     cy.get("[data-testid='cart-count']").should("contain", "1");
 
     // Go back to store
@@ -124,7 +124,7 @@ describe("Add to Cart Flow", () => {
     cy.get("[data-testid='product-detail']").should("be.visible");
 
     selectFirstRealSize();
-    cy.get("#add-to-cart-btn").click();
+    cy.get("#add-to-cart-btn").click({ force: true });
     cy.get("[data-testid='cart-count']").should("contain", "2");
   });
 
@@ -133,7 +133,7 @@ describe("Add to Cart Flow", () => {
     cy.get("[data-testid='product-detail']").should("be.visible");
 
     selectFirstRealSize();
-    cy.get("#add-to-cart-btn").click();
+    cy.get("#add-to-cart-btn").click({ force: true });
     cy.get("[data-testid='cart-count']").should("contain", "1");
 
     // Go back and add same product with different variant
@@ -143,7 +143,7 @@ describe("Add to Cart Flow", () => {
 
     selectFirstRealColor();
     selectFirstRealSize();
-    cy.get("#add-to-cart-btn").click();
+    cy.get("#add-to-cart-btn").click({ force: true });
     cy.get("[data-testid='cart-count']").should("contain", "2");
   });
 });

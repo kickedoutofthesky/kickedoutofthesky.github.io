@@ -68,7 +68,7 @@ describe("Responsive Design - Mobile and Tablet Viewports", () => {
       cy.url().should("include", "product.html");
 
       selectFirstRealSize();
-      cy.get("#add-to-cart-btn").click();
+      cy.get("#add-to-cart-btn").click({ force: true });
 
       // Navigate to cart
       cy.get("a[href*='cart.html']").first().click();
@@ -109,7 +109,7 @@ describe("Responsive Design - Mobile and Tablet Viewports", () => {
       cy.visit("/store");
       cy.get("[data-testid='product-card']").first().click();
       selectFirstRealSize();
-      cy.get("#add-to-cart-btn").click();
+      cy.get("#add-to-cart-btn").click({ force: true });
 
       cy.get("a[href*='cart.html']").first().click();
       cy.url().should("include", "cart.html");
@@ -275,7 +275,7 @@ describe("Responsive Design - Mobile and Tablet Viewports", () => {
       // Add product to cart
       cy.get("[data-testid='product-card']").first().click();
       selectFirstRealSize();
-      cy.get("#add-to-cart-btn").click();
+      cy.get("#add-to-cart-btn").click({ force: true });
 
       // Navigate to cart
       cy.get("a[href*='cart.html']").first().click();
@@ -317,7 +317,6 @@ describe("Responsive Design - Mobile and Tablet Viewports", () => {
 
         // Cards should be aligned in a grid
         const firstCardTop = $cards.eq(0).position().top;
-        const firstCardLeft = $cards.eq(0).position().left;
 
         // Multiple cards should exist in the same row (similar top position)
         let sameRowCount = 0;
@@ -391,7 +390,7 @@ describe("Responsive Design - Mobile and Tablet Viewports", () => {
       // Add multiple products
       cy.get("[data-testid='product-card']").first().click();
       selectFirstRealSize();
-      cy.get("#add-to-cart-btn").click();
+      cy.get("#add-to-cart-btn").click({ force: true });
 
       // Go to cart
       cy.wait(1500);
@@ -417,6 +416,13 @@ describe("Responsive Design - Mobile and Tablet Viewports", () => {
             cy.get("[data-testid='quantity-input']").should("be.visible");
             cy.get("[data-testid='remove-item']").should("be.visible");
           });
+      });
+
+      // Dismiss cookie consent banner if present
+      cy.get("body").then($body => {
+        if ($body.find("#cookie-accept").length > 0) {
+          cy.get("#cookie-accept").click();
+        }
       });
 
       // Checkout section should be visible

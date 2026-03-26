@@ -102,25 +102,40 @@ function populateCountrySelect() {
   });
 }
 
+function updateCheckoutButtonState() {
+  const checkoutBtn = document.getElementById("checkout-btn");
+  const select = document.getElementById("shipping-country");
+  const termsCheckbox = document.getElementById("terms-checkbox");
+  if (!checkoutBtn) return;
+
+  const countrySelected = select && select.value !== "";
+  const termsAccepted = termsCheckbox && termsCheckbox.checked;
+  checkoutBtn.disabled = !(countrySelected && termsAccepted);
+}
+
 function setupCountrySelector() {
   const select = document.getElementById("shipping-country");
-  const checkoutBtn = document.getElementById("checkout-btn");
+  const termsCheckbox = document.getElementById("terms-checkbox");
 
-  if (select && checkoutBtn) {
+  if (select) {
     // Restore previously selected country from localStorage
     const savedCountry = localStorage.getItem("selectedShippingCountry");
     if (savedCountry) {
       select.value = savedCountry;
-      checkoutBtn.disabled = false;
-    } else {
-      checkoutBtn.disabled = select.value === "";
     }
 
     select.addEventListener("change", () => {
-      // Enable checkout button only if a country is selected
-      checkoutBtn.disabled = select.value === "";
+      updateCheckoutButtonState();
     });
   }
+
+  if (termsCheckbox) {
+    termsCheckbox.addEventListener("change", () => {
+      updateCheckoutButtonState();
+    });
+  }
+
+  updateCheckoutButtonState();
 }
 
 function displayCart() {
@@ -255,6 +270,13 @@ async function proceedToCheckout() {
     return;
   }
 
+  // Check if terms are accepted
+  const termsCheckbox = document.getElementById("terms-checkbox");
+  if (!termsCheckbox || !termsCheckbox.checked) {
+    alert("You must agree to the Terms & Conditions to place an order.");
+    return;
+  }
+
   // Validate cart items before proceeding
   const validation = cart.validateItemsForCheckout(products);
   if (!validation.valid) {
@@ -314,6 +336,9 @@ async function proceedToCheckout() {
     const requestBody = {
       items,
       shippingCountry: countrySelect.value,
+      termsAccepted: true,
+      termsVersion: "2026-03-25",
+      acceptedAt: new Date().toISOString(),
     };
 
     const response = await fetch(backendUrl + "/api/create-checkout-session", {

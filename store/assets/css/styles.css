@@ -463,7 +463,7 @@ nav .container-fluid {
 }
 
 .text-secondary {
-  color: #ccc;
+  color: #ccc !important;
 }
 
 .text-tertiary {

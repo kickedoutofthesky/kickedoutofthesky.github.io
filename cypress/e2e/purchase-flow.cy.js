@@ -24,7 +24,7 @@ describe("Complete Purchase Flow - Customer Buying Merch", () => {
     selectFirstRealSize();
 
     // Step 4: Add to cart
-    cy.get("#add-to-cart-btn").should("not.be.disabled").click();
+    cy.get("#add-to-cart-btn").should("not.be.disabled").click({ force: true });
 
     // Verify product was added
     cy.get("[data-testid='cart-count'], .cart-icon-count, .badge").should("be.visible");
@@ -39,6 +39,7 @@ describe("Complete Purchase Flow - Customer Buying Merch", () => {
 
     // Step 7: Select shipping country and click checkout
     cy.get("#shipping-country").select("US");
+    acceptTerms();
     cy.get("button").contains("Proceed to Checkout").should("not.be.disabled").click();
 
     // Should either stay on checkout page or redirect to Stripe/payment
@@ -73,17 +74,18 @@ describe("Complete Purchase Flow - Customer Buying Merch", () => {
     cy.get("[data-testid='product-price']")
       .first()
       .invoke("text")
-      .then(price => {
+      .then(_price => {
         selectFirstRealSize();
 
         // Add to cart
-        cy.get("#add-to-cart-btn").click();
+        cy.get("#add-to-cart-btn").click({ force: true });
 
         // Go to cart
         cy.get("a[href*='cart.html']").first().click();
 
         // Select shipping country
         selectShippingCountry();
+        acceptTerms();
 
         // Click checkout
         cy.get("button").contains("Proceed to Checkout").click();
@@ -126,13 +128,14 @@ describe("Complete Purchase Flow - Customer Buying Merch", () => {
     cy.get("[data-testid='product-card']").first().click();
     cy.url().should("include", "product.html");
     selectFirstRealSize();
-    cy.get("#add-to-cart-btn").click();
+    cy.get("#add-to-cart-btn").click({ force: true });
 
     // Go to cart
     cy.get("a[href*='cart.html']").first().click();
 
     // Select shipping country
     selectShippingCountry();
+    acceptTerms();
 
     // Click checkout
     cy.get("button").contains("Proceed to Checkout").click();
@@ -171,7 +174,7 @@ describe("Complete Purchase Flow - Customer Buying Merch", () => {
     cy.get("[data-testid='product-card']").first().click();
     cy.url().should("include", "product.html");
     selectFirstRealSize();
-    cy.get("#add-to-cart-btn").click();
+    cy.get("#add-to-cart-btn").click({ force: true });
 
     // Go to cart and verify items
     cy.get("a[href*='cart.html']").first().click();

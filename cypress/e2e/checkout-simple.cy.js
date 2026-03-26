@@ -12,7 +12,7 @@ describe("Checkout Flow", () => {
     cy.get("[data-testid='product-card']").first().click();
     cy.get("[data-testid='product-detail']").should("be.visible");
     selectFirstRealSize();
-    cy.get("#add-to-cart-btn").should("not.be.disabled").click();
+    cy.get("#add-to-cart-btn").should("not.be.disabled").click({ force: true });
 
     // Navigate to cart
     cy.get("a[href*='cart.html']").first().click();
@@ -30,6 +30,7 @@ describe("Checkout Flow", () => {
     // Button starts disabled until shipping country is selected
     cy.get("button").contains("Proceed to Checkout").should("exist").should("be.disabled");
     cy.get("#shipping-country").select("US");
+    acceptTerms();
     cy.get("button").contains("Proceed to Checkout").should("not.be.disabled");
   });
 

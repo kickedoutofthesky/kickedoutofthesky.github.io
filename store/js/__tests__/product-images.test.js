@@ -62,7 +62,7 @@ describe("Product Images", () => {
     let variantsWithMockups = 0;
 
     products.forEach(product => {
-      Object.entries(product.variants).forEach(([color, variantData]) => {
+      Object.entries(product.variants).forEach(([_color, variantData]) => {
         totalVariants += 1;
         const mockups = variantData.mockups || [];
         if (mockups.length > 0) {

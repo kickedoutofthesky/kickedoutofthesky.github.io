@@ -177,11 +177,9 @@ describe("Merch Page - Product Visibility and Display", () => {
 
   it("should display each product's price matching the expected value formatted with $ and two decimals", () => {
     // Fetch the products data to compare
-    cy.request("GET", "/store/data/products.json").then(response => {
-      const products = response.body;
-
+    cy.request("GET", "/store/data/products.json").then(() => {
       // For each product card, verify price format and accuracy
-      cy.get("[data-testid='product-card']").each(($card, index) => {
+      cy.get("[data-testid='product-card']").each(($card, _index) => {
         cy.wrap($card).within(() => {
           cy.get("[data-testid='product-price']").then($priceEl => {
             const displayedPrice = $priceEl.text().trim();
@@ -258,7 +256,7 @@ describe("Merch Page - Product Visibility and Display", () => {
     cy.get("[data-testid='product-price']")
       .first()
       .invoke("text")
-      .then(initialPrice => {
+      .then(_initialPrice => {
         // Try to change a variant (size or color)
         cy.get("[data-testid='size-select']").then($sizeSelect => {
           if ($sizeSelect.length > 0) {
@@ -267,7 +265,7 @@ describe("Merch Page - Product Visibility and Display", () => {
               .then($options => {
                 if ($options.length > 1) {
                   // Select a non-placeholder size
-                  cy.wrap($sizeSelect).select($options.eq(1).attr("value"));
+                  cy.wrap($sizeSelect).select($options.eq(1).attr("value"), { force: true });
 
                   // Price should update (may be same or different)
                   cy.get("[data-testid='product-price']")

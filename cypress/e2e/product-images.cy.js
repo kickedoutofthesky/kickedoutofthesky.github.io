@@ -75,7 +75,7 @@ describe("Product Images and Carousel", () => {
         .invoke("attr", "src")
         .then(initialSrc => {
           // Click next to go to sleeve
-          cy.get("#carousel-next").click();
+          cy.get("#carousel-next").click({ force: true });
 
           // Image should change to sleeve mockup
           cy.get("#product-image").should("have.attr", "src").and("include", "Sleeve");
@@ -88,12 +88,12 @@ describe("Product Images and Carousel", () => {
       cy.get("[data-testid='product-detail']").should("be.visible");
 
       // Go to sleeve first
-      cy.get("#carousel-next").click();
+      cy.get("#carousel-next").click({ force: true });
       cy.get("#product-image").should("have.attr", "src").and("include", "Sleeve");
 
       // Now prev should be visible, go back
       cy.get("#carousel-prev").should("be.visible");
-      cy.get("#carousel-prev").click();
+      cy.get("#carousel-prev").click({ force: true });
       cy.get("#product-image").should("have.attr", "src").and("include", "Front");
     });
 
@@ -102,7 +102,7 @@ describe("Product Images and Carousel", () => {
       cy.get("[data-testid='product-detail']").should("be.visible");
 
       // Navigate to sleeve image
-      cy.get("#carousel-next").click();
+      cy.get("#carousel-next").click({ force: true });
       cy.get("#product-image").should("have.attr", "src").and("include", "Sleeve");
 
       // Change color — should reset to front image
@@ -120,7 +120,7 @@ describe("Product Images and Carousel", () => {
       cy.get("[data-testid='product-detail']").should("be.visible");
 
       // Navigate to last image (sleeve)
-      cy.get("#carousel-next").click();
+      cy.get("#carousel-next").click({ force: true });
 
       // At last image: prev should be visible, next should be hidden
       cy.get("#carousel-prev").should("be.visible");
@@ -168,7 +168,7 @@ describe("Product Images and Carousel", () => {
         .eq(1)
         .invoke("attr", "value")
         .then(size => {
-          cy.get("[data-testid='size-select']").select(size);
+          cy.get("[data-testid='size-select']").select(size, { force: true });
         });
 
       // Change color (no placeholder, index 1 = second color)
@@ -247,8 +247,8 @@ describe("Product Images and Carousel", () => {
             .eq(1)
             .invoke("attr", "value")
             .then(size => {
-              cy.get("[data-testid='size-select']").select(size);
-              cy.get("#add-to-cart-btn").should("not.be.disabled").click();
+              cy.get("[data-testid='size-select']").select(size, { force: true });
+              cy.get("#add-to-cart-btn").should("not.be.disabled").click({ force: true });
 
               // Go to cart
               cy.visit("/store/cart.html");

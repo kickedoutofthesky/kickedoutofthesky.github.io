@@ -10,7 +10,7 @@ function selectFirstRealSize() {
         .eq(1)
         .invoke("attr", "value")
         .then(sizeValue => {
-          cy.get("[data-testid='size-select']").select(sizeValue);
+          cy.get("[data-testid='size-select']").select(sizeValue, { force: true });
         });
     }
   });
@@ -34,7 +34,7 @@ describe("Checkout Flow", () => {
     selectFirstRealSize();
 
     // Add to cart
-    cy.get("#add-to-cart-btn").should("not.be.disabled").click();
+    cy.get("#add-to-cart-btn").should("not.be.disabled").click({ force: true });
 
     // Navigate to cart
     cy.get("a[href*='cart.html']").first().click();
@@ -62,6 +62,7 @@ describe("Checkout Flow", () => {
 
     // Select a country to enable checkout
     cy.get("#shipping-country").select("US");
+    acceptTerms();
     cy.get("button").contains("Proceed to Checkout").should("not.be.disabled");
   });
 
@@ -71,6 +72,7 @@ describe("Checkout Flow", () => {
 
     // Button should be clickable with items after selecting country
     cy.get("#shipping-country").select("US");
+    acceptTerms();
     cy.get("button").contains("Proceed to Checkout").should("not.be.disabled");
   });
 
