@@ -84,9 +84,9 @@ function updateProductImage() {
   const img = document.getElementById("product-image");
   if (img) {
     const imagePath = getCurrentDisplayImage();
-    // Convert relative paths to absolute store paths
+    // Convert relative paths to absolute store paths and encode
     const absolutePath = imagePath.startsWith("/") || imagePath.startsWith("http") ? imagePath : `/store/${imagePath}`;
-    img.src = absolutePath;
+    img.src = encodeURI(absolutePath);
   }
 }
 
@@ -472,7 +472,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         <div class="col-md-7">
             <div class="product-detail-image" style="position: relative;">
               <div id="product-image-container" style="position: relative; overflow: hidden; border-radius: 0.375rem; width: 100%; height: 100%;">
-                <img loading="lazy" id="product-image" data-testid="product-image" src="${defaultImage}" alt="${product.title}" class="rounded" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.1s ease; transform-origin: center center; user-select: none; -webkit-user-drag: none;">
+                <img loading="lazy" id="product-image" data-testid="product-image" src="${encodeURI(defaultImage)}" alt="${product.title}" class="rounded" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.1s ease; transform-origin: center center; user-select: none; -webkit-user-drag: none;">
               </div>
 
               <!-- Zoom Level Display (above zoom controls) -->
