@@ -28,12 +28,9 @@ function escapeHtml(str) {
 
 function getImageUrl(imagePath) {
   if (imagePath.startsWith("http")) return imagePath;
-  // Encode spaces and special chars for URL
-  const encoded = imagePath
-    .split("/")
-    .map(seg => encodeURIComponent(seg))
-    .join("/");
-  return `${BASE_URL}/store/${encoded}`;
+  // Use encodeURI on the whole path to properly encode spaces as %20
+  // while preserving literal + and other filename chars
+  return `${BASE_URL}/store/${encodeURI(imagePath)}`;
 }
 
 function buildPage({ title, description, url, imageUrl, redirectUrl }) {
