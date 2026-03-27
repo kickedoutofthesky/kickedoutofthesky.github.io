@@ -21,9 +21,9 @@
 
   if (hostname === "localhost" || hostname === "127.0.0.1") {
     // Local development: point to local Vercel dev server (vercel dev on port 3001)
-    backendUrl = "http://localhost:3001";
+    // backendUrl = "http://localhost:3001";
     // Local development: point to Vercel staging API via custom domain
-    // backendUrl = "https://api-staging.kickedoutofthesky.com";
+    backendUrl = "https://api-staging.kickedoutofthesky.com";
   } else {
     // Production: point to production API via custom domain
     backendUrl = "https://api.kickedoutofthesky.com";

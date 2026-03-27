@@ -444,7 +444,11 @@
         try {
           const backendUrl = window.__API_URL__ || "https://api.kickedoutofthesky.com";
 
-          const response = await fetch(`${backendUrl}/api/order-details?session_id=${encodeURIComponent(sessionId)}`);
+          let orderDetailsUrl = `${backendUrl}/api/order-details?session_id=${encodeURIComponent(sessionId)}`;
+          if (backendUrl.includes("api-staging.kickedoutofthesky.com")) {
+            orderDetailsUrl += "&x-vercel-protection-bypass=Xq8xpir5ZCR25Za5w6rpHxLofddagWJA";
+          }
+          const response = await fetch(orderDetailsUrl);
 
           if (!response.ok) {
             hideLoadingIndicator();

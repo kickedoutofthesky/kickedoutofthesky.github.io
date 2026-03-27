@@ -323,12 +323,13 @@ async function proceedToCheckout() {
     // Call backend checkout endpoint with CSRF token (skip for localhost)
     const backendUrl = window.__API_URL__ || "https://api.kickedoutofthesky.com";
     const isLocalhost = backendUrl.includes("localhost");
+    const isStaging = backendUrl.includes("api-staging.");
     const headers = {
       "Content-Type": "application/json",
     };
 
-    // Only add CSRF token for production URLs
-    if (!isLocalhost) {
+    // Only add CSRF token for production URLs (skip for localhost and staging)
+    if (!isLocalhost && !isStaging) {
       const csrfToken = getCSRFToken();
       headers["X-CSRF-Token"] = csrfToken;
     }
@@ -341,7 +342,12 @@ async function proceedToCheckout() {
       acceptedAt: new Date().toISOString(),
     };
 
-    const response = await fetch(backendUrl + "/api/create-checkout-session", {
+    let checkoutUrl = backendUrl + "/api/create-checkout-session";
+    if (backendUrl.includes("api-staging.kickedoutofthesky.com")) {
+      checkoutUrl += "?x-vercel-protection-bypass=Xq8xpir5ZCR25Za5w6rpHxLofddagWJA";
+    }
+
+    const response = await fetch(checkoutUrl, {
       method: "POST",
       headers,
       body: JSON.stringify(requestBody),
