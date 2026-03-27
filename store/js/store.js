@@ -51,7 +51,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         <div class="product-info">
           <h3 class="product-name" data-testid="product-title">${product.title}</h3>
           <p class="product-price" data-testid="product-price">${displayPrice}</p>
-          <a href="product.html?key=${product.product_key}" class="btn btn-warning btn-sm">
+          <a href="p/${product.product_key}/" class="btn btn-warning btn-sm">
             View Details
           </a>
         </div>
@@ -62,7 +62,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           console.error("Product key is missing for product:", product);
           return;
         }
-        window.location.href = `product.html?key=${product.product_key}`;
+        window.location.href = `p/${product.product_key}/`;
       });
 
       grid.appendChild(card);

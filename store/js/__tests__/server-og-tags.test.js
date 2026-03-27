@@ -76,29 +76,77 @@ function startServer() {
                   : `https://www.kickedoutofthesky.com/store/${firstProduct.image}`;
                 let html = data.toString();
                 html = html.replace(
-                  /<meta property="og:title" content="[^"]*"\s*\/?>/,
+                  /<meta\s+property="og:title"[\s\S]*?\/?>/,
                   `<meta property="og:title" content="${ogTitle}" />`
                 );
                 html = html.replace(
-                  /<meta property="og:image" content="[^"]*"\s*\/?>/,
+                  /<meta\s+property="og:image"[\s\S]*?\/?>/,
                   `<meta property="og:image" content="${ogImage}" />`
                 );
                 html = html.replace(
-                  /<meta\s+property="og:description"[\s\S]*?\/>/,
+                  /<meta\s+property="og:description"[\s\S]*?\/?>/,
                   `<meta property="og:description" content="${ogDesc}" />`
                 );
                 html = html.replace(
-                  /<meta name="twitter:title" content="[^"]*"\s*\/?>/,
+                  /<meta\s+name="twitter:title"[\s\S]*?\/?>/,
                   `<meta name="twitter:title" content="${ogTitle}" />`
                 );
                 html = html.replace(
-                  /<meta\s+name="twitter:description"[\s\S]*?\/>/,
+                  /<meta\s+name="twitter:description"[\s\S]*?\/?>/,
                   `<meta name="twitter:description" content="${ogDesc}" />`
                 );
                 res.writeHead(200, { "Content-Type": mimeType });
                 res.end(html);
                 return;
               }
+            }
+          } catch (ogErr) {
+            // Fall through to default
+          }
+        }
+
+        // Replicate product detail OG injection from server.js
+        if (fullPath.endsWith(path.join("store", "product.html")) && parsedUrl.searchParams.has("key")) {
+          const key = parsedUrl.searchParams.get("key");
+          try {
+            const productsPath = path.join(BASE_DIR, "store", "data", "products.json");
+            const products = JSON.parse(fs.readFileSync(productsPath, "utf8"));
+            const product = products.find(p => p.product_key === key);
+            if (product) {
+              const ogTitle = `${product.title} - Kicked Out of the Sky`;
+              const ogDesc = `Shop ${product.title}. Official Kicked Out of the Sky merchandise.`;
+              const ogImage = product.image.startsWith("http")
+                ? product.image
+                : `https://www.kickedoutofthesky.com/store/${encodeURI(product.image)}`;
+              const ogUrl = `https://www.kickedoutofthesky.com/store/p/${product.product_key}/`;
+              let html = data.toString();
+              html = html.replace(
+                /<meta\s+property="og:title"[\s\S]*?\/?>/,
+                `<meta property="og:title" content="${ogTitle}" />`
+              );
+              html = html.replace(
+                /<meta\s+property="og:image"[\s\S]*?\/?>/,
+                `<meta property="og:image" content="${ogImage}" />`
+              );
+              html = html.replace(
+                /<meta\s+property="og:description"[\s\S]*?\/?>/,
+                `<meta property="og:description" content="${ogDesc}" />`
+              );
+              html = html.replace(
+                /<meta\s+property="og:url"[\s\S]*?\/?>/,
+                `<meta property="og:url" content="${ogUrl}" />`
+              );
+              html = html.replace(
+                /<meta\s+name="twitter:title"[\s\S]*?\/?>/,
+                `<meta name="twitter:title" content="${ogTitle}" />`
+              );
+              html = html.replace(
+                /<meta\s+name="twitter:description"[\s\S]*?\/?>/,
+                `<meta name="twitter:description" content="${ogDesc}" />`
+              );
+              res.writeHead(200, { "Content-Type": mimeType });
+              res.end(html);
+              return;
             }
           } catch (ogErr) {
             // Fall through to default
@@ -152,7 +200,8 @@ describe("Server OG Tag Injection", () => {
     const res = await httpGet("/store/index.html");
     expect(res.status).toBe(200);
     expect(res.body).toContain('content="Merch - Kicked Out of the Sky"');
-    expect(res.body).toContain("Kicked-Out-Of-The-Sky_transparent.png");
+    // Default OG image should be first product's front image
+    expect(res.body).toContain("Unisex%20Tee%20w%20Color%20Block%20Graphic");
   });
 
   test("should inject tees OG tags when ?type=tees", async () => {
@@ -200,10 +249,11 @@ describe("Server OG Tag Injection", () => {
   test("should include product image URL in OG image tag", async () => {
     const res = await httpGet("/store/index.html?type=tees");
     expect(res.status).toBe(200);
-    // Should have a product image, not the default band logo
-    expect(res.body).not.toContain('og:image" content="https://www.kickedoutofthesky.com/img/Kicked-Out-Of-The-Sky');
-    // OG image should be an absolute URL
-    expect(res.body).toMatch(/og:image" content="https:\/\//);
+    // OG image should contain a product image, not the default band logo
+    const ogImageMatch = res.body.match(/og:image[\s\S]*?content="([^"]*)"/);
+    expect(ogImageMatch).not.toBeNull();
+    expect(ogImageMatch[1]).not.toContain("Kicked-Out-Of-The-Sky_transparent.png");
+    expect(ogImageMatch[1]).toMatch(/^https:\/\/www\.kickedoutofthesky\.com\/store\//);
   });
 
   test("should fall back to default OG tags for invalid type", async () => {
@@ -218,5 +268,13 @@ describe("Server OG Tag Injection", () => {
     expect(res.status).toBe(200);
     expect(res.body).toContain('twitter:title" content="Tees - Kicked Out of the Sky Merch"');
     expect(res.body).toContain('twitter:description" content="Shop Tees from Kicked Out of the Sky."');
+  });
+
+  test("should inject product OG tags when ?key= param on product page", async () => {
+    const res = await httpGet("/store/product.html?key=product_425342399");
+    expect(res.status).toBe(200);
+    expect(res.body).toContain("Unisex Tee w/ Color Block Graphic - Kicked Out of the Sky");
+    expect(res.body).toContain("https://www.kickedoutofthesky.com/store/p/product_425342399/");
+    expect(res.body).toContain("Unisex%20Tee%20w%20Color%20Block%20Graphic");
   });
 });

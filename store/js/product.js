@@ -426,7 +426,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Update meta tags dynamically for SEO
     try {
       const baseUrl = "https://www.kickedoutofthesky.com/store/";
-      const productUrl = `${baseUrl}product.html?key=${product.product_key}`;
+      const productUrl = `${baseUrl}p/${product.product_key}/`;
       const productImageUrl = `${baseUrl}${encodeURI(product.image)}`;
       const productDescription = `${product.title} - Official Kicked Out of the Sky merchandise. Available in multiple colors and sizes.`;
 
@@ -446,6 +446,10 @@ document.addEventListener("DOMContentLoaded", async () => {
       for (const [selector, update] of Object.entries(metaUpdates)) {
         const el = document.querySelector(selector);
         if (el) el.setAttribute(update.attr, update.value);
+      }
+      // Update address bar to shareable URL
+      if (window.location.pathname.includes("product.html")) {
+        history.replaceState(null, "", `p/${product.product_key}/`);
       }
     } catch (e) {
       console.error("Failed to update meta tags:", e);

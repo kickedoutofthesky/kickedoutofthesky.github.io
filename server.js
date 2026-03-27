@@ -137,19 +137,19 @@ const server = http.createServer((req, res) => {
                 : `https://www.kickedoutofthesky.com/store/${firstProduct.image}`;
               let html = data.toString();
               html = html.replace(
-                /<meta property="og:title" content="[^"]*"\s*\/?>/,
+                /<meta\s+property="og:title"[\s\S]*?\/?>/,
                 `<meta property="og:title" content="${ogTitle}" />`
               );
               html = html.replace(
-                /<meta property="og:image" content="[^"]*"\s*\/?>/,
+                /<meta\s+property="og:image"[\s\S]*?\/?>/,
                 `<meta property="og:image" content="${ogImage}" />`
               );
               html = html.replace(
-                /<meta\s+property="og:description"[\s\S]*?\/>/,
+                /<meta\s+property="og:description"[\s\S]*?\/?>/,
                 `<meta property="og:description" content="${ogDesc}" />`
               );
               html = html.replace(
-                /<meta name="twitter:title" content="[^"]*"\s*\/?>/,
+                /<meta\s+name="twitter:title"[\s\S]*?\/?>/,
                 `<meta name="twitter:title" content="${ogTitle}" />`
               );
               html = html.replace(
@@ -164,6 +164,55 @@ const server = http.createServer((req, res) => {
           }
         } catch (ogErr) {
           console.error("OG tag injection error:", ogErr.message);
+        }
+      }
+
+      // Inject dynamic OG tags for product detail page with ?key= param
+      if (file.endsWith(path.join("store", "product.html")) && parsedUrl.searchParams.has("key")) {
+        const key = parsedUrl.searchParams.get("key");
+        try {
+          const productsPath = path.join(BASE_DIR, "store", "data", "products.json");
+          const products = JSON.parse(fs.readFileSync(productsPath, "utf8"));
+          const product = products.find(p => p.product_key === key);
+          if (product) {
+            const ogTitle = `${product.title} - Kicked Out of the Sky`;
+            const ogDesc = `Shop ${product.title}. Official Kicked Out of the Sky merchandise.`;
+            const ogImage = product.image.startsWith("http")
+              ? product.image
+              : `https://www.kickedoutofthesky.com/store/${encodeURI(product.image)}`;
+            const ogUrl = `https://www.kickedoutofthesky.com/store/p/${product.product_key}/`;
+            let html = data.toString();
+            html = html.replace(
+              /<meta\s+property="og:title"[\s\S]*?\/?>/,
+              `<meta property="og:title" content="${ogTitle}" />`
+            );
+            html = html.replace(
+              /<meta\s+property="og:image"[\s\S]*?\/?>/,
+              `<meta property="og:image" content="${ogImage}" />`
+            );
+            html = html.replace(
+              /<meta\s+property="og:description"[\s\S]*?\/?>/,
+              `<meta property="og:description" content="${ogDesc}" />`
+            );
+            html = html.replace(
+              /<meta\s+property="og:url"[\s\S]*?\/?>/,
+              `<meta property="og:url" content="${ogUrl}" />`
+            );
+            html = html.replace(
+              /<meta\s+name="twitter:title"[\s\S]*?\/?>/,
+              `<meta name="twitter:title" content="${ogTitle}" />`
+            );
+            html = html.replace(
+              /<meta\s+name="twitter:description"[\s\S]*?\/?>/,
+              `<meta name="twitter:description" content="${ogDesc}" />`
+            );
+            response.writeHead(200, { "Content-Type": mimeType });
+            response.end(html);
+            console.log(`✅ ${req.url} (${mimeType}) [OG: ${product.title}]`);
+            return;
+          }
+        } catch (ogErr) {
+          console.error("Product OG tag injection error:", ogErr.message);
         }
       }
 
