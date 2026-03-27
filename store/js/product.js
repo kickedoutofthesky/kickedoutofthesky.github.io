@@ -83,7 +83,10 @@ function showNextImage() {
 function updateProductImage() {
   const img = document.getElementById("product-image");
   if (img) {
-    img.src = getCurrentDisplayImage();
+    const imagePath = getCurrentDisplayImage();
+    // Convert relative paths to absolute store paths
+    const absolutePath = imagePath.startsWith("/") || imagePath.startsWith("http") ? imagePath : `/store/${imagePath}`;
+    img.src = absolutePath;
   }
 }
 
@@ -457,7 +460,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Get first color as default
     const availableColors = Object.keys(product.variants);
-    const defaultImage = product.image;
+    const defaultImage =
+      product.image.startsWith("/") || product.image.startsWith("http") ? product.image : `/store/${product.image}`;
 
     // Get price range for display
     const priceDisplay = getPriceDisplay(product);
