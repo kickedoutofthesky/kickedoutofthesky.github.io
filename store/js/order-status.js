@@ -86,14 +86,20 @@ function updateButtonState() {
 
 function checkForAutoLoad() {
   // Check if printful_order_id and email are in URL query parameters
-  // Note: printful_order_id is now required
   const params = new URLSearchParams(window.location.search);
   const printfulOrderId = params.get("printful_order_id");
   const email = params.get("email");
 
-  if (email && printfulOrderId) {
+  // Populate fields from URL parameters if present
+  if (email) {
     document.getElementById("email").value = email;
+  }
+  if (printfulOrderId) {
     document.getElementById("printful-order-id").value = printfulOrderId;
+  }
+
+  // Only auto-load (search) if both parameters are present
+  if (email && printfulOrderId) {
     handleSearch();
   }
 }
