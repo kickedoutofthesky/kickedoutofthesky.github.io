@@ -571,19 +571,20 @@
         <div class="search-form" id="search-form">
           <h2>Track Your Order</h2>
           <p class="text-tertiary" style="margin-bottom: 20px">
-            Enter your email address to check your order status. Printful Order ID is optional.
+            Enter your Printful Order ID and email address to check your order status.
           </p>
           <div class="form-group-custom">
             <label for="printful-order-id">
               Printful Order ID
-              <span style="color: #999; font-weight: normal">(Optional)</span>
+              <span style="color: #ffc107; font-weight: normal" aria-label="required">*</span>
             </label>
             <input
               type="text"
               id="printful-order-id"
               placeholder="e.g., PF123456789"
               data-testid="printful-order-id-input"
-              aria-required="false"
+              required
+              aria-required="true"
             />
           </div>
           <div class="form-group-custom">
