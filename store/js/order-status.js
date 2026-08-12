@@ -548,8 +548,8 @@ function isValidEmail(email) {
 }
 
 function isValidPrintfulOrderId(orderId) {
-  // Printful Order ID: alphanumeric string, at least 5 characters
-  return /^[a-zA-Z0-9]{5,}$/.test(orderId);
+  // Printful Order ID: must start with 'PF' followed by digits (e.g., PF123456789)
+  return /^PF\d+$/.test(orderId);
 }
 
 function showError(message) {
