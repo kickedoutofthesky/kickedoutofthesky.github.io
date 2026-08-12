@@ -19,15 +19,13 @@ describe("Order Status Page - E2E Tests", () => {
 
     it("should display correct labels and placeholders", () => {
       cy.get("label[for='printful-order-id']").should("contain", "Printful Order ID");
-      cy.get("label[for='printful-order-id']").should("contain", "Optional");
       cy.get("label[for='email']").should("contain", "Email Address");
       cy.get("#printful-order-id").should("have.attr", "placeholder", "e.g., PF123456789");
       cy.get("#email").should("have.attr", "placeholder", "your@example.com");
     });
 
     it("should have form description text", () => {
-      cy.get(".search-form p").should("contain", "email address");
-      cy.get(".search-form p").should("contain", "Printful Order ID is optional");
+      cy.get(".search-form p").should("contain", "Printful Order ID");
     });
   });
 
@@ -42,68 +40,71 @@ describe("Order Status Page - E2E Tests", () => {
     });
   });
 
-  describe("Button Highlighting - Email Validation", () => {
-    it("should enable button when valid email is entered", () => {
-      cy.get("#email").type("test@example.com");
+  describe("Button Highlighting - Printful Order ID Validation", () => {
+    it("should enable button when valid Printful Order ID is entered", () => {
+      cy.get("#printful-order-id").type("PF123456789");
       cy.get("#search-btn").should("not.be.disabled");
       cy.get("#search-btn").should("have.class", "active");
     });
 
-    it("should disable button when email is cleared", () => {
-      cy.get("#email").type("test@example.com");
+    it("should disable button when Printful Order ID is cleared", () => {
+      cy.get("#printful-order-id").type("PF123456789");
       cy.get("#search-btn").should("not.be.disabled");
 
-      cy.get("#email").clear();
+      cy.get("#printful-order-id").clear();
       cy.get("#search-btn").should("be.disabled");
       cy.get("#search-btn").should("not.have.class", "active");
     });
 
-    it("should disable button with invalid email format", () => {
-      cy.get("#email").type("invalid-email");
+    it("should disable button with invalid Printful Order ID format (missing PF)", () => {
+      cy.get("#printful-order-id").type("123456789");
       cy.get("#search-btn").should("be.disabled");
       cy.get("#search-btn").should("not.have.class", "active");
     });
 
-    it("should enable button with various valid email formats", () => {
-      const validEmails = ["user@example.com", "test.name@domain.co.uk", "firstname+lastname@example.com"];
+    it("should enable button with various valid Printful Order IDs", () => {
+      const validIds = ["PF123456789", "PF1", "PF999999999"];
 
-      validEmails.forEach(email => {
-        cy.get("#email").clear().type(email);
+      validIds.forEach(id => {
+        cy.get("#printful-order-id").clear().type(id);
         cy.get("#search-btn").should("not.be.disabled");
         cy.get("#search-btn").should("have.class", "active");
       });
     });
 
-    it("should disable button with email missing domain", () => {
-      cy.get("#email").type("user@");
+    it("should disable button with Printful Order ID missing number", () => {
+      cy.get("#printful-order-id").type("PF");
       cy.get("#search-btn").should("be.disabled");
     });
 
-    it("should disable button with email missing local part", () => {
-      cy.get("#email").type("@example.com");
+    it("should disable button with Printful Order ID lowercase prefix", () => {
+      cy.get("#printful-order-id").type("pf123456789");
       cy.get("#search-btn").should("be.disabled");
     });
   });
 
-  describe("Printful Order ID Field - Optional", () => {
-    it("should allow empty Printful Order ID", () => {
+  describe("Printful Order ID Field - Required", () => {
+    it("should require Printful Order ID", () => {
       cy.get("#printful-order-id").should("have.value", "");
+      cy.get("#search-btn").should("be.disabled");
     });
 
     it("should accept Printful Order ID starting with PF", () => {
       cy.get("#printful-order-id").type("PF123456789");
       cy.get("#printful-order-id").should("have.value", "PF123456789");
+      cy.get("#search-btn").should("not.be.disabled");
     });
 
-    it("should accept lowercase pf prefix", () => {
+    it("should reject lowercase pf prefix", () => {
       cy.get("#printful-order-id").type("pf987654321");
       cy.get("#printful-order-id").should("have.value", "pf987654321");
+      cy.get("#search-btn").should("be.disabled");
     });
 
-    it("should allow form submission with empty Printful Order ID if email is valid", () => {
+    it("should require Printful Order ID even with valid email", () => {
       cy.get("#printful-order-id").should("have.value", "");
       cy.get("#email").type("test@example.com");
-      cy.get("#search-btn").should("not.be.disabled");
+      cy.get("#search-btn").should("be.disabled");
     });
   });
 
@@ -112,38 +113,30 @@ describe("Order Status Page - E2E Tests", () => {
       cy.get("#printful-order-id").type("12345");
       cy.get("#email").type("test@example.com");
 
-      // Mock the API to prevent actual network call
-      cy.intercept("GET", "**/api/order-status", { statusCode: 500 }).as("orderStatus");
-
-      cy.get("#search-btn").click();
-
-      // Check for error message (will be shown before API call)
-      cy.get("#error-message").should("contain", "Printful Order ID must start with 'PF'");
-    });
-
-    it("should not submit with invalid email", () => {
-      cy.get("#email").type("invalid-email");
+      // Button should be disabled due to invalid PF ID
       cy.get("#search-btn").should("be.disabled");
     });
 
-    it("should show error when email is empty", () => {
+    it("should require Printful Order ID for submission", () => {
+      cy.get("#email").type("test@example.com");
+      cy.get("#search-btn").should("be.disabled");
+    });
+
+    it("should allow submission with valid Printful Order ID", () => {
       cy.get("#printful-order-id").type("PF123456");
-      cy.get("#email").clear();
-
-      cy.get("#search-btn").should("be.disabled");
-    });
-
-    it("should allow submission with valid email and empty Printful Order ID", () => {
       cy.get("#email").type("test@example.com");
       cy.get("#search-btn").should("not.be.disabled");
-
-      // Verify that button can be clicked
-      cy.get("#search-btn").should("not.have.attr", "disabled");
     });
 
-    it("should allow submission with valid email and valid Printful Order ID", () => {
+    it("should require both valid Printful Order ID and email", () => {
       cy.get("#printful-order-id").type("PF123456789");
       cy.get("#email").type("test@example.com");
+      cy.get("#search-btn").should("not.be.disabled");
+    });
+
+    it("should allow submission with just valid Printful Order ID if email is optional", () => {
+      cy.get("#printful-order-id").type("PF123456789");
+      // Email not required for button enable
       cy.get("#search-btn").should("not.be.disabled");
     });
   });
