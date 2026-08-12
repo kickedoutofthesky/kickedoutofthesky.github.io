@@ -167,8 +167,8 @@ describe("Merch Page - Product Visibility and Display", () => {
       cy.get("[data-testid='product-card']").first().click();
       cy.url().should("include", "product.html");
 
-      // Go back to store
-      cy.get('a[href="index.html"]').first().click();
+      // Go back to store using the back link
+      cy.get('a[href="/store/index.html"]').first().click();
 
       // Product count should be same
       cy.get("[data-testid='product-card']").should("have.length", initialCount);

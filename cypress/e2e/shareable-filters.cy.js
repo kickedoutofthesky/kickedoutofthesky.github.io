@@ -201,20 +201,20 @@ describe("Shareable Category Filters", () => {
   describe("Dynamic OG Tags", () => {
     it("should have default OG tags on store page without type param", () => {
       cy.request("GET", "/store/index.html").then(response => {
-        expect(response.body).to.contain('og:title" content="Merch - Kicked Out of the Sky"');
+        expect(response.body).to.contain('og:title" content="Merch - Kicked Out Of The Sky"');
       });
     });
 
     it("should inject tees OG title when ?type=tees", () => {
       cy.request("GET", "/store/index.html?type=tees").then(response => {
-        expect(response.body).to.contain('og:title" content="Tees - Kicked Out of the Sky Merch"');
-        expect(response.body).to.contain("Shop Tees from Kicked Out of the Sky.");
+        expect(response.body).to.contain('og:title" content="Tees - Kicked Out Of The Sky Merch"');
+        expect(response.body).to.contain("Shop Tees from Kicked Out Of The Sky.");
       });
     });
 
     it("should inject hoodies OG title when ?type=hoodies", () => {
       cy.request("GET", "/store/index.html?type=hoodies").then(response => {
-        expect(response.body).to.contain('og:title" content="Hoodies - Kicked Out of the Sky Merch"');
+        expect(response.body).to.contain('og:title" content="Hoodies - Kicked Out Of The Sky Merch"');
       });
     });
 
@@ -231,14 +231,14 @@ describe("Shareable Category Filters", () => {
 
     it("should keep default OG tags for invalid type param", () => {
       cy.request("GET", "/store/index.html?type=invalid").then(response => {
-        expect(response.body).to.contain('og:title" content="Merch - Kicked Out of the Sky"');
+        expect(response.body).to.contain('og:title" content="Merch - Kicked Out Of The Sky"');
       });
     });
 
     it("should update twitter tags alongside OG tags", () => {
       cy.request("GET", "/store/index.html?type=hats").then(response => {
-        expect(response.body).to.contain('twitter:title" content="Hats - Kicked Out of the Sky Merch"');
-        expect(response.body).to.contain("Shop Hats from Kicked Out of the Sky.");
+        expect(response.body).to.contain('twitter:title" content="Hats - Kicked Out Of The Sky Merch"');
+        expect(response.body).to.contain("Shop Hats from Kicked Out Of The Sky.");
       });
     });
   });
