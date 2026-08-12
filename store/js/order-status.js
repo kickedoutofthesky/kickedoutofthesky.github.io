@@ -72,8 +72,8 @@ function updateButtonState() {
   const email = emailInput.value.trim();
   const printfulOrderId = printfulOrderIdInput.value.trim();
 
-  // Both fields now required
-  const isValid = email && isValidEmail(email) && printfulOrderId && isValidPrintfulOrderId(printfulOrderId);
+  // Email is required; Printful Order ID is optional
+  const isValid = email && isValidEmail(email);
 
   if (isValid) {
     searchBtn.classList.add("active");
@@ -103,7 +103,7 @@ async function handleSearch() {
   const email = document.getElementById("email").value.trim();
   const searchBtn = document.getElementById("search-btn");
 
-  // Validate inputs - both fields now required
+  // Validate inputs - email required, Printful Order ID optional
   if (!email) {
     showError("Please enter an email address");
     return;
@@ -114,13 +114,9 @@ async function handleSearch() {
     return;
   }
 
-  if (!printfulOrderId) {
-    showError("Please enter a Printful Order ID");
-    return;
-  }
-
-  if (!isValidPrintfulOrderId(printfulOrderId)) {
-    showError("Printful Order ID must be at least 5 alphanumeric characters (with or without PF prefix)");
+  // Only validate Printful Order ID if it's provided
+  if (printfulOrderId && !isValidPrintfulOrderId(printfulOrderId)) {
+    showError("Printful Order ID must start with 'PF' if provided");
     return;
   }
 
@@ -133,8 +129,10 @@ async function handleSearch() {
 
     const backendUrl = window.__API_URL__ || "https://api.kickedoutofthesky.com";
     const url = new URL(`${backendUrl}/api/order-status`);
-    url.searchParams.append("printful_order_id", printfulOrderId);
     url.searchParams.append("email", email);
+    if (printfulOrderId) {
+      url.searchParams.append("printful_order_id", printfulOrderId);
+    }
 
     const response = await fetch(url.toString(), {
       method: "GET",
@@ -165,7 +163,7 @@ async function handleSearch() {
       return;
     }
 
-    // Display single order (API now requires both fields, returns single order)
+    // Display single or multiple orders based on response
     console.log("Displaying order:", data);
     try {
       displayOrder(data);
