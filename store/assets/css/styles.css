@@ -246,7 +246,7 @@ main {
 .btn-warning:disabled {
   background-color: #999999 !important;
   border-color: #999999 !important;
-  color: #666666 !important;
+  color: #ffffff !important;
   opacity: 0.6;
   cursor: not-allowed !important;
 }

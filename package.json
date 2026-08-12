@@ -1,7 +1,7 @@
 {
   "name": "kickedoutofthesky-store",
   "version": "1.0.0",
-  "description": "Store frontend for Kicked Out of the Sky",
+  "description": "Store frontend for Kicked Out Of The Sky",
   "main": "index.js",
   "scripts": {
     "prepare": "husky install",

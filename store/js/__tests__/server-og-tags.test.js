@@ -69,8 +69,8 @@ function startServer() {
               };
               const firstProduct = products.find(p => getCategory(p.title) === type);
               if (firstProduct) {
-                const ogTitle = `${label} - Kicked Out of the Sky Merch`;
-                const ogDesc = `Shop ${label} from Kicked Out of the Sky.`;
+                const ogTitle = `${label} - Kicked Out Of The Sky Merch`;
+                const ogDesc = `Shop ${label} from Kicked Out Of The Sky.`;
                 const ogImage = firstProduct.image.startsWith("http")
                   ? firstProduct.image
                   : `https://www.kickedoutofthesky.com/store/${firstProduct.image}`;
@@ -113,8 +113,8 @@ function startServer() {
             const products = JSON.parse(fs.readFileSync(productsPath, "utf8"));
             const product = products.find(p => p.product_key === key);
             if (product) {
-              const ogTitle = `${product.title} - Kicked Out of the Sky`;
-              const ogDesc = `Shop ${product.title}. Official Kicked Out of the Sky merchandise.`;
+              const ogTitle = `${product.title} - Kicked Out Of The Sky`;
+              const ogDesc = `Shop ${product.title}. Official Kicked Out Of The Sky merchandise.`;
               const ogImage = product.image.startsWith("http")
                 ? product.image
                 : `https://www.kickedoutofthesky.com/store/${encodeURI(product.image)}`;
@@ -199,7 +199,7 @@ describe("Server OG Tag Injection", () => {
   test("should serve store page with default OG tags when no type param", async () => {
     const res = await httpGet("/store/index.html");
     expect(res.status).toBe(200);
-    expect(res.body).toContain('content="Merch - Kicked Out of the Sky"');
+    expect(res.body).toContain('content="Merch - Kicked Out Of The Sky"');
     // Default OG image should be first product's front image
     expect(res.body).toContain("Unisex%20Tee%20w%20Color%20Block%20Graphic");
   });
@@ -207,43 +207,43 @@ describe("Server OG Tag Injection", () => {
   test("should inject tees OG tags when ?type=tees", async () => {
     const res = await httpGet("/store/index.html?type=tees");
     expect(res.status).toBe(200);
-    expect(res.body).toContain('content="Tees - Kicked Out of the Sky Merch"');
-    expect(res.body).toContain('content="Shop Tees from Kicked Out of the Sky."');
+    expect(res.body).toContain('content="Tees - Kicked Out Of The Sky Merch"');
+    expect(res.body).toContain('content="Shop Tees from Kicked Out Of The Sky."');
   });
 
   test("should inject hoodies OG tags when ?type=hoodies", async () => {
     const res = await httpGet("/store/index.html?type=hoodies");
     expect(res.status).toBe(200);
-    expect(res.body).toContain('content="Hoodies - Kicked Out of the Sky Merch"');
-    expect(res.body).toContain('content="Shop Hoodies from Kicked Out of the Sky."');
+    expect(res.body).toContain('content="Hoodies - Kicked Out Of The Sky Merch"');
+    expect(res.body).toContain('content="Shop Hoodies from Kicked Out Of The Sky."');
   });
 
   test("should inject hats OG tags when ?type=hats", async () => {
     const res = await httpGet("/store/index.html?type=hats");
     expect(res.status).toBe(200);
-    expect(res.body).toContain('content="Hats - Kicked Out of the Sky Merch"');
-    expect(res.body).toContain('content="Shop Hats from Kicked Out of the Sky."');
+    expect(res.body).toContain('content="Hats - Kicked Out Of The Sky Merch"');
+    expect(res.body).toContain('content="Shop Hats from Kicked Out Of The Sky."');
   });
 
   test("should inject stickers OG tags when ?type=stickers", async () => {
     const res = await httpGet("/store/index.html?type=stickers");
     expect(res.status).toBe(200);
-    expect(res.body).toContain('content="Stickers - Kicked Out of the Sky Merch"');
-    expect(res.body).toContain('content="Shop Stickers from Kicked Out of the Sky."');
+    expect(res.body).toContain('content="Stickers - Kicked Out Of The Sky Merch"');
+    expect(res.body).toContain('content="Shop Stickers from Kicked Out Of The Sky."');
   });
 
   test("should inject long-sleeve OG tags when ?type=long-sleeve", async () => {
     const res = await httpGet("/store/index.html?type=long-sleeve");
     expect(res.status).toBe(200);
-    expect(res.body).toContain('content="Long Sleeve Tees - Kicked Out of the Sky Merch"');
-    expect(res.body).toContain('content="Shop Long Sleeve Tees from Kicked Out of the Sky."');
+    expect(res.body).toContain('content="Long Sleeve Tees - Kicked Out Of The Sky Merch"');
+    expect(res.body).toContain('content="Shop Long Sleeve Tees from Kicked Out Of The Sky."');
   });
 
   test("should inject sweatshirts OG tags when ?type=sweatshirts", async () => {
     const res = await httpGet("/store/index.html?type=sweatshirts");
     expect(res.status).toBe(200);
-    expect(res.body).toContain('content="Sweatshirts - Kicked Out of the Sky Merch"');
-    expect(res.body).toContain('content="Shop Sweatshirts from Kicked Out of the Sky."');
+    expect(res.body).toContain('content="Sweatshirts - Kicked Out Of The Sky Merch"');
+    expect(res.body).toContain('content="Shop Sweatshirts from Kicked Out Of The Sky."');
   });
 
   test("should include product image URL in OG image tag", async () => {
@@ -260,20 +260,20 @@ describe("Server OG Tag Injection", () => {
     const res = await httpGet("/store/index.html?type=invalid");
     expect(res.status).toBe(200);
     // Should still have the default OG title
-    expect(res.body).toContain('content="Merch - Kicked Out of the Sky"');
+    expect(res.body).toContain('content="Merch - Kicked Out Of The Sky"');
   });
 
   test("should update twitter meta tags alongside OG tags", async () => {
     const res = await httpGet("/store/index.html?type=tees");
     expect(res.status).toBe(200);
-    expect(res.body).toContain('twitter:title" content="Tees - Kicked Out of the Sky Merch"');
-    expect(res.body).toContain('twitter:description" content="Shop Tees from Kicked Out of the Sky."');
+    expect(res.body).toContain('twitter:title" content="Tees - Kicked Out Of The Sky Merch"');
+    expect(res.body).toContain('twitter:description" content="Shop Tees from Kicked Out Of The Sky."');
   });
 
   test("should inject product OG tags when ?key= param on product page", async () => {
     const res = await httpGet("/store/product.html?key=product_425342399");
     expect(res.status).toBe(200);
-    expect(res.body).toContain("Unisex Tee w/ Color Block Graphic - Kicked Out of the Sky");
+    expect(res.body).toContain("Unisex Tee w/ Color Block Graphic - Kicked Out Of The Sky");
     expect(res.body).toContain("https://www.kickedoutofthesky.com/store/p/product_425342399/");
     expect(res.body).toContain("Unisex%20Tee%20w%20Color%20Block%20Graphic");
   });

@@ -122,10 +122,24 @@ function setupCountrySelector() {
     const savedCountry = localStorage.getItem("selectedShippingCountry");
     if (savedCountry) {
       select.value = savedCountry;
+      // If country was previously selected, fetch order summary
+      if (savedCountry) {
+        fetchOrderSummary(savedCountry).then(orderData => {
+          updateOrderSummaryDisplay(orderData);
+        });
+      }
     }
 
-    select.addEventListener("change", () => {
+    select.addEventListener("change", async () => {
       updateCheckoutButtonState();
+
+      // Fetch updated order summary when country changes
+      if (select.value) {
+        const orderData = await fetchOrderSummary(select.value);
+        updateOrderSummaryDisplay(orderData);
+      } else {
+        updateOrderSummaryDisplay(null);
+      }
     });
   }
 
@@ -221,6 +235,66 @@ function updateCartSummary() {
 
   subtotalEl.textContent = `$${subtotalDollars.toFixed(2)}`;
   totalEl.textContent = `$${subtotalDollars.toFixed(2)}`;
+}
+
+async function fetchOrderSummary(countryCode) {
+  try {
+    const subtotalCents = cart.getSubtotalCents(products);
+    const backendUrl = window.__API_URL__ || "https://api.kickedoutofthesky.com";
+
+    const response = await fetch(`${backendUrl}/api/calculate-order-summary`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        subtotal_cents: subtotalCents,
+        shipping_country: countryCode,
+      }),
+    });
+
+    if (!response.ok) {
+      console.error("Failed to fetch order summary:", response.statusText);
+      return null;
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching order summary:", error);
+    return null;
+  }
+}
+
+function updateOrderSummaryDisplay(orderData) {
+  const taxLabel = document.getElementById("tax-label");
+  const taxValue = document.getElementById("tax-value");
+  const shippingValue = document.getElementById("shipping-value");
+  const totalEl = document.getElementById("total");
+
+  if (!taxLabel || !taxValue || !shippingValue || !totalEl) return;
+
+  if (!orderData) {
+    // Reset to "Tax/VAT" if no country selected
+    taxLabel.textContent = "Tax/VAT:";
+    taxValue.textContent = "TBD";
+    shippingValue.textContent = "TBD";
+    totalEl.textContent = "TBD";
+    return;
+  }
+
+  // Determine if VAT or Tax based on vatRate
+  const label = orderData.vatRate ? "VAT:" : "Tax:";
+  taxLabel.textContent = label;
+
+  // Format amounts as dollars
+  const taxDollars = orderData.tax / 100;
+  const shippingDollars = orderData.shipping / 100;
+  const totalDollars = orderData.total / 100;
+
+  taxValue.textContent = `$${taxDollars.toFixed(2)}`;
+  shippingValue.textContent = `$${shippingDollars.toFixed(2)}`;
+  totalEl.textContent = `$${totalDollars.toFixed(2)}`;
 }
 
 // eslint-disable-next-line no-unused-vars

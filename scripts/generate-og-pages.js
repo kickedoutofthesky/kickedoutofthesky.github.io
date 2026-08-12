@@ -33,7 +33,7 @@ function getImageUrl(imagePath) {
   return `${BASE_URL}/store/${encodeURI(imagePath)}`;
 }
 
-function buildPage({ title, description, url, imageUrl, redirectUrl }) {
+function buildPage({ title, description, url, imageUrl, redirectUrl, productKey }) {
   const safeTitle = escapeHtml(title);
   const safeDesc = escapeHtml(description);
   return `<!doctype html>
@@ -55,7 +55,23 @@ function buildPage({ title, description, url, imageUrl, redirectUrl }) {
 <meta http-equiv="refresh" content="0;url=${redirectUrl}" />
 </head>
 <body>
-<script>window.location.replace("${redirectUrl}");</script>
+<script>
+  // Environment-aware redirect: use localhost for development, live site for production
+  (function() {
+    const hostname = window.location.hostname;
+    let targetUrl;
+
+    if (hostname === 'localhost' || hostname === '127.0.0.1') {
+      // Development environment - stay on localhost
+      targetUrl = 'http://localhost:3000/store/product.html?key=${productKey}';
+    } else {
+      // Production environment - use live site
+      targetUrl = '${redirectUrl}';
+    }
+
+    window.location.replace(targetUrl);
+  })();
+</script>
 <p>Redirecting to <a href="${redirectUrl}">${safeTitle}</a>...</p>
 </body>
 </html>`;
@@ -80,6 +96,7 @@ for (const product of products) {
     url: shareUrl,
     imageUrl,
     redirectUrl,
+    productKey: product.product_key,
   });
 
   fs.writeFileSync(path.join(dir, "index.html"), html);

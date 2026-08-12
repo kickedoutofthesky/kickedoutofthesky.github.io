@@ -1,0 +1,667 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Order Status - Kicked Out of the Sky</title>
+    <meta name="description" content="Check your order status and tracking information." />
+    <meta property="og:title" content="Order Status - Kicked Out of the Sky" />
+    <meta property="og:description" content="Track your Kicked Out of the Sky merch order." />
+    <meta property="og:url" content="https://www.kickedoutofthesky.com/store/order-status.html" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Order Status - Kicked Out of the Sky" />
+    <meta name="twitter:description" content="Check your order status and tracking." />
+    <link rel="canonical" href="https://www.kickedoutofthesky.com/store/order-status.html" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; img-src 'self' https: data:; font-src 'self' https://cdnjs.cloudflare.com; connect-src 'self' http://localhost:3001 https://api.kickedoutofthesky.com https://api-staging.kickedoutofthesky.com https://cdn.jsdelivr.net https://region1.google-analytics.com https://www.google-analytics.com"
+    />
+    <link rel="icon" href="/img/star-64.ico" />
+    <link rel="apple-touch-icon" href="/img/star-64.ico" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="../css/ui.css" />
+    <link rel="stylesheet" href="assets/css/styles.css" />
+    <style>
+      .order-status-wrapper {
+        margin-top: 100px;
+      }
+
+      @media (max-width: 768px) {
+        .order-status-wrapper {
+          margin-top: 100px;
+        }
+      }
+
+      @media (max-width: 576px) {
+        .order-status-wrapper {
+          margin-top: 140px;
+        }
+      }
+
+      .order-shipping-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 30px;
+        margin-bottom: 40px;
+        max-width: 1200px;
+        margin-left: auto;
+        margin-right: auto;
+        align-items: start;
+      }
+
+      @media (max-width: 767px) {
+        .order-shipping-grid {
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: 30px;
+          margin-bottom: 40px;
+          padding: 0 20px;
+          max-width: 100%;
+        }
+
+        div[style*="margin-top: 100px"] {
+          margin-top: 180px !important;
+        }
+
+        div[style*="margin-top: 100px"] .container {
+          max-width: 100%;
+          padding: 0;
+        }
+      }
+
+      @media (min-width: 768px) and (max-width: 999px) {
+        .order-shipping-grid {
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: 30px;
+          margin-bottom: 40px;
+          padding: 0 20px;
+          max-width: 100%;
+        }
+
+        div[style*="margin-top: 100px"] {
+          margin-top: 140px !important;
+        }
+
+        div[style*="margin-top: 100px"] .container {
+          max-width: 100%;
+          padding: 0;
+        }
+      }
+
+      @media (min-width: 1000px) {
+        .order-shipping-grid {
+          display: grid;
+          grid-template-columns: 2fr 1fr;
+          gap: 30px;
+          margin-bottom: 40px;
+          max-width: 1200px;
+          margin-left: auto;
+          margin-right: auto;
+          align-items: start;
+        }
+      }
+
+      @media (max-width: 576px) {
+        #order-items > div {
+          flex-wrap: wrap;
+        }
+
+        #order-items > div > div:first-child {
+          width: 100%;
+          margin-bottom: 15px;
+        }
+
+        #order-items > div > div:last-child {
+          width: 100%;
+        }
+      }
+
+      .shipping-tracking-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+
+      @media (max-width: 767px) {
+        .shipping-tracking-grid {
+          grid-template-columns: 1fr;
+          gap: 20px;
+        }
+      }
+
+      #search-another-btn {
+        max-width: 1200px;
+        margin-left: auto;
+        margin-right: auto;
+        display: block;
+      }
+
+      @media (max-width: 576px) {
+        #order-items > div {
+          flex-wrap: wrap;
+        }
+
+        #order-items > div > div:first-child {
+          width: 100%;
+          margin-bottom: 15px;
+        }
+
+        #order-items > div > div:last-child {
+          width: 100%;
+        }
+      }
+
+      .order-status-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+
+      @media (max-width: 768px) {
+        .order-status-container {
+          padding: 20px;
+        }
+      }
+
+      @media (max-width: 576px) {
+        .order-status-container {
+          padding: 20px;
+        }
+      }
+
+      .status-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-weight: bold;
+        font-size: 0.9rem;
+        text-align: center;
+      }
+
+      .status-pending {
+        background-color: #ffc107;
+        color: #000;
+      }
+
+      .status-processing {
+        background-color: #17a2b8;
+        color: #fff;
+      }
+
+      .status-shipped {
+        background-color: #28a745;
+        color: #fff;
+      }
+
+      .status-delivered {
+        background-color: #28a745;
+        color: #fff;
+      }
+
+      .status-fulfilled {
+        background-color: #28a745;
+        color: #fff;
+      }
+
+      .order-section {
+        background: #1a1a1a;
+        border: 1px solid #262626;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+      }
+
+      .order-section h3 {
+        color: #ffc107;
+        margin-bottom: 15px;
+        font-size: 1.1rem;
+      }
+
+      .order-detail {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        padding: 12px 0;
+        border-bottom: 1px solid #262626;
+        color: #ccc;
+      }
+
+      .order-detail:last-child {
+        border-bottom: none;
+      }
+
+      .order-detail-label {
+        font-weight: 500;
+        color: #aaa;
+        min-width: 150px;
+      }
+
+      .order-detail-value {
+        text-align: right;
+        flex: 1;
+      }
+
+      .items-list {
+        background: #0d0d0d;
+        border-radius: 4px;
+        padding: 15px;
+      }
+
+      .item-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 0;
+        border-bottom: 1px solid #262626;
+        color: #ccc;
+      }
+
+      .item-row:last-child {
+        border-bottom: none;
+      }
+
+      .item-info {
+        flex: 1;
+      }
+
+      .item-name {
+        font-weight: 500;
+        color: #fff;
+      }
+
+      .item-variant {
+        font-size: 0.85rem;
+        color: #999;
+        margin-top: 4px;
+      }
+
+      .item-price {
+        text-align: right;
+        color: #ffc107;
+        font-weight: bold;
+      }
+
+      .tracking-info {
+        background: #0d4c0d;
+        border: 1px solid #28a745;
+        border-radius: 4px;
+        padding: 15px;
+        margin-bottom: 15px;
+      }
+
+      .tracking-link {
+        display: inline-block;
+        margin-top: 10px;
+        padding: 10px 16px;
+        background-color: #28a745;
+        color: #fff;
+        text-decoration: none;
+        border-radius: 4px;
+        font-size: 0.9rem;
+        transition: background-color 0.2s;
+      }
+
+      .tracking-link:hover {
+        background-color: #218838;
+        text-decoration: none;
+      }
+
+      .address-block {
+        background: #0d0d0d;
+        border-radius: 4px;
+        padding: 12px;
+        color: #ccc;
+        font-size: 0.9rem;
+        line-height: 1.6;
+      }
+
+      .search-form {
+        background: #1a1a1a;
+        border: 1px solid #262626;
+        border-radius: 8px;
+        padding: 30px;
+        margin-bottom: 30px;
+        max-width: 500px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .search-form h2 {
+        color: #fff;
+        margin-bottom: 20px;
+        font-size: 1.3rem;
+      }
+
+      .form-group-custom {
+        margin-bottom: 15px;
+      }
+
+      .form-group-custom label {
+        display: block;
+        color: #ccc;
+        margin-bottom: 8px;
+        font-weight: 500;
+      }
+
+      .form-group-custom input {
+        width: 100%;
+        padding: 12px;
+        background-color: #0d0d0d;
+        color: #fff;
+        border: 1px solid #333;
+        border-radius: 4px;
+        font-size: 1rem;
+      }
+
+      .form-group-custom input:focus {
+        outline: 2px solid #ffc107;
+        outline-offset: 2px;
+        border-color: #ffc107;
+      }
+
+      .form-group-custom input:focus-visible {
+        outline: 2px solid #ffc107;
+        outline-offset: 2px;
+      }
+
+      .form-group-custom input:-webkit-autofill,
+      .form-group-custom input:-webkit-autofill:hover,
+      .form-group-custom input:-webkit-autofill:focus,
+      .form-group-custom input:-webkit-autofill:active {
+        -webkit-box-shadow: 0 0 0 30px #0d0d0d inset !important;
+        -webkit-text-fill-color: #fff !important;
+      }
+
+      .form-group-custom input:-webkit-autofill {
+        -webkit-text-fill-color: #fff;
+      }
+
+      .search-button {
+        width: 100%;
+        padding: 12px;
+        background-color: #555;
+        color: #999;
+        border: none;
+        border-radius: 4px;
+        font-weight: bold;
+        font-size: 1rem;
+        cursor: not-allowed;
+        transition: all 0.3s ease;
+      }
+
+      .search-button.active {
+        background-color: #ffc107;
+        color: #000;
+        cursor: pointer;
+      }
+
+      .search-button.active:hover {
+        background-color: #e0a800;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(255, 193, 7, 0.3);
+      }
+
+      .search-button:disabled {
+        background-color: #555;
+        color: #999;
+        cursor: not-allowed;
+      }
+
+      .error-message {
+        background: #4d0d0d;
+        border: 1px solid #d9534f;
+        border-radius: 4px;
+        padding: 15px;
+        color: #f8d7da;
+        margin-bottom: 20px;
+      }
+
+      .loading-spinner {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        border: 3px solid #333;
+        border-top-color: #ffc107;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      .shipment-item {
+        background: #0d0d0d;
+        border-radius: 4px;
+        padding: 12px;
+        margin-bottom: 10px;
+      }
+
+      .shipment-item:last-child {
+        margin-bottom: 0;
+      }
+
+      @media (max-width: 768px) {
+        .order-section {
+          padding: 15px;
+        }
+
+        .order-detail {
+          flex-direction: column;
+          gap: 8px;
+        }
+
+        .order-detail-value {
+          text-align: left;
+        }
+
+        .item-row {
+          flex-direction: column;
+          gap: 8px;
+        }
+
+        .item-price {
+          text-align: left;
+        }
+
+        .search-form {
+          padding: 20px;
+        }
+      }
+    </style>
+    <script defer src="js/api-config.js"></script>
+  </head>
+  <body class="text-center">
+    <a href="#order-content" class="skip-nav">Skip to content</a>
+    <!-- Navbar -->
+    <nav
+      id="navbarMain"
+      class="navbar navbar-expand site-header fixed-top"
+      style="padding: 15px 40px 15px 0; background-color: #00000080"
+    >
+      <div class="container-fluid" style="display: flex; justify-content: space-between; align-items: center">
+        <a href="../index.html" style="flex-shrink: 0; display: flex; align-items: center">
+          <img
+            class="brand"
+            src="../img/Kicked-Out-Of-The-Sky_transparent.png"
+            alt="Kicked Out of the Sky Logo"
+            style="width: auto; display: block"
+          />
+        </a>
+        <ul class="nav" style="gap: 30px; display: flex; flex-wrap: nowrap; margin: 0; list-style: none">
+          <li class="nav-item">
+            <a
+              class="nav-link"
+              href="index.html"
+              style="text-decoration: none; font-size: 1.2rem; display: flex; align-items: center; cursor: pointer"
+            >
+              Merch
+            </a>
+          </li>
+          <li class="nav-item" style="position: relative">
+            <a
+              class="nav-link"
+              href="cart.html"
+              style="
+                text-decoration: none;
+                font-size: 1.2rem;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                cursor: pointer;
+              "
+            >
+              <i class="fas fa-shopping-cart"></i>
+              Cart
+              <span
+                id="cart-badge"
+                class="badge"
+                style="
+                  background-color: #ffc107;
+                  color: #000;
+                  position: absolute;
+                  top: -5px;
+                  right: -10px;
+                  display: none;
+                  font-size: 0.7rem;
+                  width: 20px;
+                  height: 20px;
+                  border-radius: 50%;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  padding: 0;
+                "
+              >
+                0
+              </span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a
+              class="nav-link"
+              href="order-status.html"
+              style="text-decoration: none; font-size: 1.2rem; display: flex; align-items: center; cursor: pointer"
+            >
+              <i class="fas fa-package"></i>
+              Orders
+            </a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <div class="order-status-wrapper">
+      <div class="container order-status-container" id="order-content" data-testid="order-status-page">
+        <h1 class="text-light mb-40">Order Status</h1>
+
+        <!-- Search Form -->
+        <div class="search-form" id="search-form">
+          <h2>Track Your Order</h2>
+          <p class="text-tertiary" style="margin-bottom: 20px">
+            Enter your email address and Printful Order ID to check your order status
+          </p>
+          <div class="form-group-custom">
+            <label for="printful-order-id">
+              Printful Order ID
+              <span style="color: #ffc107; font-weight: normal" aria-label="required">*</span>
+            </label>
+            <input
+              type="text"
+              id="printful-order-id"
+              placeholder="e.g., PF123456789"
+              data-testid="printful-order-id-input"
+              required
+              aria-required="true"
+            />
+          </div>
+          <div class="form-group-custom">
+            <label for="email">
+              Email Address
+              <span style="color: #ffc107; font-weight: normal" aria-label="required">*</span>
+            </label>
+            <input
+              type="email"
+              id="email"
+              placeholder="your@example.com"
+              data-testid="email-input"
+              required
+              aria-required="true"
+            />
+          </div>
+          <button class="search-button" id="search-btn" data-testid="search-button">Track Order</button>
+        </div>
+
+        <!-- Error Message -->
+        <div id="error-container" style="display: none" role="alert" aria-live="assertive">
+          <div class="error-message" id="error-message"></div>
+          <button class="btn btn-outline-secondary mb-30" onclick="resetForm()" style="width: 100%">
+            Search Again
+          </button>
+        </div>
+
+        <!-- Loading State -->
+        <div
+          id="loading-container"
+          style="display: none; text-align: center; padding: 40px 0"
+          role="status"
+          aria-live="polite"
+          aria-label="Loading order details"
+        >
+          <div class="loading-spinner" aria-hidden="true"></div>
+          <p class="text-secondary mt-20">Fetching your order details...</p>
+        </div>
+
+        <!-- Order Status Display -->
+        <div id="order-display" style="display: none">
+          <!-- Status Badge -->
+          <div id="status-badge-container"></div>
+
+          <!-- Pending Status -->
+          <div id="pending-section" style="display: none">
+            <div class="order-section">
+              <p class="text-tertiary" style="font-size: 1.05rem; line-height: 1.6">
+                <i class="fas fa-hourglass-half" style="color: #ffc107; margin-right: 10px"></i>
+                <span id="pending-message"></span>
+              </p>
+            </div>
+          </div>
+
+          <!-- Processing/Shipped Status -->
+          <div id="processing-section" style="display: none"></div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="legal-footer">
+      <div class="legal-links">
+        <a href="../legal/privacy-policy.html">Privacy Policy</a>
+        <a href="../legal/terms-and-conditions.html">Terms &amp; Conditions</a>
+        <a href="../legal/shipping-policy.html">Shipping &amp; Returns</a>
+        <a href="../legal/cookie-policy.html">Cookie Policy</a>
+        <a href="../legal/copyright-notice.html">Copyright</a>
+        <a href="../legal/accessibility-statement.html">Accessibility</a>
+        <a href="../legal/disclaimer.html">Disclaimer</a>
+        <a href="../legal/contact.html">Contact</a>
+      </div>
+      <p>Kicked Out Of The Sky™ — music rights owned by Matthew Bachman. &copy; 2026 Let Go Media.</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/cart.js"></script>
+    <script src="js/order-status.js"></script>
+    <script src="../js/analytics.js"></script>
+    <script src="../js/cookie-consent.js"></script>
+  </body>
+</html>

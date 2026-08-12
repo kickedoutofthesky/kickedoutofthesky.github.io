@@ -33,8 +33,23 @@
             "price_cents": 2500
           }
         },
-        "mockups": ["assets/images/Unisex Tee w Color Block Graphic - Front - Black.jpg"]
+        "mockups": [
+          "assets/images/Unisex Tee w Color Block Graphic - Front - Black.jpg"
+        ]
       }
+    },
+    "garment": {
+      "name": "Unisex T-shirt",
+      "material": "100% combed and ring-spun cotton",
+      "weight": "6 oz/yd² (203 g/m²)",
+      "fit": "Unisex",
+      "features": [
+        "Side-seamed construction",
+        "Tear away tag",
+        "Preshrunk fabric",
+        "Comfortable classic fit"
+      ],
+      "care": "Machine wash cold with like colors. Tumble dry low. Avoid bleach."
     }
   },
   {
@@ -71,8 +86,23 @@
             "price_cents": 2500
           }
         },
-        "mockups": ["assets/images/Unisex Tee w Wasting My Life Away Cover - Front - Black.jpg"]
+        "mockups": [
+          "assets/images/Unisex Tee w Wasting My Life Away Cover - Front - Black.jpg"
+        ]
       }
+    },
+    "garment": {
+      "name": "Unisex T-shirt",
+      "material": "100% combed and ring-spun cotton",
+      "weight": "6 oz/yd² (203 g/m²)",
+      "fit": "Unisex",
+      "features": [
+        "Side-seamed construction",
+        "Tear away tag",
+        "Preshrunk fabric",
+        "Comfortable classic fit"
+      ],
+      "care": "Machine wash cold with like colors. Tumble dry low. Avoid bleach."
     }
   },
   {
@@ -109,8 +139,23 @@
             "price_cents": 2500
           }
         },
-        "mockups": ["assets/images/Unisex Tee w Kicked Out Of The Sky Cover - Front - Black.jpg"]
+        "mockups": [
+          "assets/images/Unisex Tee w Kicked Out Of The Sky Cover - Front - Black.jpg"
+        ]
       }
+    },
+    "garment": {
+      "name": "Unisex T-shirt",
+      "material": "100% combed and ring-spun cotton",
+      "weight": "6 oz/yd² (203 g/m²)",
+      "fit": "Unisex",
+      "features": [
+        "Side-seamed construction",
+        "Tear away tag",
+        "Preshrunk fabric",
+        "Comfortable classic fit"
+      ],
+      "care": "Machine wash cold with like colors. Tumble dry low. Avoid bleach."
     }
   },
   {
@@ -147,8 +192,23 @@
             "price_cents": 2500
           }
         },
-        "mockups": ["assets/images/Unisex Tee w Levity Of Lies Cover - Front - Black.jpg"]
+        "mockups": [
+          "assets/images/Unisex Tee w Levity Of Lies Cover - Front - Black.jpg"
+        ]
       }
+    },
+    "garment": {
+      "name": "Unisex T-shirt",
+      "material": "100% combed and ring-spun cotton",
+      "weight": "6 oz/yd² (203 g/m²)",
+      "fit": "Unisex",
+      "features": [
+        "Side-seamed construction",
+        "Tear away tag",
+        "Preshrunk fabric",
+        "Comfortable classic fit"
+      ],
+      "care": "Machine wash cold with like colors. Tumble dry low. Avoid bleach."
     }
   },
   {
@@ -185,7 +245,9 @@
             "price_cents": 2500
           }
         },
-        "mockups": ["assets/images/Unisex Tee w Star Logo - Front - Black.jpg"]
+        "mockups": [
+          "assets/images/Unisex Tee w Star Logo - Front - Black.jpg"
+        ]
       },
       "Dark Grey Heather": {
         "image": "assets/images/Unisex Tee w Star Logo - Front - Dark Grey Heather.jpg",
@@ -215,8 +277,23 @@
             "price_cents": 2500
           }
         },
-        "mockups": ["assets/images/Unisex Tee w Star Logo - Front - Dark Grey Heather.jpg"]
+        "mockups": [
+          "assets/images/Unisex Tee w Star Logo - Front - Dark Grey Heather.jpg"
+        ]
       }
+    },
+    "garment": {
+      "name": "Unisex T-shirt",
+      "material": "100% combed and ring-spun cotton",
+      "weight": "6 oz/yd² (203 g/m²)",
+      "fit": "Unisex",
+      "features": [
+        "Side-seamed construction",
+        "Tear away tag",
+        "Preshrunk fabric",
+        "Comfortable classic fit"
+      ],
+      "care": "Machine wash cold with like colors. Tumble dry low. Avoid bleach."
     }
   },
   {
@@ -253,7 +330,9 @@
             "price_cents": 2500
           }
         },
-        "mockups": ["assets/images/Unisex Tee w Typewriter Text - Front - Black.jpg"]
+        "mockups": [
+          "assets/images/Unisex Tee w Typewriter Text - Front - Black.jpg"
+        ]
       },
       "Dark Grey Heather": {
         "image": "assets/images/Unisex Tee w Typewriter Text - Front - Dark Grey Heather.jpg",
@@ -283,8 +362,23 @@
             "price_cents": 2500
           }
         },
-        "mockups": ["assets/images/Unisex Tee w Typewriter Text - Front - Dark Grey Heather.jpg"]
+        "mockups": [
+          "assets/images/Unisex Tee w Typewriter Text - Front - Dark Grey Heather.jpg"
+        ]
       }
+    },
+    "garment": {
+      "name": "Unisex T-shirt",
+      "material": "100% combed and ring-spun cotton",
+      "weight": "6 oz/yd² (203 g/m²)",
+      "fit": "Unisex",
+      "features": [
+        "Side-seamed construction",
+        "Tear away tag",
+        "Preshrunk fabric",
+        "Comfortable classic fit"
+      ],
+      "care": "Machine wash cold with like colors. Tumble dry low. Avoid bleach."
     }
   },
   {
@@ -321,7 +415,9 @@
             "price_cents": 2500
           }
         },
-        "mockups": ["assets/images/Unisex Tee w Text - Front - Black.jpg"]
+        "mockups": [
+          "assets/images/Unisex Tee w Text - Front - Black.jpg"
+        ]
       },
       "Dark Grey Heather": {
         "image": "assets/images/Unisex Tee w Text - Front - Dark Grey Heather.jpg",
@@ -351,8 +447,23 @@
             "price_cents": 2500
           }
         },
-        "mockups": ["assets/images/Unisex Tee w Text - Front - Dark Grey Heather.jpg"]
+        "mockups": [
+          "assets/images/Unisex Tee w Text - Front - Dark Grey Heather.jpg"
+        ]
       }
+    },
+    "garment": {
+      "name": "Unisex T-shirt",
+      "material": "100% combed and ring-spun cotton",
+      "weight": "6 oz/yd² (203 g/m²)",
+      "fit": "Unisex",
+      "features": [
+        "Side-seamed construction",
+        "Tear away tag",
+        "Preshrunk fabric",
+        "Comfortable classic fit"
+      ],
+      "care": "Machine wash cold with like colors. Tumble dry low. Avoid bleach."
     }
   },
   {
@@ -385,7 +496,9 @@
             "price_cents": 2500
           }
         },
-        "mockups": ["assets/images/Unisex Tee w Kicked Out Of The Sky Vintage - Front - Oxblood Black.jpg"]
+        "mockups": [
+          "assets/images/Unisex Tee w Kicked Out Of The Sky Vintage - Front - Oxblood Black.jpg"
+        ]
       },
       "Natural": {
         "image": "assets/images/Unisex Tee w Kicked Out Of The Sky Vintage - Front - Natural.jpg",
@@ -415,8 +528,23 @@
             "price_cents": 2500
           }
         },
-        "mockups": ["assets/images/Unisex Tee w Kicked Out Of The Sky Vintage - Front - Natural.jpg"]
+        "mockups": [
+          "assets/images/Unisex Tee w Kicked Out Of The Sky Vintage - Front - Natural.jpg"
+        ]
       }
+    },
+    "garment": {
+      "name": "Unisex T-shirt",
+      "material": "100% combed and ring-spun cotton",
+      "weight": "6 oz/yd² (203 g/m²)",
+      "fit": "Unisex",
+      "features": [
+        "Side-seamed construction",
+        "Tear away tag",
+        "Preshrunk fabric",
+        "Comfortable classic fit"
+      ],
+      "care": "Machine wash cold with like colors. Tumble dry low. Avoid bleach."
     }
   },
   {
@@ -449,7 +577,9 @@
             "price_cents": 2500
           }
         },
-        "mockups": ["assets/images/Unisex Tee w Wasting My Life Away Vintage - Front - Oxblood Black.jpg"]
+        "mockups": [
+          "assets/images/Unisex Tee w Wasting My Life Away Vintage - Front - Oxblood Black.jpg"
+        ]
       },
       "Natural": {
         "image": "assets/images/Unisex Tee w Wasting My Life Away Vintage - Front - Natural.jpg",
@@ -479,8 +609,23 @@
             "price_cents": 2500
           }
         },
-        "mockups": ["assets/images/Unisex Tee w Wasting My Life Away Vintage - Front - Natural.jpg"]
+        "mockups": [
+          "assets/images/Unisex Tee w Wasting My Life Away Vintage - Front - Natural.jpg"
+        ]
       }
+    },
+    "garment": {
+      "name": "Unisex T-shirt",
+      "material": "100% combed and ring-spun cotton",
+      "weight": "6 oz/yd² (203 g/m²)",
+      "fit": "Unisex",
+      "features": [
+        "Side-seamed construction",
+        "Tear away tag",
+        "Preshrunk fabric",
+        "Comfortable classic fit"
+      ],
+      "care": "Machine wash cold with like colors. Tumble dry low. Avoid bleach."
     }
   },
   {
@@ -517,8 +662,23 @@
             "price_cents": 3500
           }
         },
-        "mockups": ["assets/images/Unisex Long Sleeve Tee w Color Block Graphic - Front - Black.jpg"]
+        "mockups": [
+          "assets/images/Unisex Long Sleeve Tee w Color Block Graphic - Front - Black.jpg"
+        ]
       }
+    },
+    "garment": {
+      "name": "Unisex Long Sleeve T-shirt",
+      "material": "100% combed and ring-spun cotton",
+      "weight": "6 oz/yd² (203 g/m²)",
+      "fit": "Unisex",
+      "features": [
+        "Side-seamed construction",
+        "Tear away tag",
+        "Preshrunk fabric",
+        "Comfortable classic fit with full-length sleeves"
+      ],
+      "care": "Machine wash cold with like colors. Tumble dry low. Avoid bleach."
     }
   },
   {
@@ -555,8 +715,23 @@
             "price_cents": 3500
           }
         },
-        "mockups": ["assets/images/Unisex Long Sleeve Tee w Kicked Out Of The Sky Cover - Front - Black.jpg"]
+        "mockups": [
+          "assets/images/Unisex Long Sleeve Tee w Kicked Out Of The Sky Cover - Front - Black.jpg"
+        ]
       }
+    },
+    "garment": {
+      "name": "Unisex Long Sleeve T-shirt",
+      "material": "100% combed and ring-spun cotton",
+      "weight": "6 oz/yd² (203 g/m²)",
+      "fit": "Unisex",
+      "features": [
+        "Side-seamed construction",
+        "Tear away tag",
+        "Preshrunk fabric",
+        "Comfortable classic fit with full-length sleeves"
+      ],
+      "care": "Machine wash cold with like colors. Tumble dry low. Avoid bleach."
     }
   },
   {
@@ -593,8 +768,23 @@
             "price_cents": 3500
           }
         },
-        "mockups": ["assets/images/Unisex Long Sleeve Tee w Wasting My Life Away Cover - Front - Black.jpg"]
+        "mockups": [
+          "assets/images/Unisex Long Sleeve Tee w Wasting My Life Away Cover - Front - Black.jpg"
+        ]
       }
+    },
+    "garment": {
+      "name": "Unisex Long Sleeve T-shirt",
+      "material": "100% combed and ring-spun cotton",
+      "weight": "6 oz/yd² (203 g/m²)",
+      "fit": "Unisex",
+      "features": [
+        "Side-seamed construction",
+        "Tear away tag",
+        "Preshrunk fabric",
+        "Comfortable classic fit with full-length sleeves"
+      ],
+      "care": "Machine wash cold with like colors. Tumble dry low. Avoid bleach."
     }
   },
   {
@@ -631,8 +821,23 @@
             "price_cents": 3500
           }
         },
-        "mockups": ["assets/images/Unisex Long Sleeve Tee w Levity Of Lies Cover - Front - Black.jpg"]
+        "mockups": [
+          "assets/images/Unisex Long Sleeve Tee w Levity Of Lies Cover - Front - Black.jpg"
+        ]
       }
+    },
+    "garment": {
+      "name": "Unisex Long Sleeve T-shirt",
+      "material": "100% combed and ring-spun cotton",
+      "weight": "6 oz/yd² (203 g/m²)",
+      "fit": "Unisex",
+      "features": [
+        "Side-seamed construction",
+        "Tear away tag",
+        "Preshrunk fabric",
+        "Comfortable classic fit with full-length sleeves"
+      ],
+      "care": "Machine wash cold with like colors. Tumble dry low. Avoid bleach."
     }
   },
   {
@@ -707,6 +912,19 @@
           "assets/images/Unisex Long Sleeve Tee w Star + Typewriter Text Sleeve - Sleeve - Dark Grey Heather.jpg"
         ]
       }
+    },
+    "garment": {
+      "name": "Unisex Long Sleeve T-shirt",
+      "material": "100% combed and ring-spun cotton",
+      "weight": "6 oz/yd² (203 g/m²)",
+      "fit": "Unisex",
+      "features": [
+        "Side-seamed construction",
+        "Tear away tag",
+        "Preshrunk fabric",
+        "Comfortable classic fit with full-length sleeves"
+      ],
+      "care": "Machine wash cold with like colors. Tumble dry low. Avoid bleach."
     }
   },
   {
@@ -743,7 +961,9 @@
             "price_cents": 3500
           }
         },
-        "mockups": ["assets/images/Unisex Long Sleeve Tee w Typewriter Text - Front - Black.jpg"]
+        "mockups": [
+          "assets/images/Unisex Long Sleeve Tee w Typewriter Text - Front - Black.jpg"
+        ]
       },
       "Dark Grey Heather": {
         "image": "assets/images/Unisex Long Sleeve Tee w Typewriter Text - Front - Dark Grey Heather.jpg",
@@ -773,8 +993,23 @@
             "price_cents": 3500
           }
         },
-        "mockups": ["assets/images/Unisex Long Sleeve Tee w Typewriter Text - Front - Dark Grey Heather.jpg"]
+        "mockups": [
+          "assets/images/Unisex Long Sleeve Tee w Typewriter Text - Front - Dark Grey Heather.jpg"
+        ]
       }
+    },
+    "garment": {
+      "name": "Unisex Long Sleeve T-shirt",
+      "material": "100% combed and ring-spun cotton",
+      "weight": "6 oz/yd² (203 g/m²)",
+      "fit": "Unisex",
+      "features": [
+        "Side-seamed construction",
+        "Tear away tag",
+        "Preshrunk fabric",
+        "Comfortable classic fit with full-length sleeves"
+      ],
+      "care": "Machine wash cold with like colors. Tumble dry low. Avoid bleach."
     }
   },
   {
@@ -811,7 +1046,9 @@
             "price_cents": 3500
           }
         },
-        "mockups": ["assets/images/Unisex Long Sleeve Tee w Text - Front - Black.jpg"]
+        "mockups": [
+          "assets/images/Unisex Long Sleeve Tee w Text - Front - Black.jpg"
+        ]
       },
       "Dark Grey Heather": {
         "image": "assets/images/Unisex Long Sleeve Tee w Text - Front - Dark Grey Heather.jpg",
@@ -841,8 +1078,23 @@
             "price_cents": 3500
           }
         },
-        "mockups": ["assets/images/Unisex Long Sleeve Tee w Text - Front - Dark Grey Heather.jpg"]
+        "mockups": [
+          "assets/images/Unisex Long Sleeve Tee w Text - Front - Dark Grey Heather.jpg"
+        ]
       }
+    },
+    "garment": {
+      "name": "Unisex Long Sleeve T-shirt",
+      "material": "100% combed and ring-spun cotton",
+      "weight": "6 oz/yd² (203 g/m²)",
+      "fit": "Unisex",
+      "features": [
+        "Side-seamed construction",
+        "Tear away tag",
+        "Preshrunk fabric",
+        "Comfortable classic fit with full-length sleeves"
+      ],
+      "care": "Machine wash cold with like colors. Tumble dry low. Avoid bleach."
     }
   },
   {
@@ -879,7 +1131,9 @@
             "price_cents": 3500
           }
         },
-        "mockups": ["assets/images/Unisex Long Sleeve Tee w Star Logo - Front - Black.jpg"]
+        "mockups": [
+          "assets/images/Unisex Long Sleeve Tee w Star Logo - Front - Black.jpg"
+        ]
       },
       "Dark Grey Heather": {
         "image": "assets/images/Unisex Long Sleeve Tee w Star Logo - Front - Dark Grey Heather.jpg",
@@ -909,8 +1163,23 @@
             "price_cents": 3500
           }
         },
-        "mockups": ["assets/images/Unisex Long Sleeve Tee w Star Logo - Front - Dark Grey Heather.jpg"]
+        "mockups": [
+          "assets/images/Unisex Long Sleeve Tee w Star Logo - Front - Dark Grey Heather.jpg"
+        ]
       }
+    },
+    "garment": {
+      "name": "Unisex Long Sleeve T-shirt",
+      "material": "100% combed and ring-spun cotton",
+      "weight": "6 oz/yd² (203 g/m²)",
+      "fit": "Unisex",
+      "features": [
+        "Side-seamed construction",
+        "Tear away tag",
+        "Preshrunk fabric",
+        "Comfortable classic fit with full-length sleeves"
+      ],
+      "care": "Machine wash cold with like colors. Tumble dry low. Avoid bleach."
     }
   },
   {
@@ -943,7 +1212,9 @@
             "price_cents": 3500
           }
         },
-        "mockups": ["assets/images/Unisex Long Sleeve Tee w Kicked Out Of The Sky Vintage - Front - Black Heather.jpg"]
+        "mockups": [
+          "assets/images/Unisex Long Sleeve Tee w Kicked Out Of The Sky Vintage - Front - Black Heather.jpg"
+        ]
       },
       "Gold": {
         "image": "assets/images/Unisex Long Sleeve Tee w Kicked Out Of The Sky Vintage - Front - Gold.jpg",
@@ -969,8 +1240,23 @@
             "price_cents": 3500
           }
         },
-        "mockups": ["assets/images/Unisex Long Sleeve Tee w Kicked Out Of The Sky Vintage - Front - Gold.jpg"]
+        "mockups": [
+          "assets/images/Unisex Long Sleeve Tee w Kicked Out Of The Sky Vintage - Front - Gold.jpg"
+        ]
       }
+    },
+    "garment": {
+      "name": "Unisex Long Sleeve T-shirt",
+      "material": "100% combed and ring-spun cotton",
+      "weight": "6 oz/yd² (203 g/m²)",
+      "fit": "Unisex",
+      "features": [
+        "Side-seamed construction",
+        "Tear away tag",
+        "Preshrunk fabric",
+        "Comfortable classic fit with full-length sleeves"
+      ],
+      "care": "Machine wash cold with like colors. Tumble dry low. Avoid bleach."
     }
   },
   {
@@ -1007,7 +1293,9 @@
             "price_cents": 3500
           }
         },
-        "mockups": ["assets/images/Unisex Long Sleeve Tee w Wasting My Life Away Vintage - Front - Black Heather.jpg"]
+        "mockups": [
+          "assets/images/Unisex Long Sleeve Tee w Wasting My Life Away Vintage - Front - Black Heather.jpg"
+        ]
       },
       "Gold": {
         "image": "assets/images/Unisex Long Sleeve Tee w Wasting My Life Away Vintage - Front - Gold.jpg",
@@ -1033,8 +1321,23 @@
             "price_cents": 3500
           }
         },
-        "mockups": ["assets/images/Unisex Long Sleeve Tee w Wasting My Life Away Vintage - Front - Gold.jpg"]
+        "mockups": [
+          "assets/images/Unisex Long Sleeve Tee w Wasting My Life Away Vintage - Front - Gold.jpg"
+        ]
       }
+    },
+    "garment": {
+      "name": "Unisex Long Sleeve T-shirt",
+      "material": "100% combed and ring-spun cotton",
+      "weight": "6 oz/yd² (203 g/m²)",
+      "fit": "Unisex",
+      "features": [
+        "Side-seamed construction",
+        "Tear away tag",
+        "Preshrunk fabric",
+        "Comfortable classic fit with full-length sleeves"
+      ],
+      "care": "Machine wash cold with like colors. Tumble dry low. Avoid bleach."
     }
   },
   {
@@ -1067,8 +1370,24 @@
             "price_cents": 4500
           }
         },
-        "mockups": ["assets/images/Unisex Hoodie w Color Block Graphic - Front - Black.jpg"]
+        "mockups": [
+          "assets/images/Unisex Hoodie w Color Block Graphic - Front - Black.jpg"
+        ]
       }
+    },
+    "garment": {
+      "name": "Unisex Hoodie",
+      "material": "80% combed and ring-spun cotton, 20% polyester",
+      "weight": "9 oz/yd² (305 g/m²)",
+      "fit": "Unisex",
+      "features": [
+        "Double-lined drawcord hood",
+        "Front pouch pocket",
+        "Tear away tag",
+        "Preshrunk fabric",
+        "Comfortable warmth and style"
+      ],
+      "care": "Machine wash cold with like colors. Tumble dry low. Avoid bleach."
     }
   },
   {
@@ -1101,8 +1420,24 @@
             "price_cents": 4500
           }
         },
-        "mockups": ["assets/images/Unisex Hoodie w Wasting My Life Away Cover - Front - Black.jpg"]
+        "mockups": [
+          "assets/images/Unisex Hoodie w Wasting My Life Away Cover - Front - Black.jpg"
+        ]
       }
+    },
+    "garment": {
+      "name": "Unisex Hoodie",
+      "material": "80% combed and ring-spun cotton, 20% polyester",
+      "weight": "9 oz/yd² (305 g/m²)",
+      "fit": "Unisex",
+      "features": [
+        "Double-lined drawcord hood",
+        "Front pouch pocket",
+        "Tear away tag",
+        "Preshrunk fabric",
+        "Comfortable warmth and style"
+      ],
+      "care": "Machine wash cold with like colors. Tumble dry low. Avoid bleach."
     }
   },
   {
@@ -1135,8 +1470,24 @@
             "price_cents": 4500
           }
         },
-        "mockups": ["assets/images/Unisex Hoodie w Levity Of Lies Cover - Front - Black.jpg"]
+        "mockups": [
+          "assets/images/Unisex Hoodie w Levity Of Lies Cover - Front - Black.jpg"
+        ]
       }
+    },
+    "garment": {
+      "name": "Unisex Hoodie",
+      "material": "80% combed and ring-spun cotton, 20% polyester",
+      "weight": "9 oz/yd² (305 g/m²)",
+      "fit": "Unisex",
+      "features": [
+        "Double-lined drawcord hood",
+        "Front pouch pocket",
+        "Tear away tag",
+        "Preshrunk fabric",
+        "Comfortable warmth and style"
+      ],
+      "care": "Machine wash cold with like colors. Tumble dry low. Avoid bleach."
     }
   },
   {
@@ -1169,8 +1520,24 @@
             "price_cents": 4500
           }
         },
-        "mockups": ["assets/images/Unisex Hoodie w Kicked Out Of The Sky Cover - Front - Black.jpg"]
+        "mockups": [
+          "assets/images/Unisex Hoodie w Kicked Out Of The Sky Cover - Front - Black.jpg"
+        ]
       }
+    },
+    "garment": {
+      "name": "Unisex Hoodie",
+      "material": "80% combed and ring-spun cotton, 20% polyester",
+      "weight": "9 oz/yd² (305 g/m²)",
+      "fit": "Unisex",
+      "features": [
+        "Double-lined drawcord hood",
+        "Front pouch pocket",
+        "Tear away tag",
+        "Preshrunk fabric",
+        "Comfortable warmth and style"
+      ],
+      "care": "Machine wash cold with like colors. Tumble dry low. Avoid bleach."
     }
   },
   {
@@ -1208,6 +1575,20 @@
           "assets/images/Unisex Hoodie w Star + Typewriter Text Sleeve - Sleeve - Black.jpg"
         ]
       }
+    },
+    "garment": {
+      "name": "Unisex Hoodie",
+      "material": "80% combed and ring-spun cotton, 20% polyester",
+      "weight": "9 oz/yd² (305 g/m²)",
+      "fit": "Unisex",
+      "features": [
+        "Double-lined drawcord hood",
+        "Front pouch pocket",
+        "Tear away tag",
+        "Preshrunk fabric",
+        "Comfortable warmth and style"
+      ],
+      "care": "Machine wash cold with like colors. Tumble dry low. Avoid bleach."
     }
   },
   {
@@ -1240,8 +1621,24 @@
             "price_cents": 4500
           }
         },
-        "mockups": ["assets/images/Unisex Hoodie w Star Logo - Front - Black.jpg"]
+        "mockups": [
+          "assets/images/Unisex Hoodie w Star Logo - Front - Black.jpg"
+        ]
       }
+    },
+    "garment": {
+      "name": "Unisex Hoodie",
+      "material": "80% combed and ring-spun cotton, 20% polyester",
+      "weight": "9 oz/yd² (305 g/m²)",
+      "fit": "Unisex",
+      "features": [
+        "Double-lined drawcord hood",
+        "Front pouch pocket",
+        "Tear away tag",
+        "Preshrunk fabric",
+        "Comfortable warmth and style"
+      ],
+      "care": "Machine wash cold with like colors. Tumble dry low. Avoid bleach."
     }
   },
   {
@@ -1274,8 +1671,24 @@
             "price_cents": 4500
           }
         },
-        "mockups": ["assets/images/Unisex Hoodie w Text - Front - Black.jpg"]
+        "mockups": [
+          "assets/images/Unisex Hoodie w Text - Front - Black.jpg"
+        ]
       }
+    },
+    "garment": {
+      "name": "Unisex Hoodie",
+      "material": "80% combed and ring-spun cotton, 20% polyester",
+      "weight": "9 oz/yd² (305 g/m²)",
+      "fit": "Unisex",
+      "features": [
+        "Double-lined drawcord hood",
+        "Front pouch pocket",
+        "Tear away tag",
+        "Preshrunk fabric",
+        "Comfortable warmth and style"
+      ],
+      "care": "Machine wash cold with like colors. Tumble dry low. Avoid bleach."
     }
   },
   {
@@ -1308,8 +1721,24 @@
             "price_cents": 4500
           }
         },
-        "mockups": ["assets/images/Unisex Hoodie w Typewriter Text - Front - Black.jpg"]
+        "mockups": [
+          "assets/images/Unisex Hoodie w Typewriter Text - Front - Black.jpg"
+        ]
       }
+    },
+    "garment": {
+      "name": "Unisex Hoodie",
+      "material": "80% combed and ring-spun cotton, 20% polyester",
+      "weight": "9 oz/yd² (305 g/m²)",
+      "fit": "Unisex",
+      "features": [
+        "Double-lined drawcord hood",
+        "Front pouch pocket",
+        "Tear away tag",
+        "Preshrunk fabric",
+        "Comfortable warmth and style"
+      ],
+      "care": "Machine wash cold with like colors. Tumble dry low. Avoid bleach."
     }
   },
   {
@@ -1342,7 +1771,9 @@
             "price_cents": 4500
           }
         },
-        "mockups": ["assets/images/Unisex Hoodie w Kicked Out Of The Sky Vintage - Front - Maroon.jpg"]
+        "mockups": [
+          "assets/images/Unisex Hoodie w Kicked Out Of The Sky Vintage - Front - Maroon.jpg"
+        ]
       },
       "Sand": {
         "image": "assets/images/Unisex Hoodie w Kicked Out Of The Sky Vintage - Front - Sand.jpg",
@@ -1368,8 +1799,24 @@
             "price_cents": 4500
           }
         },
-        "mockups": ["assets/images/Unisex Hoodie w Kicked Out Of The Sky Vintage - Front - Sand.jpg"]
+        "mockups": [
+          "assets/images/Unisex Hoodie w Kicked Out Of The Sky Vintage - Front - Sand.jpg"
+        ]
       }
+    },
+    "garment": {
+      "name": "Unisex Hoodie",
+      "material": "80% combed and ring-spun cotton, 20% polyester",
+      "weight": "9 oz/yd² (305 g/m²)",
+      "fit": "Unisex",
+      "features": [
+        "Double-lined drawcord hood",
+        "Front pouch pocket",
+        "Tear away tag",
+        "Preshrunk fabric",
+        "Comfortable warmth and style"
+      ],
+      "care": "Machine wash cold with like colors. Tumble dry low. Avoid bleach."
     }
   },
   {
@@ -1402,7 +1849,9 @@
             "price_cents": 4500
           }
         },
-        "mockups": ["assets/images/Unisex Hoodie w Wasting My Life Away Vintage - Front - Maroon.jpg"]
+        "mockups": [
+          "assets/images/Unisex Hoodie w Wasting My Life Away Vintage - Front - Maroon.jpg"
+        ]
       },
       "Sand": {
         "image": "assets/images/Unisex Hoodie w Wasting My Life Away Vintage - Front - Sand.jpg",
@@ -1428,8 +1877,24 @@
             "price_cents": 4500
           }
         },
-        "mockups": ["assets/images/Unisex Hoodie w Wasting My Life Away Vintage - Front - Sand.jpg"]
+        "mockups": [
+          "assets/images/Unisex Hoodie w Wasting My Life Away Vintage - Front - Sand.jpg"
+        ]
       }
+    },
+    "garment": {
+      "name": "Unisex Hoodie",
+      "material": "80% combed and ring-spun cotton, 20% polyester",
+      "weight": "9 oz/yd² (305 g/m²)",
+      "fit": "Unisex",
+      "features": [
+        "Double-lined drawcord hood",
+        "Front pouch pocket",
+        "Tear away tag",
+        "Preshrunk fabric",
+        "Comfortable warmth and style"
+      ],
+      "care": "Machine wash cold with like colors. Tumble dry low. Avoid bleach."
     }
   },
   {
@@ -1462,8 +1927,23 @@
             "price_cents": 4000
           }
         },
-        "mockups": ["assets/images/Unisex Crewneck Sweatshirt w Color Block Graphic - Front - Black.jpg"]
+        "mockups": [
+          "assets/images/Unisex Crewneck Sweatshirt w Color Block Graphic - Front - Black.jpg"
+        ]
       }
+    },
+    "garment": {
+      "name": "Unisex Crewneck Sweatshirt",
+      "material": "80% combed and ring-spun cotton, 20% polyester",
+      "weight": "9 oz/yd² (305 g/m²)",
+      "fit": "Unisex",
+      "features": [
+        "Crew neckline",
+        "Tear away tag",
+        "Preshrunk fabric",
+        "Classic comfortable fit"
+      ],
+      "care": "Machine wash cold with like colors. Tumble dry low. Avoid bleach."
     }
   },
   {
@@ -1496,8 +1976,23 @@
             "price_cents": 4000
           }
         },
-        "mockups": ["assets/images/Unisex Crewneck Sweatshirt w Wasting My Life Away Cover - Front - Black.jpg"]
+        "mockups": [
+          "assets/images/Unisex Crewneck Sweatshirt w Wasting My Life Away Cover - Front - Black.jpg"
+        ]
       }
+    },
+    "garment": {
+      "name": "Unisex Crewneck Sweatshirt",
+      "material": "80% combed and ring-spun cotton, 20% polyester",
+      "weight": "9 oz/yd² (305 g/m²)",
+      "fit": "Unisex",
+      "features": [
+        "Crew neckline",
+        "Tear away tag",
+        "Preshrunk fabric",
+        "Classic comfortable fit"
+      ],
+      "care": "Machine wash cold with like colors. Tumble dry low. Avoid bleach."
     }
   },
   {
@@ -1530,8 +2025,23 @@
             "price_cents": 4000
           }
         },
-        "mockups": ["assets/images/Unisex Crewneck Sweatshirt w Levity Of Lies Cover - Front - Black.jpg"]
+        "mockups": [
+          "assets/images/Unisex Crewneck Sweatshirt w Levity Of Lies Cover - Front - Black.jpg"
+        ]
       }
+    },
+    "garment": {
+      "name": "Unisex Crewneck Sweatshirt",
+      "material": "80% combed and ring-spun cotton, 20% polyester",
+      "weight": "9 oz/yd² (305 g/m²)",
+      "fit": "Unisex",
+      "features": [
+        "Crew neckline",
+        "Tear away tag",
+        "Preshrunk fabric",
+        "Classic comfortable fit"
+      ],
+      "care": "Machine wash cold with like colors. Tumble dry low. Avoid bleach."
     }
   },
   {
@@ -1564,8 +2074,23 @@
             "price_cents": 4000
           }
         },
-        "mockups": ["assets/images/Unisex Crewneck Sweatshirt w Kicked Out Of The Sky Cover - Front - Black.jpg"]
+        "mockups": [
+          "assets/images/Unisex Crewneck Sweatshirt w Kicked Out Of The Sky Cover - Front - Black.jpg"
+        ]
       }
+    },
+    "garment": {
+      "name": "Unisex Crewneck Sweatshirt",
+      "material": "80% combed and ring-spun cotton, 20% polyester",
+      "weight": "9 oz/yd² (305 g/m²)",
+      "fit": "Unisex",
+      "features": [
+        "Crew neckline",
+        "Tear away tag",
+        "Preshrunk fabric",
+        "Classic comfortable fit"
+      ],
+      "care": "Machine wash cold with like colors. Tumble dry low. Avoid bleach."
     }
   },
   {
@@ -1632,6 +2157,19 @@
           "assets/images/Unisex Crewneck Sweatshirt w Star + Typewriter Text Sleeve - Sleeve - Pepper.jpg"
         ]
       }
+    },
+    "garment": {
+      "name": "Unisex Crewneck Sweatshirt",
+      "material": "80% combed and ring-spun cotton, 20% polyester",
+      "weight": "9 oz/yd² (305 g/m²)",
+      "fit": "Unisex",
+      "features": [
+        "Crew neckline",
+        "Tear away tag",
+        "Preshrunk fabric",
+        "Classic comfortable fit"
+      ],
+      "care": "Machine wash cold with like colors. Tumble dry low. Avoid bleach."
     }
   },
   {
@@ -1664,7 +2202,9 @@
             "price_cents": 4000
           }
         },
-        "mockups": ["assets/images/Unisex Crewneck Sweatshirt w Text - Front - Black.jpg"]
+        "mockups": [
+          "assets/images/Unisex Crewneck Sweatshirt w Text - Front - Black.jpg"
+        ]
       },
       "Pepper": {
         "image": "assets/images/Unisex Crewneck Sweatshirt w Text - Front - Pepper.jpg",
@@ -1690,8 +2230,23 @@
             "price_cents": 4000
           }
         },
-        "mockups": ["assets/images/Unisex Crewneck Sweatshirt w Text - Front - Pepper.jpg"]
+        "mockups": [
+          "assets/images/Unisex Crewneck Sweatshirt w Text - Front - Pepper.jpg"
+        ]
       }
+    },
+    "garment": {
+      "name": "Unisex Crewneck Sweatshirt",
+      "material": "80% combed and ring-spun cotton, 20% polyester",
+      "weight": "9 oz/yd² (305 g/m²)",
+      "fit": "Unisex",
+      "features": [
+        "Crew neckline",
+        "Tear away tag",
+        "Preshrunk fabric",
+        "Classic comfortable fit"
+      ],
+      "care": "Machine wash cold with like colors. Tumble dry low. Avoid bleach."
     }
   },
   {
@@ -1724,7 +2279,9 @@
             "price_cents": 4000
           }
         },
-        "mockups": ["assets/images/Unisex Crewneck Sweatshirt w Star Logo - Front - Black.jpg"]
+        "mockups": [
+          "assets/images/Unisex Crewneck Sweatshirt w Star Logo - Front - Black.jpg"
+        ]
       },
       "Pepper": {
         "image": "assets/images/Unisex Crewneck Sweatshirt w Star Logo - Front - Pepper.jpg",
@@ -1750,8 +2307,23 @@
             "price_cents": 4000
           }
         },
-        "mockups": ["assets/images/Unisex Crewneck Sweatshirt w Star Logo - Front - Pepper.jpg"]
+        "mockups": [
+          "assets/images/Unisex Crewneck Sweatshirt w Star Logo - Front - Pepper.jpg"
+        ]
       }
+    },
+    "garment": {
+      "name": "Unisex Crewneck Sweatshirt",
+      "material": "80% combed and ring-spun cotton, 20% polyester",
+      "weight": "9 oz/yd² (305 g/m²)",
+      "fit": "Unisex",
+      "features": [
+        "Crew neckline",
+        "Tear away tag",
+        "Preshrunk fabric",
+        "Classic comfortable fit"
+      ],
+      "care": "Machine wash cold with like colors. Tumble dry low. Avoid bleach."
     }
   },
   {
@@ -1818,6 +2390,19 @@
           "assets/images/Unisex Crewneck Sweatshirt w Typewriter Text + Star - Back - Pepper.jpg"
         ]
       }
+    },
+    "garment": {
+      "name": "Unisex Crewneck Sweatshirt",
+      "material": "80% combed and ring-spun cotton, 20% polyester",
+      "weight": "9 oz/yd² (305 g/m²)",
+      "fit": "Unisex",
+      "features": [
+        "Crew neckline",
+        "Tear away tag",
+        "Preshrunk fabric",
+        "Classic comfortable fit"
+      ],
+      "care": "Machine wash cold with like colors. Tumble dry low. Avoid bleach."
     }
   },
   {
@@ -1850,7 +2435,9 @@
             "price_cents": 4000
           }
         },
-        "mockups": ["assets/images/Unisex Crewneck Sweatshirt w Kicked Out Of The Sky Vintage - Front - Yam.jpg"]
+        "mockups": [
+          "assets/images/Unisex Crewneck Sweatshirt w Kicked Out Of The Sky Vintage - Front - Yam.jpg"
+        ]
       },
       "Ivory": {
         "image": "assets/images/Unisex Crewneck Sweatshirt w Kicked Out Of The Sky Vintage - Front - Ivory.jpg",
@@ -1876,8 +2463,23 @@
             "price_cents": 4000
           }
         },
-        "mockups": ["assets/images/Unisex Crewneck Sweatshirt w Kicked Out Of The Sky Vintage - Front - Ivory.jpg"]
+        "mockups": [
+          "assets/images/Unisex Crewneck Sweatshirt w Kicked Out Of The Sky Vintage - Front - Ivory.jpg"
+        ]
       }
+    },
+    "garment": {
+      "name": "Unisex Crewneck Sweatshirt",
+      "material": "80% combed and ring-spun cotton, 20% polyester",
+      "weight": "9 oz/yd² (305 g/m²)",
+      "fit": "Unisex",
+      "features": [
+        "Crew neckline",
+        "Tear away tag",
+        "Preshrunk fabric",
+        "Classic comfortable fit"
+      ],
+      "care": "Machine wash cold with like colors. Tumble dry low. Avoid bleach."
     }
   },
   {
@@ -1944,6 +2546,19 @@
           "assets/images/Unisex Crewneck Sweatshirt w Wasting My Life Away Vintage - Back - Ivory.jpg"
         ]
       }
+    },
+    "garment": {
+      "name": "Unisex Crewneck Sweatshirt",
+      "material": "80% combed and ring-spun cotton, 20% polyester",
+      "weight": "9 oz/yd² (305 g/m²)",
+      "fit": "Unisex",
+      "features": [
+        "Crew neckline",
+        "Tear away tag",
+        "Preshrunk fabric",
+        "Classic comfortable fit"
+      ],
+      "care": "Machine wash cold with like colors. Tumble dry low. Avoid bleach."
     }
   },
   {
@@ -1960,7 +2575,9 @@
             "price_cents": 2500
           }
         },
-        "mockups": ["assets/images/Snapback Hat w Embroidery Star Logo - Front - Black.jpg"]
+        "mockups": [
+          "assets/images/Snapback Hat w Embroidery Star Logo - Front - Black.jpg"
+        ]
       },
       "Black/ Silver": {
         "image": "assets/images/Snapback Hat w Embroidery Star Logo - Front - Black Silver.jpg",
@@ -1970,8 +2587,22 @@
             "price_cents": 2500
           }
         },
-        "mockups": ["assets/images/Snapback Hat w Embroidery Star Logo - Front - Black Silver.jpg"]
+        "mockups": [
+          "assets/images/Snapback Hat w Embroidery Star Logo - Front - Black Silver.jpg"
+        ]
       }
+    },
+    "garment": {
+      "name": "Snapback Cap",
+      "material": "100% cotton twill",
+      "fit": "One size fits most",
+      "features": [
+        "Structured 6-panel cap",
+        "Adjustable snapback closure",
+        "Curved bill",
+        "Embroidered design"
+      ],
+      "care": "Spot clean or hand wash. Air dry."
     }
   },
   {
@@ -1988,7 +2619,9 @@
             "price_cents": 2500
           }
         },
-        "mockups": ["assets/images/Snapback Hat w Embroidery Text - Front - Black.jpg"]
+        "mockups": [
+          "assets/images/Snapback Hat w Embroidery Text - Front - Black.jpg"
+        ]
       },
       "Black/ Silver": {
         "image": "assets/images/Snapback Hat w Embroidery Text - Front - Black Silver.jpg",
@@ -1998,8 +2631,22 @@
             "price_cents": 2500
           }
         },
-        "mockups": ["assets/images/Snapback Hat w Embroidery Text - Front - Black Silver.jpg"]
+        "mockups": [
+          "assets/images/Snapback Hat w Embroidery Text - Front - Black Silver.jpg"
+        ]
       }
+    },
+    "garment": {
+      "name": "Snapback Cap",
+      "material": "100% cotton twill",
+      "fit": "One size fits most",
+      "features": [
+        "Structured 6-panel cap",
+        "Adjustable snapback closure",
+        "Curved bill",
+        "Embroidered design"
+      ],
+      "care": "Spot clean or hand wash. Air dry."
     }
   },
   {
@@ -2016,8 +2663,23 @@
             "price_cents": 2200
           }
         },
-        "mockups": ["assets/images/Trucker Cap w Star Logo - Front - Black & White.jpg"]
+        "mockups": [
+          "assets/images/Trucker Cap w Star Logo - Front - Black & White.jpg"
+        ]
       }
+    },
+    "garment": {
+      "name": "Trucker Cap",
+      "material": "100% cotton twill front, mesh back panels",
+      "fit": "One size fits most",
+      "features": [
+        "6-panel trucker style",
+        "Mesh back for breathability",
+        "Adjustable snapback closure",
+        "Curved bill",
+        "Embroidered design"
+      ],
+      "care": "Spot clean or hand wash. Air dry."
     }
   },
   {
@@ -2034,8 +2696,23 @@
             "price_cents": 2200
           }
         },
-        "mockups": ["assets/images/Trucker Cap w Text - Front - Black & White.jpg"]
+        "mockups": [
+          "assets/images/Trucker Cap w Text - Front - Black & White.jpg"
+        ]
       }
+    },
+    "garment": {
+      "name": "Trucker Cap",
+      "material": "100% cotton twill front, mesh back panels",
+      "fit": "One size fits most",
+      "features": [
+        "6-panel trucker style",
+        "Mesh back for breathability",
+        "Adjustable snapback closure",
+        "Curved bill",
+        "Embroidered design"
+      ],
+      "care": "Spot clean or hand wash. Air dry."
     }
   },
   {
@@ -2056,8 +2733,22 @@
             "price_cents": 550
           }
         },
-        "mockups": ["assets/images/Die-cut Sticker w Text - Front - Satin.jpg"]
+        "mockups": [
+          "assets/images/Die-cut Sticker w Text - Front - Satin.jpg"
+        ]
       }
+    },
+    "garment": {
+      "name": "Die-cut Vinyl Sticker",
+      "material": "Weather-resistant vinyl",
+      "features": [
+        "Die-cut shape",
+        "Weather-resistant and durable",
+        "UV-resistant inks",
+        "Dishwasher safe",
+        "Works on laptops, water bottles, cars, etc."
+      ],
+      "care": "Clean surface before applying. Apply firmly. Do not use abrasive cleaners."
     }
   },
   {
@@ -2078,8 +2769,22 @@
             "price_cents": 550
           }
         },
-        "mockups": ["assets/images/Die-cut Sticker w Star + Text - Front - Satin.jpg"]
+        "mockups": [
+          "assets/images/Die-cut Sticker w Star + Text - Front - Satin.jpg"
+        ]
       }
+    },
+    "garment": {
+      "name": "Die-cut Vinyl Sticker",
+      "material": "Weather-resistant vinyl",
+      "features": [
+        "Die-cut shape",
+        "Weather-resistant and durable",
+        "UV-resistant inks",
+        "Dishwasher safe",
+        "Works on laptops, water bottles, cars, etc."
+      ],
+      "care": "Clean surface before applying. Apply firmly. Do not use abrasive cleaners."
     }
   }
 ]

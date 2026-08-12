@@ -130,8 +130,8 @@ const server = http.createServer((req, res) => {
             };
             const firstProduct = products.find(p => getCategory(p.title) === type);
             if (firstProduct) {
-              const ogTitle = `${label} - Kicked Out of the Sky Merch`;
-              const ogDesc = `Shop ${label} from Kicked Out of the Sky.`;
+              const ogTitle = `${label} - Kicked Out Of The Sky Merch`;
+              const ogDesc = `Shop ${label} from Kicked Out Of The Sky.`;
               const ogImage = firstProduct.image.startsWith("http")
                 ? firstProduct.image
                 : `https://www.kickedoutofthesky.com/store/${firstProduct.image}`;
@@ -175,8 +175,8 @@ const server = http.createServer((req, res) => {
           const products = JSON.parse(fs.readFileSync(productsPath, "utf8"));
           const product = products.find(p => p.product_key === key);
           if (product) {
-            const ogTitle = `${product.title} - Kicked Out of the Sky`;
-            const ogDesc = `Shop ${product.title}. Official Kicked Out of the Sky merchandise.`;
+            const ogTitle = `${product.title} - Kicked Out Of The Sky`;
+            const ogDesc = `Shop ${product.title}. Official Kicked Out Of The Sky merchandise.`;
             const ogImage = product.image.startsWith("http")
               ? product.image
               : `https://www.kickedoutofthesky.com/store/${encodeURI(product.image)}`;
@@ -223,7 +223,7 @@ const server = http.createServer((req, res) => {
   }
 });
 
-server.listen(PORT, () => {
+server.listen(PORT, "127.0.0.1", () => {
   console.log(`
 🚀 Development Server Running
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

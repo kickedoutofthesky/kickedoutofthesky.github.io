@@ -350,6 +350,35 @@ function initializeZoomPan() {
   }
 }
 
+function generateGarmentSection(product) {
+  if (!product.garment) {
+    return "";
+  }
+
+  const garment = product.garment;
+  const features = garment.features || [];
+  const featuresHTML =
+    features.length > 0
+      ? `<ul style="margin: 8px 0 0 20px; padding: 0; list-style: disc; color: #ccc;">${features
+          .map(f => `<li style="margin-bottom: 4px;">${f}</li>`)
+          .join("")}</ul>`
+      : "";
+
+  return `
+    <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #333;">
+      <h4 style="color: #ffc107; margin-bottom: 15px;">Garment Details</h4>
+      <div style="color: #ccc; font-size: 0.95rem; line-height: 1.6;">
+        ${garment.name ? `<p style="margin-bottom: 10px;"><strong>${garment.name}</strong></p>` : ""}
+        ${garment.material ? `<p style="margin-bottom: 8px;"><strong>Material:</strong> ${garment.material}</p>` : ""}
+        ${garment.weight ? `<p style="margin-bottom: 8px;"><strong>Weight:</strong> ${garment.weight}</p>` : ""}
+        ${garment.fit ? `<p style="margin-bottom: 8px;"><strong>Fit:</strong> ${garment.fit}</p>` : ""}
+        ${features.length > 0 ? `<p style="margin-bottom: 8px;"><strong>Features:</strong>${featuresHTML}</p>` : ""}
+        ${garment.care ? `<p style="margin-top: 12px;"><strong>Care:</strong> ${garment.care}</p>` : ""}
+      </div>
+    </div>
+  `;
+}
+
 document.addEventListener("DOMContentLoaded", async () => {
   const detail = document.getElementById("product-detail");
   const loading = document.getElementById("loading");
@@ -428,7 +457,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Update meta tags dynamically for SEO
     try {
-      const baseUrl = "https://www.kickedoutofthesky.com/store/";
+      const baseUrl = `${window.location.protocol}//${window.location.host}/store/`;
       const productUrl = `${baseUrl}p/${product.product_key}/`;
       const productImageUrl = `${baseUrl}${encodeURI(product.image)}`;
       const productDescription = `${product.title} - Official Kicked Out of the Sky merchandise. Available in multiple colors and sizes.`;
@@ -542,6 +571,9 @@ document.addEventListener("DOMContentLoaded", async () => {
                 Add to Cart
               </button>
               </form>
+
+              <!-- Garment Specifications -->
+              ${generateGarmentSection(product)}
             </div>
           </div>
         </div>
@@ -752,6 +784,9 @@ async function addToCart() {
 
   // Update badge after animation completes
   cart.updateCartBadge();
+
+  // Navigate to shopping cart page
+  window.location.href = "/store/cart.html";
 }
 
 // Get all variant prices for a product and return display price (single or range)
