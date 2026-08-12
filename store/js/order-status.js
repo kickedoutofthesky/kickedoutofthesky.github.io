@@ -73,11 +73,7 @@ function updateButtonState() {
   const printfulOrderId = printfulOrderIdInput.value.trim();
 
   // Both email and Printful Order ID are required
-  const isValid =
-    email &&
-    isValidEmail(email) &&
-    printfulOrderId &&
-    isValidPrintfulOrderId(printfulOrderId);
+  const isValid = email && isValidEmail(email) && printfulOrderId && isValidPrintfulOrderId(printfulOrderId);
 
   if (isValid) {
     searchBtn.classList.add("active");
