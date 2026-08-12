@@ -197,7 +197,8 @@ describe("Responsive Design Tests", () => {
           cy.visit("/store");
           cy.get("[data-testid='product-card']").first().click();
           selectFirstRealSize();
-          cy.get("#add-to-cart-btn").trigger("touchstart").trigger("touchend").click({ force: true });
+          cy.get("#add-to-cart-btn").should("be.visible");
+          cy.get("#add-to-cart-btn").scrollIntoView().click({ force: true });
 
           cy.get("a[href*='cart.html']").should("exist");
         });
