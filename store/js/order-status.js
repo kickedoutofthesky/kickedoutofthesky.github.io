@@ -72,8 +72,12 @@ function updateButtonState() {
   const email = emailInput.value.trim();
   const printfulOrderId = printfulOrderIdInput.value.trim();
 
-  // Printful Order ID is required to query; Email may be optional or required depending on backend
-  const isValid = printfulOrderId && isValidPrintfulOrderId(printfulOrderId);
+  // Both email and Printful Order ID are required
+  const isValid =
+    email &&
+    isValidEmail(email) &&
+    printfulOrderId &&
+    isValidPrintfulOrderId(printfulOrderId);
 
   if (isValid) {
     searchBtn.classList.add("active");
@@ -103,7 +107,17 @@ async function handleSearch() {
   const email = document.getElementById("email").value.trim();
   const searchBtn = document.getElementById("search-btn");
 
-  // Validate inputs - Printful Order ID is required
+  // Validate inputs - both are required
+  if (!email) {
+    showError("Please enter an email address");
+    return;
+  }
+
+  if (!isValidEmail(email)) {
+    showError("Please enter a valid email address");
+    return;
+  }
+
   if (!printfulOrderId) {
     showError("Please enter a Printful Order ID");
     return;
@@ -111,12 +125,6 @@ async function handleSearch() {
 
   if (!isValidPrintfulOrderId(printfulOrderId)) {
     showError("Printful Order ID must start with 'PF'");
-    return;
-  }
-
-  // Email validation if provided (optional or required depends on backend)
-  if (email && !isValidEmail(email)) {
-    showError("Please enter a valid email address");
     return;
   }
 

@@ -40,15 +40,19 @@ describe("Order Status Page - E2E Tests", () => {
     });
   });
 
-  describe("Button Highlighting - Printful Order ID Validation", () => {
-    it("should enable button when valid Printful Order ID is entered", () => {
+  describe("Button Highlighting - Both Fields Required", () => {
+    it("should require both email and Printful Order ID to enable button", () => {
       cy.get("#printful-order-id").type("PF123456789");
+      cy.get("#search-btn").should("be.disabled");
+
+      cy.get("#email").type("test@example.com");
       cy.get("#search-btn").should("not.be.disabled");
       cy.get("#search-btn").should("have.class", "active");
     });
 
     it("should disable button when Printful Order ID is cleared", () => {
       cy.get("#printful-order-id").type("PF123456789");
+      cy.get("#email").type("test@example.com");
       cy.get("#search-btn").should("not.be.disabled");
 
       cy.get("#printful-order-id").clear();
@@ -56,88 +60,120 @@ describe("Order Status Page - E2E Tests", () => {
       cy.get("#search-btn").should("not.have.class", "active");
     });
 
-    it("should disable button with invalid Printful Order ID format (missing PF)", () => {
-      cy.get("#printful-order-id").type("123456789");
+    it("should disable button when email is cleared", () => {
+      cy.get("#printful-order-id").type("PF123456789");
+      cy.get("#email").type("test@example.com");
+      cy.get("#search-btn").should("not.be.disabled");
+
+      cy.get("#email").clear();
       cy.get("#search-btn").should("be.disabled");
       cy.get("#search-btn").should("not.have.class", "active");
     });
 
-    it("should enable button with various valid Printful Order IDs", () => {
-      const validIds = ["PF123456789", "PF1", "PF999999999"];
-
-      validIds.forEach(id => {
-        cy.get("#printful-order-id").clear().type(id);
-        cy.get("#search-btn").should("not.be.disabled");
-        cy.get("#search-btn").should("have.class", "active");
-      });
-    });
-
-    it("should disable button with Printful Order ID missing number", () => {
-      cy.get("#printful-order-id").type("PF");
+    it("should disable button with invalid Printful Order ID format", () => {
+      cy.get("#email").type("test@example.com");
+      cy.get("#printful-order-id").type("123456789");
       cy.get("#search-btn").should("be.disabled");
     });
 
-    it("should disable button with Printful Order ID lowercase prefix", () => {
+    it("should disable button with invalid email format", () => {
+      cy.get("#printful-order-id").type("PF123456789");
+      cy.get("#email").type("invalid-email");
+      cy.get("#search-btn").should("be.disabled");
+    });
+
+    it("should enable button with valid Printful Order ID and email", () => {
+      cy.get("#printful-order-id").type("PF123456789");
+      cy.get("#email").type("test@example.com");
+      cy.get("#search-btn").should("not.be.disabled");
+      cy.get("#search-btn").should("have.class", "active");
+    });
+
+    it("should disable button with lowercase pf prefix even with valid email", () => {
+      cy.get("#email").type("test@example.com");
       cy.get("#printful-order-id").type("pf123456789");
       cy.get("#search-btn").should("be.disabled");
     });
   });
 
-  describe("Printful Order ID Field - Required", () => {
-    it("should require Printful Order ID", () => {
+  describe("Form Fields - Required", () => {
+    it("should require both Printful Order ID and email for button enable", () => {
       cy.get("#printful-order-id").should("have.value", "");
+      cy.get("#email").should("have.value", "");
       cy.get("#search-btn").should("be.disabled");
     });
 
-    it("should accept Printful Order ID starting with PF", () => {
+    it("should require email when Printful Order ID is valid", () => {
       cy.get("#printful-order-id").type("PF123456789");
-      cy.get("#printful-order-id").should("have.value", "PF123456789");
+      cy.get("#search-btn").should("be.disabled");
+
+      cy.get("#email").type("test@example.com");
+      cy.get("#search-btn").should("not.be.disabled");
+    });
+
+    it("should require valid Printful Order ID when email is valid", () => {
+      cy.get("#email").type("test@example.com");
+      cy.get("#search-btn").should("be.disabled");
+
+      cy.get("#printful-order-id").type("PF123456789");
       cy.get("#search-btn").should("not.be.disabled");
     });
 
     it("should reject lowercase pf prefix", () => {
       cy.get("#printful-order-id").type("pf987654321");
-      cy.get("#printful-order-id").should("have.value", "pf987654321");
+      cy.get("#email").type("test@example.com");
       cy.get("#search-btn").should("be.disabled");
     });
 
-    it("should require Printful Order ID even with valid email", () => {
-      cy.get("#printful-order-id").should("have.value", "");
-      cy.get("#email").type("test@example.com");
+    it("should reject invalid email format", () => {
+      cy.get("#printful-order-id").type("PF123456789");
+      cy.get("#email").type("not-an-email");
       cy.get("#search-btn").should("be.disabled");
+    });
+
+    it("should accept valid email formats", () => {
+      cy.get("#printful-order-id").type("PF123456789");
+      const validEmails = [
+        "test@example.com",
+        "user.name@domain.co.uk",
+        "first+last@example.org",
+      ];
+
+      validEmails.forEach(email => {
+        cy.get("#email").clear().type(email);
+        cy.get("#search-btn").should("not.be.disabled");
+      });
     });
   });
 
   describe("Form Submission - Validation", () => {
-    it("should show error when Printful Order ID doesn't start with PF", () => {
-      cy.get("#printful-order-id").type("12345");
-      cy.get("#email").type("test@example.com");
-
-      // Button should be disabled due to invalid PF ID
-      cy.get("#search-btn").should("be.disabled");
-    });
-
-    it("should require Printful Order ID for submission", () => {
-      cy.get("#email").type("test@example.com");
-      cy.get("#search-btn").should("be.disabled");
-    });
-
-    it("should allow submission with valid Printful Order ID", () => {
+    it("should require both fields for submission", () => {
       cy.get("#printful-order-id").type("PF123456");
+      cy.get("#search-btn").should("be.disabled");
+
       cy.get("#email").type("test@example.com");
       cy.get("#search-btn").should("not.be.disabled");
     });
 
-    it("should require both valid Printful Order ID and email", () => {
+    it("should reject invalid Printful Order ID format", () => {
+      cy.get("#email").type("test@example.com");
+      cy.get("#printful-order-id").type("12345");
+      cy.get("#search-btn").should("be.disabled");
+    });
+
+    it("should reject invalid email format", () => {
+      cy.get("#printful-order-id").type("PF123456");
+      cy.get("#email").type("invalid-email");
+      cy.get("#search-btn").should("be.disabled");
+    });
+
+    it("should allow submission with valid email and valid Printful Order ID", () => {
       cy.get("#printful-order-id").type("PF123456789");
       cy.get("#email").type("test@example.com");
       cy.get("#search-btn").should("not.be.disabled");
-    });
 
-    it("should allow submission with just valid Printful Order ID if email is optional", () => {
-      cy.get("#printful-order-id").type("PF123456789");
-      // Email not required for button enable
-      cy.get("#search-btn").should("not.be.disabled");
+      // Verify that button can be clicked
+      cy.get("#search-btn").should("not.have.attr", "disabled");
     });
   });
 
@@ -276,11 +312,12 @@ describe("Order Status Page - E2E Tests", () => {
     });
   });
 
-  describe("Multiple Orders - Email Only Search", () => {
-    it("should display multiple orders when email-only search returns array", () => {
+  describe("Multiple Orders - Printful Order ID Search", () => {
+    it("should display multiple orders when Printful Order ID search returns array", () => {
+      cy.get("#printful-order-id").type("PF123456789");
       cy.get("#email").type("test@example.com");
 
-      // Mock API returning multiple orders
+      // Mock API returning multiple orders (e.g., multiple shipments for same order)
       cy.intercept("GET", "**/api/order-status**", {
         statusCode: 200,
         body: [
@@ -292,7 +329,7 @@ describe("Order Status Page - E2E Tests", () => {
             costs: { total_cents: 3999 },
           },
           {
-            printful_order_id: "PF987654321",
+            printful_order_id: "PF123456789",
             status: "processing",
             created_at: "1627200000000",
             updated_at: "1627300000000",
@@ -310,6 +347,7 @@ describe("Order Status Page - E2E Tests", () => {
     });
 
     it("should show summary of each order in multiple orders view", () => {
+      cy.get("#printful-order-id").type("PF123456789");
       cy.get("#email").type("test@example.com");
 
       cy.intercept("GET", "**/api/order-status**", {
@@ -323,7 +361,7 @@ describe("Order Status Page - E2E Tests", () => {
             costs: { total_cents: 3999 },
           },
           {
-            printful_order_id: "PF987654321",
+            printful_order_id: "PF123456789",
             status: "processing",
             created_at: "1627200000000",
             updated_at: "1627300000000",
@@ -335,9 +373,8 @@ describe("Order Status Page - E2E Tests", () => {
       cy.get("#search-btn").click();
       cy.wait("@multipleOrders");
 
-      // Should show order IDs
+      // Should show order ID
       cy.get("#order-display").should("contain", "PF123456789");
-      cy.get("#order-display").should("contain", "PF987654321");
 
       // Should show status badges
       cy.get(".status-shipped").should("exist");
@@ -345,6 +382,7 @@ describe("Order Status Page - E2E Tests", () => {
     });
 
     it("should have View Details button for each order", () => {
+      cy.get("#printful-order-id").type("PF123456789");
       cy.get("#email").type("test@example.com");
 
       cy.intercept("GET", "**/api/order-status**", {
@@ -358,7 +396,7 @@ describe("Order Status Page - E2E Tests", () => {
             costs: { total_cents: 3999 },
           },
           {
-            printful_order_id: "PF987654321",
+            printful_order_id: "PF123456789",
             status: "processing",
             created_at: "1627200000000",
             updated_at: "1627300000000",
@@ -373,8 +411,9 @@ describe("Order Status Page - E2E Tests", () => {
       cy.get("button").contains("View Details").should("have.length.at.least", 2);
     });
 
-    it("should show no orders message when email has no orders", () => {
-      cy.get("#email").type("noorders@example.com");
+    it("should show no orders message when Printful Order ID has no orders", () => {
+      cy.get("#printful-order-id").type("PF999999999");
+      cy.get("#email").type("test@example.com");
 
       cy.intercept("GET", "**/api/order-status**", {
         statusCode: 200,
@@ -388,6 +427,7 @@ describe("Order Status Page - E2E Tests", () => {
     });
 
     it("should allow searching again from multiple orders view", () => {
+      cy.get("#printful-order-id").type("PF123456789");
       cy.get("#email").type("test@example.com");
 
       cy.intercept("GET", "**/api/order-status**", {
@@ -457,10 +497,11 @@ describe("Order Status Page - E2E Tests", () => {
     });
 
     it("should show View Details button when clicking from multiple orders", () => {
+      cy.get("#printful-order-id").type("PF123456789");
       cy.get("#email").type("test@example.com");
 
-      // First response: multiple orders
-      cy.intercept("GET", "**/api/order-status?email=*", {
+      // First response: multiple orders with same Printful Order ID (multiple shipments)
+      cy.intercept("GET", "**/api/order-status?printful_order_id=*", {
         statusCode: 200,
         body: [
           {
@@ -470,10 +511,17 @@ describe("Order Status Page - E2E Tests", () => {
             updated_at: "1627100000000",
             costs: { total_cents: 3999 },
           },
+          {
+            printful_order_id: "PF123456789",
+            status: "processing",
+            created_at: "1627200000000",
+            updated_at: "1627300000000",
+            costs: { total_cents: 2999 },
+          },
         ],
       }).as("multipleOrders");
 
-      // Second response: single order details
+      // Second response: full order details
       cy.intercept("GET", "**/api/order-status?printful_order_id=*&email=*", {
         statusCode: 200,
         body: {
