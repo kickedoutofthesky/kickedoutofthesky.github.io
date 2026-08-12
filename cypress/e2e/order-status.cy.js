@@ -201,6 +201,7 @@ describe("Order Status Page - E2E Tests", () => {
     });
 
     it("should return to search form after error", () => {
+      cy.get("#printful-order-id").type("PF123456");
       cy.get("#email").type("test@example.com");
 
       // Mock API error
@@ -233,23 +234,30 @@ describe("Order Status Page - E2E Tests", () => {
       });
     });
 
-    it("should auto-load search with just email in URL", () => {
+    it("should populate email field but not auto-load with just email in URL", () => {
       cy.visit("/store/order-status.html?email=test@example.com");
 
       cy.get("#email").should("have.value", "test@example.com");
       cy.get("#printful-order-id").should("have.value", "");
+
+      // Button should be disabled since Printful Order ID is missing
+      cy.get("#search-btn").should("be.disabled");
     });
 
-    it("should not auto-load without email in URL", () => {
+    it("should not auto-load without both email and Printful Order ID in URL", () => {
       cy.visit("/store/order-status.html?printful_order_id=PF123456789");
 
-      cy.get("#printful-order-id").should("have.value", "");
+      cy.get("#printful-order-id").should("have.value", "PF123456789");
       cy.get("#email").should("have.value", "");
+
+      // Button should be disabled since email is missing
+      cy.get("#search-btn").should("be.disabled");
     });
   });
 
   describe("Keyboard Navigation", () => {
-    it("should submit form when Enter is pressed in email field with valid email", () => {
+    it("should submit form when Enter is pressed in email field with valid input", () => {
+      cy.get("#printful-order-id").type("PF123456");
       cy.get("#email").type("test@example.com");
 
       // Mock API
@@ -269,10 +277,12 @@ describe("Order Status Page - E2E Tests", () => {
     });
 
     it("should not submit when Enter is pressed with invalid email", () => {
+      cy.get("#printful-order-id").type("PF123456");
       cy.get("#email").type("invalid-email{enter}");
 
-      // Should not attempt search
+      // Should not attempt search (button should be disabled due to invalid email)
       cy.get("#error-message").should("not.be.visible");
+      cy.get("#search-btn").should("be.disabled");
     });
 
     it("should submit from Printful Order ID field when Enter is pressed", () => {
