@@ -391,12 +391,16 @@ function updateOrderSummaryDisplay(quote) {
   shippingEl.textContent = shippingFormatted;
   totalEl.textContent = totalFormatted;
 
-  // Handle tax/VAT display based on tax amount and taxIncluded flag
-  let taxLabel = quote.taxLabel || "Tax/VAT";
+  // Handle tax/VAT display based on tax amount
+  let taxLabel = "Tax/VAT";
   let taxValue = taxFormatted;
 
-  // If tax is 0, show "VAT" and "Included"
-  if (quote.tax === 0) {
+  // If there is tax, show "Tax" with the amount
+  if (quote.tax > 0) {
+    taxLabel = "Tax";
+    taxValue = taxFormatted;
+  } else {
+    // If tax is 0, show "VAT" and "Included"
     taxLabel = "VAT";
     taxValue = "Included";
   }
