@@ -391,10 +391,18 @@ function updateOrderSummaryDisplay(quote) {
   shippingEl.textContent = shippingFormatted;
   totalEl.textContent = totalFormatted;
 
-  // Handle tax/VAT display based on taxIncluded flag
-  const taxLabel = quote.taxLabel || "Tax/VAT";
+  // Handle tax/VAT display based on tax amount and taxIncluded flag
+  let taxLabel = quote.taxLabel || "Tax/VAT";
+  let taxValue = taxFormatted;
+
+  // If tax is 0, show "VAT" and "Included"
+  if (quote.tax === 0) {
+    taxLabel = "VAT";
+    taxValue = "Included";
+  }
+
   taxLabelEl.textContent = taxLabel;
-  taxValueEl.textContent = taxFormatted;
+  taxValueEl.textContent = taxValue;
 
   // Style tax row: muted if tax is included in price
   if (quote.taxIncluded) {
