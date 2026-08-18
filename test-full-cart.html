@@ -1,0 +1,444 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Full Product Test Cart</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+        background: #f5f5f5;
+      }
+      .container {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      h1 {
+        color: #333;
+        text-align: center;
+      }
+      .info {
+        background: #e3f2fd;
+        border-left: 4px solid #2196f3;
+        padding: 15px;
+        margin: 20px 0;
+        border-radius: 4px;
+      }
+      .products-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 15px;
+        margin: 20px 0;
+      }
+      .product-item {
+        border: 1px solid #ddd;
+        padding: 15px;
+        border-radius: 4px;
+        background: #fafafa;
+      }
+      .product-item h3 {
+        margin: 0 0 10px 0;
+        font-size: 14px;
+        color: #333;
+      }
+      .colors {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 8px;
+      }
+      .color-badge {
+        background: #2196f3;
+        color: white;
+        padding: 4px 8px;
+        border-radius: 3px;
+        font-size: 12px;
+      }
+      .buttons {
+        text-align: center;
+        margin-top: 30px;
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+      button {
+        padding: 12px 24px;
+        font-size: 16px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background 0.3s;
+      }
+      .btn-primary {
+        background: #4caf50;
+        color: white;
+      }
+      .btn-primary:hover {
+        background: #45a049;
+      }
+      .btn-secondary {
+        background: #2196f3;
+        color: white;
+      }
+      .btn-secondary:hover {
+        background: #0b7dda;
+      }
+      .status {
+        text-align: center;
+        margin-top: 20px;
+        padding: 15px;
+        background: #f0f0f0;
+        border-radius: 4px;
+        font-weight: bold;
+      }
+      .status.success {
+        background: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+      }
+      .status.error {
+        background: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+      }
+      .summary {
+        background: #f9f9f9;
+        padding: 15px;
+        margin: 20px 0;
+        border-radius: 4px;
+        border-left: 4px solid #ff9800;
+      }
+      .summary strong {
+        display: block;
+        margin-bottom: 10px;
+        font-size: 16px;
+      }
+      .summary-item {
+        font-size: 13px;
+        padding: 4px 0;
+        color: #555;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>🛒 Full Product Test Cart</h1>
+
+      <div class="info">
+        <strong>Purpose:</strong>
+        This tool adds ONE of each product (in each available color) to your cart for testing. This allows you to verify
+        that all product images appear correctly in the order confirmation email.
+      </div>
+
+      <div class="summary">
+        <strong id="summary-title">📊 Cart Summary</strong>
+        <div id="summary-content">
+          <div class="summary-item">Loading product data...</div>
+        </div>
+      </div>
+
+      <div id="products-container"></div>
+
+      <div class="buttons">
+        <button class="btn-primary" onclick="addAllProductsToCart()">
+          ✅ Add All Products to Cart (One of Each Color)
+        </button>
+        <button class="btn-secondary" onclick="viewCart()">🛍️ View Cart</button>
+        <button class="btn-secondary" onclick="goToCheckout()">💳 Go to Checkout</button>
+      </div>
+
+      <div id="status"></div>
+    </div>
+
+    <script>
+      // Fetch catalog and display products
+      async function loadCatalog() {
+        try {
+          const response = await fetch("http://localhost:3001/api/health");
+          if (!response.ok) throw new Error("Backend not available");
+
+          // Get unique products from catalog
+          const products = [
+            { slug: "diecut_sticker_w_star_text", name: "Die-cut Sticker w/ Star + Text", colors: ["Satin"] },
+            { slug: "diecut_sticker_w_text", name: "Die-cut Sticker w/ Text", colors: ["Satin"] },
+            {
+              slug: "snapback_hat_w_embroidery_star_logo",
+              name: "Snapback Hat w/ Embroidery Star Logo",
+              colors: ["Black", "Black/ Silver"],
+            },
+            {
+              slug: "snapback_hat_w_embroidery_text",
+              name: "Snapback Hat w/ Embroidery Text",
+              colors: ["Black", "Black/ Silver"],
+            },
+            { slug: "trucker_cap_w_star_logo", name: "Trucker Cap w/ Star Logo", colors: ["Black/ White"] },
+            { slug: "trucker_cap_w_text", name: "Trucker Cap w/ Text", colors: ["Black/ White"] },
+            {
+              slug: "unisex_crewneck_sweatshirt_w_color_block_graphic",
+              name: "Unisex Crewneck Sweatshirt w/ Color Block Graphic",
+              colors: ["Black"],
+            },
+            {
+              slug: "unisex_crewneck_sweatshirt_w_kicked_out_of_the_sky_cover",
+              name: "Unisex Crewneck Sweatshirt w/ Kicked Out Of The Sky Cover",
+              colors: ["Black"],
+            },
+            {
+              slug: "unisex_crewneck_sweatshirt_w_kicked_out_of_the_sky_vintage",
+              name: "Unisex Crewneck Sweatshirt w/ Kicked Out Of The Sky Vintage",
+              colors: ["Ivory", "Yam"],
+            },
+            {
+              slug: "unisex_crewneck_sweatshirt_w_levity_of_lies_cover",
+              name: "Unisex Crewneck Sweatshirt w/ Levity Of Lies Cover",
+              colors: ["Black"],
+            },
+            {
+              slug: "unisex_crewneck_sweatshirt_w_star_typewriter_text_sleeve",
+              name: "Unisex Crewneck Sweatshirt w/ Star + Typewriter Text Sleeve",
+              colors: ["Black", "Pepper"],
+            },
+            {
+              slug: "unisex_crewneck_sweatshirt_w_star_logo",
+              name: "Unisex Crewneck Sweatshirt w/ Star Logo",
+              colors: ["Black", "Pepper"],
+            },
+            {
+              slug: "unisex_crewneck_sweatshirt_w_text",
+              name: "Unisex Crewneck Sweatshirt w/ Text",
+              colors: ["Black", "Pepper"],
+            },
+            {
+              slug: "unisex_crewneck_sweatshirt_w_typewriter_text_star",
+              name: "Unisex Crewneck Sweatshirt w/ Typewriter Text + Star",
+              colors: ["Black", "Pepper"],
+            },
+            {
+              slug: "unisex_crewneck_sweatshirt_w_wasting_my_life_away_cover",
+              name: "Unisex Crewneck Sweatshirt w/ Wasting My Life Away Cover",
+              colors: ["Black"],
+            },
+            {
+              slug: "unisex_crewneck_sweatshirt_w_wasting_my_life_away_vintage",
+              name: "Unisex Crewneck Sweatshirt w/ Wasting My Life Away Vintage",
+              colors: ["Ivory", "Yam"],
+            },
+            {
+              slug: "unisex_hoodie_w_color_block_graphic",
+              name: "Unisex Hoodie w/ Color Block Graphic",
+              colors: ["Black"],
+            },
+            {
+              slug: "unisex_hoodie_w_kicked_out_of_the_sky_cover",
+              name: "Unisex Hoodie w/ Kicked Out Of The Sky Cover",
+              colors: ["Black"],
+            },
+            {
+              slug: "unisex_hoodie_w_kicked_out_of_the_sky_vintage",
+              name: "Unisex Hoodie w/ Kicked Out Of The Sky Vintage",
+              colors: ["Maroon", "Sand"],
+            },
+            {
+              slug: "unisex_hoodie_w_levity_of_lies_cover",
+              name: "Unisex Hoodie w/ Levity Of Lies Cover",
+              colors: ["Black"],
+            },
+            {
+              slug: "unisex_hoodie_w_star_typewriter_text_sleeve",
+              name: "Unisex Hoodie w/ Star + Typewriter Text Sleeve",
+              colors: ["Black"],
+            },
+            { slug: "unisex_hoodie_w_star_logo", name: "Unisex Hoodie w/ Star Logo", colors: ["Black"] },
+            { slug: "unisex_hoodie_w_text", name: "Unisex Hoodie w/ Text", colors: ["Black"] },
+            { slug: "unisex_hoodie_w_typewriter_text", name: "Unisex Hoodie w/ Typewriter Text", colors: ["Black"] },
+            {
+              slug: "unisex_hoodie_w_wasting_my_life_away_cover",
+              name: "Unisex Hoodie w/ Wasting My Life Away Cover",
+              colors: ["Black"],
+            },
+            {
+              slug: "unisex_hoodie_w_wasting_my_life_away_vintage",
+              name: "Unisex Hoodie w/ Wasting My Life Away Vintage",
+              colors: ["Maroon", "Sand"],
+            },
+            {
+              slug: "unisex_long_sleeve_tee_w_color_block_graphic",
+              name: "Unisex Long Sleeve Tee w/ Color Block Graphic",
+              colors: ["Black"],
+            },
+            {
+              slug: "unisex_long_sleeve_tee_w_kicked_out_of_the_sky_cover",
+              name: "Unisex Long Sleeve Tee w/ Kicked Out Of The Sky Cover",
+              colors: ["Black"],
+            },
+            {
+              slug: "unisex_long_sleeve_tee_w_kicked_out_of_the_sky_vintage",
+              name: "Unisex Long Sleeve Tee w/ Kicked Out Of The Sky Vintage",
+              colors: ["Black Heather", "Gold"],
+            },
+            {
+              slug: "unisex_long_sleeve_tee_w_levity_of_lies_cover",
+              name: "Unisex Long Sleeve Tee w/ Levity Of Lies Cover",
+              colors: ["Black"],
+            },
+            {
+              slug: "unisex_long_sleeve_tee_w_star_typewriter_text_sleeve",
+              name: "Unisex Long Sleeve Tee w/ Star + Typewriter Text Sleeve",
+              colors: ["Black", "Dark Grey Heather"],
+            },
+            {
+              slug: "unisex_long_sleeve_tee_w_star_logo",
+              name: "Unisex Long Sleeve Tee w/ Star Logo",
+              colors: ["Black", "Dark Grey Heather"],
+            },
+            {
+              slug: "unisex_long_sleeve_tee_w_text",
+              name: "Unisex Long Sleeve Tee w/ Text",
+              colors: ["Black", "Dark Grey Heather"],
+            },
+            {
+              slug: "unisex_long_sleeve_tee_w_typewriter_text",
+              name: "Unisex Long Sleeve Tee w/ Typewriter Text",
+              colors: ["Black", "Dark Grey Heather"],
+            },
+            {
+              slug: "unisex_long_sleeve_tee_w_wasting_my_life_away_cover",
+              name: "Unisex Long Sleeve Tee w/ Wasting My Life Away Cover",
+              colors: ["Black"],
+            },
+            {
+              slug: "unisex_long_sleeve_tee_w_wasting_my_life_away_vintage",
+              name: "Unisex Long Sleeve Tee w/ Wasting My Life Away Vintage",
+              colors: ["Black Heather", "Gold"],
+            },
+            { slug: "unisex_tee_w_color_block_graphic", name: "Unisex Tee w/ Color Block Graphic", colors: ["Black"] },
+            {
+              slug: "unisex_tee_w_kicked_out_of_the_sky_cover",
+              name: "Unisex Tee w/ Kicked Out Of The Sky Cover",
+              colors: ["Black"],
+            },
+            {
+              slug: "unisex_tee_w_kicked_out_of_the_sky_vintage",
+              name: "Unisex Tee w/ Kicked Out Of The Sky Vintage",
+              colors: ["Natural", "Oxblood Black"],
+            },
+            {
+              slug: "unisex_tee_w_levity_of_lies_cover",
+              name: "Unisex Tee w/ Levity Of Lies Cover",
+              colors: ["Black"],
+            },
+            { slug: "unisex_tee_w_star_logo", name: "Unisex Tee w/ Star Logo", colors: ["Black", "Dark Grey Heather"] },
+            { slug: "unisex_tee_w_text", name: "Unisex Tee w/ Text", colors: ["Black", "Dark Grey Heather"] },
+            {
+              slug: "unisex_tee_w_typewriter_text",
+              name: "Unisex Tee w/ Typewriter Text",
+              colors: ["Black", "Dark Grey Heather"],
+            },
+            {
+              slug: "unisex_tee_w_wasting_my_life_away_cover",
+              name: "Unisex Tee w/ Wasting My Life Away Cover",
+              colors: ["Black"],
+            },
+            {
+              slug: "unisex_tee_w_wasting_my_life_away_vintage",
+              name: "Unisex Tee w/ Wasting My Life Away Vintage",
+              colors: ["Natural", "Oxblood Black"],
+            },
+          ];
+
+          const totalColors = products.reduce((sum, p) => sum + p.colors.length, 0);
+
+          // Display summary
+          const summaryHTML = `
+          <div class="summary-item"><strong>${products.length}</strong> unique products</div>
+          <div class="summary-item"><strong>${totalColors}</strong> total color variants</div>
+          <div class="summary-item">🎯 Click "Add All Products" to populate cart with one of each variant</div>
+        `;
+          document.getElementById("summary-content").innerHTML = summaryHTML;
+
+          // Display products
+          const html = products
+            .map(
+              p => `
+          <div class="product-item">
+            <h3>${p.name}</h3>
+            <div class="colors">
+              ${p.colors.map(c => `<span class="color-badge">${c}</span>`).join("")}
+            </div>
+          </div>
+        `
+            )
+            .join("");
+
+          document.getElementById("products-container").innerHTML = `<div class="products-list">${html}</div>`;
+        } catch (error) {
+          showStatus("❌ Error loading catalog: " + error.message, "error");
+        }
+      }
+
+      async function addAllProductsToCart() {
+        showStatus("⏳ Loading products from server...", "info");
+        try {
+          const response = await fetch("http://localhost:3000/store/data/products.json");
+          if (!response.ok) throw new Error("Failed to fetch products");
+
+          const products = await response.json();
+
+          // Build cart items: one of each product/color combination
+          const cartItems = [];
+          products.forEach(product => {
+            const productKey = product.product_key;
+
+            // Add one item per color variant
+            Object.keys(product.variants).forEach(color => {
+              const colorVariant = product.variants[color];
+              // Get the first available size for this color
+              const availableSizes = Object.keys(colorVariant.sizes);
+              const size = availableSizes.length > 0 ? availableSizes[0] : "M";
+
+              cartItems.push({
+                productKey: productKey,
+                color: color,
+                size: size,
+                quantity: 1,
+              });
+            });
+          });
+
+          // Store in localStorage using the correct key (kots_cart) and redirect to store
+          localStorage.setItem("kots_cart", JSON.stringify(cartItems));
+          showStatus(`✅ Cart prepared with ${cartItems.length} items! Redirecting to store...`, "success");
+
+          setTimeout(() => {
+            window.location.href = "http://localhost:3000/store/cart.html";
+          }, 2000);
+        } catch (error) {
+          showStatus("❌ Error preparing cart: " + error.message, "error");
+        }
+      }
+
+      function viewCart() {
+        window.location.href = "http://localhost:3000/store/cart.html";
+      }
+
+      function goToCheckout() {
+        window.location.href = "http://localhost:3000/store";
+      }
+
+      function showStatus(message, type = "info") {
+        const status = document.getElementById("status");
+        status.textContent = message;
+        status.className = `status ${type}`;
+      }
+
+      // Load on page load
+      loadCatalog();
+    </script>
+  </body>
+</html>
