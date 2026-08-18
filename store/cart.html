@@ -256,25 +256,64 @@
           <!-- Order Summary -->
           <div id="cart-summary" class="card-dark hidden mt-40">
             <h3 class="text-light mb-20 mt-0">Order Summary</h3>
-            <div class="flex-between text-secondary mb-15 pb-15 border-bottom-dark">
-              <span>Subtotal:</span>
-              <span id="subtotal" data-testid="cart-subtotal">$0.00</span>
+
+            <!-- Loading State -->
+            <div id="quote-loading" style="display: none; text-align: center; padding: 20px; color: #999">
+              <i class="fas fa-spinner fa-spin" style="margin-right: 8px"></i>
+              Calculating tax...
             </div>
-            <div class="flex-between text-secondary mb-15 pb-15 border-bottom-dark">
-              <span id="tax-label">Tax/VAT:</span>
-              <span id="tax-value" data-testid="cart-tax">TBD</span>
+
+            <!-- Quote Error State -->
+            <div
+              id="quote-error"
+              style="
+                display: none;
+                padding: 15px;
+                background-color: #3a2a2a;
+                color: #ff6b6b;
+                border-radius: 4px;
+                margin-bottom: 15px;
+              "
+            >
+              <p id="quote-error-text" style="margin: 0; font-size: 0.9rem"></p>
             </div>
-            <div class="flex-between text-secondary mb-15 pb-15 border-bottom-dark">
-              <span>Shipping:</span>
-              <span id="shipping-value" data-testid="cart-shipping">TBD</span>
+
+            <!-- Order Summary Content (shown when quote loaded) -->
+            <div id="summary-content" style="display: none">
+              <div class="flex-between text-secondary mb-15 pb-15 border-bottom-dark">
+                <span>Subtotal:</span>
+                <span id="subtotal" data-testid="cart-subtotal">—</span>
+              </div>
+              <div class="flex-between text-secondary mb-15 pb-15 border-bottom-dark">
+                <span>Shipping:</span>
+                <span id="shipping-value" data-testid="cart-shipping">—</span>
+              </div>
+              <div class="flex-between text-secondary mb-15 pb-15 border-bottom-dark" id="tax-row">
+                <span id="tax-label">Tax/VAT:</span>
+                <span id="tax-value" data-testid="cart-tax">—</span>
+              </div>
+              <div class="flex-between text-light fw-bold" style="font-size: 1.2rem; margin-bottom: 15px">
+                <span>Total:</span>
+                <span id="total">—</span>
+              </div>
+
+              <!-- Import Duties Note -->
+              <div
+                id="import-duties-note"
+                style="
+                  display: none;
+                  padding: 12px;
+                  background-color: #2a2a1a;
+                  color: #999;
+                  border-radius: 4px;
+                  font-size: 0.85rem;
+                  margin-bottom: 15px;
+                  border-left: 3px solid #ffc107;
+                "
+              >
+                ⓘ Import duties may be charged on delivery and are the customer's responsibility.
+              </div>
             </div>
-            <div class="flex-between text-light fw-bold" style="font-size: 1.2rem">
-              <span>Total:</span>
-              <span id="total">$0.00</span>
-            </div>
-            <p class="text-tertiary text-sm divider-dark">
-              Shipping address and taxes will be calculated during checkout.
-            </p>
             <div class="mt-20">
               <label for="shipping-country" class="form-group-label">
                 Shipping Country

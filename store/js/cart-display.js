@@ -4,6 +4,19 @@
 
 let products = [];
 let countries = [];
+let quoteDebounceTimer = null;
+let currentQuote = null;
+let isCheckingOut = false;
+
+// Debounce utility function
+function debounce(func, delayMs) {
+  return function debounced(...args) {
+    clearTimeout(quoteDebounceTimer);
+    quoteDebounceTimer = setTimeout(() => {
+      func.apply(this, args);
+    }, delayMs);
+  };
+}
 
 // CSRF Token Management
 function generateCSRFToken() {
@@ -110,7 +123,10 @@ function updateCheckoutButtonState() {
 
   const countrySelected = select && select.value !== "";
   const termsAccepted = termsCheckbox && termsCheckbox.checked;
-  checkoutBtn.disabled = !(countrySelected && termsAccepted);
+  const quoteLoaded = currentQuote !== null && currentQuote !== undefined;
+
+  // Disable if: no country, no terms, no quote, or already checking out
+  checkoutBtn.disabled = !countrySelected || !termsAccepted || !quoteLoaded || isCheckingOut;
 }
 
 function setupCountrySelector() {
@@ -120,25 +136,23 @@ function setupCountrySelector() {
   if (select) {
     // Restore previously selected country from localStorage
     const savedCountry = localStorage.getItem("selectedShippingCountry");
-    if (savedCountry) {
+    if (savedCountry && !isCheckingOut) {
       select.value = savedCountry;
-      // If country was previously selected, fetch order summary
-      if (savedCountry) {
-        fetchOrderSummary(savedCountry).then(orderData => {
-          updateOrderSummaryDisplay(orderData);
-        });
-      }
+      // Fetch quote for the saved country
+      debouncedFetchQuote();
     }
 
     select.addEventListener("change", async () => {
-      updateCheckoutButtonState();
-
-      // Fetch updated order summary when country changes
-      if (select.value) {
-        const orderData = await fetchOrderSummary(select.value);
-        updateOrderSummaryDisplay(orderData);
-      } else {
-        updateOrderSummaryDisplay(null);
+      if (!isCheckingOut) {
+        updateCheckoutButtonState();
+        // Clear quote if no country selected
+        if (!select.value) {
+          currentQuote = null;
+          updateOrderSummaryDisplay(null);
+        } else {
+          // Fetch quote with debouncing
+          debouncedFetchQuote();
+        }
       }
     });
   }
@@ -152,6 +166,9 @@ function setupCountrySelector() {
   updateCheckoutButtonState();
 }
 
+// Debounced quote fetch (~400ms)
+const debouncedFetchQuote = debounce(fetchQuote, 400);
+
 function displayCart() {
   const cartItems = document.getElementById("cart-items");
   const cartSummary = document.getElementById("cart-summary");
@@ -161,6 +178,7 @@ function displayCart() {
     cartItems.style.display = "none";
     emptyCart.style.display = "block";
     if (cartSummary) cartSummary.style.display = "none";
+    currentQuote = null;
     return;
   }
 
@@ -221,80 +239,179 @@ function displayCart() {
     cartItems.appendChild(itemCard);
   });
 
-  updateCartSummary();
+  // Trigger quote fetch if country is selected (with debouncing)
+  const countrySelect = document.getElementById("shipping-country");
+  if (countrySelect && countrySelect.value && !isCheckingOut) {
+    debouncedFetchQuote();
+  }
 }
 
-function updateCartSummary() {
-  const subtotalEl = document.getElementById("subtotal");
-  const totalEl = document.getElementById("total");
-
-  if (!subtotalEl || !totalEl) return;
-
-  const subtotalCents = cart.getSubtotalCents(products);
-  const subtotalDollars = subtotalCents / 100;
-
-  subtotalEl.textContent = `$${subtotalDollars.toFixed(2)}`;
-  totalEl.textContent = `$${subtotalDollars.toFixed(2)}`;
+// Transform cart items to SKU format for API
+function buildQuoteItems() {
+  const items = [];
+  cart.items.forEach(item => {
+    const product = products.find(p => p.product_key === item.productKey);
+    if (product) {
+      const variantId = product.variants[item.color]?.sizes?.[item.size]?.variant_id;
+      if (variantId) {
+        items.push({
+          sku: variantId,
+          qty: item.quantity,
+        });
+      }
+    }
+  });
+  return items;
 }
 
-async function fetchOrderSummary(countryCode) {
+async function fetchQuote() {
+  const countrySelect = document.getElementById("shipping-country");
+  if (!countrySelect || !countrySelect.value) {
+    currentQuote = null;
+    updateOrderSummaryDisplay(null);
+    return;
+  }
+
+  const country = countrySelect.value;
+  const items = buildQuoteItems();
+
+  if (items.length === 0) {
+    currentQuote = null;
+    updateOrderSummaryDisplay(null);
+    return;
+  }
+
+  // Show loading state
+  showQuoteLoading(true);
+  hideQuoteError();
+
   try {
-    const subtotalCents = cart.getSubtotalCents(products);
     const backendUrl = window.__API_URL__ || "https://api.kickedoutofthesky.com";
-
-    const response = await fetch(`${backendUrl}/api/calculate-order-summary`, {
+    const response = await fetch(`${backendUrl}/api/quote`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        subtotal_cents: subtotalCents,
-        shipping_country: countryCode,
+        items,
+        country,
       }),
     });
 
     if (!response.ok) {
-      console.error("Failed to fetch order summary:", response.statusText);
-      return null;
+      const errorData = await response.json();
+      throw new Error(errorData.error || "Failed to fetch quote");
     }
 
-    const data = await response.json();
-    return data;
+    const quote = await response.json();
+    currentQuote = quote;
+    updateOrderSummaryDisplay(quote);
+    showQuoteLoading(false);
   } catch (error) {
-    console.error("Error fetching order summary:", error);
-    return null;
+    console.error("Error fetching quote:", error);
+    showQuoteError(error.message || "Failed to calculate order total. Please try again.");
+    showQuoteLoading(false);
   }
 }
 
-function updateOrderSummaryDisplay(orderData) {
-  const taxLabel = document.getElementById("tax-label");
-  const taxValue = document.getElementById("tax-value");
-  const shippingValue = document.getElementById("shipping-value");
+function showQuoteLoading(isLoading) {
+  const loadingEl = document.getElementById("quote-loading");
+  const contentEl = document.getElementById("summary-content");
+  if (loadingEl && contentEl) {
+    loadingEl.style.display = isLoading ? "block" : "none";
+    contentEl.style.display = isLoading ? "none" : "block";
+  }
+}
+
+function showQuoteError(errorMessage) {
+  const errorEl = document.getElementById("quote-error");
+  const errorTextEl = document.getElementById("quote-error-text");
+  if (errorEl && errorTextEl) {
+    errorTextEl.textContent = errorMessage;
+    errorEl.style.display = "block";
+  }
+}
+
+function hideQuoteError() {
+  const errorEl = document.getElementById("quote-error");
+  if (errorEl) {
+    errorEl.style.display = "none";
+  }
+}
+
+function formatCurrency(minorUnits, currency) {
+  // Convert minor units (cents) to dollars/euros/etc
+  const divisor = 100; // assuming cents-based currencies
+  const amount = minorUnits / divisor;
+
+  // Map currency codes to symbols
+  const currencySymbols = {
+    USD: "$",
+    EUR: "€",
+    GBP: "£",
+    CAD: "C$",
+    AUD: "A$",
+    JPY: "¥",
+    CNY: "¥",
+    INR: "₹",
+  };
+
+  const symbol = currencySymbols[currency] || currency;
+  return `${symbol}${amount.toFixed(2)}`;
+}
+
+function updateOrderSummaryDisplay(quote) {
+  const contentEl = document.getElementById("summary-content");
+  const subtotalEl = document.getElementById("subtotal");
+  const shippingEl = document.getElementById("shipping-value");
+  const taxLabelEl = document.getElementById("tax-label");
+  const taxValueEl = document.getElementById("tax-value");
+  const taxRowEl = document.getElementById("tax-row");
   const totalEl = document.getElementById("total");
+  const importDutiesEl = document.getElementById("import-duties-note");
 
-  if (!taxLabel || !taxValue || !shippingValue || !totalEl) return;
+  if (!contentEl || !subtotalEl) return;
 
-  if (!orderData) {
-    // Reset to "Tax/VAT" if no country selected
-    taxLabel.textContent = "Tax/VAT:";
-    taxValue.textContent = "TBD";
-    shippingValue.textContent = "TBD";
-    totalEl.textContent = "TBD";
+  if (!quote) {
+    contentEl.style.display = "none";
     return;
   }
 
-  // Determine if VAT or Tax based on vatRate
-  const label = orderData.vatRate ? "VAT:" : "Tax:";
-  taxLabel.textContent = label;
+  contentEl.style.display = "block";
 
-  // Format amounts as dollars
-  const taxDollars = orderData.tax / 100;
-  const shippingDollars = orderData.shipping / 100;
-  const totalDollars = orderData.total / 100;
+  // Format amounts using the quote currency
+  const currency = quote.currency || "USD";
+  const subtotalFormatted = formatCurrency(quote.subtotal, currency);
+  const shippingFormatted = formatCurrency(quote.shipping, currency);
+  const taxFormatted = formatCurrency(quote.tax, currency);
+  const totalFormatted = formatCurrency(quote.total, currency);
 
-  taxValue.textContent = `$${taxDollars.toFixed(2)}`;
-  shippingValue.textContent = `$${shippingDollars.toFixed(2)}`;
-  totalEl.textContent = `$${totalDollars.toFixed(2)}`;
+  // Update subtotal, shipping, and total
+  subtotalEl.textContent = subtotalFormatted;
+  shippingEl.textContent = shippingFormatted;
+  totalEl.textContent = totalFormatted;
+
+  // Handle tax/VAT display based on taxIncluded flag
+  const taxLabel = quote.taxLabel || "Tax/VAT";
+  taxLabelEl.textContent = taxLabel;
+  taxValueEl.textContent = taxFormatted;
+
+  // Style tax row: muted if tax is included in price
+  if (quote.taxIncluded) {
+    taxRowEl.style.opacity = "0.6";
+    taxRowEl.style.fontSize = "0.9rem";
+  } else {
+    taxRowEl.style.opacity = "1";
+    taxRowEl.style.fontSize = "1rem";
+  }
+
+  // Show import duties note if applicable
+  if (importDutiesEl) {
+    importDutiesEl.style.display = quote.importDutiesNote ? "block" : "none";
+  }
+
+  // Update checkout button state (only enable if quote is fresh and terms accepted)
+  updateCheckoutButtonState();
 }
 
 // eslint-disable-next-line no-unused-vars
@@ -351,6 +468,12 @@ async function proceedToCheckout() {
     return;
   }
 
+  // Check if quote is loaded
+  if (!currentQuote || !currentQuote.calculationId) {
+    alert("Unable to proceed: Order total calculation failed. Please try again.");
+    return;
+  }
+
   // Validate cart items before proceeding
   const validation = cart.validateItemsForCheckout(products);
   if (!validation.valid) {
@@ -360,6 +483,11 @@ async function proceedToCheckout() {
   }
 
   try {
+    isCheckingOut = true;
+
+    // Lock country selector during checkout
+    countrySelect.disabled = true;
+
     // Save the selected country to localStorage
     localStorage.setItem("selectedShippingCountry", countrySelect.value);
 
@@ -368,33 +496,21 @@ async function proceedToCheckout() {
     checkoutBtn.disabled = true;
     checkoutBtn.textContent = "Processing...";
 
-    // Transform cart items for backend
-    const items = cart.items
-      .map(item => {
-        const product = products.find(p => p.product_key === item.productKey);
-        if (!product) return null;
+    // Get email from user (could also be from a form field)
+    const email = prompt("Please enter your email address:");
+    if (!email) {
+      // User cancelled
+      isCheckingOut = false;
+      countrySelect.disabled = false;
+      checkoutBtn.disabled = false;
+      checkoutBtn.textContent = "Proceed to Checkout";
+      return;
+    }
 
-        const variantId = product.variants[item.color]?.sizes?.[item.size]?.variant_id;
-        const image = getProductImage(product, item.color);
+    // Build items in SKU format for checkout
+    const items = buildQuoteItems();
 
-        // Convert relative image URL to absolute URL
-        let fullImageUrl = image;
-        if (image && !image.startsWith("http")) {
-          fullImageUrl = window.location.origin + "/store/" + image;
-        }
-
-        return {
-          variant_id: variantId,
-          quantity: item.quantity,
-          name: product.title,
-          image: fullImageUrl,
-          color: item.color,
-          size: item.size,
-        };
-      })
-      .filter(item => item !== null);
-
-    // Call backend checkout endpoint with CSRF token (skip for localhost)
+    // Call backend checkout endpoint with calculationId
     const backendUrl = window.__API_URL__ || "https://api.kickedoutofthesky.com";
     const isLocalhost = backendUrl.includes("localhost");
     const isStaging = backendUrl.includes("api-staging.");
@@ -402,21 +518,20 @@ async function proceedToCheckout() {
       "Content-Type": "application/json",
     };
 
-    // Only add CSRF token for production URLs (skip for localhost and staging)
+    // Only add CSRF token for production URLs
     if (!isLocalhost && !isStaging) {
       const csrfToken = getCSRFToken();
       headers["X-CSRF-Token"] = csrfToken;
     }
 
     const requestBody = {
+      calculationId: currentQuote.calculationId,
       items,
-      shippingCountry: countrySelect.value,
-      termsAccepted: true,
-      termsVersion: "2026-03-25",
-      acceptedAt: new Date().toISOString(),
+      country: countrySelect.value,
+      email,
     };
 
-    let checkoutUrl = backendUrl + "/api/create-checkout-session";
+    let checkoutUrl = backendUrl + "/api/checkout";
     if (backendUrl.includes("api-staging.kickedoutofthesky.com")) {
       checkoutUrl += "?x-vercel-protection-bypass=Xq8xpir5ZCR25Za5w6rpHxLofddagWJA";
     }
@@ -430,33 +545,45 @@ async function proceedToCheckout() {
     const data = await response.json();
 
     if (!response.ok) {
-      // Parse error response from backend
       const errorMessage = data.error || data.message || "Checkout failed";
       console.error("Checkout error:", errorMessage);
       alert("Checkout failed: " + errorMessage);
 
-      // Restore button state on error
-      const checkoutBtn = document.getElementById("checkout-btn");
+      // Restore UI state on error
+      isCheckingOut = false;
+      countrySelect.disabled = false;
       checkoutBtn.disabled = false;
       checkoutBtn.textContent = "Proceed to Checkout";
       return;
     }
 
-    // Redirect to Stripe checkout using the new response format
-    // (Cart will be cleared on success page after payment confirmation)
-    if (data.url) {
-      window.location.href = data.url;
+    // Use Stripe's redirect with client_secret for hosted checkout or embedded checkout
+    if (data.client_secret) {
+      // For hosted checkout, redirect to Stripe
+      // For embedded checkout, you'd initialize Stripe.js here
+      if (data.redirect_url) {
+        window.location.href = data.redirect_url;
+      } else {
+        // Alternative: use client_secret with Stripe.js or redirect to success
+        alert("Payment initiated. Please complete payment.");
+      }
     } else {
-      throw new Error("No checkout URL provided by server");
+      throw new Error("No client_secret provided by server");
     }
   } catch (error) {
     console.error("Checkout error:", error);
     alert("Checkout failed: " + (error.message || "Please try again."));
 
-    // Restore button state on error
+    // Restore UI state on error
+    isCheckingOut = false;
+    const countrySelect = document.getElementById("shipping-country");
+    if (countrySelect) countrySelect.disabled = false;
+
     const checkoutBtn = document.getElementById("checkout-btn");
-    checkoutBtn.disabled = false;
-    checkoutBtn.textContent = "Proceed to Checkout";
+    if (checkoutBtn) {
+      checkoutBtn.disabled = false;
+      checkoutBtn.textContent = "Proceed to Checkout";
+    }
   }
 }
 
