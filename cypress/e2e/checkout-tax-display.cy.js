@@ -36,12 +36,14 @@ describe("Tax Calculation Workflow", () => {
       cy.get("#quote-loading", { timeout: 5000 }).should("not.be.visible");
 
       // Verify Tax label is shown
-      cy.get("#tax-label").should("contain", "Tax");
+      cy.get("#tax-label").should("contain", "Tax:");
 
       // Verify tax amount is displayed
       cy.get("#tax-value").should("not.contain", "Included");
       cy.get("#tax-value").should("not.contain", "TBD");
-      cy.get("#tax-value").invoke("text").should("match", /\$[\d.]+/);
+      cy.get("#tax-value")
+        .invoke("text")
+        .should("match", /\$[\d.]+/);
     });
 
     it("should not apply muted style to tax row when tax is not included", () => {
@@ -59,19 +61,31 @@ describe("Tax Calculation Workflow", () => {
       cy.get("#quote-loading", { timeout: 5000 }).should("not.be.visible");
 
       // Verify all amounts are displayed
-      cy.get("#subtotal").invoke("text").should("match", /\$[\d.]+/);
-      cy.get("#shipping-value").invoke("text").should("match", /\$[\d.]+/);
-      cy.get("#tax-value").invoke("text").should("match", /\$[\d.]+/);
-      cy.get("#total").invoke("text").should("match", /\$[\d.]+/);
+      cy.get("#subtotal")
+        .invoke("text")
+        .should("match", /\$[\d.]+/);
+      cy.get("#shipping-value")
+        .invoke("text")
+        .should("match", /\$[\d.]+/);
+      cy.get("#tax-value")
+        .invoke("text")
+        .should("match", /\$[\d.]+/);
+      cy.get("#total")
+        .invoke("text")
+        .should("match", /\$[\d.]+/);
 
       // Verify subtotal < total (tax and shipping added)
-      cy.get("#subtotal").invoke("text").then(subtotal => {
-        cy.get("#total").invoke("text").then(total => {
-          const subtotalNum = parseFloat(subtotal.replace("$", ""));
-          const totalNum = parseFloat(total.replace("$", ""));
-          expect(totalNum).to.be.greaterThan(subtotalNum);
+      cy.get("#subtotal")
+        .invoke("text")
+        .then(subtotal => {
+          cy.get("#total")
+            .invoke("text")
+            .then(total => {
+              const subtotalNum = parseFloat(subtotal.replace("$", ""));
+              const totalNum = parseFloat(total.replace("$", ""));
+              expect(totalNum).to.be.greaterThan(subtotalNum);
+            });
         });
-      });
     });
 
     it("should show loading state while fetching quote", () => {
@@ -89,21 +103,25 @@ describe("Tax Calculation Workflow", () => {
       // Try to select an EU country (e.g., Germany) - adjust based on available countries
       cy.get("#shipping-country").then($select => {
         // Check if EU country exists in options
-        const hasEU = $select.find("option").toArray().some(opt => 
-          ["DE", "FR", "IT", "ES", "PL", "NL", "BE", "AT", "IE"].includes(opt.value)
-        );
+        const hasEU = $select
+          .find("option")
+          .toArray()
+          .some(opt => ["DE", "FR", "IT", "ES", "PL", "NL", "BE", "AT", "IE"].includes(opt.value));
 
         if (hasEU) {
           // Select first available EU country
-          cy.get("#shipping-country").find("option").each(($option, index) => {
-            if (index > 0) { // Skip "Select a country"
-              const countryCode = $option.val();
-              if (["DE", "FR", "IT", "ES", "PL", "NL", "BE", "AT", "IE"].includes(countryCode)) {
-                cy.get("#shipping-country").select(countryCode);
-                return false; // Break the loop
+          cy.get("#shipping-country")
+            .find("option")
+            .each(($option, index) => {
+              if (index > 0) {
+                // Skip "Select a country"
+                const countryCode = $option.val();
+                if (["DE", "FR", "IT", "ES", "PL", "NL", "BE", "AT", "IE"].includes(countryCode)) {
+                  cy.get("#shipping-country").select(countryCode);
+                  return false; // Break the loop
+                }
               }
-            }
-          });
+            });
 
           // Wait for quote
           cy.get("#quote-loading", { timeout: 5000 }).should("not.be.visible");
@@ -111,7 +129,7 @@ describe("Tax Calculation Workflow", () => {
           // Verify VAT and Included are shown (when applicable)
           cy.get("#tax-label").then($label => {
             const labelText = $label.text();
-            if (labelText === "VAT") {
+            if (labelText === "VAT:") {
               cy.get("#tax-value").should("contain", "Included");
             }
           });
@@ -122,20 +140,23 @@ describe("Tax Calculation Workflow", () => {
     it("should apply muted style when tax is included", () => {
       // Similar to above - select EU country
       cy.get("#shipping-country").then($select => {
-        const hasEU = $select.find("option").toArray().some(opt => 
-          ["DE", "FR", "IT", "ES", "PL", "NL", "BE", "AT", "IE"].includes(opt.value)
-        );
+        const hasEU = $select
+          .find("option")
+          .toArray()
+          .some(opt => ["DE", "FR", "IT", "ES", "PL", "NL", "BE", "AT", "IE"].includes(opt.value));
 
         if (hasEU) {
-          cy.get("#shipping-country").find("option").each(($option, index) => {
-            if (index > 0) {
-              const countryCode = $option.val();
-              if (["DE", "FR", "IT", "ES", "PL", "NL", "BE", "AT", "IE"].includes(countryCode)) {
-                cy.get("#shipping-country").select(countryCode);
-                return false;
+          cy.get("#shipping-country")
+            .find("option")
+            .each(($option, index) => {
+              if (index > 0) {
+                const countryCode = $option.val();
+                if (["DE", "FR", "IT", "ES", "PL", "NL", "BE", "AT", "IE"].includes(countryCode)) {
+                  cy.get("#shipping-country").select(countryCode);
+                  return false;
+                }
               }
-            }
-          });
+            });
 
           cy.get("#quote-loading", { timeout: 5000 }).should("not.be.visible");
 
@@ -143,9 +164,11 @@ describe("Tax Calculation Workflow", () => {
           cy.get("#tax-value").then($tax => {
             if ($tax.text() === "Included") {
               // Should have muted opacity
-              cy.get("#tax-row").should("have.css", "opacity").and(val => {
-                expect(parseFloat(val)).to.be.lessThan(1);
-              });
+              cy.get("#tax-row")
+                .should("have.css", "opacity")
+                .and(val => {
+                  expect(parseFloat(val)).to.be.lessThan(1);
+                });
             }
           });
         }
@@ -167,17 +190,13 @@ describe("Tax Calculation Workflow", () => {
 
     it("should allow retry after error", () => {
       // First call fails
-      cy.intercept("POST", "**/api/quote", { statusCode: 500, body: { error: "Server error" } }).as(
-        "quoteFailure"
-      );
+      cy.intercept("POST", "**/api/quote", { statusCode: 500, body: { error: "Server error" } }).as("quoteFailure");
 
       cy.get("#shipping-country").select("US");
       cy.get("#quote-error", { timeout: 5000 }).should("be.visible");
 
       // Change country to retry
-      cy.intercept("POST", "**/api/quote", { statusCode: 200, body: { subtotal: 5000, tax: 350 } }).as(
-        "quoteSuccess"
-      );
+      cy.intercept("POST", "**/api/quote", { statusCode: 200, body: { subtotal: 5000, tax: 350 } }).as("quoteSuccess");
 
       cy.get("#shipping-country").select("CA");
 
@@ -244,9 +263,15 @@ describe("Tax Calculation Workflow", () => {
       cy.get("#quote-loading", { timeout: 5000 }).should("not.be.visible");
 
       // Check that amounts follow XX.XX format
-      cy.get("#subtotal").invoke("text").should("match", /\$\d+\.\d{2}/);
-      cy.get("#shipping-value").invoke("text").should("match", /\$\d+\.\d{2}/);
-      cy.get("#total").invoke("text").should("match", /\$\d+\.\d{2}/);
+      cy.get("#subtotal")
+        .invoke("text")
+        .should("match", /\$\d+\.\d{2}/);
+      cy.get("#shipping-value")
+        .invoke("text")
+        .should("match", /\$\d+\.\d{2}/);
+      cy.get("#total")
+        .invoke("text")
+        .should("match", /\$\d+\.\d{2}/);
     });
   });
 

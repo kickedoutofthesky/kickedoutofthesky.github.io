@@ -356,7 +356,15 @@ function formatCurrency(minorUnits, currency) {
     INR: "₹",
   };
 
-  const symbol = currencySymbols[currency] || currency;
+  // Convert currency to uppercase to ensure proper lookup
+  const currencyUpper = (currency || "USD").toUpperCase();
+  const symbol = currencySymbols[currencyUpper] || currencyUpper;
+  
+  // JPY and CNY don't use decimal places
+  if (currencyUpper === "JPY" || currencyUpper === "CNY") {
+    return `${symbol}${Math.round(amount)}`;
+  }
+  
   return `${symbol}${amount.toFixed(2)}`;
 }
 
@@ -392,16 +400,16 @@ function updateOrderSummaryDisplay(quote) {
   totalEl.textContent = totalFormatted;
 
   // Handle tax/VAT display based on tax amount
-  let taxLabel = "Tax/VAT";
+  let taxLabel = "Tax/VAT:";
   let taxValue = taxFormatted;
 
   // If there is tax, show "Tax" with the amount
   if (quote.tax > 0) {
-    taxLabel = "Tax";
+    taxLabel = "Tax:";
     taxValue = taxFormatted;
   } else {
     // If tax is 0, show "VAT" and "Included"
-    taxLabel = "VAT";
+    taxLabel = "VAT:";
     taxValue = "Included";
   }
 
@@ -508,17 +516,6 @@ async function proceedToCheckout() {
     checkoutBtn.disabled = true;
     checkoutBtn.textContent = "Processing...";
 
-    // Get email from user (could also be from a form field)
-    const email = prompt("Please enter your email address:");
-    if (!email) {
-      // User cancelled
-      isCheckingOut = false;
-      countrySelect.disabled = false;
-      checkoutBtn.disabled = false;
-      checkoutBtn.textContent = "Proceed to Checkout";
-      return;
-    }
-
     // Build items in SKU format for checkout
     const items = buildQuoteItems();
 
@@ -540,7 +537,6 @@ async function proceedToCheckout() {
       calculationId: currentQuote.calculationId,
       items,
       country: countrySelect.value,
-      email,
     };
 
     let checkoutUrl = backendUrl + "/api/checkout";

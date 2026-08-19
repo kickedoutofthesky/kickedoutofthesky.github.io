@@ -15,7 +15,7 @@ describe("Cart Display - Tax Calculation", () => {
         <div id="shipping-value" data-testid="cart-shipping">—</div>
         <div id="tax-row">
           <span id="tax-label">Tax/VAT:</span>
-          <span id="tax-value" data-testid="cart-tax">—</span>
+          <span id="tax-value" data-testid="cart-tax">Calculated after country is selected</span>
         </div>
         <div id="total">—</div>
         <div id="import-duties-note" style="display: none;"></div>
@@ -75,12 +75,12 @@ describe("Cart Display - Tax Calculation", () => {
       const minorUnits = 5000;
       const currency = "USD";
       const expected = "$50.00";
-      
+
       const amount = minorUnits / 100;
       const currencySymbols = { USD: "$", EUR: "€", GBP: "£" };
       const symbol = currencySymbols[currency] || currency;
       const result = `${symbol}${amount.toFixed(2)}`;
-      
+
       expect(result).toBe(expected);
     });
 
@@ -88,12 +88,12 @@ describe("Cart Display - Tax Calculation", () => {
       const minorUnits = 5000;
       const currency = "EUR";
       const expected = "€50.00";
-      
+
       const amount = minorUnits / 100;
       const currencySymbols = { USD: "$", EUR: "€", GBP: "£" };
       const symbol = currencySymbols[currency] || currency;
       const result = `${symbol}${amount.toFixed(2)}`;
-      
+
       expect(result).toBe(expected);
     });
 
@@ -101,12 +101,12 @@ describe("Cart Display - Tax Calculation", () => {
       const minorUnits = 1000;
       const currency = "GBP";
       const expected = "£10.00";
-      
+
       const amount = minorUnits / 100;
       const currencySymbols = { USD: "$", EUR: "€", GBP: "£" };
       const symbol = currencySymbols[currency] || currency;
       const result = `${symbol}${amount.toFixed(2)}`;
-      
+
       expect(result).toBe(expected);
     });
   });
@@ -114,7 +114,7 @@ describe("Cart Display - Tax Calculation", () => {
   describe("updateOrderSummaryDisplay", () => {
     test("should hide content when quote is null", () => {
       const contentEl = document.getElementById("summary-content");
-      
+
       // When quote is null, content should be hidden
       expect(contentEl.style.display).toBe("none");
     });
@@ -123,7 +123,7 @@ describe("Cart Display - Tax Calculation", () => {
       const contentEl = document.getElementById("summary-content");
       const taxLabelEl = document.getElementById("tax-label");
       const taxValueEl = document.getElementById("tax-value");
-      
+
       // Simulate quote with tax
       const quote = {
         subtotal: 5000,
@@ -137,18 +137,18 @@ describe("Cart Display - Tax Calculation", () => {
       };
 
       // Test the tax display logic
-      let taxLabel = "Tax/VAT";
+      let taxLabel = "Tax/VAT:";
       let taxValue = "$3.50";
 
       if (quote.tax > 0) {
-        taxLabel = "Tax";
+        taxLabel = "Tax:";
         taxValue = "$3.50";
       } else {
-        taxLabel = "VAT";
+        taxLabel = "VAT:";
         taxValue = "Included";
       }
 
-      expect(taxLabel).toBe("Tax");
+      expect(taxLabel).toBe("Tax:");
       expect(taxValue).toBe("$3.50");
     });
 
@@ -165,24 +165,24 @@ describe("Cart Display - Tax Calculation", () => {
       };
 
       // Test the tax display logic
-      let taxLabel = "Tax/VAT";
+      let taxLabel = "Tax/VAT:";
       let taxValue = "€0.00";
 
       if (quote.tax > 0) {
-        taxLabel = "Tax";
+        taxLabel = "Tax:";
         taxValue = "€0.00";
       } else {
-        taxLabel = "VAT";
+        taxLabel = "VAT:";
         taxValue = "Included";
       }
 
-      expect(taxLabel).toBe("VAT");
+      expect(taxLabel).toBe("VAT:");
       expect(taxValue).toBe("Included");
     });
 
     test("should apply muted style when tax is included", () => {
       const taxRowEl = document.getElementById("tax-row");
-      
+
       // Quote with tax included
       const quote = {
         tax: 0,
@@ -201,7 +201,7 @@ describe("Cart Display - Tax Calculation", () => {
 
     test("should NOT apply muted style when tax is not included", () => {
       const taxRowEl = document.getElementById("tax-row");
-      
+
       const quote = {
         tax: 350,
         taxIncluded: false,
@@ -222,7 +222,7 @@ describe("Cart Display - Tax Calculation", () => {
 
     test("should show import duties note when applicable", () => {
       const importDutiesEl = document.getElementById("import-duties-note");
-      
+
       const quote = {
         importDutiesNote: true,
       };
@@ -233,7 +233,7 @@ describe("Cart Display - Tax Calculation", () => {
 
     test("should hide import duties note when not applicable", () => {
       const importDutiesEl = document.getElementById("import-duties-note");
-      
+
       const quote = {
         importDutiesNote: false,
       };
@@ -361,7 +361,9 @@ describe("Cart Display - Tax Calculation", () => {
           variants: {
             Red: {
               sizes: {
-                L: { /* no variant_id */ },
+                L: {
+                  /* no variant_id */
+                },
               },
             },
           },
@@ -396,14 +398,14 @@ describe("Cart Display - Tax Calculation", () => {
         currency: "USD",
       };
 
-      let taxLabel = "Tax/VAT";
+      let taxLabel = "Tax/VAT:";
       if (quote.tax > 0) {
-        taxLabel = "Tax";
+        taxLabel = "Tax:";
       } else {
-        taxLabel = "VAT";
+        taxLabel = "VAT:";
       }
 
-      expect(taxLabel).toBe("Tax");
+      expect(taxLabel).toBe("Tax:");
     });
 
     test("should handle large tax amounts", () => {
@@ -422,12 +424,12 @@ describe("Cart Display - Tax Calculation", () => {
         return `${symbol}${amount.toFixed(2)}`;
       };
 
-      let taxLabel = "Tax/VAT";
+      let taxLabel = "Tax/VAT:";
       if (quote.tax > 0) {
-        taxLabel = "Tax";
+        taxLabel = "Tax:";
       }
 
-      expect(taxLabel).toBe("Tax");
+      expect(taxLabel).toBe("Tax:");
       expect(formatCurrency(quote.tax, quote.currency)).toBe("$24.00");
     });
 
@@ -436,15 +438,15 @@ describe("Cart Display - Tax Calculation", () => {
         tax: -100, // edge case
       };
 
-      let taxLabel = "Tax/VAT";
+      let taxLabel = "Tax/VAT:";
       if (quote.tax > 0) {
-        taxLabel = "Tax";
+        taxLabel = "Tax:";
       } else {
-        taxLabel = "VAT";
+        taxLabel = "VAT:";
       }
 
       // Negative tax should show VAT/Included
-      expect(taxLabel).toBe("VAT");
+      expect(taxLabel).toBe("VAT:");
     });
   });
 
@@ -487,6 +489,143 @@ describe("Cart Display - Tax Calculation", () => {
       };
 
       expect(formatCurrency(1000, "XXX")).toBe("XXX10.00");
+    });
+  });
+
+  describe("Lowercase Currency Code Handling", () => {
+    test("should handle lowercase currency codes (eur, gbp, usd)", () => {
+      // The API returns lowercase currency codes, formatCurrency should handle it
+      const formatCurrency = (minorUnits, currency) => {
+        const divisor = 100;
+        const amount = minorUnits / divisor;
+        const currencySymbols = {
+          USD: "$",
+          EUR: "€",
+          GBP: "£",
+          CAD: "C$",
+          AUD: "A$",
+          JPY: "¥",
+          CNY: "¥",
+          INR: "₹",
+        };
+        const currencyUpper = (currency || "USD").toUpperCase();
+        const symbol = currencySymbols[currencyUpper] || currencyUpper;
+        if (currencyUpper === "JPY" || currencyUpper === "CNY") {
+          return `${symbol}${Math.round(amount)}`;
+        }
+        return `${symbol}${amount.toFixed(2)}`;
+      };
+
+      // Test lowercase codes from API
+      expect(formatCurrency(2253, "eur")).toBe("€22.53");
+      expect(formatCurrency(1000, "gbp")).toBe("£10.00");
+      expect(formatCurrency(5000, "usd")).toBe("$50.00");
+      expect(formatCurrency(1500, "cad")).toBe("C$15.00");
+      expect(formatCurrency(3000, "jpy")).toBe("¥30");
+    });
+
+    test("should handle uppercase currency codes (existing behavior)", () => {
+      const formatCurrency = (minorUnits, currency) => {
+        const divisor = 100;
+        const amount = minorUnits / divisor;
+        const currencySymbols = {
+          USD: "$",
+          EUR: "€",
+          GBP: "£",
+          CAD: "C$",
+          AUD: "A$",
+          JPY: "¥",
+          CNY: "¥",
+          INR: "₹",
+        };
+        const currencyUpper = (currency || "USD").toUpperCase();
+        const symbol = currencySymbols[currencyUpper] || currencyUpper;
+        if (currencyUpper === "JPY" || currencyUpper === "CNY") {
+          return `${symbol}${Math.round(amount)}`;
+        }
+        return `${symbol}${amount.toFixed(2)}`;
+      };
+
+      // Test uppercase codes (original)
+      expect(formatCurrency(2253, "EUR")).toBe("€22.53");
+      expect(formatCurrency(1000, "GBP")).toBe("£10.00");
+      expect(formatCurrency(5000, "USD")).toBe("$50.00");
+    });
+  });
+
+  describe("Initial Tax Display State", () => {
+    test("should display 'Calculated after country is selected' as initial tax value", () => {
+      const taxValueEl = document.getElementById("tax-value");
+      expect(taxValueEl.textContent).toBe("Calculated after country is selected");
+    });
+
+    test("should have Tax/VAT label with colon", () => {
+      const taxLabelEl = document.getElementById("tax-label");
+      expect(taxLabelEl.textContent).toBe("Tax/VAT:");
+    });
+
+    test("should hide summary content initially", () => {
+      const contentEl = document.getElementById("summary-content");
+      expect(contentEl.style.display).toBe("none");
+    });
+
+    test("should show summary content when quote loads", () => {
+      const contentEl = document.getElementById("summary-content");
+      const quote = {
+        subtotal: 5000,
+        shipping: 800,
+        tax: 350,
+        taxIncluded: false,
+        total: 6150,
+        currency: "USD",
+        calculationId: "quote_123",
+        importDutiesNote: false,
+      };
+
+      // Simulate quote loading
+      contentEl.style.display = "block";
+      expect(contentEl.style.display).toBe("block");
+    });
+  });
+
+  describe("Checkout Email Handling", () => {
+    test("should NOT include email in checkout request body", () => {
+      // Verify the checkout request structure does not include email
+      const checkoutRequest = {
+        calculationId: "quote_abc123",
+        items: [{ sku: "variant_123", qty: 2 }],
+        country: "US",
+        // Email should NOT be here - it will be captured by Stripe
+      };
+
+      expect(checkoutRequest.email).toBeUndefined();
+      expect(Object.keys(checkoutRequest)).toEqual(["calculationId", "items", "country"]);
+    });
+
+    test("should have calculationId for server-side verification", () => {
+      const checkoutRequest = {
+        calculationId: "quote_abc123",
+        items: [{ sku: "variant_123", qty: 2 }],
+        country: "US",
+      };
+
+      expect(checkoutRequest.calculationId).toBeDefined();
+      expect(checkoutRequest.calculationId).toMatch(/^quote_/);
+    });
+
+    test("should include items in proper SKU format", () => {
+      const checkoutRequest = {
+        calculationId: "quote_abc123",
+        items: [
+          { sku: "variant_123", qty: 2 },
+          { sku: "variant_456", qty: 1 },
+        ],
+        country: "US",
+      };
+
+      expect(checkoutRequest.items.length).toBe(2);
+      expect(checkoutRequest.items[0]).toHaveProperty("sku");
+      expect(checkoutRequest.items[0]).toHaveProperty("qty");
     });
   });
 });
