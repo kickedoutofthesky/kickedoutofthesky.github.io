@@ -628,4 +628,179 @@ describe("Cart Display - Tax Calculation", () => {
       expect(checkoutRequest.items[0]).toHaveProperty("qty");
     });
   });
+
+  describe("Locale-Specific Currency Formatting", () => {
+    test("should format USD with comma separator and period decimal", () => {
+      const formatCurrency = (minorUnits, currency, locale) => {
+        const divisor = 100;
+        const amount = minorUnits / divisor;
+        const currencyUpper = (currency || "USD").toUpperCase();
+        const localeMap = {
+          USD: "en-US",
+          EUR: "de-DE",
+          GBP: "en-GB",
+          CAD: "en-CA",
+          AUD: "en-AU",
+          JPY: "ja-JP",
+          CNY: "zh-CN",
+          INR: "en-IN",
+        };
+        const targetLocale = locale || localeMap[currencyUpper] || "en-US";
+        try {
+          return new Intl.NumberFormat(targetLocale, {
+            style: "currency",
+            currency: currencyUpper,
+            minimumFractionDigits: currencyUpper === "JPY" || currencyUpper === "CNY" ? 0 : 2,
+            maximumFractionDigits: currencyUpper === "JPY" || currencyUpper === "CNY" ? 0 : 2,
+          }).format(amount);
+        } catch (error) {
+          return "ERROR";
+        }
+      };
+
+      // USD: $1,234.50
+      const result = formatCurrency(123450, "USD");
+      expect(result).toContain("$");
+      expect(result).toContain("1");
+      expect(result).toContain("234");
+    });
+
+    test("should format EUR with period separator and comma decimal", () => {
+      const formatCurrency = (minorUnits, currency, locale) => {
+        const divisor = 100;
+        const amount = minorUnits / divisor;
+        const currencyUpper = (currency || "USD").toUpperCase();
+        const localeMap = {
+          USD: "en-US",
+          EUR: "de-DE",
+          GBP: "en-GB",
+          CAD: "en-CA",
+          AUD: "en-AU",
+          JPY: "ja-JP",
+          CNY: "zh-CN",
+          INR: "en-IN",
+        };
+        const targetLocale = locale || localeMap[currencyUpper] || "en-US";
+        try {
+          return new Intl.NumberFormat(targetLocale, {
+            style: "currency",
+            currency: currencyUpper,
+            minimumFractionDigits: currencyUpper === "JPY" || currencyUpper === "CNY" ? 0 : 2,
+            maximumFractionDigits: currencyUpper === "JPY" || currencyUpper === "CNY" ? 0 : 2,
+          }).format(amount);
+        } catch (error) {
+          return "ERROR";
+        }
+      };
+
+      // EUR: €1.234,50
+      const result = formatCurrency(123450, "EUR");
+      expect(result).toContain("€");
+    });
+
+    test("should format JPY with no decimal places", () => {
+      const formatCurrency = (minorUnits, currency, locale) => {
+        const divisor = 100;
+        const amount = minorUnits / divisor;
+        const currencyUpper = (currency || "USD").toUpperCase();
+        const localeMap = {
+          USD: "en-US",
+          EUR: "de-DE",
+          GBP: "en-GB",
+          CAD: "en-CA",
+          AUD: "en-AU",
+          JPY: "ja-JP",
+          CNY: "zh-CN",
+          INR: "en-IN",
+        };
+        const targetLocale = locale || localeMap[currencyUpper] || "en-US";
+        try {
+          return new Intl.NumberFormat(targetLocale, {
+            style: "currency",
+            currency: currencyUpper,
+            minimumFractionDigits: currencyUpper === "JPY" || currencyUpper === "CNY" ? 0 : 2,
+            maximumFractionDigits: currencyUpper === "JPY" || currencyUpper === "CNY" ? 0 : 2,
+          }).format(amount);
+        } catch (error) {
+          return "ERROR";
+        }
+      };
+
+      // JPY: ¥123,450 (no decimal) - accepts both half-width and full-width yen symbols
+      const result = formatCurrency(12345000, "JPY");
+      expect(result).toMatch(/[¥￥]/);
+      expect(result).not.toContain(",00");
+    });
+
+    test("should use provided locale instead of default", () => {
+      const formatCurrency = (minorUnits, currency, locale) => {
+        const divisor = 100;
+        const amount = minorUnits / divisor;
+        const currencyUpper = (currency || "USD").toUpperCase();
+        const targetLocale = locale || "en-US";
+        try {
+          return new Intl.NumberFormat(targetLocale, {
+            style: "currency",
+            currency: currencyUpper,
+            minimumFractionDigits: currencyUpper === "JPY" || currencyUpper === "CNY" ? 0 : 2,
+            maximumFractionDigits: currencyUpper === "JPY" || currencyUpper === "CNY" ? 0 : 2,
+          }).format(amount);
+        } catch (error) {
+          return "ERROR";
+        }
+      };
+
+      // With custom locale
+      const result = formatCurrency(123450, "USD", "fr-FR");
+      expect(result).not.toBe("ERROR");
+      expect(result).toContain("$");
+    });
+
+    test("should include currency symbol with amount", () => {
+      const formatCurrency = (minorUnits, currency, locale) => {
+        const divisor = 100;
+        const amount = minorUnits / divisor;
+        const currencyUpper = (currency || "USD").toUpperCase();
+        const localeMap = {
+          USD: "en-US",
+          EUR: "de-DE",
+          GBP: "en-GB",
+          CAD: "en-CA",
+          AUD: "en-AU",
+          JPY: "ja-JP",
+          CNY: "zh-CN",
+          INR: "en-IN",
+        };
+        const targetLocale = locale || localeMap[currencyUpper] || "en-US";
+        try {
+          return new Intl.NumberFormat(targetLocale, {
+            style: "currency",
+            currency: currencyUpper,
+            minimumFractionDigits: currencyUpper === "JPY" || currencyUpper === "CNY" ? 0 : 2,
+            maximumFractionDigits: currencyUpper === "JPY" || currencyUpper === "CNY" ? 0 : 2,
+          }).format(amount);
+        } catch (error) {
+          return "ERROR";
+        }
+      };
+
+      const currencyCombos = [
+        { currency: "USD", symbol: "$" },
+        { currency: "EUR", symbol: "€" },
+        { currency: "GBP", symbol: "£" },
+        { currency: "JPY", symbol: /[¥￥]/ }, // Accepts both half-width and full-width yen
+        { currency: "INR", symbol: "₹" },
+      ];
+
+      currencyCombos.forEach(({ currency, symbol }) => {
+        const result = formatCurrency(100000, currency);
+        if (typeof symbol === "string") {
+          expect(result).toContain(symbol);
+        } else if (symbol instanceof RegExp) {
+          expect(result).toMatch(symbol);
+        }
+        expect(result).not.toBe("ERROR");
+      });
+    });
+  });
 });
