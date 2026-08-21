@@ -4,41 +4,233 @@
  */
 
 let customerCurrency = null;
+let detectionInProgress = false;
 
 /**
- * Initialize currency from geo-location API
- * Calls /api/geo to detect customer's country and currency
- * Stores the initial country in localStorage for use on checkout page
+ * Detect country from timezone using Intl API
+ * Provides a fallback when IP geolocation APIs fail
+ * @returns {string|null} Two-letter country code or null if unable to detect
  */
-export async function initializeCurrency() {
+function getCountryFromTimezone() {
+  try {
+    // Get timezone from browser
+    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    if (!timezone) return null;
+
+    // Map common timezones to country codes
+    const timezoneToCountry = {
+      // North America
+      "America/New_York": "US",
+      "America/Chicago": "US",
+      "America/Denver": "US",
+      "America/Los_Angeles": "US",
+      "America/Anchorage": "US",
+      "Pacific/Honolulu": "US",
+      "America/Toronto": "CA",
+      "America/Mexico_City": "MX",
+
+      // Europe
+      "Europe/London": "GB",
+      "Europe/Paris": "FR",
+      "Europe/Berlin": "DE",
+      "Europe/Madrid": "ES",
+      "Europe/Rome": "IT",
+      "Europe/Amsterdam": "NL",
+      "Europe/Brussels": "BE",
+      "Europe/Vienna": "AT",
+      "Europe/Prague": "CZ",
+      "Europe/Warsaw": "PL",
+      "Europe/Stockholm": "SE",
+      "Europe/Oslo": "NO",
+      "Europe/Copenhagen": "DK",
+      "Europe/Zurich": "CH",
+      "Europe/Dublin": "IE",
+      "Europe/Moscow": "RU",
+
+      // Asia
+      "Asia/Tokyo": "JP",
+      "Asia/Shanghai": "CN",
+      "Asia/Hong_Kong": "HK",
+      "Asia/Singapore": "SG",
+      "Asia/Bangkok": "TH",
+      "Asia/Kolkata": "IN",
+      "Asia/Dubai": "AE",
+      "Asia/Seoul": "KR",
+      "Asia/Manila": "PH",
+      "Asia/Jakarta": "ID",
+      "Asia/Kuala_Lumpur": "MY",
+      "Asia/Ho_Chi_Minh": "VN",
+
+      // Australia/Pacific
+      "Australia/Sydney": "AU",
+      "Australia/Melbourne": "AU",
+      "Pacific/Auckland": "NZ",
+
+      // South America
+      "America/Sao_Paulo": "BR",
+      "America/Argentina/Buenos_Aires": "AR",
+      "America/Santiago": "CL",
+      "America/Bogota": "CO",
+    };
+
+    return timezoneToCountry[timezone] || null;
+  } catch (error) {
+    console.warn("Could not detect timezone:", error);
+    return null;
+  }
+}
+
+/**
+ * Detect country via IP geolocation (client-side)
+ * Works on localhost (browser has real public IP) and production
+ * @returns {Promise<string|null>} Two-letter country code or null if detection fails
+ */
+async function detectCountryViaIP() {
+  try {
+    // Use ipapi.co which works on localhost (browser makes the request with its real public IP)
+    const response = await fetch("https://ipapi.co/json/", {
+      method: "GET",
+      headers: { Accept: "application/json" },
+    });
+
+    if (!response.ok) {
+      console.warn(`IP geolocation API returned status ${response.status}`);
+      return null;
+    }
+
+    const data = await response.json();
+    const country = data.country_code;
+
+    if (country && country.length === 2) {
+      console.log(`✓ IP geolocation detected country: ${country}`);
+      return country;
+    }
+
+    return null;
+  } catch (error) {
+    console.warn("IP geolocation detection failed:", error);
+    return null;
+  }
+}
+
+/**
+ * Fetch currency data from backend /api/geo endpoint
+ * Must have a detected country to work
+ * @param {string} country - Two-letter country code
+ * @returns {Promise<object|null>} Currency data or null if fetch fails
+ */
+async function fetchCurrencyData(country) {
   try {
     const backendUrl = window.__API_URL__ || "https://api.kickedoutofthesky.com";
-    const response = await fetch(`${backendUrl}/api/geo`);
-    const geoData = await response.json();
+    const response = await fetch(`${backendUrl}/api/geo?country=${country}`);
 
-    customerCurrency = {
-      country: geoData.country,
-      currency: geoData.currency,
-      exchangeRates: geoData.exchangeRates,
-      vatRate: geoData.vatRate,
-      isEU: geoData.isEU,
-    };
+    if (!response.ok) {
+      console.warn(`Backend geo endpoint returned status ${response.status}`);
+      return null;
+    }
+
+    const geoData = await response.json();
+    return geoData;
+  } catch (error) {
+    console.warn("Failed to fetch currency data from backend:", error);
+    return null;
+  }
+}
+
+/**
+ * Initialize currency and detect country on first page load
+ * Fire-once, non-blocking detection that respects user's manual country selection
+ * Detection happens in background; UI renders immediately with defaults
+ *
+ * Sequence:
+ * 1. If user manually set country before, use that (never overwrite)
+ * 2. If country already detected, use it
+ * 3. Otherwise, detect via:
+ *    a. IP geolocation (ipapi.co) - works on localhost + production
+ *    b. Timezone fallback - works offline, less accurate
+ *    c. Default to US - never end up with no country
+ */
+export async function initializeCurrency() {
+  // Prevent multiple concurrent detections
+  if (detectionInProgress) {
+    return window.customerCurrency;
+  }
+
+  // If already initialized, return cached value
+  if (window.customerCurrency) {
+    return window.customerCurrency;
+  }
+
+  detectionInProgress = true;
+
+  try {
+    // Check if user manually set country before (flag prevents overwriting)
+    const countryManuallySet = localStorage.getItem("countryManuallySet") === "true";
+    const savedCountry = localStorage.getItem("selectedShippingCountry");
+
+    let detectedCountry = null;
+
+    // If user manually set country, never override it with detection
+    if (countryManuallySet && savedCountry) {
+      console.log(`✓ Using manually selected country: ${savedCountry}`);
+      detectedCountry = savedCountry;
+    } else if (savedCountry) {
+      // Use previously detected country
+      console.log(`✓ Using previously detected country: ${savedCountry}`);
+      detectedCountry = savedCountry;
+    } else {
+      // Detect country (fire-and-forget, non-blocking)
+      // Try IP detection first, fall back to timezone, then default to US
+      detectedCountry = await detectCountryViaIP();
+
+      if (!detectedCountry) {
+        console.warn("IP detection failed, trying timezone fallback...");
+        detectedCountry = getCountryFromTimezone();
+      }
+
+      if (!detectedCountry) {
+        console.warn("Timezone detection failed, defaulting to US");
+        detectedCountry = "US";
+      }
+
+      // Store detected country (not manually set)
+      localStorage.setItem("selectedShippingCountry", detectedCountry);
+      localStorage.setItem("countryManuallySet", "false");
+      console.log(`✓ Auto-detected country: ${detectedCountry}`);
+    }
+
+    // Fetch currency data from backend
+    const geoData = await fetchCurrencyData(detectedCountry);
+
+    if (geoData) {
+      customerCurrency = {
+        country: geoData.country || detectedCountry,
+        currency: geoData.currency || "USD",
+        exchangeRates: geoData.exchangeRates || { USD: 1.0 },
+        vatRate: geoData.vatRate || 0,
+        isEU: geoData.isEU || false,
+      };
+    } else {
+      // Fallback to default if backend fails
+      console.warn("Backend failed, using defaults");
+      customerCurrency = {
+        country: detectedCountry,
+        currency: "USD",
+        exchangeRates: { USD: 1.0 },
+        vatRate: 0,
+        isEU: false,
+      };
+    }
 
     // Store globally for access from other modules
     window.customerCurrency = customerCurrency;
 
-    // Store initial geo-detected country in localStorage if not already set
-    // This becomes the default on the cart page unless customer changes it
-    if (!localStorage.getItem("selectedShippingCountry")) {
-      localStorage.setItem("selectedShippingCountry", geoData.country);
-      console.log(`✓ Stored geo-detected country: ${geoData.country}`);
-    }
-
-    console.log(`✓ Currency initialized: ${geoData.country} → ${geoData.currency}`);
-
+    console.log(`✓ Currency initialized: ${customerCurrency.country} → ${customerCurrency.currency}`);
     return customerCurrency;
   } catch (error) {
-    console.error("✗ Failed to detect currency, falling back to USD:", error);
+    console.error("Critical error during currency initialization:", error);
+
+    // Last resort fallback
     customerCurrency = {
       country: "US",
       currency: "USD",
@@ -48,12 +240,14 @@ export async function initializeCurrency() {
     };
     window.customerCurrency = customerCurrency;
 
-    // Store fallback country in localStorage if not already set
+    // Ensure country is in localStorage
     if (!localStorage.getItem("selectedShippingCountry")) {
       localStorage.setItem("selectedShippingCountry", "US");
     }
 
     return customerCurrency;
+  } finally {
+    detectionInProgress = false;
   }
 }
 
@@ -203,4 +397,13 @@ export function getExchangeRate(currency) {
   }
   const currencyUpper = (currency || "USD").toUpperCase();
   return cc.exchangeRates[currencyUpper] || 1;
+}
+
+/**
+ * Reset detection flag for testing (internal use only)
+ * @private
+ */
+export function _resetDetection() {
+  detectionInProgress = false;
+  customerCurrency = null;
 }
