@@ -2,6 +2,8 @@
 /* eslint-disable-next-line no-unused-vars */
 /* global cart, updateCartQuantity, removeFromCart, showCartBadgeBurst */
 
+import { initializeCurrency, convertPrice, formatPrice } from "./utils/currency.js";
+
 let products = [];
 let countries = [];
 let quoteDebounceTimer = null;
@@ -66,6 +68,9 @@ function waitForCart(callback) {
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
+  // Initialize currency from geo-location first
+  await initializeCurrency();
+
   // Wait for cart to be ready
   waitForCart(async () => {
     // Force reload cart from localStorage to ensure we have latest items
@@ -418,12 +423,29 @@ function updateOrderSummaryDisplay(quote) {
 
   contentEl.style.display = "block";
 
-  // Format amounts using the quote currency
-  const currency = quote.currency || "USD";
-  const subtotalFormatted = formatCurrency(quote.subtotal, currency);
-  const shippingFormatted = formatCurrency(quote.shipping, currency);
-  const taxFormatted = formatCurrency(quote.tax, currency);
-  const totalFormatted = formatCurrency(quote.total, currency);
+  // Get customer's currency if available, otherwise use quote currency
+  const customerCurrency = window.customerCurrency;
+  const targetCurrency = customerCurrency?.currency || quote.currency || "USD";
+
+  // Convert prices from USD to customer's currency if needed
+  let subtotalConverted = quote.subtotal;
+  let shippingConverted = quote.shipping;
+  let taxConverted = quote.tax;
+  let totalConverted = quote.total;
+
+  if (customerCurrency && targetCurrency !== "USD") {
+    // Convert all amounts using the convertPrice function
+    subtotalConverted = convertPrice(quote.subtotal);
+    shippingConverted = convertPrice(quote.shipping);
+    taxConverted = convertPrice(quote.tax);
+    totalConverted = convertPrice(quote.total);
+  }
+
+  // Format amounts using the target currency
+  const subtotalFormatted = formatPrice(subtotalConverted, targetCurrency);
+  const shippingFormatted = formatPrice(shippingConverted, targetCurrency);
+  const taxFormatted = formatPrice(taxConverted, targetCurrency);
+  const totalFormatted = formatPrice(totalConverted, targetCurrency);
 
   // Update subtotal, shipping, and total
   subtotalEl.textContent = subtotalFormatted;
@@ -435,7 +457,7 @@ function updateOrderSummaryDisplay(quote) {
   let taxValue = taxFormatted;
 
   // If there is tax, show "Tax" with the amount
-  if (quote.tax > 0) {
+  if (taxConverted > 0) {
     taxLabel = "Tax:";
     taxValue = taxFormatted;
   } else {

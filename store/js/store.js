@@ -1,5 +1,10 @@
 // Store - Product Grid
 
+import { initializeCurrency } from "./utils/currency.js";
+
+// Initialize currency on page load
+initializeCurrency().catch(error => console.error("Failed to initialize currency:", error));
+
 function getProductCategory(title) {
   const t = title.toLowerCase();
   if (t.includes("sticker")) return "stickers";

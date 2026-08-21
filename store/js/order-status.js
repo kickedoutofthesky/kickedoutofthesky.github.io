@@ -1,9 +1,12 @@
 // Order Status Page
 /* eslint-disable-next-line no-unused-vars */
 
+import { initializeCurrency } from "./utils/currency.js";
+
 let products = [];
 
 document.addEventListener("DOMContentLoaded", async () => {
+  await initializeCurrency();
   await loadProducts();
   setupEventListeners();
 
