@@ -8,6 +8,7 @@ let customerCurrency = null;
 /**
  * Initialize currency from geo-location API
  * Calls /api/geo to detect customer's country and currency
+ * Stores the initial country in localStorage for use on checkout page
  */
 export async function initializeCurrency() {
   try {
@@ -25,6 +26,14 @@ export async function initializeCurrency() {
 
     // Store globally for access from other modules
     window.customerCurrency = customerCurrency;
+
+    // Store initial geo-detected country in localStorage if not already set
+    // This becomes the default on the cart page unless customer changes it
+    if (!localStorage.getItem("selectedShippingCountry")) {
+      localStorage.setItem("selectedShippingCountry", geoData.country);
+      console.log(`✓ Stored geo-detected country: ${geoData.country}`);
+    }
+
     console.log(`✓ Currency initialized: ${geoData.country} → ${geoData.currency}`);
 
     return customerCurrency;
@@ -38,6 +47,12 @@ export async function initializeCurrency() {
       isEU: false,
     };
     window.customerCurrency = customerCurrency;
+
+    // Store fallback country in localStorage if not already set
+    if (!localStorage.getItem("selectedShippingCountry")) {
+      localStorage.setItem("selectedShippingCountry", "US");
+    }
+
     return customerCurrency;
   }
 }

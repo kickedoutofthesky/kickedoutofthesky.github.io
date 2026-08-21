@@ -135,15 +135,23 @@ function setupCountrySelector() {
 
   if (select) {
     // Restore previously selected country from localStorage
+    // This will be the geo-detected country (from initializeCurrency on product page)
+    // or the customer's previously chosen country (which overrides geo-location)
     const savedCountry = localStorage.getItem("selectedShippingCountry");
-    if (savedCountry && !isCheckingOut) {
+    if (savedCountry && select.options.namedItem(savedCountry)) {
+      // Only set if the country exists in the dropdown
       select.value = savedCountry;
+      console.log(`✓ Cart: Restored country from storage: ${savedCountry}`);
       // Fetch quote for the saved country
       debouncedFetchQuote();
     }
 
     select.addEventListener("change", async () => {
       if (!isCheckingOut) {
+        // Save customer's chosen country to localStorage (overrides geo-location)
+        localStorage.setItem("selectedShippingCountry", select.value);
+        console.log(`✓ Cart: Updated shipping country to ${select.value}`);
+
         updateCheckoutButtonState();
         // Clear quote if no country selected
         if (!select.value) {
@@ -225,12 +233,12 @@ function displayCart() {
         <p style="color: #ccc; font-size: 0.9rem; margin: 4px 0;">Color: ${item.color}</p>
         <p style="color: #ccc; font-size: 0.9rem; margin: 4px 0;">Size: ${item.size}</p>
         <div style="display: flex; gap: 10px; align-items: center; margin-top: 15px;">
-          <span style="color: #ffc107; font-weight: bold;" data-testid="item-price">$${(pricePerItem / 100).toFixed(2)}</span>
+          <span style="color: #ffc107; font-weight: bold;" data-testid="item-price">${formatCurrency(pricePerItem, "USD")}</span>
           <span style="color: #ccc;">×</span>
           <button class="cart-qty-btn" onclick="updateCartQuantity(${index}, ${item.quantity - 1})" style="background: #3a3a3a; color: #fff; border: none; width: 22px; height: 22px; padding: 0; cursor: pointer; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.65rem; line-height: 1;"><i class="fas fa-minus" style="font-size: 0.55rem;"></i></button>
           <input type="text" class="quantity-input" data-testid="quantity-input" value="${item.quantity}" readonly style="width: 50px; padding: 5px; background: #1a1a1a; color: #fff; border: 1px solid #333; text-align: center; border-radius: 4px;">
           <button class="cart-qty-btn" onclick="updateCartQuantity(${index}, ${item.quantity + 1})" style="background: #3a3a3a; color: #fff; border: none; width: 22px; height: 22px; padding: 0; cursor: pointer; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.65rem; line-height: 1;"><i class="fas fa-plus" style="font-size: 0.55rem;"></i></button>
-          <span style="color: #ccc; margin-left: auto;">Total: <span style="color: #ffc107; font-weight: bold;">$${(lineTotal / 100).toFixed(2)}</span></span>
+          <span style="color: #ccc; margin-left: auto;">Total: <span style="color: #ffc107; font-weight: bold;">${formatCurrency(lineTotal, "USD")}</span></span>
           <button onclick="removeFromCart(${index})" data-testid="remove-item" style="background: none; color: #fff; border: none; padding: 8px 0 8px 12px; cursor: pointer; font-size: 1.1rem;"><i class="fas fa-trash"></i></button>
         </div>
       </div>
@@ -339,33 +347,56 @@ function hideQuoteError() {
   }
 }
 
-function formatCurrency(minorUnits, currency) {
+function formatCurrency(minorUnits, currency, locale) {
   // Convert minor units (cents) to dollars/euros/etc
   const divisor = 100; // assuming cents-based currencies
   const amount = minorUnits / divisor;
 
-  // Map currency codes to symbols
-  const currencySymbols = {
-    USD: "$",
-    EUR: "€",
-    GBP: "£",
-    CAD: "C$",
-    AUD: "A$",
-    JPY: "¥",
-    CNY: "¥",
-    INR: "₹",
+  // Normalize currency to uppercase
+  const currencyUpper = (currency || "USD").toUpperCase();
+
+  // Map currency codes to their proper locales for toLocaleString()
+  const localeMap = {
+    USD: "en-US", // $1,234.50
+    EUR: "de-DE", // €1.234,50
+    GBP: "en-GB", // £1,234.50
+    CAD: "en-CA", // $1,234.50
+    AUD: "en-AU", // $1,234.50
+    JPY: "ja-JP", // ¥123,450
+    CNY: "zh-CN", // ¥1,234.50
+    INR: "en-IN", // ₹1,234.50
   };
 
-  // Convert currency to uppercase to ensure proper lookup
-  const currencyUpper = (currency || "USD").toUpperCase();
-  const symbol = currencySymbols[currencyUpper] || currencyUpper;
-  
-  // JPY and CNY don't use decimal places
-  if (currencyUpper === "JPY" || currencyUpper === "CNY") {
-    return `${symbol}${Math.round(amount)}`;
+  // Use provided locale or map to appropriate locale for the currency
+  const targetLocale = locale || localeMap[currencyUpper] || "en-US";
+
+  // Format using toLocaleString with currency option
+  try {
+    return new Intl.NumberFormat(targetLocale, {
+      style: "currency",
+      currency: currencyUpper,
+      minimumFractionDigits: currencyUpper === "JPY" || currencyUpper === "CNY" ? 0 : 2,
+      maximumFractionDigits: currencyUpper === "JPY" || currencyUpper === "CNY" ? 0 : 2,
+    }).format(amount);
+  } catch (error) {
+    // Fallback if Intl.NumberFormat fails
+    console.warn(`Currency formatting error for ${currencyUpper}:`, error);
+    const currencySymbols = {
+      USD: "$",
+      EUR: "€",
+      GBP: "£",
+      CAD: "C$",
+      AUD: "A$",
+      JPY: "¥",
+      CNY: "¥",
+      INR: "₹",
+    };
+    const symbol = currencySymbols[currencyUpper] || currencyUpper;
+    if (currencyUpper === "JPY" || currencyUpper === "CNY") {
+      return `${symbol}${Math.round(amount)}`;
+    }
+    return `${symbol}${amount.toFixed(2)}`;
   }
-  
-  return `${symbol}${amount.toFixed(2)}`;
 }
 
 function updateOrderSummaryDisplay(quote) {
@@ -508,8 +539,8 @@ async function proceedToCheckout() {
     // Lock country selector during checkout
     countrySelect.disabled = true;
 
-    // Save the selected country to localStorage
-    localStorage.setItem("selectedShippingCountry", countrySelect.value);
+    // Country already saved to localStorage when dropdown changed
+    // No need to save again here (already saved in event listener)
 
     // Disable checkout button during processing
     const checkoutBtn = document.getElementById("checkout-btn");
