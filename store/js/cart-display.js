@@ -648,6 +648,10 @@ async function proceedToCheckout() {
   }
 }
 
+// Expose functions to global scope for HTML onclick handlers
+window.updateCartQuantity = updateCartQuantity;
+window.removeFromCart = removeFromCart;
+
 // Allow importing in Node.js (Jest tests) while keeping browser globals
 if (typeof module !== "undefined" && module.exports) {
   module.exports = { getProductImage };
