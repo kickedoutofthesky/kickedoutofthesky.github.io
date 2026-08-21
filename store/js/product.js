@@ -1,11 +1,5 @@
 /* global cart, playDingSound, createCartBurst */
 // Product Detail Page
-
-import { initializeCurrency } from "./utils/currency.js";
-
-// Initialize currency on page load
-initializeCurrency().catch(error => console.error("Failed to initialize currency:", error));
-
 let currentProduct = null;
 let currentImageIndex = 0; // Track carousel position (0 = main, 1 = sleeve mockup)
 
