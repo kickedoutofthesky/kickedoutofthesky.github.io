@@ -10,6 +10,21 @@ let quoteDebounceTimer = null;
 let currentQuote = null;
 let isCheckingOut = false;
 
+/**
+ * Initialize localStorage defaults for country selection
+ * Sets US as the default country unless already set
+ */
+function initializeCountryDefaults() {
+  if (!localStorage.getItem("selectedShippingCountry")) {
+    localStorage.setItem("selectedShippingCountry", "US");
+    localStorage.setItem("countryManuallySet", "false");
+    console.log("✓ Initialized localStorage with default country: US");
+  }
+}
+
+// Initialize country defaults immediately when module loads
+initializeCountryDefaults();
+
 // Debounce utility function
 function debounce(func, delayMs) {
   return function debounced(...args) {
@@ -143,31 +158,36 @@ function setupCountrySelector() {
     // This will be the geo-detected country (from initializeCurrency on product page)
     // or the customer's previously chosen country (which overrides geo-location)
     const savedCountry = localStorage.getItem("selectedShippingCountry");
+    const countryManuallySet = localStorage.getItem("countryManuallySet") === "true";
 
     // Check if cart has items and no country is selected
     const hasCartItems = cart && cart.items && cart.items.length > 0;
     const geoCountry = window.customerCurrency?.country;
 
     // Auto-select geo-detected country if cart has items and no country is saved
-    if (hasCartItems && !savedCountry && geoCountry && select.options.namedItem(geoCountry)) {
+    // Only auto-select if user hasn't manually set a country before
+    if (hasCartItems && !countryManuallySet && geoCountry && select.options.namedItem(geoCountry)) {
       select.value = geoCountry;
       localStorage.setItem("selectedShippingCountry", geoCountry);
+      localStorage.setItem("countryManuallySet", "false");
       console.log(`✓ Cart: Auto-selected country from geo-location: ${geoCountry}`);
       // Fetch quote for the auto-selected country
       debouncedFetchQuote();
     } else if (savedCountry && select.options.namedItem(savedCountry)) {
       // Only set if the country exists in the dropdown
       select.value = savedCountry;
-      console.log(`✓ Cart: Restored country from storage: ${savedCountry}`);
+      console.log(`✓ Cart: Restored country from storage: ${savedCountry} (manually set: ${countryManuallySet})`);
       // Fetch quote for the saved country
       debouncedFetchQuote();
     }
 
     select.addEventListener("change", async () => {
       if (!isCheckingOut) {
-        // Save customer's chosen country to localStorage (overrides geo-location)
+        // Save customer's chosen country to localStorage
         localStorage.setItem("selectedShippingCountry", select.value);
-        console.log(`✓ Cart: Updated shipping country to ${select.value}`);
+        // Mark that user manually selected this country (prevents geo overwrite)
+        localStorage.setItem("countryManuallySet", "true");
+        console.log(`✓ Cart: Updated shipping country to ${select.value} (user selected)`);
 
         updateCheckoutButtonState();
         // Clear quote if no country selected

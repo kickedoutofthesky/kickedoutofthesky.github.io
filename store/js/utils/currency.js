@@ -174,11 +174,9 @@ export async function initializeCurrency() {
     if (countryManuallySet && savedCountry) {
       console.log(`✓ Using manually selected country: ${savedCountry}`);
       detectedCountry = savedCountry;
-    } else if (savedCountry) {
-      // Use previously detected country
-      console.log(`✓ Using previously detected country: ${savedCountry}`);
-      detectedCountry = savedCountry;
     } else {
+      // If countryManuallySet is false (or doesn't exist), try geolocation
+      // This allows geolocation to override the default US value
       // Detect country (fire-and-forget, non-blocking)
       // Try IP detection first, fall back to timezone, then default to US
       detectedCountry = await detectCountryViaIP();
@@ -189,8 +187,14 @@ export async function initializeCurrency() {
       }
 
       if (!detectedCountry) {
-        console.warn("Timezone detection failed, defaulting to US");
-        detectedCountry = "US";
+        // Fall back to saved country or default to US
+        if (savedCountry) {
+          console.log(`✓ Using saved country as fallback: ${savedCountry}`);
+          detectedCountry = savedCountry;
+        } else {
+          console.warn("Timezone detection failed, defaulting to US");
+          detectedCountry = "US";
+        }
       }
 
       // Store detected country (not manually set)

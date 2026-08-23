@@ -316,6 +316,37 @@ describe("Geo-Location & Currency Initialization", () => {
       expect(localStorage.getItem("selectedShippingCountry")).toBe("FR");
       expect(localStorage.getItem("countryManuallySet")).toBe("true");
     });
+
+    test("geolocation overrides default US when countryManuallySet is false", async () => {
+      // Initialize with default US (simulating cart-display.js initialization)
+      localStorage.setItem("selectedShippingCountry", "US");
+      localStorage.setItem("countryManuallySet", "false");
+
+      // IP detection finds a different country
+      global.fetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ country_code: "DE" }),
+      });
+
+      global.fetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          country: "DE",
+          currency: "EUR",
+          exchangeRates: { USD: 1.0 },
+          vatRate: 19,
+          isEU: true,
+        }),
+      });
+
+      const result = await initializeCurrency();
+
+      // Should override the default US with detected DE
+      expect(result.country).toBe("DE");
+      expect(result.currency).toBe("EUR");
+      expect(localStorage.getItem("selectedShippingCountry")).toBe("DE");
+      expect(localStorage.getItem("countryManuallySet")).toBe("false");
+    });
   });
 
   describe("Multi-Currency Support with Geo", () => {
