@@ -3,7 +3,7 @@
  * Tests for multi-step country detection: IP → timezone → backend → default
  */
 
-import { initializeCurrency, _resetDetection } from "../utils/currency.js";
+import { initializeCurrency, updateCurrencyForCountry, _resetDetection } from "../utils/currency.js";
 
 describe("Geo-Location & Currency Initialization", () => {
   beforeEach(() => {
@@ -500,6 +500,95 @@ describe("Geo-Location & Currency Initialization", () => {
       expect(result2.country).toBe("DE");
       // Should only have called fetch twice (IP + backend from first call)
       expect(global.fetch).toHaveBeenCalledTimes(2);
+    });
+  });
+
+  describe("updateCurrencyForCountry() - Manual Country Selection", () => {
+    beforeEach(() => {
+      _resetDetection();
+      localStorage.clear();
+      global.fetch.mockClear();
+      window.customerCurrency = null;
+    });
+
+    test("should update currency when user manually selects a different country", async () => {
+      // Initialize with DE (Euro)
+      global.fetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ country_code: "DE" }),
+      });
+      global.fetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          country: "DE",
+          currency: "EUR",
+          exchangeRates: { USD: 1.0, EUR: 0.92 },
+          vatRate: 19,
+          isEU: true,
+        }),
+      });
+
+      await initializeCurrency();
+      expect(window.customerCurrency.currency).toBe("EUR");
+
+      // User manually selects US from dropdown
+      global.fetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          country: "US",
+          currency: "USD",
+          exchangeRates: { USD: 1.0 },
+          vatRate: 0,
+          isEU: false,
+        }),
+      });
+
+      const result = await updateCurrencyForCountry("US");
+
+      expect(result.country).toBe("US");
+      expect(result.currency).toBe("USD");
+      expect(window.customerCurrency.currency).toBe("USD");
+      expect(window.customerCurrency.country).toBe("US");
+    });
+
+    test("should handle currency update with different exchange rates", async () => {
+      // Initialize with US
+      global.fetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ country_code: "US" }),
+      });
+      global.fetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          country: "US",
+          currency: "USD",
+          exchangeRates: { USD: 1.0 },
+          vatRate: 0,
+          isEU: false,
+        }),
+      });
+
+      await initializeCurrency();
+      expect(window.customerCurrency.currency).toBe("USD");
+
+      // User selects GB (GBP)
+      global.fetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          country: "GB",
+          currency: "GBP",
+          exchangeRates: { USD: 1.0, GBP: 0.79 },
+          vatRate: 20,
+          isEU: false,
+        }),
+      });
+
+      const result = await updateCurrencyForCountry("GB");
+
+      expect(result.country).toBe("GB");
+      expect(result.currency).toBe("GBP");
+      expect(result.exchangeRates.GBP).toBe(0.79);
+      expect(window.customerCurrency.vatRate).toBe(20);
     });
   });
 });

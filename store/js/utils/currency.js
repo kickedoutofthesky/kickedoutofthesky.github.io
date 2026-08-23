@@ -256,6 +256,49 @@ export async function initializeCurrency() {
 }
 
 /**
+ * Update currency data for a manually selected country
+ * Called when user changes country selection in dropdown
+ * @param {string} country - Two-letter country code
+ * @returns {Promise<object>} Updated customerCurrency object
+ */
+export async function updateCurrencyForCountry(country) {
+  try {
+    // Fetch currency data from backend
+    const geoData = await fetchCurrencyData(country);
+
+    if (geoData) {
+      customerCurrency = {
+        country: geoData.country || country,
+        currency: geoData.currency || "USD",
+        exchangeRates: geoData.exchangeRates || { USD: 1.0 },
+        vatRate: geoData.vatRate || 0,
+        isEU: geoData.isEU || false,
+      };
+    } else {
+      // Fallback if backend fails
+      console.warn(`Failed to fetch currency for ${country}, using USD fallback`);
+      customerCurrency = {
+        country,
+        currency: "USD",
+        exchangeRates: { USD: 1.0 },
+        vatRate: 0,
+        isEU: false,
+      };
+    }
+
+    // Store globally for access from other modules
+    window.customerCurrency = customerCurrency;
+
+    console.log(`✓ Currency updated for manual selection: ${customerCurrency.country} → ${customerCurrency.currency}`);
+    return customerCurrency;
+  } catch (error) {
+    console.error("Error updating currency for country:", error);
+    // Return current currency if update fails
+    return window.customerCurrency || { country, currency: "USD" };
+  }
+}
+
+/**
  * Get decimal places for a currency
  * Most currencies use 2 decimals, but JPY/KRW use 0, some others use 3
  */

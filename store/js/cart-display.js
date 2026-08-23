@@ -2,7 +2,7 @@
 /* eslint-disable-next-line no-unused-vars */
 /* global cart, updateCartQuantity, removeFromCart, showCartBadgeBurst */
 
-import { initializeCurrency, convertPrice, formatPrice } from "./utils/currency.js";
+import { initializeCurrency, updateCurrencyForCountry, convertPrice, formatPrice } from "./utils/currency.js";
 
 let products = [];
 let countries = [];
@@ -188,6 +188,9 @@ function setupCountrySelector() {
         // Mark that user manually selected this country (prevents geo overwrite)
         localStorage.setItem("countryManuallySet", "true");
         console.log(`✓ Cart: Updated shipping country to ${select.value} (user selected)`);
+
+        // Update currency display for the newly selected country
+        await updateCurrencyForCountry(select.value);
 
         updateCheckoutButtonState();
         // Clear quote if no country selected
