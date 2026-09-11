@@ -2,7 +2,7 @@
 /* eslint-disable-next-line no-unused-vars */
 /* global cart, updateCartQuantity, removeFromCart, showCartBadgeBurst */
 
-import { initializeCurrency, updateCurrencyForCountry, convertPrice, formatPrice } from "./utils/currency.js";
+import { initializeCurrency, updateCurrencyForCountry, formatPrice } from "./utils/currency.js";
 
 let products = [];
 let countries = [];
@@ -189,16 +189,17 @@ function setupCountrySelector() {
         localStorage.setItem("countryManuallySet", "true");
         console.log(`✓ Cart: Updated shipping country to ${select.value} (user selected)`);
 
+        // IMPORTANT: Clear current quote immediately so checkout button is disabled
+        // until a fresh quote loads. This prevents stale calculationId issues.
+        currentQuote = null;
+        updateOrderSummaryDisplay(null);
+
         // Update currency display for the newly selected country
         await updateCurrencyForCountry(select.value);
 
         updateCheckoutButtonState();
-        // Clear quote if no country selected
-        if (!select.value) {
-          currentQuote = null;
-          updateOrderSummaryDisplay(null);
-        } else {
-          // Fetch quote with debouncing
+        // Fetch quote with debouncing for the new country
+        if (select.value) {
           debouncedFetchQuote();
         }
       }
@@ -303,7 +304,7 @@ function buildQuoteItems() {
       const variantId = product.variants[item.color]?.sizes?.[item.size]?.variant_id;
       if (variantId) {
         items.push({
-          sku: variantId,
+          sku: String(variantId), // Ensure SKU is a string for backend compatibility
           qty: item.quantity,
         });
       }
@@ -458,29 +459,21 @@ function updateOrderSummaryDisplay(quote) {
 
   contentEl.style.display = "block";
 
-  // Get customer's currency if available, otherwise use quote currency
-  const customerCurrency = window.customerCurrency;
-  const targetCurrency = customerCurrency?.currency || quote.currency || "USD";
+  // Extract prices from the nested structure - backend returns prices in a "prices" object
+  const prices = quote.prices || quote;
+  const currency = quote.currency || "USD";
 
-  // Convert prices from USD to customer's currency if needed
-  let subtotalConverted = quote.subtotal;
-  let shippingConverted = quote.shipping;
-  let taxConverted = quote.tax;
-  let totalConverted = quote.total;
-
-  if (customerCurrency && targetCurrency !== "USD") {
-    // Convert all amounts using the convertPrice function
-    subtotalConverted = convertPrice(quote.subtotal);
-    shippingConverted = convertPrice(quote.shipping);
-    taxConverted = convertPrice(quote.tax);
-    totalConverted = convertPrice(quote.total);
-  }
+  // Get prices in cents (already in customer's currency from backend)
+  let subtotalConverted = prices.subtotal;
+  let shippingConverted = prices.shipping;
+  let taxConverted = prices.tax;
+  let totalConverted = prices.total;
 
   // Format amounts using the target currency
-  const subtotalFormatted = formatPrice(subtotalConverted, targetCurrency);
-  const shippingFormatted = formatPrice(shippingConverted, targetCurrency);
-  const taxFormatted = formatPrice(taxConverted, targetCurrency);
-  const totalFormatted = formatPrice(totalConverted, targetCurrency);
+  const subtotalFormatted = formatPrice(subtotalConverted, currency);
+  const shippingFormatted = formatPrice(shippingConverted, currency);
+  const taxFormatted = formatPrice(taxConverted, currency);
+  const totalFormatted = formatPrice(totalConverted, currency);
 
   // Update subtotal, shipping, and total
   subtotalEl.textContent = subtotalFormatted;
