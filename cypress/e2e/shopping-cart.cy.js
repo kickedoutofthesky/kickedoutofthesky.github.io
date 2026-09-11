@@ -393,4 +393,205 @@ describe("Shopping Cart", () => {
     // Page should not crash or show console errors
     cy.get("body").should("exist");
   });
+
+  describe("Loading Widget", () => {
+    it("should show loading widget when navigating to cart with items", () => {
+      // beforeEach already adds a product
+      cy.get("a[href*='cart.html']").first().click();
+      cy.url().should("include", "cart.html");
+
+      // Loading widget should be visible initially
+      cy.get("#cart-loading").should("be.visible");
+    });
+
+    it("should hide loading widget after order summary loads", () => {
+      cy.get("a[href*='cart.html']").first().click();
+      cy.url().should("include", "cart.html");
+
+      // Initially loading
+      cy.get("#cart-loading").should("be.visible");
+
+      // Select a country to trigger quote fetch
+      cy.get("#shipping-country").select("US", { force: true });
+
+      // Wait for order summary to load
+      cy.get("#summary-content", { timeout: 10000 }).should("be.visible");
+
+      // Loading widget should be hidden after quote loads
+      cy.get("#cart-loading").should("not.be.visible");
+    });
+
+    it("should display cart items and order summary when cart has items", () => {
+      cy.get("a[href*='cart.html']").first().click();
+      cy.url().should("include", "cart.html");
+
+      // Cart items should be displayed
+      cy.get("[data-testid='cart-item']").should("have.length.greaterThan", 0);
+
+      // Select country for order summary
+      cy.get("#shipping-country").select("US", { force: true });
+
+      // Order summary should be visible
+      cy.get("#summary-content", { timeout: 10000 }).should("be.visible");
+      cy.get("[data-testid='cart-subtotal']").should("be.visible");
+    });
+
+    it("should not show continue shopping button when cart has items", () => {
+      cy.get("a[href*='cart.html']").first().click();
+      cy.url().should("include", "cart.html");
+
+      // Continue shopping link should not be visible
+      cy.get("#empty-cart").should("not.be.visible");
+      cy.get("#empty-cart a").should("not.be.visible");
+    });
+
+    it("should show loading widget with spinner icon", () => {
+      cy.get("a[href*='cart.html']").first().click();
+      cy.url().should("include", "cart.html");
+
+      // Loading widget should be visible
+      cy.get("#cart-loading").should("be.visible");
+
+      // Spinner icon should be present
+      cy.get("#cart-loading i.fa-spinner.fa-spin").should("exist");
+    });
+
+    it("should show loading text in the widget", () => {
+      cy.get("a[href*='cart.html']").first().click();
+      cy.url().should("include", "cart.html");
+
+      // Loading text should be visible
+      cy.get("#cart-loading").should("be.visible");
+      cy.get("#cart-loading p").should("contain", "Loading your cart");
+    });
+
+    it("should show empty cart message when no items in cart", () => {
+      cy.visit("/store/cart.html");
+
+      // Empty cart message should be visible
+      cy.get("[data-testid='empty-cart-message']").should("be.visible");
+
+      // Loading widget should not be visible
+      cy.get("#cart-loading").should("not.be.visible");
+    });
+
+    it("should show continue shopping link on empty cart", () => {
+      cy.visit("/store/cart.html");
+
+      // Continue shopping link should be visible
+      cy.get("[data-testid='empty-cart-message'] a").should("be.visible");
+      cy.get("[data-testid='empty-cart-message'] a").should("contain", "Continue Shopping");
+
+      // Link should navigate to merch page
+      cy.get("[data-testid='empty-cart-message'] a").should("have.attr", "href").and("include", "index.html");
+    });
+
+    it("should transition from loading to order summary when country is selected", () => {
+      cy.get("a[href*='cart.html']").first().click();
+      cy.url().should("include", "cart.html");
+
+      // Initially: loading visible, summary hidden
+      cy.get("#cart-loading").should("be.visible");
+      cy.get("#summary-content").should("not.be.visible");
+
+      // Select country
+      cy.get("#shipping-country").select("DE", { force: true });
+
+      // After quote loads: loading hidden, summary visible
+      cy.get("#summary-content", { timeout: 10000 }).should("be.visible");
+      cy.get("#cart-loading").should("not.be.visible");
+    });
+
+    it("should not show both continue shopping button and loading widget simultaneously", () => {
+      cy.get("a[href*='cart.html']").first().click();
+      cy.url().should("include", "cart.html");
+
+      // With items: only loading should be visible
+      cy.get("#empty-cart").should("not.be.visible");
+      cy.get("#cart-loading").should("be.visible");
+
+      // Remove all items and verify
+      cy.get("[data-testid='remove-item']").first().click({ force: true });
+
+      // Wait for cart to update
+      cy.wait(500);
+
+      // Now empty message should be visible, loading should not be
+      cy.get("[data-testid='empty-cart-message']").should("be.visible");
+      cy.get("#cart-loading").should("not.be.visible");
+    });
+
+    it("should hide loading widget after changing country selection", () => {
+      cy.get("a[href*='cart.html']").first().click();
+      cy.url().should("include", "cart.html");
+
+      // Select first country
+      cy.get("#shipping-country").select("US", { force: true });
+
+      // Wait for loading to complete
+      cy.get("#summary-content", { timeout: 10000 }).should("be.visible");
+      cy.get("#cart-loading").should("not.be.visible");
+
+      // Change country - loading should appear briefly
+      cy.get("#shipping-country").select("DE", { force: true });
+
+      // Eventually loading should hide again
+      cy.get("#summary-content", { timeout: 10000 }).should("be.visible");
+      cy.get("#cart-loading").should("not.be.visible");
+    });
+
+    it("should display currency code after country selection", () => {
+      cy.get("a[href*='cart.html']").first().click();
+      cy.url().should("include", "cart.html");
+
+      // Select US - should show USD
+      cy.get("#shipping-country").select("US", { force: true });
+
+      // Wait for quote to load
+      cy.get("#summary-content", { timeout: 10000 }).should("be.visible");
+      cy.get("[data-testid='currency-display']").should("contain", "USD");
+    });
+
+    it("should display EUR currency code for European country", () => {
+      cy.get("a[href*='cart.html']").first().click();
+
+      // Select Germany - should show EUR
+      cy.get("#shipping-country").select("DE", { force: true });
+
+      // Wait for quote to load
+      cy.get("#summary-content", { timeout: 10000 }).should("be.visible");
+      cy.get("[data-testid='currency-display']").should("contain", "EUR");
+    });
+
+    it("should display correct currency when changing countries", () => {
+      cy.get("a[href*='cart.html']").first().click();
+
+      // Start with US
+      cy.get("#shipping-country").select("US", { force: true });
+      cy.get("#summary-content", { timeout: 10000 }).should("be.visible");
+      cy.get("[data-testid='currency-display']").should("contain", "USD");
+
+      // Change to Germany
+      cy.get("#shipping-country").select("DE", { force: true });
+      cy.get("#summary-content", { timeout: 10000 }).should("be.visible");
+      cy.get("[data-testid='currency-display']").should("contain", "EUR");
+
+      // Change to UK
+      cy.get("#shipping-country").select("GB", { force: true });
+      cy.get("#summary-content", { timeout: 10000 }).should("be.visible");
+      cy.get("[data-testid='currency-display']").should("contain", "GBP");
+    });
+
+    it("should show loading widget before currency displays", () => {
+      cy.get("a[href*='cart.html']").first().click();
+
+      // Initially loading should show
+      cy.get("#shipping-country").select("US", { force: true });
+
+      // Loading should eventually hide and currency should display
+      cy.get("#cart-loading", { timeout: 10000 }).should("not.be.visible");
+      cy.get("[data-testid='currency-display']", { timeout: 10000 }).should("not.contain", "—");
+      cy.get("[data-testid='currency-display']").should("contain.text", /[A-Z]{3}/);
+    });
+  });
 });

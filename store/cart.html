@@ -289,6 +289,17 @@
 
             <!-- Order Summary Content (shown when quote loaded) -->
             <div id="summary-content" style="display: none">
+              <!-- Currency Display -->
+              <div class="flex-between text-secondary mb-15 pb-15 border-bottom-dark">
+                <span style="font-size: 0.85rem">Prices in:</span>
+                <span
+                  id="currency-display"
+                  style="font-size: 0.85rem; font-weight: bold"
+                  data-testid="currency-display"
+                >
+                  —
+                </span>
+              </div>
               <div class="flex-between text-secondary mb-15 pb-15 border-bottom-dark">
                 <span>Subtotal:</span>
                 <span id="subtotal" data-testid="cart-subtotal">—</span>

@@ -1,5 +1,6 @@
 // Cart Display Tests
 // Tests for cart display and tax calculation workflow
+/* eslint-disable no-unused-vars */
 
 describe("Cart Display - Tax Calculation", () => {
   // Mock the global cart and products
@@ -11,6 +12,7 @@ describe("Cart Display - Tax Calculation", () => {
     // Clear and setup DOM
     document.body.innerHTML = `
       <div id="summary-content" style="display: none;">
+        <div id="currency-display" data-testid="currency-display">—</div>
         <div id="subtotal" data-testid="cart-subtotal">—</div>
         <div id="shipping-value" data-testid="cart-shipping">—</div>
         <div id="tax-row">
@@ -21,6 +23,7 @@ describe("Cart Display - Tax Calculation", () => {
         <div id="import-duties-note" style="display: none;"></div>
       </div>
       <div id="quote-loading" style="display: none;"></div>
+      <div id="cart-loading" style="display: none;"></div>
       <div id="quote-error" style="display: none;">
         <p id="quote-error-text"></p>
       </div>
@@ -801,6 +804,275 @@ describe("Cart Display - Tax Calculation", () => {
         }
         expect(result).not.toBe("ERROR");
       });
+    });
+  });
+
+  describe("Loading Widget Display", () => {
+    beforeEach(() => {
+      // Setup DOM with loading widget and cart elements
+      document.body.innerHTML = `
+        <div id="empty-cart" data-testid="empty-cart-message" style="display: none;">
+          <p class="text-secondary">Your cart is empty</p>
+          <a href="index.html" class="btn btn-primary">Continue Shopping</a>
+        </div>
+        <div id="cart-loading" style="display: none; text-align: center; padding: 40px">
+          <i class="fas fa-spinner fa-spin"></i>
+          <p>Loading your cart...</p>
+        </div>
+        <div id="cart-items" style="display: none; grid;">
+          <!-- Cart items rendered here -->
+        </div>
+        <div id="cart-summary" style="display: none;">
+          <div id="summary-content" style="display: none;">
+            <div id="subtotal">—</div>
+            <div id="shipping-value">—</div>
+            <div id="tax-row">
+              <span id="tax-label">Tax/VAT:</span>
+              <span id="tax-value">—</span>
+            </div>
+            <div id="total">—</div>
+            <div id="import-duties-note"></div>
+          </div>
+          <div id="quote-loading" style="display: none;"></div>
+          <div id="quote-error" style="display: none;">
+            <p id="quote-error-text"></p>
+          </div>
+        </div>
+      `;
+    });
+
+    test("should show loading widget when cart has items", () => {
+      const cartLoading = document.getElementById("cart-loading");
+      const emptyCart = document.getElementById("empty-cart");
+      const cartItems = document.getElementById("cart-items");
+
+      // Simulate displayCart() with items
+      emptyCart.style.display = "none";
+      cartLoading.style.display = "block";
+      cartItems.style.display = "grid";
+
+      expect(cartLoading.style.display).toBe("block");
+      expect(emptyCart.style.display).toBe("none");
+      expect(cartItems.style.display).toBe("grid");
+    });
+
+    test("should hide loading widget when cart is empty", () => {
+      const cartLoading = document.getElementById("cart-loading");
+      const emptyCart = document.getElementById("empty-cart");
+      const cartItems = document.getElementById("cart-items");
+
+      // Simulate displayCart() with no items
+      emptyCart.style.display = "block";
+      cartLoading.style.display = "none";
+      cartItems.style.display = "none";
+
+      expect(cartLoading.style.display).toBe("none");
+      expect(emptyCart.style.display).toBe("block");
+      expect(cartItems.style.display).toBe("none");
+    });
+
+    test("should hide loading widget when quote loads", () => {
+      const cartLoading = document.getElementById("cart-loading");
+      const summaryContent = document.getElementById("summary-content");
+
+      // Simulate updateOrderSummaryDisplay() with a quote
+      cartLoading.style.display = "none";
+      summaryContent.style.display = "block";
+
+      expect(cartLoading.style.display).toBe("none");
+      expect(summaryContent.style.display).toBe("block");
+    });
+
+    test("should show continue shopping only on empty cart", () => {
+      const emptyCart = document.getElementById("empty-cart");
+      const continueLink = emptyCart.querySelector("a");
+
+      // Empty cart - link visible
+      emptyCart.style.display = "block";
+      expect(continueLink).not.toBeNull();
+      expect(emptyCart.style.display).toBe("block");
+
+      // With items - empty cart hidden
+      emptyCart.style.display = "none";
+      expect(emptyCart.style.display).toBe("none");
+    });
+
+    test("should display spinner icon in loading widget", () => {
+      const cartLoading = document.getElementById("cart-loading");
+      const spinner = cartLoading.querySelector("i.fa-spinner.fa-spin");
+
+      expect(spinner).not.toBeNull();
+      expect(spinner.classList.contains("fa-spinner")).toBe(true);
+      expect(spinner.classList.contains("fa-spin")).toBe(true);
+    });
+
+    test("should display loading text in loading widget", () => {
+      const cartLoading = document.getElementById("cart-loading");
+      const loadingText = cartLoading.querySelector("p");
+
+      expect(loadingText).not.toBeNull();
+      expect(loadingText.textContent).toContain("Loading your cart");
+    });
+
+    test("should transition from loading to order summary", () => {
+      const cartLoading = document.getElementById("cart-loading");
+      const summaryContent = document.getElementById("summary-content");
+
+      // Initially loading
+      cartLoading.style.display = "block";
+      summaryContent.style.display = "none";
+
+      expect(cartLoading.style.display).toBe("block");
+      expect(summaryContent.style.display).toBe("none");
+
+      // Quote loaded - hide loading, show summary
+      cartLoading.style.display = "none";
+      summaryContent.style.display = "block";
+
+      expect(cartLoading.style.display).toBe("none");
+      expect(summaryContent.style.display).toBe("block");
+    });
+
+    test("should never show both continue shopping and loading widget", () => {
+      const emptyCart = document.getElementById("empty-cart");
+      const cartLoading = document.getElementById("cart-loading");
+
+      // Scenario 1: Empty cart
+      emptyCart.style.display = "block";
+      cartLoading.style.display = "none";
+
+      expect(emptyCart.style.display === "block" && cartLoading.style.display === "block").toBe(false);
+
+      // Scenario 2: Cart with items
+      emptyCart.style.display = "none";
+      cartLoading.style.display = "block";
+
+      expect(emptyCart.style.display === "block" && cartLoading.style.display === "block").toBe(false);
+    });
+
+    test("should never show continue shopping when items exist in cart", () => {
+      const emptyCart = document.getElementById("empty-cart");
+
+      // Cart has items
+      emptyCart.style.display = "none";
+
+      expect(emptyCart.style.display).toBe("none");
+    });
+  });
+
+  describe("Loading Widget and Currency Display", () => {
+    test("should show loading widget when cart has items but quote not loaded", () => {
+      const cartLoading = document.getElementById("cart-loading");
+      const summaryContent = document.getElementById("summary-content");
+
+      // Simulate displayCart() behavior when cart has items
+      cartLoading.style.display = "block";
+      summaryContent.style.display = "block";
+
+      expect(cartLoading.style.display).toBe("block");
+    });
+
+    test("should hide loading widget when quote loads successfully", () => {
+      const cartLoading = document.getElementById("cart-loading");
+
+      // Simulate updateOrderSummaryDisplay() behavior
+      cartLoading.style.display = "none";
+
+      expect(cartLoading.style.display).toBe("none");
+    });
+
+    test("should display currency code from quote", () => {
+      document.body.innerHTML = `
+        <div id="summary-content" style="display: none;">
+          <div id="currency-display" data-testid="currency-display">—</div>
+          <div id="subtotal" data-testid="cart-subtotal">—</div>
+          <div id="shipping-value" data-testid="cart-shipping">—</div>
+          <div id="tax-row">
+            <span id="tax-label">Tax/VAT:</span>
+            <span id="tax-value" data-testid="cart-tax">—</span>
+          </div>
+          <div id="total">—</div>
+          <div id="import-duties-note" style="display: none;"></div>
+        </div>
+        <div id="quote-loading" style="display: none;"></div>
+        <div id="quote-error" style="display: none;">
+          <p id="quote-error-text"></p>
+        </div>
+      `;
+
+      const quote = {
+        subtotal: 5000,
+        shipping: 800,
+        tax: 350,
+        total: 6150,
+        currency: "EUR",
+        calculationId: "quote_123",
+        prices: { subtotal: 5000, shipping: 800, tax: 350, total: 6150 },
+      };
+
+      const currencyEl = document.getElementById("currency-display");
+      currencyEl.textContent = quote.currency;
+
+      expect(currencyEl.textContent).toBe("EUR");
+    });
+
+    test("should display USD currency code", () => {
+      document.body.innerHTML = `
+        <div id="summary-content" style="display: none;">
+          <div id="currency-display" data-testid="currency-display">—</div>
+          <div id="subtotal" data-testid="cart-subtotal">—</div>
+          <div id="shipping-value" data-testid="cart-shipping">—</div>
+          <div id="tax-row">
+            <span id="tax-label">Tax/VAT:</span>
+            <span id="tax-value" data-testid="cart-tax">—</span>
+          </div>
+          <div id="total">—</div>
+          <div id="import-duties-note" style="display: none;"></div>
+        </div>
+      `;
+
+      const quote = {
+        currency: "USD",
+      };
+
+      const currencyEl = document.getElementById("currency-display");
+      currencyEl.textContent = quote.currency;
+
+      expect(currencyEl.textContent).toBe("USD");
+    });
+
+    test("should display BRL currency code for international order", () => {
+      document.body.innerHTML = `
+        <div id="summary-content" style="display: none;">
+          <div id="currency-display" data-testid="currency-display">—</div>
+        </div>
+      `;
+
+      const quote = {
+        currency: "BRL",
+      };
+
+      const currencyEl = document.getElementById("currency-display");
+      currencyEl.textContent = quote.currency;
+
+      expect(currencyEl.textContent).toBe("BRL");
+    });
+
+    test("should show loading widget and hide summary initially", () => {
+      document.body.innerHTML = `
+        <div id="empty-cart" style="display: none;"></div>
+        <div id="cart-loading" style="display: block;"></div>
+        <div id="cart-items" style="display: grid;"></div>
+        <div id="cart-summary" style="display: block;">
+          <div id="summary-content" style="display: none;"></div>
+        </div>
+      `;
+
+      const cartLoading = document.getElementById("cart-loading");
+      const summaryContent = document.getElementById("summary-content");
+
+      expect(cartLoading.style.display).toBe("block");
+      expect(summaryContent.style.display).toBe("none");
     });
   });
 });

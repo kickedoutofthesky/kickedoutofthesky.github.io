@@ -447,6 +447,7 @@ function formatCurrency(minorUnits, currency, locale) {
 function updateOrderSummaryDisplay(quote) {
   const contentEl = document.getElementById("summary-content");
   const cartLoading = document.getElementById("cart-loading");
+  const currencyEl = document.getElementById("currency-display");
   const subtotalEl = document.getElementById("subtotal");
   const shippingEl = document.getElementById("shipping-value");
   const taxLabelEl = document.getElementById("tax-label");
@@ -464,6 +465,12 @@ function updateOrderSummaryDisplay(quote) {
 
   // Hide loading widget when quote is ready
   if (cartLoading) cartLoading.style.display = "none";
+
+  // Display currency code
+  if (currencyEl && quote.currency) {
+    currencyEl.textContent = quote.currency;
+  }
+
   contentEl.style.display = "block";
 
   // Extract prices from the nested structure - backend returns prices in a "prices" object
