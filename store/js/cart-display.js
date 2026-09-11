@@ -233,10 +233,10 @@ function displayCart() {
     return;
   }
 
-  // Cart has items - show loading state initially
+  // Cart has items - always show items, loading widget shown during quote fetch
   emptyCart.style.display = "none";
-  cartLoading.style.display = "block";
-  cartItems.style.display = "grid";
+  cartLoading.style.display = "none"; // Hide initially - will show when quote is being fetched
+  cartItems.style.display = "grid"; // Always show items
   if (cartSummary) cartSummary.style.display = "block";
 
   cartItems.innerHTML = "";
@@ -334,7 +334,9 @@ async function fetchQuote() {
     return;
   }
 
-  // Show loading state
+  // Show loading state for both cart and quote sections
+  const cartLoading = document.getElementById("cart-loading");
+  if (cartLoading) cartLoading.style.display = "block";
   showQuoteLoading(true);
   hideQuoteError();
 
@@ -460,6 +462,8 @@ function updateOrderSummaryDisplay(quote) {
 
   if (!quote) {
     contentEl.style.display = "none";
+    // Hide loading widget when quote is cleared
+    if (cartLoading) cartLoading.style.display = "none";
     return;
   }
 
