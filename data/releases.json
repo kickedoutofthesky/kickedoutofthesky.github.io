@@ -1,0 +1,16 @@
+{
+  "current": "betterpartofme",
+  "releases": [
+    {
+      "slug": "betterpartofme",
+      "title": "Better Part Of Me",
+      "artist": "Kicked Out Of The Sky",
+      "releaseDate": "2026-10-23",
+      "coverImage": "/img/releases/better-part-of-me-1200x1200.jpg",
+      "coverImageSquare": "/img/releases/better-part-of-me-1200x1200.jpg",
+      "coverImageCard": "/img/releases/better-part-of-me-1200x630.jpg",
+      "presaveUrl": "https://open.spotify.com/album/3mPTW6XxKAMcxIp1N3XKJ5",
+      "postReleaseUrl": "https://open.spotify.com/track/3mPTW6XxKAMcxIp1N3XKJ5"
+    }
+  ]
+}
