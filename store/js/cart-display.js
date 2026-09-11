@@ -646,18 +646,13 @@ async function proceedToCheckout() {
       return;
     }
 
-    // Use Stripe's redirect with client_secret for hosted checkout or embedded checkout
-    if (data.client_secret) {
-      // For hosted checkout, redirect to Stripe
-      // For embedded checkout, you'd initialize Stripe.js here
-      if (data.redirect_url) {
-        window.location.href = data.redirect_url;
-      } else {
-        // Alternative: use client_secret with Stripe.js or redirect to success
-        alert("Payment initiated. Please complete payment.");
-      }
+    console.log("Checkout response:", data);
+
+    // Redirect to Stripe Checkout Session
+    if (data.redirect_url) {
+      window.location.href = data.redirect_url;
     } else {
-      throw new Error("No client_secret provided by server");
+      throw new Error("No redirect_url provided by server");
     }
   } catch (error) {
     console.error("Checkout error:", error);
