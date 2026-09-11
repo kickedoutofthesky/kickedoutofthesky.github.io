@@ -359,6 +359,7 @@ async function fetchQuote() {
     }
 
     const quote = await response.json();
+    console.log("Quote response:", quote); // Debug: log the full quote response
     currentQuote = quote;
     updateOrderSummaryDisplay(quote);
     showQuoteLoading(false);
@@ -473,15 +474,17 @@ function updateOrderSummaryDisplay(quote) {
   if (cartLoading) cartLoading.style.display = "none";
 
   // Display currency code
-  if (currencyEl && quote.currency) {
-    currencyEl.textContent = quote.currency;
+  // Fallback to window.customerCurrency if quote doesn't have currency
+  const currency = quote.currency || (window.customerCurrency && window.customerCurrency.currency) || "USD";
+
+  if (currencyEl && currency) {
+    currencyEl.textContent = currency;
   }
 
   contentEl.style.display = "block";
 
   // Extract prices from the nested structure - backend returns prices in a "prices" object
   const prices = quote.prices || quote;
-  const currency = quote.currency || "USD";
 
   // Get prices in cents (already in customer's currency from backend)
   let subtotalConverted = prices.subtotal;
