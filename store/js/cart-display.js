@@ -452,9 +452,11 @@ function updateOrderSummaryDisplay(quote) {
   const currencyEl = document.getElementById("currency-display");
   const subtotalEl = document.getElementById("subtotal");
   const shippingEl = document.getElementById("shipping-value");
+  const shippingNoteEl = document.getElementById("shipping-note");
   const taxLabelEl = document.getElementById("tax-label");
   const taxValueEl = document.getElementById("tax-value");
   const taxRowEl = document.getElementById("tax-row");
+  const taxNoteEl = document.getElementById("tax-note");
   const totalEl = document.getElementById("total");
   const importDutiesEl = document.getElementById("import-duties-note");
 
@@ -496,24 +498,57 @@ function updateOrderSummaryDisplay(quote) {
   // Update subtotal, shipping, and total
   subtotalEl.textContent = subtotalFormatted;
   shippingEl.textContent = shippingFormatted;
+
+  // Display shipping note if provided by backend (e.g., "Calculated at checkout based on your address")
+  if (quote.shippingNote && shippingNoteEl) {
+    shippingNoteEl.textContent = quote.shippingNote;
+    shippingNoteEl.style.display = "block";
+  } else if (shippingNoteEl) {
+    shippingNoteEl.style.display = "none";
+  }
+
   totalEl.textContent = totalFormatted;
 
-  // Handle tax/VAT display based on tax amount
+  // Handle tax/VAT display - use backend's taxLabel if provided
   let taxLabel = "Tax/VAT:";
   let taxValue = taxFormatted;
+  let taxNote = "";
 
-  // If there is tax, show "Tax" with the amount
-  if (taxConverted > 0) {
-    taxLabel = "Tax:";
-    taxValue = taxFormatted;
+  // Use backend-provided taxLabel if available (e.g., "Sales tax (8.5%) will be added at checkout")
+  if (quote.taxLabel) {
+    taxLabel = quote.taxLabel;
+    // If taxLabel is provided, assume it's a note about when tax will be calculated
+    if (taxConverted === 0) {
+      taxValue = "";
+      taxNote = quote.taxLabel;
+    } else {
+      taxValue = taxFormatted;
+      taxNote = "";
+    }
   } else {
-    // If tax is 0, show "VAT" and "Included"
-    taxLabel = "VAT:";
-    taxValue = "Included";
+    // Fallback to original logic if no taxLabel provided
+    if (taxConverted > 0) {
+      taxLabel = "Tax:";
+      taxValue = taxFormatted;
+    } else {
+      // If tax is 0, show "VAT" and "Included"
+      taxLabel = "VAT:";
+      taxValue = "Included";
+    }
   }
 
   taxLabelEl.textContent = taxLabel;
   taxValueEl.textContent = taxValue;
+
+  // Display tax note if provided
+  if (taxNote) {
+    if (taxNoteEl) {
+      taxNoteEl.textContent = taxNote;
+      taxNoteEl.style.display = "block";
+    }
+  } else if (taxNoteEl) {
+    taxNoteEl.style.display = "none";
+  }
 
   // Style tax row: muted if tax is included in price
   if (quote.taxIncluded) {

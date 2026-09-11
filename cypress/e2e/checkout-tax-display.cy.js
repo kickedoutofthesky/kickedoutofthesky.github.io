@@ -278,9 +278,7 @@ describe("Tax Calculation Workflow", () => {
   describe("Tax Display - Debouncing", () => {
     it("should debounce quote requests when changing country", () => {
       // Should only make one request after 400ms debounce, not multiple
-      let requestCount = 0;
       cy.intercept("POST", "**/api/quote", req => {
-        requestCount++;
         req.reply({ statusCode: 200, body: { subtotal: 5000, tax: 350, total: 5350, currency: "USD" } });
       }).as("quoteRequest");
 
