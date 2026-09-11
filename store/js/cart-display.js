@@ -222,16 +222,20 @@ function displayCart() {
   const cartItems = document.getElementById("cart-items");
   const cartSummary = document.getElementById("cart-summary");
   const emptyCart = document.getElementById("empty-cart");
+  const cartLoading = document.getElementById("cart-loading");
 
   if (!cart || !cart.items || cart.items.length === 0) {
     cartItems.style.display = "none";
+    cartLoading.style.display = "none";
     emptyCart.style.display = "block";
     if (cartSummary) cartSummary.style.display = "none";
     currentQuote = null;
     return;
   }
 
+  // Cart has items - show loading state initially
   emptyCart.style.display = "none";
+  cartLoading.style.display = "block";
   cartItems.style.display = "grid";
   if (cartSummary) cartSummary.style.display = "block";
 
@@ -442,6 +446,7 @@ function formatCurrency(minorUnits, currency, locale) {
 
 function updateOrderSummaryDisplay(quote) {
   const contentEl = document.getElementById("summary-content");
+  const cartLoading = document.getElementById("cart-loading");
   const subtotalEl = document.getElementById("subtotal");
   const shippingEl = document.getElementById("shipping-value");
   const taxLabelEl = document.getElementById("tax-label");
@@ -457,6 +462,8 @@ function updateOrderSummaryDisplay(quote) {
     return;
   }
 
+  // Hide loading widget when quote is ready
+  if (cartLoading) cartLoading.style.display = "none";
   contentEl.style.display = "block";
 
   // Extract prices from the nested structure - backend returns prices in a "prices" object
