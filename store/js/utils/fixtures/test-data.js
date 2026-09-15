@@ -157,56 +157,87 @@ export const mockCountries = [
 
 // Mock Order
 export const mockOrder = {
-  printful_order_id: "PF123456789",
+  printful_order_id: "eoKK1upmt2jl99BK1qYLDjbYH1gwUZeh",
   external_order_id: "ORD-2024-001",
   status: "processing",
-  created: 1725355200,
-  updated: 1725355800,
+  created_at: "1725355200000",
+  updated_at: "1725355800000",
+  message: "Order is being prepared for shipment.",
+  costs: {
+    subtotal_cents: "7000",
+    shipping_cents: "1000",
+    tax_cents: "640",
+    total_cents: "8640",
+  },
   items: [
     {
       id: "item_001",
       product_key: "tee_001",
       product_name: "Classic Tee",
+      product_title: "Classic Tee",
+      variant_id: 1001,
       variant_name: "Black / Medium",
+      color: "Black",
+      size: "M",
       quantity: 1,
-      price: "25.00",
+      price_cents: "2500",
+      image: "tee-black.jpg",
     },
     {
       id: "item_002",
       product_key: "hoodie_001",
       product_name: "Classic Hoodie",
+      product_title: "Classic Hoodie",
+      variant_id: 2001,
       variant_name: "Navy / Large",
+      color: "Navy",
+      size: "L",
       quantity: 1,
-      price: "45.00",
+      price_cents: "4500",
+      image: "hoodie-navy.jpg",
     },
   ],
   recipient: {
     name: "John Doe",
+    email: "john@example.com",
     address: {
       line1: "123 Main St",
+      line2: "Apt 4B",
       city: "Springfield",
       state: "IL",
       zip: "62701",
-      country: "US",
+      country: "United States",
+      country_code: "US",
     },
   },
-  shipping: {
-    status: "pending",
-    carrier: "USPS",
-    tracking_number: null,
-  },
+  shipments: [],
 };
 
 // Mock Order with Tracking
 export const mockOrderWithTracking = {
   ...mockOrder,
   status: "shipped",
-  shipping: {
-    status: "in_transit",
-    carrier: "USPS",
-    tracking_number: "9400111899223456789012",
-    tracking_url: "https://tools.usps.com/go/TrackConfirmAction",
-  },
+  shipments: [
+    {
+      id: "shipment-001",
+      carrier: "USPS",
+      service: "USPS Ground Advantage",
+      tracking_number: "9400111899223456789012",
+      tracking_url: "https://tools.usps.com/go/TrackConfirmAction",
+      shipped_date: "1725442800000",
+      delivered_date: null,
+      items: [
+        {
+          quantity: 1,
+          item_id: "item_001",
+        },
+        {
+          quantity: 1,
+          item_id: "item_002",
+        },
+      ],
+    },
+  ],
 };
 
 // Mock Checkout Session Response
