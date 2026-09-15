@@ -591,7 +591,7 @@ function removeFromCart(index) {
 
 function getProductImage(product, color) {
   // Use color-specific image if available
-  if (color && product.variants[color] && product.variants[color].image) {
+  if (color && product.variants && product.variants[color] && product.variants[color].image) {
     return product.variants[color].image;
   }
   // Fallback to product image
@@ -733,5 +733,5 @@ window.removeFromCart = removeFromCart;
 
 // Allow importing in Node.js (Jest tests) while keeping browser globals
 if (typeof module !== "undefined" && module.exports) {
-  module.exports = { getProductImage };
+  module.exports = { getProductImage, debounce, generateCSRFToken, getCSRFToken };
 }
