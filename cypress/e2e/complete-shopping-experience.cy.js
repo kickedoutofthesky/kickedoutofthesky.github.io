@@ -214,19 +214,19 @@ describe("Complete Shopping Experience E2E", () => {
     selectShippingCountry(countries[0].code);
     cy.get("#summary-content", { timeout: 10000 }).should("be.visible");
     cy.get("#currency-display", { timeout: 5000 }).should("exist");
-    cy.get("#subtotal", { timeout: 5000 }).should("not.include", "NaN");
+    cy.get("#subtotal", { timeout: 5000 }).invoke("text").should("not.include", "NaN");
 
     // Test second country
     selectShippingCountry(countries[1].code);
     cy.get("#summary-content", { timeout: 10000 }).should("be.visible");
     cy.get("#currency-display", { timeout: 5000 }).should("exist");
-    cy.get("#subtotal", { timeout: 5000 }).should("not.include", "NaN");
+    cy.get("#subtotal", { timeout: 5000 }).invoke("text").should("not.include", "NaN");
 
     // Test third country
     selectShippingCountry(countries[2].code);
     cy.get("#summary-content", { timeout: 10000 }).should("be.visible");
     cy.get("#currency-display", { timeout: 5000 }).should("exist");
-    cy.get("#subtotal", { timeout: 5000 }).should("not.include", "NaN");
+    cy.get("#subtotal", { timeout: 5000 }).invoke("text").should("not.include", "NaN");
   });
 
   it("should disable checkout until terms are accepted", () => {
@@ -296,7 +296,7 @@ describe("Complete Shopping Experience E2E", () => {
     }).as("validateCheckout");
 
     // Click checkout
-    cy.get("button").contains("Proceed to Checkout").click({ force: true });
-    cy.wait("@validateCheckout");
+    cy.get("button").contains("Proceed to Checkout").should("not.be.disabled").click({ force: true });
+    cy.wait("@validateCheckout", { timeout: 10000 });
   });
 });
