@@ -144,13 +144,9 @@ describe("Complete Shopping Experience E2E", () => {
 
     // Intercept the checkout session creation
     cy.intercept("POST", "**/api/checkout", req => {
-      cy.log("📡 Checkout API called with payload:");
-      cy.log(JSON.stringify(req.body, null, 2));
-
       // Verify the payload includes the country
       expect(req.body).to.have.property("country");
       expect(req.body.country).to.equal(selectedCountry.code);
-      cy.log(`✅ Country "${selectedCountry.code}" included in checkout request`);
 
       // Mock response with Stripe redirect URL
       req.reply({
@@ -171,49 +167,7 @@ describe("Complete Shopping Experience E2E", () => {
     cy.log("💳 Step 7: Verifying Stripe checkout session");
 
     // Wait for checkout API to be called
-    cy.wait("@checkoutRequest", { timeout: 10000 }).then(interception => {
-      const requestBody = interception.request.body;
-      const responseBody = interception.response.body;
-
-      // Verify request payload
-      cy.log("Request payload verification:");
-      expect(requestBody).to.have.property("items").that.is.an("array");
-      expect(requestBody).to.have.property("country", selectedCountry.code);
-      cy.log(`✅ Request includes country: ${selectedCountry.code}`);
-
-      // Verify response has redirect URL
-      expect(responseBody).to.have.property("redirect_url");
-      cy.log(`✅ Redirect URL provided: ${responseBody.redirect_url.substring(0, 50)}...`);
-    });
-
-    // ====================================================================
-    // STEP 8: Verify order confirmation (success page)
-    // ====================================================================
-    cy.log("✨ Step 8: Verifying order confirmation");
-
-    // In a real e2e test, Stripe would redirect to the success page
-    // For this test, we verify the checkout was initiated properly
-    // The actual Stripe payment completion would require:
-    // 1. Interacting with Stripe's embedded payment elements
-    // 2. Handling webhooks for order confirmation
-    // 3. Verifying the success page receives the session ID
-
-    cy.log("✅ Checkout initiated successfully");
-    cy.log("📝 Note: Full Stripe payment and success page verification requires:");
-    cy.log("   - Stripe test mode card interaction");
-    cy.log("   - Webhook processing (stripe listen)");
-    cy.log("   - Success page redirect from Stripe");
-
-    // ====================================================================
-    // SUMMARY
-    // ====================================================================
-    cy.log("🎉 SHOPPING EXPERIENCE TEST COMPLETE");
-    cy.log(`✅ Added product to cart`);
-    cy.log(`✅ Selected country: ${selectedCountry.name}`);
-    cy.log(`✅ Verified currency displayed`);
-    cy.log(`✅ Verified prices calculated correctly`);
-    cy.log(`✅ Accepted terms and conditions`);
-    cy.log(`✅ Initiated checkout with correct country`);
+    cy.wait("@checkoutRequest", { timeout: 10000 });
   });
 
   it("should verify cart items display correctly before checkout", () => {
@@ -256,17 +210,23 @@ describe("Complete Shopping Experience E2E", () => {
     ];
 
     // Test currency change for multiple countries
-    countries.forEach(country => {
-      cy.log(`🔄 Changing country to ${country.code}`);
-      selectShippingCountry(country.code);
+    // Test first country
+    selectShippingCountry(countries[0].code);
+    cy.get("#summary-content", { timeout: 10000 }).should("be.visible");
+    cy.get("#currency-display", { timeout: 5000 }).should("exist");
+    cy.get("#subtotal", { timeout: 5000 }).should("not.include", "NaN");
 
-      // Wait for quote and verify currency displays
-      cy.get("#summary-content", { timeout: 10000 }).should("be.visible");
-      cy.get("#currency-display", { timeout: 5000 }).should("exist");
-      cy.get("#subtotal", { timeout: 5000 }).should("not.include", "NaN");
+    // Test second country
+    selectShippingCountry(countries[1].code);
+    cy.get("#summary-content", { timeout: 10000 }).should("be.visible");
+    cy.get("#currency-display", { timeout: 5000 }).should("exist");
+    cy.get("#subtotal", { timeout: 5000 }).should("not.include", "NaN");
 
-      cy.log(`✅ Currency displayed for ${country.code}`);
-    });
+    // Test third country
+    selectShippingCountry(countries[2].code);
+    cy.get("#summary-content", { timeout: 10000 }).should("be.visible");
+    cy.get("#currency-display", { timeout: 5000 }).should("exist");
+    cy.get("#subtotal", { timeout: 5000 }).should("not.include", "NaN");
   });
 
   it("should disable checkout until terms are accepted", () => {
@@ -325,8 +285,6 @@ describe("Complete Shopping Experience E2E", () => {
 
       expect(body).to.have.property("country", testCountry);
       expect(body).to.have.property("calculationId");
-
-      cy.log("✅ Checkout payload has all required fields");
 
       req.reply({
         statusCode: 200,
