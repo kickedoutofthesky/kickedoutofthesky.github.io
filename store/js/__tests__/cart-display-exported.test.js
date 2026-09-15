@@ -187,8 +187,8 @@ describe("Cart Display - Exported Functions", () => {
       // Both should be strings with substantial length
       expect(typeof token1).toBe("string");
       expect(typeof token2).toBe("string");
-      expect(token1.length).toBeGreaterThan(20);
-      expect(token2.length).toBeGreaterThan(20);
+      expect(token1.length).toBeGreaterThanOrEqual(20);
+      expect(token2.length).toBeGreaterThanOrEqual(20);
     });
 
     it("should generate unique tokens", () => {

@@ -843,5 +843,13 @@ function getPriceRange(product) {
 
 // Allow importing in Node.js (Jest tests) while keeping browser globals
 if (typeof module !== "undefined" && module.exports) {
-  module.exports = { getPriceDisplay, getPriceRange };
+  module.exports = {
+    getPriceDisplay,
+    getPriceRange,
+    checkFormComplete,
+    isSticker,
+    resetZoom,
+    updateColorImage,
+    updateSizes,
+  };
 }

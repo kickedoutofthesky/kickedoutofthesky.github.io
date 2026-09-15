@@ -746,5 +746,14 @@ window.removeFromCart = removeFromCart;
 
 // Allow importing in Node.js (Jest tests) while keeping browser globals
 if (typeof module !== "undefined" && module.exports) {
-  module.exports = { getProductImage, debounce, generateCSRFToken, getCSRFToken };
+  module.exports = {
+    getProductImage,
+    debounce,
+    generateCSRFToken,
+    getCSRFToken,
+    updateCheckoutButtonState,
+    buildQuoteItems,
+    populateCountrySelect,
+    initializeCountryDefaults,
+  };
 }
