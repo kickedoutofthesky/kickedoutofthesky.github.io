@@ -325,7 +325,7 @@ describe("Validating Mock Fetch", () => {
   });
 
   it("should handle JSON parsing errors", async () => {
-    const validator = (url, method, body) => true;
+    const validator = (_url, _method, _body) => true;
     const mockFetch = createValidatingMockFetch(validator, { success: true });
 
     const response = await mockFetch("/api/test", {
@@ -340,7 +340,7 @@ describe("Validating Mock Fetch", () => {
   });
 
   it("should handle validator errors", async () => {
-    const validator = () => {
+    const validator = (_url, _method, _body) => {
       throw new Error("Validation failed");
     };
 
@@ -355,7 +355,7 @@ describe("Validating Mock Fetch", () => {
   });
 
   it("should pass correct parameters to validator", async () => {
-    const validator = jest.fn((url, method, body) => true);
+    const validator = jest.fn(() => true);
     const mockFetch = createValidatingMockFetch(validator, { success: true });
 
     await mockFetch("/api/test", {
