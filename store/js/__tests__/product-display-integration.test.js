@@ -25,19 +25,19 @@ describe("Product Display - Comprehensive Integration", () => {
             <button id="carousel-next">→</button>
           </div>
         </div>
-        
+
         <div id="product-info">
           <h1 id="product-name"></h1>
           <div id="product-rating"></div>
           <div id="product-price-display"></div>
           <p id="product-description"></p>
-          
+
           <div id="variant-selector">
             <div class="variant-group">
               <label for="color-input">Color:</label>
               <div id="color-options"></div>
             </div>
-            
+
             <div class="variant-group">
               <label for="size-input">Size:</label>
               <div id="size-options"></div>
@@ -45,21 +45,21 @@ describe("Product Display - Comprehensive Integration", () => {
                 <a href="#size-chart" class="size-chart-link">View Size Chart</a>
               </div>
             </div>
-            
+
             <div class="quantity-group">
               <label for="quantity">Quantity:</label>
               <input id="quantity" type="number" value="1" min="1" max="999" />
             </div>
           </div>
-          
+
           <div id="form-status">
             <div id="validation-errors"></div>
             <div id="success-message"></div>
           </div>
-          
+
           <button id="add-to-cart-btn" class="primary-btn">Add to Cart</button>
           <button id="save-for-later-btn" class="secondary-btn">Save for Later</button>
-          
+
           <div id="product-details-tabs">
             <button id="tab-description" class="tab-btn active">Description</button>
             <button id="tab-reviews" class="tab-btn">Reviews</button>

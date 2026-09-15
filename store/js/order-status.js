@@ -567,3 +567,22 @@ function resetForm() {
   // Clear URL query parameters
   window.history.replaceState({}, document.title, window.location.pathname);
 }
+
+// For backward compatibility with Jest CommonJS imports
+// These functions are imported from order-status-utilities.js but re-exported for testing
+if (typeof module !== "undefined" && module.exports) {
+  module.exports = {
+    // Re-export imported utilities so they're available via require()
+    // in CommonJS test environments
+    isValidEmail,
+    isValidPrintfulOrderId,
+    formatDate,
+    formatStatus,
+    formatTrackingStatus,
+    getCountryFlag,
+    // Local functions
+    enrichItemWithProductData,
+    handleSearch,
+    displayOrder,
+  };
+}
