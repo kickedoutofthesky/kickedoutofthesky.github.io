@@ -103,7 +103,6 @@ describe("Complete Shopping Experience E2E", () => {
     // Check currency display
     cy.get("#currency-display").then($currencyEl => {
       const displayedCurrency = $currencyEl.text().trim().toUpperCase();
-      cy.log(`Displayed currency: ${displayedCurrency}, Expected: ${selectedCountry.currency}`);
 
       // Currency code should match the selected country
       // Note: Some countries may use the same currency (e.g., EUR for Germany/France)
@@ -112,20 +111,18 @@ describe("Complete Shopping Experience E2E", () => {
     });
 
     // Verify prices are displayed (not NaN or $0)
-    cy.get("#subtotal").then(subtotalEl => {
+    cy.get("#subtotal", { timeout: 5000 }).then(subtotalEl => {
       const subtotalText = subtotalEl.text();
       expect(subtotalText).to.not.include("NaN");
       expect(subtotalText).to.not.equal("$0.00");
       expect(subtotalText).to.match(/[$€£¥₹]/); // Should have some currency symbol
-      cy.log(`✅ Subtotal displayed: ${subtotalText}`);
     });
 
-    cy.get("#total").then(totalEl => {
+    cy.get("#total", { timeout: 5000 }).then(totalEl => {
       const totalText = totalEl.text();
       expect(totalText).to.not.include("NaN");
       expect(totalText).to.not.equal("$0.00");
       expect(totalText).to.match(/[$€£¥₹]/);
-      cy.log(`✅ Total displayed: ${totalText}`);
     });
 
     // ====================================================================
