@@ -2,6 +2,7 @@
 // Tests for product.js and store.js functionality
 const { getPriceDisplay } = require("../store");
 const { getProductImage } = require("../cart-display");
+const { getPriceRange } = require("../product");
 
 describe("Product Display", () => {
   const mockProduct = {
@@ -374,6 +375,55 @@ describe("Product Display", () => {
       const result2 = onColorChange(mockProductDifferentSizes, "Natural");
       expect(result2.selectedSize).toBe("");
       expect(result2.sizes).toContain("XS");
+    });
+  });
+
+  describe("getPriceRange from product.js", () => {
+    test("should calculate price range from all variants", () => {
+      const priceRange = getPriceRange(mockProduct);
+      expect(priceRange).toHaveProperty("min");
+      expect(priceRange).toHaveProperty("max");
+      expect(priceRange.min).toBe(25);
+      expect(priceRange.max).toBe(25);
+    });
+
+    test("should calculate price range for sticker product", () => {
+      const priceRange = getPriceRange(mockStickerProduct);
+      expect(priceRange.min).toBe(4.5);
+      expect(priceRange.max).toBe(5.5);
+    });
+
+    test("should convert cents to dollars correctly", () => {
+      const priceRange = getPriceRange(mockProduct);
+      // Prices are in cents: 2500 = $25.00
+      expect(priceRange.min * 100).toBe(2500);
+      expect(priceRange.max * 100).toBe(2500);
+    });
+
+    test("should handle single variant products", () => {
+      const singleVariantProduct = {
+        variants: {
+          Black: {
+            sizes: {
+              M: { price_cents: 3000 },
+            },
+          },
+        },
+      };
+
+      const priceRange = getPriceRange(singleVariantProduct);
+      expect(priceRange.min).toBe(30);
+      expect(priceRange.max).toBe(30);
+    });
+
+    test("should handle empty variants", () => {
+      const emptyProduct = {
+        variants: {},
+      };
+
+      const priceRange = getPriceRange(emptyProduct);
+      expect(priceRange).toHaveProperty("min");
+      expect(priceRange).toHaveProperty("max");
     });
   });
 });
