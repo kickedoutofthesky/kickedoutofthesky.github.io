@@ -3,6 +3,12 @@
 /* global cart, updateCartQuantity, removeFromCart, showCartBadgeBurst */
 
 import { initializeCurrency, updateCurrencyForCountry, formatPrice } from "./utils/currency.js";
+import {
+  buildQuoteRequestPayload,
+  extractQuoteData,
+  isValidQuote,
+  formatCurrency as formatCurrencyUtil,
+} from "./utils/fixtures/cart-utilities.js";
 
 let products = [];
 let countries = [];
@@ -299,22 +305,18 @@ function displayCart() {
   }
 }
 
-// Transform cart items to SKU format for API
+// Transform cart items to SKU format for API (wrapper around utility function)
 function buildQuoteItems() {
-  const items = [];
-  cart.items.forEach(item => {
-    const product = products.find(p => p.product_key === item.productKey);
-    if (product) {
-      const variantId = product.variants[item.color]?.sizes?.[item.size]?.variant_id;
-      if (variantId) {
-        items.push({
-          sku: String(variantId), // Ensure SKU is a string for backend compatibility
-          qty: item.quantity,
-        });
-      }
-    }
-  });
-  return items;
+  // Convert cart items to format expected by buildQuoteRequestPayload
+  const items = cart.items.map(item => ({
+    variant_id: item.variant_id || item.variant_id,
+    quantity: item.quantity,
+  }));
+
+  const countrySelect = document.getElementById("shipping-country");
+  const country = countrySelect?.value;
+
+  return buildQuoteRequestPayload(items, country);
 }
 
 async function fetchQuote() {
@@ -326,9 +328,7 @@ async function fetchQuote() {
   }
 
   const country = countrySelect.value;
-  const items = buildQuoteItems();
-
-  if (items.length === 0) {
+  if (!cart || !cart.items || cart.items.length === 0) {
     currentQuote = null;
     updateOrderSummaryDisplay(null);
     return;
@@ -341,6 +341,12 @@ async function fetchQuote() {
   hideQuoteError();
 
   try {
+    // Use utility function to build payload
+    const items = cart.items.map(item => ({
+      variant_id: item.variant_id || item.variant_id,
+      quantity: item.quantity,
+    }));
+
     const backendUrl = window.__API_URL__ || "https://api.kickedoutofthesky.com";
     const response = await fetch(`${backendUrl}/api/quote`, {
       method: "POST",
@@ -358,10 +364,17 @@ async function fetchQuote() {
       throw new Error(errorData.error || "Failed to fetch quote");
     }
 
-    const quote = await response.json();
-    console.log("Quote response:", quote); // Debug: log the full quote response
-    currentQuote = quote;
-    updateOrderSummaryDisplay(quote);
+    const quoteData = await response.json();
+    console.log("Quote response:", quoteData); // Debug: log the full quote response
+
+    // Use utility function to normalize quote data
+    currentQuote = extractQuoteData(quoteData);
+
+    if (!isValidQuote(currentQuote)) {
+      throw new Error("Invalid quote data received from server");
+    }
+
+    updateOrderSummaryDisplay(currentQuote);
     showQuoteLoading(false);
   } catch (error) {
     console.error("Error fetching quote:", error);
@@ -473,9 +486,12 @@ function updateOrderSummaryDisplay(quote) {
   // Hide loading widget when quote is ready
   if (cartLoading) cartLoading.style.display = "none";
 
+  // Use utility function to normalize quote data if not already normalized
+  const normalizedQuote = quote.subtotal !== undefined ? quote : extractQuoteData(quote);
+
   // Display currency code
   // Fallback to window.customerCurrency if quote doesn't have currency
-  const currency = quote.currency || (window.customerCurrency && window.customerCurrency.currency) || "USD";
+  const currency = normalizedQuote.currency || (window.customerCurrency && window.customerCurrency.currency) || "USD";
 
   if (currencyEl && currency) {
     currencyEl.textContent = currency;
@@ -483,14 +499,11 @@ function updateOrderSummaryDisplay(quote) {
 
   contentEl.style.display = "block";
 
-  // Extract prices from the nested structure - backend returns prices in a "prices" object
-  const prices = quote.prices || quote;
-
-  // Get prices in cents (already in customer's currency from backend)
-  let subtotalConverted = prices.subtotal;
-  let shippingConverted = prices.shipping;
-  let taxConverted = prices.tax;
-  let totalConverted = prices.total;
+  // Get prices from normalized quote (already in cents from utility function)
+  const subtotalConverted = normalizedQuote.subtotal;
+  const shippingConverted = normalizedQuote.shipping;
+  const taxConverted = normalizedQuote.tax;
+  const totalConverted = normalizedQuote.total;
 
   // Format amounts using the target currency
   const subtotalFormatted = formatPrice(subtotalConverted, currency);
@@ -503,8 +516,8 @@ function updateOrderSummaryDisplay(quote) {
   shippingEl.textContent = shippingFormatted;
 
   // Display shipping note if provided by backend (e.g., "Calculated at checkout based on your address")
-  if (quote.shippingNote && shippingNoteEl) {
-    shippingNoteEl.textContent = quote.shippingNote;
+  if (normalizedQuote.shippingNote && shippingNoteEl) {
+    shippingNoteEl.textContent = normalizedQuote.shippingNote;
     shippingNoteEl.style.display = "block";
   } else if (shippingNoteEl) {
     shippingNoteEl.style.display = "none";
@@ -518,12 +531,12 @@ function updateOrderSummaryDisplay(quote) {
   let taxNote = "";
 
   // Use backend-provided taxLabel if available (e.g., "Sales tax (8.5%) will be added at checkout")
-  if (quote.taxLabel) {
-    taxLabel = quote.taxLabel;
+  if (normalizedQuote.taxLabel) {
+    taxLabel = normalizedQuote.taxLabel;
     // If taxLabel is provided, assume it's a note about when tax will be calculated
     if (taxConverted === 0) {
       taxValue = "";
-      taxNote = quote.taxLabel;
+      taxNote = normalizedQuote.taxLabel;
     } else {
       taxValue = taxFormatted;
       taxNote = "";

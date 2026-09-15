@@ -1,5 +1,21 @@
 /* global cart, playDingSound, createCartBurst */
 // Product Detail Page
+/* eslint-disable no-unused-vars */
+import {
+  getColorNamesFromProduct,
+  getSizesForColor,
+  getVariantIdForColorSize,
+  getPriceForColorSize,
+  getImageForColor,
+  validateProductFormData,
+  constrainZoomLevel,
+  calculateZoomIncrement,
+  validateCarouselIndex,
+  isProductSticker,
+  getMockupsForColor,
+  getPriceRangeFromProduct,
+} from "./utils/fixtures/product-utilities.js";
+/* eslint-enable no-unused-vars */
 let currentProduct = null;
 let currentImageIndex = 0; // Track carousel position (0 = main, 1 = sleeve mockup)
 
@@ -12,9 +28,6 @@ let dragStartX = 0;
 let dragStartY = 0;
 let dragStartPanX = 0;
 let dragStartPanY = 0;
-const MAX_ZOOM = 3;
-const MIN_ZOOM = 1;
-const ZOOM_STEP = 0.2;
 
 // Get the list of images for the current color (mockups array or fallback to single image)
 function getColorImages() {
@@ -113,24 +126,25 @@ function applyImageTransform() {
 
 // eslint-disable-next-line no-unused-vars
 function zoomIn() {
-  if (zoomLevel < MAX_ZOOM) {
-    zoomLevel = Math.min(zoomLevel + ZOOM_STEP, MAX_ZOOM);
-    updateZoomDisplay();
-    applyImageTransform();
-  }
+  const increment = calculateZoomIncrement("in");
+  zoomLevel += increment;
+  zoomLevel = constrainZoomLevel(zoomLevel);
+  updateZoomDisplay();
+  applyImageTransform();
 }
 
 // eslint-disable-next-line no-unused-vars
 function zoomOut() {
-  if (zoomLevel > MIN_ZOOM) {
-    zoomLevel = Math.max(zoomLevel - ZOOM_STEP, MIN_ZOOM);
-    updateZoomDisplay();
-    applyImageTransform();
-    if (zoomLevel === MIN_ZOOM) {
-      panX = 0;
-      panY = 0;
-    }
+  const increment = calculateZoomIncrement("out");
+  zoomLevel += increment;
+  zoomLevel = constrainZoomLevel(zoomLevel);
+  if (zoomLevel <= 1) {
+    zoomLevel = 1;
+    panX = 0;
+    panY = 0;
   }
+  updateZoomDisplay();
+  applyImageTransform();
 }
 
 // eslint-disable-next-line no-unused-vars
@@ -169,6 +183,10 @@ function updateZoomDisplay() {
 }
 
 function handleImageWheel(e) {
+  const MIN_ZOOM = 1;
+  const MAX_ZOOM = 3;
+  const ZOOM_STEP = 0.2;
+
   if (zoomLevel <= 1 && e.deltaY > 0) {
     return;
   }
@@ -177,7 +195,7 @@ function handleImageWheel(e) {
 
   const oldZoom = zoomLevel;
   const delta = e.deltaY > 0 ? -ZOOM_STEP : ZOOM_STEP;
-  zoomLevel = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, zoomLevel + delta));
+  zoomLevel = constrainZoomLevel(zoomLevel + delta, MIN_ZOOM, MAX_ZOOM);
 
   if (zoomLevel === MIN_ZOOM) {
     panX = 0;
@@ -242,6 +260,9 @@ function handleImageTouchStart(e) {
 }
 
 function handleImageTouchMove(e) {
+  const MIN_ZOOM = 1;
+  const MAX_ZOOM = 3;
+
   if (e.touches.length === 2) {
     e.preventDefault();
     const touch1 = e.touches[0];
@@ -251,7 +272,7 @@ function handleImageTouchMove(e) {
     if (touchDistance > 0) {
       const scale = newDistance / touchDistance;
       const oldZoom = zoomLevel;
-      zoomLevel = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, zoomLevel * scale));
+      zoomLevel = constrainZoomLevel(zoomLevel * scale, MIN_ZOOM, MAX_ZOOM);
 
       if (zoomLevel !== oldZoom) {
         updateZoomDisplay();
@@ -283,7 +304,7 @@ function handleImageTouchEnd() {
 }
 
 function isSticker() {
-  return currentProduct && currentProduct.title.toLowerCase().includes("sticker");
+  return isProductSticker(currentProduct);
 }
 
 function initializeZoomPan() {
@@ -636,11 +657,9 @@ function updateSizes(selectedColor) {
   // Clear existing sizes
   sizeSelect.innerHTML = '<option value="">-- Choose a size --</option>';
 
-  if (color && currentProduct.variants[color]) {
-    const colorData = currentProduct.variants[color];
-    const sizes = colorData.sizes
-      ? Object.keys(colorData.sizes)
-      : Object.keys(colorData).filter(k => k !== "image" && k !== "mockups");
+  if (color) {
+    // Use utility function to get sizes for color
+    const sizes = getSizesForColor(currentProduct, color);
 
     sizes.forEach(size => {
       const option = document.createElement("option");
@@ -791,69 +810,35 @@ async function addToCart() {
 
 // Get all variant prices for a product and return display price (single or range)
 function getPriceDisplay(product) {
-  const prices = [];
-
-  // Collect all prices from all variants and sizes
-  if (product.variants && typeof product.variants === "object") {
-    Object.values(product.variants).forEach(colorData => {
-      if (colorData.sizes && typeof colorData.sizes === "object") {
-        Object.values(colorData.sizes).forEach(sizeData => {
-          // Try to get price from variant object first
-          if (sizeData.price_cents !== null && sizeData.price_cents !== undefined) {
-            prices.push(sizeData.price_cents);
-          }
-        });
-      }
-    });
+  if (!product) {
+    return "$0.00";
   }
 
-  // If no variant prices found, fall back to display_price
-  if (prices.length === 0) {
-    return product.display_price;
-  }
+  // Use utility function to get price range
+  const priceRange = getPriceRangeFromProduct(product);
 
-  // Sort prices and get min and max
-  prices.sort((a, b) => a - b);
-  const minPrice = prices[0];
-  const maxPrice = prices[prices.length - 1];
+  // If fallback to display_price
+  if (priceRange.min === 0 && priceRange.max === 0) {
+    return product.display_price || "$0.00";
+  }
 
   // If all prices are the same, show single price
-  if (minPrice === maxPrice) {
-    return `$${(minPrice / 100).toFixed(2)}`;
+  if (priceRange.min === priceRange.max) {
+    return `$${priceRange.min.toFixed(2)}`;
   }
 
   // If prices differ, show range
-  return `$${(minPrice / 100).toFixed(2)} - $${(maxPrice / 100).toFixed(2)}`;
+  return `$${priceRange.min.toFixed(2)} - $${priceRange.max.toFixed(2)}`;
 }
 
 // Helper function to get numeric price range for schema markup
 function getPriceRange(product) {
-  const prices = [];
-
-  // Collect all prices from all variants and sizes
-  if (product.variants && typeof product.variants === "object") {
-    Object.values(product.variants).forEach(colorData => {
-      if (colorData.sizes && typeof colorData.sizes === "object") {
-        Object.values(colorData.sizes).forEach(sizeData => {
-          if (sizeData.price_cents !== null && sizeData.price_cents !== undefined) {
-            prices.push(sizeData.price_cents);
-          }
-        });
-      }
-    });
+  if (!product) {
+    return { min: 0, max: 0 };
   }
 
-  // If no prices found, use display_price or default
-  if (prices.length === 0) {
-    const fallbackPrice = product.display_price ? parseFloat(product.display_price.replace("$", "")) * 100 : 0;
-    return { min: fallbackPrice / 100, max: fallbackPrice / 100 };
-  }
-
-  prices.sort((a, b) => a - b);
-  return {
-    min: prices[0] / 100,
-    max: prices[prices.length - 1] / 100,
-  };
+  // Use utility function to get price range
+  return getPriceRangeFromProduct(product);
 }
 
 // Allow importing in Node.js (Jest tests) while keeping browser globals
