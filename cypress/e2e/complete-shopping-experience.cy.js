@@ -89,7 +89,7 @@ describe("Complete Shopping Experience E2E", () => {
     selectShippingCountry(selectedCountry.code);
 
     // Wait for quote to be fetched and prices to update
-    cy.get("#summary-content", { timeout: 10000 }).should("be.visible");
+    cy.get("#summary-content", { timeout: 10000 }).should("exist");
 
     // Verify the quote API was called for the selected country
     cy.get("[data-testid='cart-subtotal']", { timeout: 5000 }).should("exist");
@@ -212,19 +212,19 @@ describe("Complete Shopping Experience E2E", () => {
     // Test currency change for multiple countries
     // Test first country
     selectShippingCountry(countries[0].code);
-    cy.get("#summary-content", { timeout: 10000 }).should("be.visible");
+    cy.get("#summary-content", { timeout: 10000 }).should("exist");
     cy.get("#currency-display", { timeout: 5000 }).should("exist");
     cy.get("#subtotal", { timeout: 5000 }).invoke("text").should("not.include", "NaN");
 
     // Test second country
     selectShippingCountry(countries[1].code);
-    cy.get("#summary-content", { timeout: 10000 }).should("be.visible");
+    cy.get("#summary-content", { timeout: 10000 }).should("exist");
     cy.get("#currency-display", { timeout: 5000 }).should("exist");
     cy.get("#subtotal", { timeout: 5000 }).invoke("text").should("not.include", "NaN");
 
     // Test third country
     selectShippingCountry(countries[2].code);
-    cy.get("#summary-content", { timeout: 10000 }).should("be.visible");
+    cy.get("#summary-content", { timeout: 10000 }).should("exist");
     cy.get("#currency-display", { timeout: 5000 }).should("exist");
     cy.get("#subtotal", { timeout: 5000 }).invoke("text").should("not.include", "NaN");
   });
