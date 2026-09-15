@@ -1,10 +1,9 @@
 // Order Status Page Tests
 // Tests for order status page form validation and functionality
 
-describe("Order Status Page - Validation Functions", () => {
-  // Import the exported functions
-  const { isValidEmail, isValidPrintfulOrderId } = require("../order-status.js");
+import { isValidEmail, isValidPrintfulOrderId } from "../utils/fixtures/order-status-utilities.js";
 
+describe("Order Status Page - Validation Functions", () => {
   describe("Email Validation", () => {
     test("should accept valid email addresses", () => {
       expect(isValidEmail("user@example.com")).toBe(true);
@@ -78,7 +77,6 @@ describe("Order Status Page - Form Behavior", () => {
   test("should apply active class when email is valid", () => {
     const emailInput = document.getElementById("email");
     const searchBtn = document.getElementById("search-btn");
-    const { isValidEmail } = require("../order-status.js");
 
     emailInput.value = "valid@example.com";
 
@@ -94,7 +92,6 @@ describe("Order Status Page - Form Behavior", () => {
   test("should remove active class when email becomes invalid", () => {
     const emailInput = document.getElementById("email");
     const searchBtn = document.getElementById("search-btn");
-    const { isValidEmail } = require("../order-status.js");
 
     // Start valid
     emailInput.value = "valid@example.com";
@@ -115,7 +112,6 @@ describe("Order Status Page - Form Behavior", () => {
   });
 
   test("button should remain disabled with invalid email", () => {
-    const { isValidEmail } = require("../order-status.js");
     const emailInput = document.getElementById("email");
 
     emailInput.value = "invalid-email";
@@ -124,7 +120,6 @@ describe("Order Status Page - Form Behavior", () => {
   });
 
   test("button should be disabled with empty email", () => {
-    const { isValidEmail } = require("../order-status.js");
     const emailInput = document.getElementById("email");
 
     emailInput.value = "";
@@ -135,7 +130,6 @@ describe("Order Status Page - Form Behavior", () => {
   test("should require both email and Printful Order ID", () => {
     const printfulInput = document.getElementById("printful-order-id");
     const emailInput = document.getElementById("email");
-    const { isValidEmail, isValidPrintfulOrderId } = require("../order-status.js");
 
     // Both required
     printfulInput.value = "PF123456789";
@@ -157,8 +151,6 @@ describe("Order Status Page - Form Behavior", () => {
   });
 
   test("should validate Printful Order ID format when provided", () => {
-    const { isValidPrintfulOrderId } = require("../order-status.js");
-
     const validIdWithPF = "PF123456789";
     const validIdWithoutPF = "123456789";
     const invalidIdTooShort = "AB12";

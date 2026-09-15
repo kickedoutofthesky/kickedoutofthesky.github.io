@@ -2,6 +2,17 @@
 /* eslint-disable-next-line no-unused-vars */
 
 import { initializeCurrency } from "./utils/currency.js";
+import {
+  isValidEmail,
+  isValidPrintfulOrderId,
+  formatDate,
+  formatStatus,
+  formatTrackingStatus,
+  getCountryFlag,
+  parseCostCents,
+  formatCurrencyAmount,
+  buildErrorMessage,
+} from "./utils/fixtures/order-status-utilities.js";
 
 let products = [];
 
@@ -504,66 +515,8 @@ function enrichItemWithProductData(item) {
 }
 
 // Helper functions
-function getCountryFlag(countryCode) {
-  if (!countryCode || countryCode.length !== 2) return "🌍";
-
-  // Convert country code to regional indicator symbols for flag emoji
-  const codePoints = countryCode
-    .toUpperCase()
-    .split("")
-    .map(char => 127397 + char.charCodeAt());
-  return String.fromCodePoint(...codePoints);
-}
-
-function formatDate(timestamp) {
-  if (!timestamp) return "—";
-
-  const date = new Date(parseInt(timestamp));
-  const options = {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-    timeZoneName: "short",
-  };
-
-  return date.toLocaleDateString("en-US", options);
-}
-
-function formatStatus(status) {
-  const statuses = {
-    pending: "Pending",
-    processing: "Processing",
-    shipped: "Shipped",
-    delivered: "Delivered",
-    fulfilled: "Fulfilled",
-  };
-  return statuses[status] || status;
-}
-
-function formatTrackingStatus(status) {
-  const statuses = {
-    pending: "Pending",
-    in_transit: "In Transit",
-    out_for_delivery: "Out for Delivery",
-    delivered: "Delivered",
-    failed_attempt: "Failed Delivery Attempt",
-    returned: "Returned",
-  };
-  return statuses[status] || status;
-}
-
-function isValidEmail(email) {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return emailRegex.test(email);
-}
-
-function isValidPrintfulOrderId(orderId) {
-  // Printful Order ID: alphanumeric, minimum 5 characters, optional 'PF' prefix
-  return /^[a-zA-Z0-9]{5,}$/.test(orderId);
-}
+// Note: formatDate, formatStatus, formatTrackingStatus, getCountryFlag, isValidEmail, isValidPrintfulOrderId
+// are now imported from order-status-utilities.js
 
 function showError(message) {
   const errorContainer = document.getElementById("error-container");
@@ -613,16 +566,4 @@ function resetForm() {
 
   // Clear URL query parameters
   window.history.replaceState({}, document.title, window.location.pathname);
-}
-
-// Allow importing in Node.js (Jest tests) while keeping browser globals
-if (typeof module !== "undefined" && module.exports) {
-  module.exports = {
-    formatDate,
-    formatStatus,
-    formatTrackingStatus,
-    isValidEmail,
-    isValidPrintfulOrderId,
-    enrichItemWithProductData,
-  };
 }
