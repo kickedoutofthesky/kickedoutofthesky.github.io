@@ -16,12 +16,42 @@ function selectFirstRealColor() {
 
 describe("Add All Products and Variants to Cart", () => {
   beforeEach(() => {
+    // Clear storage before setting up intercepts
+    localStorage.clear();
+    sessionStorage.clear();
+
+    // Mock the /api/geo endpoint
+    cy.intercept("GET", "**/api/geo", {
+      statusCode: 200,
+      body: {
+        country: "US",
+        currency: "USD",
+        exchangeRates: {
+          USD: 1.0,
+          EUR: 0.92,
+          GBP: 0.79,
+          JPY: 110.25,
+        },
+        vatRate: 0,
+        isEU: false,
+      },
+    }).as("geoDetection");
+
+    // Mock the /api/quote endpoint
+    cy.intercept("POST", "**/api/quote", {
+      statusCode: 200,
+      body: {
+        calculationId: "calc-12345",
+        subtotal: 2500,
+        shipping: 1000,
+        tax: 0,
+        total: 3500,
+        currency: "USD",
+        taxIncluded: false,
+      },
+    }).as("quoteUS");
+
     cy.visit("/store");
-    // Clear cart before test
-    cy.window().then(win => {
-      win.localStorage.clear();
-      win.sessionStorage.clear();
-    });
   });
 
   it("should add products to cart", () => {
@@ -93,6 +123,10 @@ describe("Add All Products and Variants to Cart", () => {
 
         // Go to cart and verify subtotal
         cy.get("a[href*='cart.html']").first().click();
+
+        // Wait for the quote API call to complete
+        cy.wait("@quoteUS");
+
         cy.get("[data-testid='cart-subtotal']").should("exist");
         cy.get("[data-testid='cart-subtotal']").invoke("text").should("include", "$");
       });

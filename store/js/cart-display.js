@@ -172,14 +172,14 @@ function setupCountrySelector() {
 
     // Auto-select geo-detected country if cart has items and no country is saved
     // Only auto-select if user hasn't manually set a country before
-    if (hasCartItems && !countryManuallySet && geoCountry && select.options.namedItem(geoCountry)) {
+    if (hasCartItems && !countryManuallySet && geoCountry && select.querySelector(`option[value="${geoCountry}"]`)) {
       select.value = geoCountry;
       localStorage.setItem("selectedShippingCountry", geoCountry);
       localStorage.setItem("countryManuallySet", "false");
       console.log(`✓ Cart: Auto-selected country from geo-location: ${geoCountry}`);
       // Fetch quote for the auto-selected country
       debouncedFetchQuote();
-    } else if (savedCountry && select.options.namedItem(savedCountry)) {
+    } else if (savedCountry && select.querySelector(`option[value="${savedCountry}"]`)) {
       // Only set if the country exists in the dropdown
       select.value = savedCountry;
       console.log(`✓ Cart: Restored country from storage: ${savedCountry} (manually set: ${countryManuallySet})`);
