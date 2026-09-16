@@ -853,3 +853,13 @@ if (typeof module !== "undefined" && module.exports) {
     updateSizes,
   };
 }
+
+// Expose functions to window for inline event handlers when loaded as ES6 module
+if (typeof window !== "undefined") {
+  window.updatePrice = updatePrice;
+  window.updateColorAndPrice = updateColorAndPrice;
+  window.checkFormComplete = checkFormComplete;
+  window.addToCart = addToCart;
+  window.showPreviousImage = showPreviousImage;
+  window.showNextImage = showNextImage;
+}
