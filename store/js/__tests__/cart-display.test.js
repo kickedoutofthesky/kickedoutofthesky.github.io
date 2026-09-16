@@ -140,8 +140,8 @@ describe("Cart Display - Tax Calculation", () => {
       };
 
       // Test the tax display logic
-      let taxLabel = "Tax/VAT:";
-      let taxValue = "$3.50";
+      let taxLabel;
+      let taxValue;
 
       if (quote.tax > 0) {
         taxLabel = "Tax:";
@@ -168,8 +168,8 @@ describe("Cart Display - Tax Calculation", () => {
       };
 
       // Test the tax display logic
-      let taxLabel = "Tax/VAT:";
-      let taxValue = "€0.00";
+      let taxLabel;
+      let taxValue;
 
       if (quote.tax > 0) {
         taxLabel = "Tax:";
@@ -401,7 +401,7 @@ describe("Cart Display - Tax Calculation", () => {
         currency: "USD",
       };
 
-      let taxLabel = "Tax/VAT:";
+      let taxLabel;
       if (quote.tax > 0) {
         taxLabel = "Tax:";
       } else {
@@ -427,7 +427,7 @@ describe("Cart Display - Tax Calculation", () => {
         return `${symbol}${amount.toFixed(2)}`;
       };
 
-      let taxLabel = "Tax/VAT:";
+      let taxLabel;
       if (quote.tax > 0) {
         taxLabel = "Tax:";
       }
@@ -441,7 +441,7 @@ describe("Cart Display - Tax Calculation", () => {
         tax: -100, // edge case
       };
 
-      let taxLabel = "Tax/VAT:";
+      let taxLabel;
       if (quote.tax > 0) {
         taxLabel = "Tax:";
       } else {

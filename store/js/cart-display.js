@@ -526,7 +526,9 @@ function updateOrderSummaryDisplay(quote) {
   totalEl.textContent = totalFormatted;
 
   // Handle tax/VAT display - use backend's taxLabel if provided
+  // eslint-disable-next-line no-useless-assignment
   let taxLabel = "Tax/VAT:";
+  // eslint-disable-next-line no-useless-assignment
   let taxValue = taxFormatted;
   let taxNote = "";
 
@@ -584,7 +586,6 @@ function updateOrderSummaryDisplay(quote) {
   updateCheckoutButtonState();
 }
 
-// eslint-disable-next-line no-unused-vars
 function updateCartQuantity(index, quantity) {
   if (quantity <= 0) {
     removeFromCart(index);
@@ -595,7 +596,6 @@ function updateCartQuantity(index, quantity) {
   }
 }
 
-// eslint-disable-next-line no-unused-vars
 function removeFromCart(index) {
   cart.removeItem(index);
   displayCart();

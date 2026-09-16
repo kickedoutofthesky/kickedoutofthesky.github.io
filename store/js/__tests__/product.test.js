@@ -514,11 +514,10 @@ describe("Product Page - Zoom and Pan", () => {
 
   describe("Pan Functionality", () => {
     it("should track mouse position for panning", () => {
-      let position = { x: 0, y: 0 };
       const newX = 100;
       const newY = 50;
 
-      position = { x: newX, y: newY };
+      const position = { x: newX, y: newY };
       expect(position.x).toBe(100);
       expect(position.y).toBe(50);
     });
