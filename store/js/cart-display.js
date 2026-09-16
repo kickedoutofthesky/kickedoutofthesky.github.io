@@ -3,12 +3,8 @@
 /* global cart, updateCartQuantity, removeFromCart, showCartBadgeBurst */
 
 import { initializeCurrency, updateCurrencyForCountry, formatPrice } from "./utils/currency.js";
-import {
-  buildQuoteRequestPayload,
-  extractQuoteData,
-  isValidQuote,
-  formatCurrency as formatCurrencyUtil,
-} from "./utils/fixtures/cart-utilities.js";
+import { extractQuoteData, isValidQuote } from "./utils/fixtures/cart-utilities.js";
+import { getVariantIdForColorSize, getImageForColor } from "./utils/fixtures/product-utilities.js";
 
 let products = [];
 let countries = [];
@@ -307,16 +303,33 @@ function displayCart() {
 
 // Transform cart items to SKU format for API (wrapper around utility function)
 function buildQuoteItems() {
-  // Convert cart items to format expected by buildQuoteRequestPayload
-  const items = cart.items.map(item => ({
-    variant_id: item.variant_id || item.variant_id,
-    quantity: item.quantity,
-  }));
+  // Convert cart items to checkout format with full product details
+  const items = cart.items
+    .map(item => {
+      // Find the product for this cart item
+      const product = products.find(p => p.product_key === item.productKey);
+      if (!product) {
+        return null; // Skip items without products
+      }
 
-  const countrySelect = document.getElementById("shipping-country");
-  const country = countrySelect?.value;
+      // Get the variant_id for this color/size combination
+      const variantId = getVariantIdForColorSize(product, item.color, item.size);
+      if (!variantId) {
+        return null; // Skip items without valid variants
+      }
 
-  return buildQuoteRequestPayload(items, country);
+      return {
+        variant_id: variantId,
+        quantity: item.quantity,
+        name: product.title || product.name, // Use title (from products.json) or name as fallback
+        image: getImageForColor(product, item.color) || product.image,
+        color: item.color,
+        size: item.size,
+      };
+    })
+    .filter(item => item !== null); // Remove null items
+
+  return items;
 }
 
 async function fetchQuote() {
@@ -686,10 +699,10 @@ async function proceedToCheckout() {
     const requestBody = {
       calculationId: currentQuote.calculationId,
       items,
-      country: countrySelect.value,
+      shippingCountry: countrySelect.value,
     };
 
-    let checkoutUrl = backendUrl + "/api/checkout";
+    let checkoutUrl = backendUrl + "/api/create-checkout-session";
     if (backendUrl.includes("api-staging.kickedoutofthesky.com")) {
       checkoutUrl += "?x-vercel-protection-bypass=Xq8xpir5ZCR25Za5w6rpHxLofddagWJA";
     }
@@ -717,11 +730,15 @@ async function proceedToCheckout() {
 
     console.log("Checkout response:", data);
 
-    // Redirect to Stripe Checkout Session
-    if (data.redirect_url) {
-      window.location.href = data.redirect_url;
+    // Clear cart before redirecting to Stripe Checkout
+    cart.clear();
+
+    // Redirect to Stripe Checkout Session (handle both redirect_url and url fields)
+    const stripeUrl = data.redirect_url || data.url;
+    if (stripeUrl) {
+      window.location.href = stripeUrl;
     } else {
-      throw new Error("No redirect_url provided by server");
+      throw new Error("No redirect_url or url provided by server");
     }
   } catch (error) {
     console.error("Checkout error:", error);

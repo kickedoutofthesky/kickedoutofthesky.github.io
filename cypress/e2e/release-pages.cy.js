@@ -8,59 +8,89 @@ describe("Release Landing Pages - E2E", () => {
     });
   });
 
-  describe("/listen - Rotating Current Release", () => {
-    it("should load /listen page without errors", () => {
-      cy.visit("/listen/");
-      cy.get("#main-content").should("be.visible");
+  describe("/listen - Push.fm Redirect", () => {
+    it("should redirect to push.fm", () => {
+      cy.visit("/listen/", { failOnStatusCode: false });
+      cy.url().should("include", "push.fm");
     });
 
-    it("should display release cover art", () => {
-      cy.visit("/listen/");
-      cy.get("#release-cover").should("be.visible").and("have.attr", "src").and("include", "/img/releases/");
+    it("should redirect to correct push.fm link", () => {
+      cy.visit("/listen/", { failOnStatusCode: false });
+      cy.url().should("equal", "https://push.fm/fl/kickedoutofthesky");
     });
 
-    it("should display artist name", () => {
-      cy.visit("/listen/");
-      cy.get("#release-artist").should("contain", "Kicked Out Of The Sky");
+    it("should preserve utm_source parameter", () => {
+      cy.visit("/listen/?utm_source=instagram", { failOnStatusCode: false });
+      cy.url().should("include", "utm_source=instagram");
     });
 
-    it("should display release title", () => {
-      cy.visit("/listen/");
-      cy.get("#release-title").should("contain", "Better Part Of Me");
+    it("should preserve utm_medium parameter", () => {
+      cy.visit("/listen/?utm_medium=story", { failOnStatusCode: false });
+      cy.url().should("include", "utm_medium=story");
     });
 
-    it("should display formatted release date", () => {
-      cy.visit("/listen/");
-      cy.get("#release-date").should("contain", "2026");
+    it("should preserve utm_campaign parameter", () => {
+      cy.visit("/listen/?utm_campaign=launch", { failOnStatusCode: false });
+      cy.url().should("include", "utm_campaign=launch");
     });
 
-    it("should have a working CTA button", () => {
-      cy.visit("/listen/");
-      cy.get("#release-cta").should("be.visible").and("have.attr", "href").and("include", "spotify.com");
+    it("should preserve utm_content parameter", () => {
+      cy.visit("/listen/?utm_content=banner", { failOnStatusCode: false });
+      cy.url().should("include", "utm_content=banner");
     });
 
-    it("should have visible focus state on CTA", () => {
-      cy.visit("/listen/");
-      cy.get("#release-cta").focus();
-      cy.get("#release-cta").should("have.focus");
+    it("should preserve utm_term parameter", () => {
+      cy.visit("/listen/?utm_term=keyword", { failOnStatusCode: false });
+      cy.url().should("include", "utm_term=keyword");
     });
 
-    it("should set correct canonical URL", () => {
-      cy.visit("/listen/");
-      cy.get('link[rel="canonical"]').should("have.attr", "href").and("include", "betterpartofme");
+    it("should preserve fbclid (Facebook Click ID)", () => {
+      cy.visit("/listen/?fbclid=abc123xyz", { failOnStatusCode: false });
+      cy.url().should("include", "fbclid=abc123xyz");
     });
 
-    it("should render proper OG tags", () => {
-      cy.visit("/listen/");
-      cy.get('meta[property="og:title"]').should("have.attr", "content").and("include", "Better Part Of Me");
-      cy.get('meta[property="og:image"]').should("have.attr", "content").and("include", ".jpg");
-      cy.get('meta[property="og:url"]').should("have.attr", "content").and("include", "kickedoutofthesky.com");
+    it("should preserve ttclid (TikTok Click ID)", () => {
+      cy.visit("/listen/?ttclid=tiktok456", { failOnStatusCode: false });
+      cy.url().should("include", "ttclid=tiktok456");
     });
 
-    it("should render proper Twitter Card tags", () => {
+    it("should preserve multiple parameters together", () => {
+      cy.visit("/listen/?utm_source=tiktok&utm_medium=organic&fbclid=xyz123", { failOnStatusCode: false });
+      cy.url()
+        .should("include", "utm_source=tiktok")
+        .and("include", "utm_medium=organic")
+        .and("include", "fbclid=xyz123");
+    });
+
+    it("should ignore non-tracked query parameters", () => {
+      cy.visit("/listen/?utm_source=test&random_param=value", { failOnStatusCode: false });
+      cy.url().should("include", "utm_source=test").and("not.include", "random_param");
+    });
+
+    it("should have fallback link to push.fm", () => {
       cy.visit("/listen/");
-      cy.get('meta[name="twitter:card"]').should("have.attr", "content", "summary_large_image");
-      cy.get('meta[name="twitter:title"]').should("have.attr", "content").and("include", "Better Part Of Me");
+      cy.get('a[href="https://push.fm/fl/kickedoutofthesky"]').should("exist");
+    });
+
+    it("should have Meta Pixel script loaded", () => {
+      cy.visit("/listen/");
+      cy.get('script[src="/js/meta-pixel.js"]').should("exist");
+    });
+
+    it("should have noscript redirect fallback", () => {
+      cy.visit("/listen/");
+      cy.get("noscript").should("contain", "https://push.fm/fl/kickedoutofthesky");
+    });
+
+    it("should have proper page title", () => {
+      cy.visit("/listen/");
+      cy.title().should("contain", "Kicked Out Of The Sky");
+      cy.title().should("contain", "Listen");
+    });
+
+    it("should have proper meta description", () => {
+      cy.visit("/listen/");
+      cy.get('meta[name="description"]').should("have.attr", "content").and("contain", "Listen");
     });
   });
 

@@ -16,14 +16,53 @@ function selectFirstRealSize() {
   });
 }
 
+// Helper function to accept terms
+function acceptTerms() {
+  cy.get("#terms-checkbox").then($checkbox => {
+    if (!$checkbox.is(":checked")) {
+      cy.get("#terms-checkbox").click({ force: true });
+    }
+  });
+}
+
 describe("Checkout Flow", () => {
   beforeEach(() => {
+    // Clear storage before setting up intercepts
+    localStorage.clear();
+    sessionStorage.clear();
+
+    // Mock the /api/geo endpoint
+    cy.intercept("GET", "**/api/geo", {
+      statusCode: 200,
+      body: {
+        country: "US",
+        currency: "USD",
+        exchangeRates: {
+          USD: 1.0,
+          EUR: 0.92,
+          GBP: 0.79,
+          JPY: 110.25,
+        },
+        vatRate: 0,
+        isEU: false,
+      },
+    }).as("geoDetection");
+
+    // Mock the /api/quote endpoint
+    cy.intercept("POST", "**/api/quote", {
+      statusCode: 200,
+      body: {
+        calculationId: "calc-12345",
+        subtotal: 2500,
+        shipping: 1000,
+        tax: 0,
+        total: 3500,
+        currency: "USD",
+        taxIncluded: false,
+      },
+    }).as("quoteUS");
+
     cy.visit("/store");
-    // Clear cart
-    cy.window().then(win => {
-      win.localStorage.clear();
-      win.sessionStorage.clear();
-    });
 
     // Add a product to cart
     cy.get("[data-testid='product-card']").first().click();
@@ -45,6 +84,9 @@ describe("Checkout Flow", () => {
   });
 
   it("should display cart subtotal before checkout", () => {
+    // Wait for the quote API to calculate subtotal
+    cy.wait("@quoteUS");
+
     cy.get("[data-testid='cart-subtotal']").should("exist");
     cy.get("[data-testid='cart-subtotal']").invoke("text").should("include", "$");
   });
@@ -57,12 +99,16 @@ describe("Checkout Flow", () => {
     // Get current URL (cart.html)
     cy.url().should("include", "cart.html");
 
-    // Checkout button starts disabled until country is selected
+    // Checkout button starts disabled until country is selected and quote is ready
     cy.get("button").contains("Proceed to Checkout").should("exist").should("be.disabled");
 
     // Select a country to enable checkout
     cy.get("#shipping-country").select("US");
     acceptTerms();
+
+    // Wait for quote to be calculated with the selected country
+    cy.wait("@quoteUS");
+
     cy.get("button").contains("Proceed to Checkout").should("not.be.disabled");
   });
 
@@ -73,6 +119,10 @@ describe("Checkout Flow", () => {
     // Button should be clickable with items after selecting country
     cy.get("#shipping-country").select("US");
     acceptTerms();
+
+    // Wait for quote to be calculated with the selected country
+    cy.wait("@quoteUS");
+
     cy.get("button").contains("Proceed to Checkout").should("not.be.disabled");
   });
 

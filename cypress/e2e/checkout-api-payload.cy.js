@@ -1,13 +1,72 @@
 /* eslint-disable no-undef */
 // Helper function to select a shipping country on the cart page
 
+// Helper function to select first real size option
+function selectFirstRealSize() {
+  cy.get("[data-testid='size-select']").then($select => {
+    const value = $select.val();
+    // If placeholder is selected (empty value), select first real option
+    if (!value || value === "") {
+      cy.get("[data-testid='size-select'] option")
+        .eq(1)
+        .invoke("attr", "value")
+        .then(sizeValue => {
+          cy.get("[data-testid='size-select']").select(sizeValue, { force: true });
+        });
+    }
+  });
+}
+
+// Helper function to select shipping country
+function selectShippingCountry(country = "US") {
+  cy.get("#shipping-country").select(country);
+}
+
+// Helper function to accept terms
+function acceptTerms() {
+  cy.get("#terms-checkbox").then($checkbox => {
+    if (!$checkbox.is(":checked")) {
+      cy.get("#terms-checkbox").click({ force: true });
+    }
+  });
+}
+
 describe("Checkout API Payload Tests", () => {
   beforeEach(() => {
-    // Clear localStorage and sessionStorage before each test
-    cy.window().then(win => {
-      win.localStorage.clear();
-      win.sessionStorage.clear();
-    });
+    // Clear storage before setting up intercepts
+    localStorage.clear();
+    sessionStorage.clear();
+
+    // Mock the /api/geo endpoint
+    cy.intercept("GET", "**/api/geo", {
+      statusCode: 200,
+      body: {
+        country: "US",
+        currency: "USD",
+        exchangeRates: {
+          USD: 1.0,
+          EUR: 0.92,
+          GBP: 0.79,
+          JPY: 110.25,
+        },
+        vatRate: 0,
+        isEU: false,
+      },
+    }).as("geoDetection");
+
+    // Mock the /api/quote endpoint
+    cy.intercept("POST", "**/api/quote", {
+      statusCode: 200,
+      body: {
+        calculationId: "calc-12345",
+        subtotal: 2500,
+        shipping: 1000,
+        tax: 0,
+        total: 3500,
+        currency: "USD",
+        taxIncluded: false,
+      },
+    }).as("quoteUS");
   });
 
   describe("Scenario 1: Checkout Flow with Stripe Redirect", () => {
@@ -20,8 +79,7 @@ describe("Checkout API Payload Tests", () => {
       selectFirstRealSize();
       cy.get("#add-to-cart-btn").should("not.be.disabled").click({ force: true });
 
-      // Navigate to cart
-      cy.get("a[href*='cart.html']").first().click();
+      // addToCart() redirects to cart.html, so wait for cart page to load
       cy.url().should("include", "cart.html");
 
       // Mock the checkout API to return a Stripe URL
@@ -36,6 +94,10 @@ describe("Checkout API Payload Tests", () => {
       // Select shipping country and click checkout
       selectShippingCountry();
       acceptTerms();
+
+      // Wait for quote to be calculated
+      cy.wait("@quoteUS");
+
       cy.get("button").contains("Proceed to Checkout").click();
 
       // Verify checkout API was called
@@ -92,11 +154,14 @@ describe("Checkout API Payload Tests", () => {
       selectFirstRealSize();
       cy.get("#add-to-cart-btn").should("not.be.disabled").click({ force: true });
 
-      // Go to cart and click checkout
-      cy.get("a[href*='cart.html']").first().click();
+      // addToCart() redirects to cart.html, so wait for cart page to load
       cy.url().should("include", "cart.html");
       selectShippingCountry();
       acceptTerms();
+
+      // Wait for quote to be calculated
+      cy.wait("@quoteUS");
+
       cy.get("button").contains("Proceed to Checkout").click();
 
       // Verify the API was called with correct payload
@@ -137,9 +202,13 @@ describe("Checkout API Payload Tests", () => {
       cy.get("[data-testid='product-card']").first().click();
       selectFirstRealSize();
       cy.get("#add-to-cart-btn").click({ force: true });
-      cy.get("a[href*='cart.html']").first().click();
+      cy.url().should("include", "cart.html");
       selectShippingCountry();
       acceptTerms();
+
+      // Wait for quote to be calculated
+      cy.wait("@quoteUS");
+
       cy.get("button").contains("Proceed to Checkout").click();
 
       cy.wait("@noShippingCheck");
@@ -164,9 +233,13 @@ describe("Checkout API Payload Tests", () => {
       cy.get("[data-testid='product-card']").first().click();
       selectFirstRealSize();
       cy.get("#add-to-cart-btn").click({ force: true });
-      cy.get("a[href*='cart.html']").first().click();
+      cy.url().should("include", "cart.html");
       selectShippingCountry();
       acceptTerms();
+
+      // Wait for quote to be calculated
+      cy.wait("@quoteUS");
+
       cy.get("button").contains("Proceed to Checkout").click();
 
       // Verify API was called
@@ -305,15 +378,14 @@ describe("Checkout API Payload Tests", () => {
       selectFirstRealSize();
       cy.get("#add-to-cart-btn").click({ force: true });
 
+      // addToCart() redirects to cart.html
+      cy.url().should("include", "cart.html");
+
       // Get cart count
       cy.window().then(win => {
         const cartData = JSON.parse(win.localStorage.getItem("kots_cart") || "[]");
         const itemsInCart = cartData.length;
         expect(itemsInCart).to.be.greaterThan(0);
-
-        // Navigate to cart
-        cy.get("a[href*='cart.html']").first().click();
-        cy.url().should("include", "cart.html");
 
         // Mock the checkout API to return a cancel URL
         cy.intercept("POST", "**/api/create-checkout-session", {
@@ -389,17 +461,21 @@ describe("Checkout API Payload Tests", () => {
       cy.get("[data-testid='product-card']").eq(0).click();
       selectFirstRealSize();
       cy.get("#add-to-cart-btn").click({ force: true });
+      // addToCart() redirects to cart.html, so we need to go back to store
+      cy.visit("/store");
 
       // Add second product (different product)
-      cy.visit("/store");
       cy.get("[data-testid='product-card']").eq(1).click();
       selectFirstRealSize();
       cy.get("#add-to-cart-btn").click({ force: true });
 
-      // Navigate to cart and checkout
-      cy.visit("/store/cart.html");
+      // addToCart() redirects to cart.html, so we're already at the cart page
       selectShippingCountry();
       acceptTerms();
+
+      // Wait for quote to be calculated
+      cy.wait("@quoteUS");
+
       cy.get("button").contains("Proceed to Checkout").click();
 
       cy.wait("@multiItemCheckout");
@@ -412,7 +488,7 @@ describe("Checkout API Payload Tests", () => {
       cy.get("[data-testid='product-card']").first().click();
       selectFirstRealSize();
       cy.get("#add-to-cart-btn").click({ force: true });
-      cy.get("a[href*='cart.html']").first().click();
+      cy.url().should("include", "cart.html");
 
       cy.get("#shipping-country").should("exist");
       cy.get("#shipping-country option").should("have.length.greaterThan", 1);
@@ -423,7 +499,8 @@ describe("Checkout API Payload Tests", () => {
       cy.get("[data-testid='product-card']").first().click();
       selectFirstRealSize();
       cy.get("#add-to-cart-btn").click({ force: true });
-      cy.get("a[href*='cart.html']").first().click();
+      // addToCart() redirects to cart.html
+      cy.url().should("include", "cart.html");
 
       // Button should be disabled initially (no country, no T&C)
       cy.get("button").contains("Proceed to Checkout").should("be.disabled");
@@ -436,6 +513,9 @@ describe("Checkout API Payload Tests", () => {
 
       // Select a country
       cy.get("#shipping-country").select("US");
+
+      // Wait for quote to be calculated
+      cy.wait("@quoteUS");
 
       // Button should now be enabled (both country and T&C accepted)
       cy.get("button").contains("Proceed to Checkout").should("not.be.disabled");
@@ -454,10 +534,15 @@ describe("Checkout API Payload Tests", () => {
       cy.get("[data-testid='product-card']").first().click();
       selectFirstRealSize();
       cy.get("#add-to-cart-btn").click({ force: true });
-      cy.get("a[href*='cart.html']").first().click();
+      // addToCart() redirects to cart.html
+      cy.url().should("include", "cart.html");
 
       selectShippingCountry("CA");
       acceptTerms();
+
+      // Wait for quote to be calculated
+      cy.wait("@quoteUS");
+
       cy.get("button").contains("Proceed to Checkout").click();
 
       cy.wait("@countryPayloadCheck");
@@ -468,13 +553,17 @@ describe("Checkout API Payload Tests", () => {
       cy.get("[data-testid='product-card']").first().click();
       selectFirstRealSize();
       cy.get("#add-to-cart-btn").click({ force: true });
-      cy.get("a[href*='cart.html']").first().click();
+      cy.url().should("include", "cart.html");
 
       // Accept terms
       acceptTerms();
 
       // Select a country
       cy.get("#shipping-country").select("US");
+
+      // Wait for quote to be calculated
+      cy.wait("@quoteUS");
+
       cy.get("button").contains("Proceed to Checkout").should("not.be.disabled");
 
       // Reset to placeholder
