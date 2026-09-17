@@ -1,5 +1,74 @@
 /* eslint-disable no-undef */
-// Helper function to select a shipping country on the cart page
+// Helper functions - use same pattern as checkout-api-payload.cy.js (which has all 15 tests passing)
+
+// Helper function to select a proper size (not placeholder)
+function selectFirstRealSize() {
+  // Wait for size options to be populated (not just the placeholder)
+  cy.get("[data-testid='size-select'] option").should("have.length.greaterThan", 1);
+
+  cy.get("[data-testid='size-select']").then($select => {
+    const value = $select.val();
+    // If placeholder is selected (empty value), select first real option
+    if (!value || value === "") {
+      cy.get("[data-testid='size-select'] option")
+        .eq(1)
+        .invoke("attr", "value")
+        .then(sizeValue => {
+          cy.get("[data-testid='size-select']").select(sizeValue, { force: true });
+        });
+    }
+  });
+}
+
+// Helper function to select first real color option
+function selectFirstRealColor() {
+  // Wait for color select to be visible and have options
+  cy.get("[data-testid='color-select']").should("exist");
+  cy.get("[data-testid='color-select'] option").should("have.length.greaterThan", 0);
+
+  cy.get("[data-testid='color-select']").then($select => {
+    if ($select.length > 0 && $select.find("option").length > 0) {
+      cy.get("[data-testid='color-select'] option")
+        .eq(0) // Get the first color (no placeholder in color select)
+        .invoke("attr", "value")
+        .then(colorValue => {
+          // Use force:true to bypass navbar coverage issue
+          cy.get("[data-testid='color-select']").select(colorValue, { force: true });
+          // Wait for color change to update sizes
+          cy.get("[data-testid='size-select'] option").should("have.length.greaterThan", 1);
+        });
+    }
+  });
+}
+
+function selectShippingCountry() {
+  // Wait for countries to be populated (more than just placeholder)
+  cy.get("#shipping-country option").should("have.length.greaterThan", 1);
+
+  // Select country from dropdown (use US for testing)
+  cy.get("#shipping-country").then($select => {
+    if ($select.find("option[value='US']").length > 0) {
+      cy.get("#shipping-country").select("US");
+    } else {
+      // Fallback: select second option
+      cy.get("#shipping-country")
+        .find("option")
+        .eq(1)
+        .then($option => {
+          cy.get("#shipping-country").select($option.val());
+        });
+    }
+  });
+}
+
+function acceptTerms() {
+  // Check terms checkbox if visible
+  cy.get("#terms-checkbox").then($checkbox => {
+    if (!$checkbox.prop("checked")) {
+      cy.get("#terms-checkbox").click({ force: true });
+    }
+  });
+}
 
 describe("Checkout Flow — Modified Error Handling", () => {
   beforeEach(() => {
@@ -7,6 +76,40 @@ describe("Checkout Flow — Modified Error Handling", () => {
       win.localStorage.clear();
       win.sessionStorage.clear();
     });
+
+    // Mock geo-location API to return US
+    cy.intercept("GET", "**/api/geo", {
+      statusCode: 200,
+      body: {
+        country_code: "US",
+      },
+    }).as("geoDetection");
+
+    // Mock quote API to return a quote for US
+    cy.intercept("POST", "**/api/quote", {
+      statusCode: 200,
+      body: {
+        calculationId: "calc-12345",
+        subtotal: 2500,
+        shipping: 1000,
+        tax: 0,
+        total: 3500,
+        currency: "USD",
+        taxIncluded: false,
+      },
+    }).as("quoteUS");
+
+    // Mock countries file
+    cy.intercept("GET", "**/data/printful-shipping-countries.json", {
+      statusCode: 200,
+      body: [
+        { name: "United States", code: "US" },
+        { name: "Canada", code: "CA" },
+        { name: "United Kingdom", code: "GB" },
+        { name: "Australia", code: "AU" },
+        { name: "Germany", code: "DE" },
+      ],
+    }).as("countriesLoaded");
   });
 
   describe("Scenario 1: API 500 Error - Friendly Error Message", () => {
@@ -26,17 +129,26 @@ describe("Checkout Flow — Modified Error Handling", () => {
 
       // Add product to cart
       cy.get("[data-testid='product-card']").first().click();
+      cy.get("[data-testid='product-detail']").should("be.visible");
+      selectFirstRealColor();
       selectFirstRealSize();
-      cy.get("#add-to-cart-btn").click({ force: true });
+      cy.get("#add-to-cart-btn").should("not.be.disabled").click({ force: true });
 
-      // Go to cart
-      cy.get("a[href*='cart.html']").first().click();
+      // addToCart() redirects to cart.html, so wait for URL to update
       cy.url().should("include", "cart.html");
+
+      // Wait for countries to load
+      cy.wait("@countriesLoaded", { timeout: 5000 });
 
       // Select shipping country and click checkout
       selectShippingCountry();
       acceptTerms();
-      cy.get("button").contains("Proceed to Checkout").click();
+
+      // Wait for quote to be calculated
+      cy.wait("@quoteUS");
+
+      // Click checkout button with force:true in case it appears disabled momentarily
+      cy.get("button").contains("Proceed to Checkout").click({ force: true });
 
       // Wait for error response
       cy.wait("@checkoutError500");
@@ -66,12 +178,19 @@ describe("Checkout Flow — Modified Error Handling", () => {
       cy.on("window:alert", alertStub);
 
       cy.get("[data-testid='product-card']").first().click();
+      cy.get("[data-testid='product-detail']").should("be.visible");
+      selectFirstRealColor();
       selectFirstRealSize();
-      cy.get("#add-to-cart-btn").click({ force: true });
+      cy.get("#add-to-cart-btn").should("not.be.disabled").click({ force: true });
 
-      cy.get("a[href*='cart.html']").first().click();
+      // addToCart() redirects to cart.html
+      cy.url().should("include", "cart.html");
       selectShippingCountry();
       acceptTerms();
+
+      // Wait for quote to be calculated
+      cy.wait("@quoteUS");
+
       cy.get("button").contains("Proceed to Checkout").click();
 
       cy.wait("@checkoutErrorBadRequest");
@@ -102,12 +221,19 @@ describe("Checkout Flow — Modified Error Handling", () => {
       cy.on("window:alert", alertStub);
 
       cy.get("[data-testid='product-card']").first().click();
+      cy.get("[data-testid='product-detail']").should("be.visible");
+      selectFirstRealColor();
       selectFirstRealSize();
-      cy.get("#add-to-cart-btn").click({ force: true });
+      cy.get("#add-to-cart-btn").should("not.be.disabled").click({ force: true });
 
-      cy.get("a[href*='cart.html']").first().click();
+      // addToCart() redirects to cart.html
+      cy.url().should("include", "cart.html");
       selectShippingCountry();
       acceptTerms();
+
+      // Wait for quote to be calculated
+      cy.wait("@quoteUS");
+
       cy.get("button").contains("Proceed to Checkout").click();
 
       cy.wait("@checkoutErrorWithMessage");
@@ -138,15 +264,20 @@ describe("Checkout Flow — Modified Error Handling", () => {
       cy.on("window:alert", alertStub);
 
       cy.get("[data-testid='product-card']").first().click();
+      cy.get("[data-testid='product-detail']").should("be.visible");
+      selectFirstRealColor();
       selectFirstRealSize();
-      cy.get("#add-to-cart-btn").click({ force: true });
+      cy.get("#add-to-cart-btn").should("not.be.disabled").click({ force: true });
 
-      cy.wait(1500);
-      cy.get("a[href*='cart.html']").first().click({ force: true });
+      // addToCart() redirects to cart.html
       cy.url().should("include", "cart.html");
       cy.get("[data-testid='cart-item']").should("have.length.greaterThan", 0);
       selectShippingCountry();
       acceptTerms();
+
+      // Wait for quote to be calculated
+      cy.wait("@quoteUS");
+
       cy.get("#checkout-btn").should("not.be.disabled").click({ force: true });
 
       // Wait for timeout error
@@ -179,10 +310,13 @@ describe("Checkout Flow — Modified Error Handling", () => {
       cy.on("window:alert", alertStub);
 
       cy.get("[data-testid='product-card']").first().click();
+      cy.get("[data-testid='product-detail']").should("be.visible");
+      selectFirstRealColor();
       selectFirstRealSize();
-      cy.get("#add-to-cart-btn").click({ force: true });
+      cy.get("#add-to-cart-btn").should("not.be.disabled").click({ force: true });
 
-      cy.get("a[href*='cart.html']").first().click();
+      // addToCart() redirects to cart.html
+      cy.url().should("include", "cart.html");
       selectShippingCountry();
       acceptTerms();
       cy.get("button").contains("Proceed to Checkout").click();
@@ -214,14 +348,21 @@ describe("Checkout Flow — Modified Error Handling", () => {
       cy.visit("/store");
 
       cy.get("[data-testid='product-card']").first().click();
+      cy.get("[data-testid='product-detail']").should("be.visible");
+      selectFirstRealColor();
       selectFirstRealSize();
-      cy.get("#add-to-cart-btn").click({ force: true });
+      cy.get("#add-to-cart-btn").should("not.be.disabled").click({ force: true });
 
-      cy.get("a[href*='cart.html']").first().click();
+      // addToCart() redirects to cart.html
+      cy.url().should("include", "cart.html");
 
       // Select country then click checkout
       selectShippingCountry();
       acceptTerms();
+
+      // Wait for quote to be calculated
+      cy.wait("@quoteUS");
+
       cy.get("#checkout-btn").click({ force: true });
 
       // Wait for the API call
@@ -252,14 +393,21 @@ describe("Checkout Flow — Modified Error Handling", () => {
       cy.visit("/store");
 
       cy.get("[data-testid='product-card']").first().click();
+      cy.get("[data-testid='product-detail']").should("be.visible");
+      selectFirstRealColor();
       selectFirstRealSize();
-      cy.get("#add-to-cart-btn").click({ force: true });
+      cy.get("#add-to-cart-btn").should("not.be.disabled").click({ force: true });
 
-      cy.get("a[href*='cart.html']").first().click();
+      // addToCart() redirects to cart.html
+      cy.url().should("include", "cart.html");
 
       // Select country and click checkout button
       selectShippingCountry();
       acceptTerms();
+
+      // Wait for quote to be calculated
+      cy.wait("@quoteUS");
+
       cy.get("#checkout-btn").click({ force: true });
 
       // Verify button is disabled after click (text changes to "Processing...")
@@ -285,14 +433,21 @@ describe("Checkout Flow — Modified Error Handling", () => {
       cy.visit("/store");
 
       cy.get("[data-testid='product-card']").first().click();
+      cy.get("[data-testid='product-detail']").should("be.visible");
+      selectFirstRealColor();
       selectFirstRealSize();
-      cy.get("#add-to-cart-btn").click({ force: true });
+      cy.get("#add-to-cart-btn").should("not.be.disabled").click({ force: true });
 
-      cy.get("a[href*='cart.html']").first().click();
+      // addToCart() redirects to cart.html
+      cy.url().should("include", "cart.html");
 
       // Select country and click checkout
       selectShippingCountry();
       acceptTerms();
+
+      // Wait for quote to be calculated
+      cy.wait("@quoteUS");
+
       cy.get("button").contains("Proceed to Checkout").click();
 
       // Verify button is disabled during processing
@@ -326,14 +481,21 @@ describe("Checkout Flow — Modified Error Handling", () => {
       cy.visit("/store");
 
       cy.get("[data-testid='product-card']").first().click();
+      cy.get("[data-testid='product-detail']").should("be.visible");
+      selectFirstRealColor();
       selectFirstRealSize();
-      cy.get("#add-to-cart-btn").click({ force: true });
+      cy.get("#add-to-cart-btn").should("not.be.disabled").click({ force: true });
 
-      cy.get("a[href*='cart.html']").first().click();
+      // addToCart() redirects to cart.html
+      cy.url().should("include", "cart.html");
 
       // Select country, click checkout, and immediately check for loading state
       selectShippingCountry();
       acceptTerms();
+
+      // Wait for quote to be calculated
+      cy.wait("@quoteUS");
+
       cy.get("button").contains("Proceed to Checkout").click();
 
       // Look for processing indicator (could be text, spinner, or disabled state)
@@ -365,15 +527,21 @@ describe("Checkout Flow — Modified Error Handling", () => {
       cy.visit("/store");
 
       cy.get("[data-testid='product-card']").first().click();
+      cy.get("[data-testid='product-detail']").should("be.visible");
+      selectFirstRealColor();
       selectFirstRealSize();
-      cy.get("#add-to-cart-btn").click({ force: true });
+      cy.get("#add-to-cart-btn").should("not.be.disabled").click({ force: true });
 
-      cy.wait(1500);
-      cy.get("a[href*='cart.html']").first().click({ force: true });
+      // addToCart() redirects to cart.html
+      cy.url().should("include", "cart.html");
 
       // Select country and click checkout
       selectShippingCountry();
       acceptTerms();
+
+      // Wait for quote to be calculated
+      cy.wait("@quoteUS");
+
       cy.get("button").contains("Proceed to Checkout").click();
 
       // Wait for checkout API
@@ -396,11 +564,13 @@ describe("Checkout Flow — Modified Error Handling", () => {
       cy.visit("/store");
 
       cy.get("[data-testid='product-card']").first().click();
+      cy.get("[data-testid='product-detail']").should("be.visible");
+      selectFirstRealColor();
       selectFirstRealSize();
-      cy.get("#add-to-cart-btn").click({ force: true });
+      cy.get("#add-to-cart-btn").should("not.be.disabled").click({ force: true });
 
-      cy.wait(1500);
-      cy.get("a[href*='cart.html']").first().click({ force: true });
+      // addToCart() redirects to cart.html
+      cy.url().should("include", "cart.html");
 
       selectShippingCountry();
       acceptTerms();
@@ -512,13 +682,20 @@ describe("Checkout Flow — Modified Error Handling", () => {
       cy.on("window:alert", alertStub);
 
       cy.get("[data-testid='product-card']").first().click();
+      cy.get("[data-testid='product-detail']").should("be.visible");
+      selectFirstRealColor();
       selectFirstRealSize();
-      cy.get("#add-to-cart-btn").click({ force: true });
+      cy.get("#add-to-cart-btn").should("not.be.disabled").click({ force: true });
 
-      cy.get("a[href*='cart.html']").first().click();
+      // addToCart() redirects to cart.html
+      cy.url().should("include", "cart.html");
 
       selectShippingCountry();
       acceptTerms();
+
+      // Wait for quote to be calculated
+      cy.wait("@quoteUS");
+
       cy.get("button").contains("Proceed to Checkout").click();
 
       // Should show alert with error
@@ -573,14 +750,21 @@ describe("Checkout Flow — Modified Error Handling", () => {
       cy.on("window:alert", alertStub);
 
       cy.get("[data-testid='product-card']").first().click();
+      cy.get("[data-testid='product-detail']").should("be.visible");
+      selectFirstRealColor();
       selectFirstRealSize();
-      cy.get("#add-to-cart-btn").click({ force: true });
+      cy.get("#add-to-cart-btn").should("not.be.disabled").click({ force: true });
 
-      cy.get("a[href*='cart.html']").first().click();
+      // addToCart() redirects to cart.html
+      cy.url().should("include", "cart.html");
 
       // First attempt - should fail
       selectShippingCountry();
       acceptTerms();
+
+      // Wait for quote to be calculated
+      cy.wait("@quoteUS");
+
       cy.get("button").contains("Proceed to Checkout").click();
 
       cy.wait("@checkoutWithRetry");

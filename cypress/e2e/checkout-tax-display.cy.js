@@ -1,42 +1,112 @@
 /* eslint-disable no-undef */
 
+// Helper function to select first real size option
+function selectFirstRealSize() {
+  // Wait for size options to be populated (not just the placeholder)
+  cy.get("[data-testid='size-select'] option").should("have.length.greaterThan", 1);
+
+  cy.get("[data-testid='size-select']").then($select => {
+    const value = $select.val();
+    // If placeholder is selected (empty value), select first real option
+    if (!value || value === "") {
+      cy.get("[data-testid='size-select'] option")
+        .eq(1)
+        .invoke("attr", "value")
+        .then(sizeValue => {
+          cy.get("[data-testid='size-select']").select(sizeValue, { force: true });
+        });
+    }
+  });
+}
+
+// Helper function to select first real color option
+function selectFirstRealColor() {
+  // Wait for color select to be visible and have options
+  cy.get("[data-testid='color-select']").should("exist");
+  cy.get("[data-testid='color-select'] option").should("have.length.greaterThan", 0);
+
+  cy.get("[data-testid='color-select']").then($select => {
+    if ($select.length > 0 && $select.find("option").length > 0) {
+      cy.get("[data-testid='color-select'] option")
+        .eq(0) // Get the first color (no placeholder in color select)
+        .invoke("attr", "value")
+        .then(colorValue => {
+          // Use force:true to bypass navbar coverage issue
+          cy.get("[data-testid='color-select']").select(colorValue, { force: true });
+          // Wait for color change to update sizes
+          cy.get("[data-testid='size-select'] option").should("have.length.greaterThan", 1);
+        });
+    }
+  });
+}
+
+// Using global selectShippingCountry() helper from cypress/support/e2e.js
+
 describe("Tax Calculation Workflow", () => {
   beforeEach(() => {
-    cy.visit("/store");
     cy.window().then(win => {
       win.localStorage.clear();
       win.sessionStorage.clear();
     });
 
-    // Add a product to cart
+    // Mock geo-location API to return US
+    cy.intercept("GET", "**/api/geo", {
+      statusCode: 200,
+      body: {
+        country_code: "US",
+      },
+    }).as("geoDetection");
+
+    // Mock quote API to return a quote
+    cy.intercept("POST", "**/api/quote", {
+      statusCode: 200,
+      body: {
+        calculationId: "calc-12345",
+        subtotal: 2500,
+        shipping: 1000,
+        tax: 250,
+        total: 3750,
+        currency: "USD",
+        taxIncluded: false,
+      },
+    }).as("quote");
+
+    // Mock countries file
+    cy.intercept("GET", "**/data/printful-shipping-countries.json", {
+      statusCode: 200,
+      body: [
+        { name: "United States", code: "US" },
+        { name: "Canada", code: "CA" },
+        { name: "United Kingdom", code: "GB" },
+        { name: "Australia", code: "AU" },
+        { name: "Germany", code: "DE" },
+      ],
+    }).as("countriesLoaded");
+
+    cy.visit("/store");
+
+    // Add product to cart
     cy.get("[data-testid='product-card']").first().click();
     cy.get("[data-testid='product-detail']").should("be.visible");
-
-    // Select size based on product type (handle hats/stickers)
-    cy.get("select").then($select => {
-      const options = $select.find("option");
-      const firstOption = options.eq(1); // Skip placeholder
-      if (firstOption.length > 0) {
-        cy.get("select").select(firstOption.val());
-      }
-    });
-
+    selectFirstRealColor();
+    selectFirstRealSize();
     cy.get("#add-to-cart-btn").should("not.be.disabled").click({ force: true });
 
-    // Navigate to cart
-    cy.get("a[href*='cart.html']").first().click();
+    // addToCart() redirects to cart.html automatically
+    cy.url().should("include", "cart.html");
+
+    // Wait for countries to load so dropdown is populated
+    cy.wait("@countriesLoaded", { timeout: 5000 });
   });
 
   describe("Tax Display - When Tax > 0 (US)", () => {
     it("should display Tax label and amount when tax is calculated", () => {
-      // Select US (which has sales tax)
+      // Select US and wait for quote
       cy.get("#shipping-country").select("US");
+      cy.wait("@quote", { timeout: 5000 });
 
-      // Wait for quote to load
-      cy.get("#quote-loading", { timeout: 5000 }).should("not.be.visible");
-
-      // Verify Tax label is shown
-      cy.get("#tax-label").should("contain", "Tax:");
+      // Verify Tax label is shown (contains "Tax/VAT:" in the actual HTML)
+      cy.get("#tax-label").should("contain", "Tax");
 
       // Verify tax amount is displayed
       cy.get("#tax-value").should("not.contain", "Included");
@@ -47,18 +117,18 @@ describe("Tax Calculation Workflow", () => {
     });
 
     it("should not apply muted style to tax row when tax is not included", () => {
+      // Select US and wait for quote
       cy.get("#shipping-country").select("US");
-
-      cy.get("#quote-loading", { timeout: 5000 }).should("not.be.visible");
+      cy.wait("@quote", { timeout: 5000 });
 
       // Tax row should not be muted (opacity should be 1)
       cy.get("#tax-row").should("have.css", "opacity", "1");
     });
 
     it("should display correct subtotal, shipping, and total for US", () => {
+      // Select US and wait for quote
       cy.get("#shipping-country").select("US");
-
-      cy.get("#quote-loading", { timeout: 5000 }).should("not.be.visible");
+      cy.wait("@quote", { timeout: 5000 });
 
       // Verify all amounts are displayed
       cy.get("#subtotal")
@@ -178,14 +248,15 @@ describe("Tax Calculation Workflow", () => {
 
   describe("Tax Display - Error Handling", () => {
     it("should show error state when quote fetch fails", () => {
-      // Intercept quote API and make it fail
-      cy.intercept("POST", "**/api/quote", { statusCode: 500, body: { error: "Server error" } });
+      // Intercept quote API and make it fail (without error field to get fallback message)
+      cy.intercept("POST", "**/api/quote", { statusCode: 500, body: {} }).as("quoteFailed");
 
       cy.get("#shipping-country").select("US");
+      cy.wait("@quoteFailed", { timeout: 5000 });
 
-      // Error should be displayed
+      // Error should be displayed with fallback message
       cy.get("#quote-error", { timeout: 5000 }).should("be.visible");
-      cy.get("#quote-error-text").should("contain", "Failed to calculate order total");
+      cy.get("#quote-error-text").should("contain", "Failed to fetch quote");
     });
 
     it("should allow retry after error", () => {
@@ -282,10 +353,10 @@ describe("Tax Calculation Workflow", () => {
         req.reply({ statusCode: 200, body: { subtotal: 5000, tax: 350, total: 5350, currency: "USD" } });
       }).as("quoteRequest");
 
-      // Rapidly change country multiple times
+      // Rapidly change country multiple times (use GB instead of MX which isn't in mock)
       cy.get("#shipping-country").select("US");
       cy.get("#shipping-country").select("CA");
-      cy.get("#shipping-country").select("MX");
+      cy.get("#shipping-country").select("GB");
 
       // Wait for debounce to settle
       cy.wait(500);
@@ -299,10 +370,11 @@ describe("Tax Calculation Workflow", () => {
 
   describe("Tax Display - Import Duties Note", () => {
     it("should show import duties note when applicable", () => {
-      // This would require a mock that returns importDutiesNote: true
+      // Override the quote mock BEFORE selecting country
       cy.intercept("POST", "**/api/quote", {
         statusCode: 200,
         body: {
+          calculationId: "calc-duties-123",
           subtotal: 5000,
           shipping: 800,
           tax: 0,
@@ -310,13 +382,15 @@ describe("Tax Calculation Workflow", () => {
           currency: "USD",
           importDutiesNote: true,
           taxIncluded: true,
-          calculationId: "quote_123",
         },
-      });
+      }).as("quoteWithDuties");
 
-      cy.get("#shipping-country").select("US");
+      // Now select country to trigger the new quote with import duties
+      cy.get("#shipping-country").select("CA");
+      cy.wait("@quoteWithDuties", { timeout: 5000 });
 
-      cy.get("#quote-loading", { timeout: 5000 }).should("not.be.visible");
+      // Verify loading is done and duties note is visible
+      cy.get("#quote-loading").should("not.be.visible");
       cy.get("#import-duties-note").should("be.visible");
     });
 

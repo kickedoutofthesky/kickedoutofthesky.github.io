@@ -1,5 +1,4 @@
 // Order Status Page
-/* eslint-disable-next-line no-unused-vars */
 
 import { initializeCurrency } from "./utils/currency.js";
 import {
@@ -548,7 +547,6 @@ function hideSearchForm() {
   document.getElementById("search-form").style.display = "none";
 }
 
-/* eslint-disable-next-line no-unused-vars */
 function resetForm() {
   document.getElementById("printful-order-id").value = "";
   document.getElementById("email").value = "";

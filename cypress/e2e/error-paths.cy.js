@@ -56,6 +56,33 @@ describe("Error Paths and Edge Cases", () => {
         win.localStorage.clear();
       });
 
+      // Mock APIs
+      cy.intercept("GET", "**/api/geo", {
+        statusCode: 200,
+        body: { country_code: "US" },
+      }).as("geoDetection");
+
+      cy.intercept("POST", "**/api/quote", {
+        statusCode: 200,
+        body: {
+          calculationId: "calc-12345",
+          subtotal: 2500,
+          shipping: 1000,
+          tax: 250,
+          total: 3750,
+          currency: "USD",
+          taxIncluded: false,
+        },
+      }).as("quote");
+
+      cy.intercept("GET", "**/data/printful-shipping-countries.json", {
+        statusCode: 200,
+        body: [
+          { name: "United States", code: "US" },
+          { name: "Canada", code: "CA" },
+        ],
+      }).as("countriesLoaded");
+
       // Add product to cart
       cy.get("[data-testid='product-card']").first().click();
       cy.get("[data-testid='product-detail']").should("be.visible");
@@ -63,6 +90,10 @@ describe("Error Paths and Edge Cases", () => {
       cy.get("#add-to-cart-btn").should("not.be.disabled").click({ force: true });
       cy.wait(1500);
       cy.get("a[href*='cart.html']").first().click({ force: true });
+
+      // Wait for cart to load with quote
+      cy.wait("@countriesLoaded", { timeout: 5000 });
+      cy.wait("@quote", { timeout: 5000 });
     });
 
     it("should handle zero quantity gracefully", () => {

@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 const { playDingSound, createCartBurst } = require("../cart-notification");
 
 describe("Cart Notifications - playDingSound", () => {

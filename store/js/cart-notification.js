@@ -21,7 +21,6 @@ function playDingSound() {
   oscillator.stop(audioContext.currentTime + 0.1);
 }
 
-// eslint-disable-next-line no-unused-vars
 function createCartBurst() {
   // Get the quantity input position
   const quantityInput = document.getElementById("quantity");

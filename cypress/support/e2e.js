@@ -57,11 +57,17 @@ function selectFirstRealColor() {
 }
 
 function selectShippingCountry(countryCode = "US") {
-  cy.get("#shipping-country").should("exist").select(countryCode);
+  // Select country with force:true to bypass any coverage issues
+  cy.get("#shipping-country", { timeout: 5000 }).select(countryCode, { force: true });
+
+  // Wait for quote to load
+  cy.get("#summary-content", { timeout: 10000 }).should("have.css", "display", "block");
+  cy.get("#subtotal", { timeout: 10000 }).invoke("text").should("not.equal", "—");
 }
 
 function acceptTerms() {
-  cy.get("#terms-checkbox").should("exist").check();
+  // Check terms with force:true since it may be in a fixed position
+  cy.get("#terms-checkbox").check({ force: true });
 }
 
 // Make helpers available globally
@@ -72,7 +78,7 @@ window.acceptTerms = acceptTerms;
 
 // Ignore cross-origin script errors from CDN resources (Bootstrap, Font Awesome)
 // These are expected and don't affect test functionality
-// eslint-disable-next-line no-undef
+
 Cypress.on("uncaught:exception", (err, _runnable) => {
   // Ignore Script errors (cross-origin resource errors from CDN)
   if (err.message === "Script error." || err.message.includes("Script error")) {

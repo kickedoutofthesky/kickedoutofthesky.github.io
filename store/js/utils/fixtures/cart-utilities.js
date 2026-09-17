@@ -147,6 +147,8 @@ export function extractQuoteData(response) {
     taxLabel: response.taxLabel || "Tax",
     shippingNote: response.shippingNote || "",
     calculationId: response.calculationId || null,
+    taxIncluded: response.taxIncluded || false,
+    importDutiesNote: response.importDutiesNote || false,
   };
 }
 

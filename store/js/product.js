@@ -70,7 +70,7 @@ function updateCarouselUI() {
 }
 
 // Navigate to previous image
-// eslint-disable-next-line no-unused-vars
+
 function showPreviousImage() {
   if (currentImageIndex > 0) {
     currentImageIndex--;
@@ -81,7 +81,7 @@ function showPreviousImage() {
 }
 
 // Navigate to next image
-// eslint-disable-next-line no-unused-vars
+
 function showNextImage() {
   const images = getColorImages();
   if (currentImageIndex < images.length - 1) {
@@ -124,7 +124,6 @@ function applyImageTransform() {
   }
 }
 
-// eslint-disable-next-line no-unused-vars
 function zoomIn() {
   const increment = calculateZoomIncrement("in");
   zoomLevel += increment;
@@ -133,7 +132,6 @@ function zoomIn() {
   applyImageTransform();
 }
 
-// eslint-disable-next-line no-unused-vars
 function zoomOut() {
   const increment = calculateZoomIncrement("out");
   zoomLevel += increment;
@@ -147,7 +145,6 @@ function zoomOut() {
   applyImageTransform();
 }
 
-// eslint-disable-next-line no-unused-vars
 function resetZoom() {
   if (isSticker()) return;
   zoomLevel = 1;
@@ -157,7 +154,6 @@ function resetZoom() {
   applyImageTransform();
 }
 
-// eslint-disable-next-line no-unused-vars
 function panImage(deltaX, deltaY) {
   if (zoomLevel <= 1) return;
 
@@ -693,7 +689,6 @@ function updateColorImage(selectedColor) {
   updateCarouselUI();
 }
 
-// eslint-disable-next-line no-unused-vars
 function updateColorAndPrice() {
   const colorSelect = document.getElementById("color");
   const selectedColor = colorSelect.value;
@@ -775,7 +770,6 @@ function checkFormComplete() {
   }
 }
 
-// eslint-disable-next-line no-unused-vars
 async function addToCart() {
   if (!currentProduct) return;
 
