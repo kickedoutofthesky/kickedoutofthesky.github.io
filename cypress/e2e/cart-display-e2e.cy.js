@@ -120,8 +120,12 @@ describe("Cart Display - Enhanced Quote and Checkout", () => {
       cy.get("#shipping-country").select("US");
       cy.get("#quote-loading", { timeout: 5000 }).should("not.be.visible");
 
-      cy.get("#tax-label").should("contain", "Tax");
-      cy.get("#tax-value").should("be.visible");
+      // Tax label should be visible (contains "Tax/VAT:")
+      cy.get("#tax-label").should("be.visible");
+      cy.get("#tax-label").invoke("text").should("include", "Tax");
+
+      // Tax value should exist (may be empty when calculated at checkout)
+      cy.get("#tax-value").should("exist");
     });
 
     it("should display correct order summary structure", () => {

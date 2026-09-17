@@ -88,18 +88,6 @@ describe("Site Experience - Overall Site Functionality", () => {
       cy.get("[data-testid='product-grid'], .products").should("exist");
     });
 
-    // EPK page is currently disabled
-    it.skip("should navigate to EPK page and load correctly", () => {
-      cy.get("body").then($body => {
-        const $link = $body.find("a[href*='epk']");
-        if ($link.length > 0) {
-          cy.wrap($link).first().click();
-          cy.url().should("include", "epk");
-          cy.get("body").should("be.visible");
-        }
-      });
-    });
-
     it("should return to home from store", () => {
       // Visit store directly (home page store link uses window.open)
       cy.visit("/store");

@@ -20,7 +20,8 @@ describe("Complete Purchase Flow - Customer Buying Merch", () => {
     cy.url().should("include", "product.html");
     cy.get("[data-testid='product-detail']").should("be.visible");
 
-    // Step 3: Select a size variant
+    // Step 3: Select color then size variant (MUST be in this order)
+    selectFirstRealColor();
     selectFirstRealSize();
 
     // Step 4: Add to cart
@@ -35,12 +36,24 @@ describe("Complete Purchase Flow - Customer Buying Merch", () => {
     cy.get("[data-testid='cart-item']").should("have.length.greaterThan", 0);
 
     // Step 6: Verify checkout button (disabled until country selected)
-    cy.get("button").contains("Proceed to Checkout").should("exist").should("be.disabled");
+    cy.get("#checkout-btn").should("exist").should("be.disabled");
 
-    // Step 7: Select shipping country and click checkout
-    cy.get("#shipping-country").select("US");
+    // Step 7: Mock quote API, select shipping country and click checkout
+    cy.intercept("POST", "**/api/quote", {
+      statusCode: 200,
+      body: {
+        calculationId: "calc-12345",
+        subtotal: 2500,
+        shipping: 1000,
+        tax: 0,
+        total: 3500,
+        currency: "USD",
+        taxIncluded: false,
+      },
+    }).as("quote");
+    selectShippingCountry("US");
     acceptTerms();
-    cy.get("button").contains("Proceed to Checkout").should("not.be.disabled").click();
+    cy.get("#checkout-btn").should("not.be.disabled").click();
 
     // Should either stay on checkout page or redirect to Stripe/payment
     cy.url().then(url => {
@@ -54,6 +67,20 @@ describe("Complete Purchase Flow - Customer Buying Merch", () => {
   });
 
   it("should intercept checkout API call and verify request contains correct product, variant, quantity, and shipping", () => {
+    // Intercept the quote API
+    cy.intercept("POST", "**/api/quote", {
+      statusCode: 200,
+      body: {
+        calculationId: "calc-12345",
+        subtotal: 2500,
+        shipping: 1000,
+        tax: 0,
+        total: 3500,
+        currency: "USD",
+        taxIncluded: false,
+      },
+    }).as("quote");
+
     // Intercept the checkout API call
     cy.intercept("POST", "**/api/create-checkout-session", req => {
       req.reply({
@@ -75,6 +102,7 @@ describe("Complete Purchase Flow - Customer Buying Merch", () => {
       .first()
       .invoke("text")
       .then(_price => {
+        selectFirstRealColor();
         selectFirstRealSize();
 
         // Add to cart
@@ -84,11 +112,11 @@ describe("Complete Purchase Flow - Customer Buying Merch", () => {
         cy.get("a[href*='cart.html']").first().click();
 
         // Select shipping country
-        selectShippingCountry();
+        selectShippingCountry("US");
         acceptTerms();
 
         // Click checkout
-        cy.get("button").contains("Proceed to Checkout").click();
+        cy.get("#checkout-btn").click();
 
         // Verify checkout API was called
         cy.wait("@checkoutAPI").then(interception => {
@@ -114,6 +142,20 @@ describe("Complete Purchase Flow - Customer Buying Merch", () => {
   });
 
   it("should redirect to success page after successful checkout API response", () => {
+    // Mock the quote API
+    cy.intercept("POST", "**/api/quote", {
+      statusCode: 200,
+      body: {
+        calculationId: "calc-12345",
+        subtotal: 2500,
+        shipping: 1000,
+        tax: 0,
+        total: 3500,
+        currency: "USD",
+        taxIncluded: false,
+      },
+    }).as("quote");
+
     // Mock the checkout API to return success and redirect URL
     cy.intercept("POST", "**/api/create-checkout-session", {
       statusCode: 200,
@@ -127,6 +169,7 @@ describe("Complete Purchase Flow - Customer Buying Merch", () => {
     // Add product to cart
     cy.get("[data-testid='product-card']").first().click();
     cy.url().should("include", "product.html");
+    selectFirstRealColor();
     selectFirstRealSize();
     cy.get("#add-to-cart-btn").click({ force: true });
 
@@ -134,11 +177,11 @@ describe("Complete Purchase Flow - Customer Buying Merch", () => {
     cy.get("a[href*='cart.html']").first().click();
 
     // Select shipping country
-    selectShippingCountry();
+    selectShippingCountry("US");
     acceptTerms();
 
     // Click checkout
-    cy.get("button").contains("Proceed to Checkout").click();
+    cy.get("#checkout-btn").click();
 
     // Wait for checkout API
     cy.wait("@checkoutSuccess");

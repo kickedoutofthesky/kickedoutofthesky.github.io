@@ -566,6 +566,9 @@ function resetForm() {
   window.history.replaceState({}, document.title, window.location.pathname);
 }
 
+// Make resetForm available globally for HTML onclick handlers
+window.resetForm = resetForm;
+
 // For backward compatibility with Jest CommonJS imports
 // These functions are imported from order-status-utilities.js but re-exported for testing
 if (typeof module !== "undefined" && module.exports) {

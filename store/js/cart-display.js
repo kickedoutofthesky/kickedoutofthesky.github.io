@@ -301,6 +301,20 @@ function displayCart() {
   }
 }
 
+// Convert relative image paths to absolute URLs for Stripe
+function getAbsoluteImageUrl(relativePath) {
+  // If already an absolute URL, return as-is
+  if (!relativePath || /^https?:\/\//.test(relativePath)) {
+    return relativePath;
+  }
+
+  // Build absolute URL with production domain and store path
+  // Image paths like "assets/images/..." need to be /store/assets/images/...
+  const productionDomain = "https://kickedoutofthesky.com";
+  const imagePath = relativePath.startsWith("/") ? relativePath : `/${relativePath}`;
+  return `${productionDomain}/store${imagePath}`;
+}
+
 // Transform cart items to SKU format for API (wrapper around utility function)
 function buildQuoteItems() {
   // Convert cart items to checkout format with full product details
@@ -318,11 +332,12 @@ function buildQuoteItems() {
         return null; // Skip items without valid variants
       }
 
+      const imageUrl = getImageForColor(product, item.color) || product.image;
       return {
         variant_id: variantId,
         quantity: item.quantity,
         name: product.title || product.name, // Use title (from products.json) or name as fallback
-        image: getImageForColor(product, item.color) || product.image,
+        image: getAbsoluteImageUrl(imageUrl),
         color: item.color,
         size: item.size,
       };
@@ -354,11 +369,37 @@ async function fetchQuote() {
   hideQuoteError();
 
   try {
-    // Use utility function to build payload
-    const items = cart.items.map(item => ({
-      variant_id: item.variant_id || item.variant_id,
-      quantity: item.quantity,
-    }));
+    // Build payload: cart items have productKey/color/size, need to resolve to variant_id/sku
+    const items = cart.items
+      .map(item => {
+        // Validate quantity exists and is a positive integer
+        if (!item.quantity || !Number.isInteger(item.quantity) || item.quantity <= 0) {
+          console.error(`Invalid quantity for cart item: ${item.productKey} - quantity: ${item.quantity}`);
+          return null;
+        }
+
+        const product = products.find(p => p.product_key === item.productKey);
+        if (!product) {
+          console.error(`Product not found for cart item: ${item.productKey}`);
+          return null;
+        }
+
+        const variantId = getVariantIdForColorSize(product, item.color, item.size);
+        if (!variantId) {
+          console.error(`Variant not found for ${item.productKey} - ${item.color} - ${item.size}`);
+          return null;
+        }
+
+        return {
+          sku: String(variantId),
+          quantity: item.quantity,
+        };
+      })
+      .filter(item => item !== null);
+
+    if (items.length === 0) {
+      throw new Error("No valid cart items to quote");
+    }
 
     const backendUrl = window.__API_URL__ || "https://api.kickedoutofthesky.com";
     const response = await fetch(`${backendUrl}/api/quote`, {
@@ -389,10 +430,16 @@ async function fetchQuote() {
 
     updateOrderSummaryDisplay(currentQuote);
     showQuoteLoading(false);
+    // Hide loading widget on success
+    const cartLoading = document.getElementById("cart-loading");
+    if (cartLoading) cartLoading.style.display = "none";
   } catch (error) {
     console.error("Error fetching quote:", error);
     showQuoteError(error.message || "Failed to calculate order total. Please try again.");
     showQuoteLoading(false);
+    // Hide loading widget on error too
+    const cartLoading = document.getElementById("cart-loading");
+    if (cartLoading) cartLoading.style.display = "none";
   }
 }
 
@@ -700,6 +747,7 @@ async function proceedToCheckout() {
       calculationId: currentQuote.calculationId,
       items,
       shippingCountry: countrySelect.value,
+      termsAccepted: termsCheckbox.checked,
     };
 
     let checkoutUrl = backendUrl + "/api/create-checkout-session";
@@ -730,8 +778,8 @@ async function proceedToCheckout() {
 
     console.log("Checkout response:", data);
 
-    // Clear cart before redirecting to Stripe Checkout
-    cart.clear();
+    // Cart will be cleared on success.html after payment is confirmed
+    // This preserves items if user abandons checkout or encounters an error
 
     // Redirect to Stripe Checkout Session (handle both redirect_url and url fields)
     const stripeUrl = data.redirect_url || data.url;

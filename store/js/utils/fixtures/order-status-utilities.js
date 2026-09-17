@@ -28,7 +28,8 @@ export function isValidPrintfulOrderId(orderId) {
     return false;
   }
 
-  // Printful Order IDs must be at least 5 characters and alphanumeric
+  // Printful Order IDs: minimum 5 characters, alphanumeric
+  // Can be: PF123456789, ABC123456789, eoKK1upmt2jl99BK1qYLDjbYH1gwUZeh, etc.
   const orderIdRegex = /^[a-zA-Z0-9]{5,}$/;
   return orderIdRegex.test(orderId.trim());
 }
