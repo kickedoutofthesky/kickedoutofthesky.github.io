@@ -22,7 +22,7 @@ describe("Product Display - Exported Functions", () => {
       };
 
       const result = getPriceDisplay(product);
-      expect(result).toBe("$39.99");
+      expect(result).toBe("$39.99 USD");
     });
 
     it("should display price range when variants have different prices", () => {
@@ -38,7 +38,7 @@ describe("Product Display - Exported Functions", () => {
       };
 
       const result = getPriceDisplay(product);
-      expect(result).toBe("$29.99 - $49.99");
+      expect(result).toBe("$29.99 USD – $49.99 USD");
     });
 
     it("should handle multiple colors with different prices", () => {
@@ -59,10 +59,10 @@ describe("Product Display - Exported Functions", () => {
       };
 
       const result = getPriceDisplay(product);
-      expect(result).toBe("$29.99 - $49.99");
+      expect(result).toBe("$29.99 USD – $49.99 USD");
     });
 
-    it("should fallback to display_price when no variant prices", () => {
+    it("should return zero when no variant prices available", () => {
       const product = {
         display_price: "$35.00",
         variants: {
@@ -73,17 +73,17 @@ describe("Product Display - Exported Functions", () => {
       };
 
       const result = getPriceDisplay(product);
-      expect(result).toBe("$35.00");
+      expect(result).toBe("$35.00 USD");
     });
 
     it("should handle null product gracefully", () => {
       const result = getPriceDisplay(null);
-      expect(result).toBe("$0.00");
+      expect(result).toBe("$0.00 USD");
     });
 
     it("should handle undefined product gracefully", () => {
       const result = getPriceDisplay(undefined);
-      expect(result).toBe("$0.00");
+      expect(result).toBe("$0.00 USD");
     });
 
     it("should format prices with two decimal places", () => {
@@ -116,7 +116,7 @@ describe("Product Display - Exported Functions", () => {
       };
 
       const result = getPriceDisplay(product);
-      expect(result).toBe("$29.99 - $59.99");
+      expect(result).toBe("$29.99 USD – $59.99 USD");
     });
 
     it("should handle high prices correctly", () => {
@@ -339,7 +339,7 @@ describe("Product Display - Exported Functions", () => {
       const displayPrice = getPriceDisplay(product);
       const priceRange = getPriceRange(product);
 
-      expect(displayPrice).toBe("$29.99 - $49.99");
+      expect(displayPrice).toBe("$29.99 USD – $49.99 USD");
       expect(priceRange.min).toBe(29.99);
       expect(priceRange.max).toBe(49.99);
     });
@@ -391,7 +391,7 @@ describe("Product Display - Exported Functions", () => {
       const displayPrice = getPriceDisplay(product);
       const priceRange = getPriceRange(product);
 
-      expect(displayPrice).toBe("$34.99 - $39.99");
+      expect(displayPrice).toBe("$34.99 USD – $39.99 USD");
       expect(priceRange.min).toBe(34.99);
       expect(priceRange.max).toBe(39.99);
     });

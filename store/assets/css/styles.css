@@ -425,12 +425,6 @@ input[type="number"] {
   -moz-appearance: textfield;
 }
 
-/* Logo responsive sizing */
-.brand {
-  max-height: 70px;
-  width: auto;
-}
-
 /* Navbar menu - prevent wrapping */
 .nav {
   flex-wrap: nowrap !important;
@@ -769,10 +763,6 @@ nav .container-fluid {
 }
 
 @media (max-width: 768px) {
-  .brand {
-    max-height: 35px;
-  }
-
   .nav {
     gap: 15px !important;
   }
@@ -812,10 +802,6 @@ nav .container-fluid {
 }
 
 @media (max-width: 576px) {
-  .brand {
-    max-height: 28px;
-  }
-
   .nav {
     gap: 10px !important;
   }
@@ -860,39 +846,6 @@ nav .container-fluid {
     width: 100% !important;
     justify-content: center !important;
     padding: 0 0 10px 0 !important;
-  }
-}
-
-/* Store navbar logo - smaller than main site */
-.brand {
-  height: 25px !important;
-}
-
-@media (min-width: 768px) {
-  .brand {
-    height: 40px !important;
-  }
-
-  .product-image {
-    height: 400px;
-  }
-}
-
-@media (min-width: 1000px) {
-  .brand {
-    height: 50px !important;
-  }
-}
-
-@media (min-width: 1200px) {
-  .brand {
-    height: 45px !important;
-  }
-}
-
-@media (min-width: 1400px) {
-  .brand {
-    height: 45px !important;
   }
 }
 

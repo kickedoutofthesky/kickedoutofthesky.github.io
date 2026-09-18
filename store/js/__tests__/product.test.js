@@ -27,7 +27,7 @@ describe("Product Page - Price Functions", () => {
       };
 
       const price = getPriceDisplay(product);
-      expect(price).toBe("$25.00");
+      expect(price).toBe("$25.00 USD");
     });
 
     it("should display price range when variants differ", () => {
@@ -43,17 +43,17 @@ describe("Product Page - Price Functions", () => {
       };
 
       const price = getPriceDisplay(product);
-      expect(price).toMatch(/\$20\.00\s*[-–]\s*\$25\.00|\$20\.00.*\$25\.00/);
+      expect(price).toMatch(/\$20\.00\s*[-–]\s*\$25\.00\s*USD|\$20\.00.*\$25\.00\s*USD/);
     });
 
     it("should use display_price as fallback", () => {
       const product = {
-        display_price: "$25.00",
+        display_price: "$25.00 USD",
         variants: {},
       };
 
       const price = getPriceDisplay(product);
-      expect(price).toBe("$25.00");
+      expect(price).toBe("$25.00 USD");
     });
   });
 

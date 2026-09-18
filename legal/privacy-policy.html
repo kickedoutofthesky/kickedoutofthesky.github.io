@@ -16,6 +16,7 @@
       integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
       crossorigin="anonymous"
     />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
     <link rel="stylesheet" href="../css/ui.css" />
     <style>
       body {
@@ -27,7 +28,7 @@
       .legal-container {
         max-width: 800px;
         margin: 0 auto;
-        padding: 40px 20px 60px;
+        padding: 150px 20px 60px;
       }
       .legal-nav {
         background: #111;
@@ -117,16 +118,7 @@
     </style>
   </head>
   <body>
-    <nav class="legal-nav">
-      <a href="../index.html">Home</a>
-      <a href="../store/index.html">Merch</a>
-      <a href="privacy-policy.html">Privacy</a>
-      <a href="terms-and-conditions.html">Terms</a>
-      <a href="shipping-policy.html">Shipping</a>
-      <a href="cookie-policy.html">Cookies</a>
-      <a href="contact.html">Contact</a>
-    </nav>
-
+    <!-- Navbar loaded dynamically from navbar.html -->
     <div class="legal-container">
       <h1>Privacy Policy</h1>
       <p class="last-updated">
@@ -440,6 +432,7 @@
     <script>
       document.getElementById("last-updated").textContent = new Date().toLocaleDateString();
     </script>
+    <script src="../js/navbar-loader.js"></script>
     <script src="../js/analytics.js"></script>
     <script src="../js/cookie-consent.js"></script>
   </body>

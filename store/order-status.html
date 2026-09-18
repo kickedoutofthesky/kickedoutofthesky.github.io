@@ -28,22 +28,6 @@
     <link rel="stylesheet" href="../css/ui.css" />
     <link rel="stylesheet" href="assets/css/styles.css" />
     <style>
-      .order-status-wrapper {
-        margin-top: 100px;
-      }
-
-      @media (max-width: 768px) {
-        .order-status-wrapper {
-          margin-top: 100px;
-        }
-      }
-
-      @media (max-width: 576px) {
-        .order-status-wrapper {
-          margin-top: 140px;
-        }
-      }
-
       .order-shipping-grid {
         display: grid;
         grid-template-columns: 2fr 1fr;
@@ -64,15 +48,6 @@
           padding: 0 20px;
           max-width: 100%;
         }
-
-        div[style*="margin-top: 100px"] {
-          margin-top: 180px !important;
-        }
-
-        div[style*="margin-top: 100px"] .container {
-          max-width: 100%;
-          padding: 0;
-        }
       }
 
       @media (min-width: 768px) and (max-width: 999px) {
@@ -83,15 +58,6 @@
           margin-bottom: 40px;
           padding: 0 20px;
           max-width: 100%;
-        }
-
-        div[style*="margin-top: 100px"] {
-          margin-top: 140px !important;
-        }
-
-        div[style*="margin-top: 100px"] .container {
-          max-width: 100%;
-          padding: 0;
         }
       }
 
@@ -484,86 +450,9 @@
   </head>
   <body class="text-center">
     <a href="#order-content" class="skip-nav">Skip to content</a>
-    <!-- Navbar -->
-    <nav
-      id="navbarMain"
-      class="navbar navbar-expand site-header fixed-top"
-      style="padding: 15px 40px 15px 0; background-color: #00000080"
-    >
-      <div class="container-fluid" style="display: flex; justify-content: space-between; align-items: center">
-        <a href="../index.html" style="flex-shrink: 0; display: flex; align-items: center">
-          <img
-            class="brand"
-            src="../img/Kicked-Out-Of-The-Sky_transparent.png"
-            alt="Kicked Out of the Sky Logo"
-            style="width: auto; display: block"
-          />
-        </a>
-        <ul class="nav" style="gap: 30px; display: flex; flex-wrap: nowrap; margin: 0; list-style: none">
-          <li class="nav-item">
-            <a
-              class="nav-link"
-              href="index.html"
-              style="text-decoration: none; font-size: 1.2rem; display: flex; align-items: center; cursor: pointer"
-            >
-              Merch
-            </a>
-          </li>
-          <li class="nav-item" style="position: relative">
-            <a
-              class="nav-link"
-              href="cart.html"
-              style="
-                text-decoration: none;
-                font-size: 1.2rem;
-                display: flex;
-                align-items: center;
-                gap: 8px;
-                cursor: pointer;
-              "
-            >
-              <i class="fas fa-shopping-cart"></i>
-              Cart
-              <span
-                id="cart-badge"
-                data-testid="cart-count"
-                class="badge"
-                style="
-                  background-color: #ffc107;
-                  color: #000;
-                  position: absolute;
-                  top: -5px;
-                  right: -10px;
-                  display: none;
-                  font-size: 0.7rem;
-                  width: 20px;
-                  height: 20px;
-                  border-radius: 50%;
-                  display: flex;
-                  align-items: center;
-                  justify-content: center;
-                  padding: 0;
-                "
-              >
-                0
-              </span>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a
-              class="nav-link"
-              href="order-status.html"
-              style="text-decoration: none; font-size: 1.2rem; display: flex; align-items: center; cursor: pointer"
-            >
-              <i class="fas fa-package"></i>
-              Orders
-            </a>
-          </li>
-        </ul>
-      </div>
-    </nav>
+    <!-- Navbar loaded dynamically from navbar.html -->
 
-    <div class="order-status-wrapper">
+    <div id="main-content">
       <div class="container order-status-container" id="order-content" data-testid="order-status-page">
         <h1 class="text-light mb-40">Order Status</h1>
 
@@ -660,6 +549,7 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/navbar-loader.js"></script>
     <script src="js/cart.js"></script>
     <script type="module" src="js/order-status.js"></script>
     <script src="../js/analytics.js"></script>

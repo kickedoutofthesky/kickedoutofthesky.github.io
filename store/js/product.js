@@ -1,6 +1,7 @@
 /* global cart, playDingSound, createCartBurst */
 // Product Detail Page
 /* eslint-disable no-unused-vars */
+import { formatUSD, PRICE_DISCLAIMER_WITH_LINK } from "../../js/money.js";
 import {
   getColorNamesFromProduct,
   getSizesForColor,
@@ -738,8 +739,7 @@ function updatePrice() {
   if (size && color) {
     const variantData = currentProduct.variants[color]?.sizes?.[size];
     if (variantData?.price_cents !== null && variantData?.price_cents !== undefined) {
-      const price = variantData.price_cents / 100;
-      document.getElementById("price-display").textContent = `$${price.toFixed(2)}`;
+      document.getElementById("price-display").textContent = formatUSD(variantData.price_cents);
       return;
     }
   }
@@ -805,24 +805,31 @@ async function addToCart() {
 // Get all variant prices for a product and return display price (single or range)
 function getPriceDisplay(product) {
   if (!product) {
-    return "$0.00";
+    return formatUSD(0);
   }
 
   // Use utility function to get price range
   const priceRange = getPriceRangeFromProduct(product);
 
-  // If fallback to display_price
+  // If all prices are 0 and product has a display_price fallback, use it
+  if (priceRange.min === 0 && priceRange.max === 0 && product.display_price) {
+    // Ensure display_price has USD suffix
+    const displayPrice = product.display_price;
+    return displayPrice.includes("USD") ? displayPrice : `${displayPrice} USD`;
+  }
+
+  // If all prices are 0, return zero
   if (priceRange.min === 0 && priceRange.max === 0) {
-    return product.display_price || "$0.00";
+    return formatUSD(0);
   }
 
   // If all prices are the same, show single price
   if (priceRange.min === priceRange.max) {
-    return `$${priceRange.min.toFixed(2)}`;
+    return formatUSD(priceRange.min * 100);
   }
 
   // If prices differ, show range
-  return `$${priceRange.min.toFixed(2)} - $${priceRange.max.toFixed(2)}`;
+  return `${formatUSD(priceRange.min * 100)} – ${formatUSD(priceRange.max * 100)}`;
 }
 
 // Helper function to get numeric price range for schema markup

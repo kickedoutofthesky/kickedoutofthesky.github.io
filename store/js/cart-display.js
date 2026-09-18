@@ -2,7 +2,7 @@
 /* eslint-disable-next-line no-unused-vars */
 /* global cart, updateCartQuantity, removeFromCart, showCartBadgeBurst */
 
-import { initializeCurrency, updateCurrencyForCountry, formatPrice } from "./utils/currency.js";
+import { formatUSD, PRICE_DISCLAIMER_WITH_LINK } from "../../js/money.js";
 import { extractQuoteData, isValidQuote } from "./utils/fixtures/cart-utilities.js";
 import { getVariantIdForColorSize, getImageForColor } from "./utils/fixtures/product-utilities.js";
 
@@ -13,19 +13,9 @@ let currentQuote = null;
 let isCheckingOut = false;
 
 /**
- * Initialize localStorage defaults for country selection
- * Sets US as the default country unless already set
+ * Country selection is stored in localStorage
+ * Defaults to "Select a country..." until customer makes a choice
  */
-function initializeCountryDefaults() {
-  if (!localStorage.getItem("selectedShippingCountry")) {
-    localStorage.setItem("selectedShippingCountry", "US");
-    localStorage.setItem("countryManuallySet", "false");
-    console.log("✓ Initialized localStorage with default country: US");
-  }
-}
-
-// Initialize country defaults immediately when module loads
-initializeCountryDefaults();
 
 // Debounce utility function
 function debounce(func, delayMs) {
@@ -85,9 +75,6 @@ function waitForCart(callback) {
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
-  // Initialize currency from geo-location first
-  await initializeCurrency();
-
   // Wait for cart to be ready
   waitForCart(async () => {
     // Force reload cart from localStorage to ensure we have latest items
@@ -157,47 +144,25 @@ function setupCountrySelector() {
 
   if (select) {
     // Restore previously selected country from localStorage
-    // This will be the geo-detected country (from initializeCurrency on product page)
-    // or the customer's previously chosen country (which overrides geo-location)
     const savedCountry = localStorage.getItem("selectedShippingCountry");
-    const countryManuallySet = localStorage.getItem("countryManuallySet") === "true";
 
-    // Check if cart has items and no country is selected
-    const hasCartItems = cart && cart.items && cart.items.length > 0;
-    const geoCountry = window.customerCurrency?.country;
-
-    // Auto-select geo-detected country if cart has items and no country is saved
-    // Only auto-select if user hasn't manually set a country before
-    if (hasCartItems && !countryManuallySet && geoCountry && select.querySelector(`option[value="${geoCountry}"]`)) {
-      select.value = geoCountry;
-      localStorage.setItem("selectedShippingCountry", geoCountry);
-      localStorage.setItem("countryManuallySet", "false");
-      console.log(`✓ Cart: Auto-selected country from geo-location: ${geoCountry}`);
-      // Fetch quote for the auto-selected country
-      debouncedFetchQuote();
-    } else if (savedCountry && select.querySelector(`option[value="${savedCountry}"]`)) {
-      // Only set if the country exists in the dropdown
+    if (savedCountry && select.querySelector(`option[value="${savedCountry}"]`)) {
       select.value = savedCountry;
-      console.log(`✓ Cart: Restored country from storage: ${savedCountry} (manually set: ${countryManuallySet})`);
+      console.log(`✓ Cart: Restored country from storage: ${savedCountry}`);
       // Fetch quote for the saved country
       debouncedFetchQuote();
     }
 
-    select.addEventListener("change", async () => {
+    select.addEventListener("change", () => {
       if (!isCheckingOut) {
         // Save customer's chosen country to localStorage
         localStorage.setItem("selectedShippingCountry", select.value);
-        // Mark that user manually selected this country (prevents geo overwrite)
-        localStorage.setItem("countryManuallySet", "true");
-        console.log(`✓ Cart: Updated shipping country to ${select.value} (user selected)`);
+        console.log(`✓ Cart: Updated shipping country to ${select.value}`);
 
         // IMPORTANT: Clear current quote immediately so checkout button is disabled
         // until a fresh quote loads. This prevents stale calculationId issues.
         currentQuote = null;
         updateOrderSummaryDisplay(null);
-
-        // Update currency display for the newly selected country
-        await updateCurrencyForCountry(select.value);
 
         updateCheckoutButtonState();
         // Fetch quote with debouncing for the new country
@@ -280,12 +245,13 @@ function displayCart() {
         <p style="color: #ccc; font-size: 0.9rem; margin: 4px 0;">Color: ${item.color}</p>
         <p style="color: #ccc; font-size: 0.9rem; margin: 4px 0;">Size: ${item.size}</p>
         <div style="display: flex; gap: 10px; align-items: center; margin-top: 15px;">
-          <span style="color: #ffc107; font-weight: bold;" data-testid="item-price">${formatCurrency(pricePerItem, "USD")}</span>
+          <span style="color: #ffc107; font-weight: bold;" data-testid="item-price">${formatUSD(pricePerItem)}</span>
           <span style="color: #ccc;">×</span>
           <button class="cart-qty-btn" onclick="updateCartQuantity(${index}, ${item.quantity - 1})" style="background: #3a3a3a; color: #fff; border: none; width: 22px; height: 22px; padding: 0; cursor: pointer; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.65rem; line-height: 1;"><i class="fas fa-minus" style="font-size: 0.55rem;"></i></button>
           <input type="text" class="quantity-input" data-testid="quantity-input" value="${item.quantity}" readonly style="width: 50px; padding: 5px; background: #1a1a1a; color: #fff; border: 1px solid #333; text-align: center; border-radius: 4px;">
           <button class="cart-qty-btn" onclick="updateCartQuantity(${index}, ${item.quantity + 1})" style="background: #3a3a3a; color: #fff; border: none; width: 22px; height: 22px; padding: 0; cursor: pointer; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.65rem; line-height: 1;"><i class="fas fa-plus" style="font-size: 0.55rem;"></i></button>
-          <span style="color: #ccc; margin-left: auto;">Total: <span style="color: #ffc107; font-weight: bold;">${formatCurrency(lineTotal, "USD")}</span></span>
+          <span style="color: #ccc; margin-left: auto;">=</span>
+          <span style="color: #ffc107; font-weight: bold;">${formatUSD(lineTotal)}</span>
           <button onclick="removeFromCart(${index})" data-testid="remove-item" style="background: none; color: #fff; border: none; padding: 8px 0 8px 12px; cursor: pointer; font-size: 1.1rem;"><i class="fas fa-trash"></i></button>
         </div>
       </div>
@@ -468,62 +434,9 @@ function hideQuoteError() {
   }
 }
 
-function formatCurrency(minorUnits, currency, locale) {
-  // Convert minor units (cents) to dollars/euros/etc
-  const divisor = 100; // assuming cents-based currencies
-  const amount = minorUnits / divisor;
-
-  // Normalize currency to uppercase
-  const currencyUpper = (currency || "USD").toUpperCase();
-
-  // Map currency codes to their proper locales for toLocaleString()
-  const localeMap = {
-    USD: "en-US", // $1,234.50
-    EUR: "de-DE", // €1.234,50
-    GBP: "en-GB", // £1,234.50
-    CAD: "en-CA", // $1,234.50
-    AUD: "en-AU", // $1,234.50
-    JPY: "ja-JP", // ¥123,450
-    CNY: "zh-CN", // ¥1,234.50
-    INR: "en-IN", // ₹1,234.50
-  };
-
-  // Use provided locale or map to appropriate locale for the currency
-  const targetLocale = locale || localeMap[currencyUpper] || "en-US";
-
-  // Format using toLocaleString with currency option
-  try {
-    return new Intl.NumberFormat(targetLocale, {
-      style: "currency",
-      currency: currencyUpper,
-      minimumFractionDigits: currencyUpper === "JPY" || currencyUpper === "CNY" ? 0 : 2,
-      maximumFractionDigits: currencyUpper === "JPY" || currencyUpper === "CNY" ? 0 : 2,
-    }).format(amount);
-  } catch (error) {
-    // Fallback if Intl.NumberFormat fails
-    console.warn(`Currency formatting error for ${currencyUpper}:`, error);
-    const currencySymbols = {
-      USD: "$",
-      EUR: "€",
-      GBP: "£",
-      CAD: "C$",
-      AUD: "A$",
-      JPY: "¥",
-      CNY: "¥",
-      INR: "₹",
-    };
-    const symbol = currencySymbols[currencyUpper] || currencyUpper;
-    if (currencyUpper === "JPY" || currencyUpper === "CNY") {
-      return `${symbol}${Math.round(amount)}`;
-    }
-    return `${symbol}${amount.toFixed(2)}`;
-  }
-}
-
 function updateOrderSummaryDisplay(quote) {
   const contentEl = document.getElementById("summary-content");
   const cartLoading = document.getElementById("cart-loading");
-  const currencyEl = document.getElementById("currency-display");
   const subtotalEl = document.getElementById("subtotal");
   const taxLabelEl = document.getElementById("tax-label");
   const taxValueEl = document.getElementById("tax-value");
@@ -544,43 +457,31 @@ function updateOrderSummaryDisplay(quote) {
   // Use utility function to normalize quote data if not already normalized
   const normalizedQuote = quote.subtotal !== undefined ? quote : extractQuoteData(quote);
 
-  // Display currency code
-  // Fallback to window.customerCurrency if quote doesn't have currency
-  const currency = normalizedQuote.currency || (window.customerCurrency && window.customerCurrency.currency) || "USD";
-
-  if (currencyEl && currency) {
-    currencyEl.textContent = currency;
-  }
-
   contentEl.style.display = "block";
 
   // Get prices from normalized quote (already in cents from utility function)
   const subtotalConverted = normalizedQuote.subtotal;
   const taxConverted = normalizedQuote.tax;
-  const totalConverted = normalizedQuote.total;
 
-  // Format amounts using the target currency
-  const subtotalFormatted = formatPrice(subtotalConverted, currency);
-  const taxFormatted = formatPrice(taxConverted, currency);
+  // Format amounts using USD only
+  const subtotalFormatted = formatUSD(subtotalConverted);
+  const taxFormatted = formatUSD(taxConverted);
 
   // Update subtotal
   subtotalEl.textContent = subtotalFormatted;
 
   // Handle tax/VAT label and display
   let taxLabel;
-  let taxLabelNote;
   let taxValue;
 
   // Determine if this is a VAT country based on taxIncluded flag
   if (normalizedQuote.taxIncluded) {
     // VAT country - tax is included in the price
     taxLabel = "VAT:";
-    taxLabelNote = "";
     taxValue = "Included in price";
   } else {
     // Tax country - tax will be calculated at checkout
     taxLabel = "Tax:";
-    taxLabelNote = "";
     // If tax value is 0 and we don't have it yet, show the note in the value
     if (taxConverted === 0) {
       taxValue = "Calculated at checkout";
@@ -589,9 +490,9 @@ function updateOrderSummaryDisplay(quote) {
     }
   }
 
-  // Update tax label with colon and note
+  // Update tax label
   if (taxLabelEl) {
-    taxLabelEl.innerHTML = `${taxLabel}<span id="tax-label-note" style="font-size: 0.95rem; color: #999">${taxLabelNote}</span>`;
+    taxLabelEl.textContent = taxLabel;
   }
   taxValueEl.textContent = taxValue;
 
@@ -777,6 +678,5 @@ if (typeof module !== "undefined" && module.exports) {
     updateCheckoutButtonState,
     buildQuoteItems,
     populateCountrySelect,
-    initializeCountryDefaults,
   };
 }

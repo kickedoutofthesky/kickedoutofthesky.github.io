@@ -56,15 +56,6 @@
       }
 
       @media (max-width: 767px) {
-        div[style*="margin-top: 100px"] {
-          margin-top: 180px !important;
-        }
-
-        div[style*="margin-top: 100px"] .container {
-          max-width: 100%;
-          padding: 0;
-        }
-
         .cart-container {
           display: block;
         }
@@ -156,87 +147,9 @@
   </head>
   <body class="text-center">
     <a href="#cart-items" class="skip-nav">Skip to content</a>
-    <!-- Navbar -->
-    <nav
-      id="navbarMain"
-      class="navbar navbar-expand site-header fixed-top"
-      style="padding: 15px 40px 15px 0; background-color: #00000080"
-    >
-      <div class="container-fluid" style="display: flex; justify-content: space-between; align-items: center">
-        <a href="../index.html" style="flex-shrink: 0; display: flex; align-items: center">
-          <img
-            class="brand"
-            src="../img/Kicked-Out-Of-The-Sky_transparent.png"
-            alt="Kicked Out Of The Sky Logo"
-            style="width: auto; display: block"
-          />
-        </a>
-        <ul class="nav" style="gap: 30px; display: flex; flex-wrap: nowrap; margin: 0; list-style: none">
-          <li class="nav-item">
-            <a
-              class="nav-link"
-              href="index.html"
-              style="text-decoration: none; font-size: 1.2rem; display: flex; align-items: center; cursor: pointer"
-            >
-              Merch
-            </a>
-          </li>
-          <li class="nav-item" style="position: relative">
-            <a
-              class="nav-link"
-              href="cart.html"
-              style="
-                text-decoration: none;
-                font-size: 1.2rem;
-                display: flex;
-                align-items: center;
-                gap: 8px;
-                cursor: pointer;
-              "
-            >
-              <i class="fas fa-shopping-cart"></i>
-              Cart
-              <span
-                id="cart-badge"
-                data-testid="cart-count"
-                class="badge"
-                aria-label="Items in cart"
-                style="
-                  background-color: #ffc107;
-                  color: #000;
-                  position: absolute;
-                  top: -5px;
-                  right: -10px;
-                  display: none;
-                  font-size: 0.7rem;
-                  width: 20px;
-                  height: 20px;
-                  border-radius: 50%;
-                  display: flex;
-                  align-items: center;
-                  justify-content: center;
-                  padding: 0;
-                "
-              >
-                0
-              </span>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a
-              class="nav-link"
-              href="order-status.html"
-              style="text-decoration: none; font-size: 1.2rem; display: flex; align-items: center; cursor: pointer"
-            >
-              <i class="fas fa-package"></i>
-              Orders
-            </a>
-          </li>
-        </ul>
-      </div>
-    </nav>
+    <!-- Navbar loaded dynamically from navbar.html -->
 
-    <div style="margin-top: 100px">
+    <div id="main-content">
       <div class="container" data-testid="cart-page">
         <h1 class="text-light mb-40">Shopping Cart</h1>
 
@@ -289,13 +202,6 @@
 
             <!-- Order Summary Content (shown when quote loaded) -->
             <div id="summary-content" style="display: none">
-              <!-- Currency Display -->
-              <div class="flex-between text-secondary mb-15 pb-15 border-bottom-dark">
-                <span>Prices in:</span>
-                <span id="currency-display" style="color: #999; font-size: 0.95rem" data-testid="currency-display">
-                  —
-                </span>
-              </div>
               <div class="flex-between text-secondary mb-15 pb-15 border-bottom-dark">
                 <span style="font-weight: bold">Subtotal:</span>
                 <span id="subtotal" data-testid="cart-subtotal" style="font-weight: bold">—</span>
@@ -331,6 +237,24 @@
               >
                 ⓘ Import duties may be charged on delivery and are the customer's responsibility.
               </div>
+            </div>
+            <!-- Price Disclaimer -->
+            <div
+              style="
+                padding: 12px;
+                background-color: #1a1a1a;
+                border-radius: 4px;
+                margin-bottom: 20px;
+                font-size: 0.8125rem;
+                color: #999;
+                line-height: 1.5;
+              "
+            >
+              Prices in USD. Orders outside the US may be subject to
+              <a href="../legal/shipping-policy.html#duties" style="color: #ffc107; text-decoration: underline">
+                import duties or VAT
+              </a>
+              charged on delivery.
             </div>
             <div class="mt-20">
               <label for="shipping-country" class="form-group-label">
@@ -415,6 +339,7 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/navbar-loader.js"></script>
     <script src="js/cart.js"></script>
     <script src="js/cart-notification.js"></script>
     <script type="module" src="js/cart-display.js?v=20260323120009"></script>

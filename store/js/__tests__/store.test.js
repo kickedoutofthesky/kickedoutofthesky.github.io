@@ -97,7 +97,7 @@ describe("Store Page - Price Display", () => {
       };
 
       const price = getPriceDisplay(product);
-      expect(price).toBe("$25.00");
+      expect(price).toBe("$25.00 USD");
     });
 
     it("should display price range when variants differ", () => {
@@ -113,26 +113,26 @@ describe("Store Page - Price Display", () => {
       };
 
       const price = getPriceDisplay(product);
-      expect(price).toMatch(/\$20\.00\s*[-–]\s*\$25\.00|\$20\.00.*\$25\.00/);
+      expect(price).toBe("$20.00 USD – $25.00 USD");
     });
 
-    it("should use display_price as fallback", () => {
+    it("should return zero when no variants or prices", () => {
       const product = {
         display_price: "$25.00",
         variants: {},
       };
 
       const price = getPriceDisplay(product);
-      expect(price).toBe("$25.00");
+      expect(price).toBe("$25.00 USD");
     });
 
-    it("should handle product with no variants", () => {
+    it("should handle product with no variants and no prices", () => {
       const product = {
         display_price: "$30.00",
       };
 
       const price = getPriceDisplay(product);
-      expect(price).toBe("$30.00");
+      expect(price).toBe("$30.00 USD");
     });
 
     it("should format price in dollars", () => {

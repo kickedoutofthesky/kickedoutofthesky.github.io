@@ -16,6 +16,7 @@
       integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
       crossorigin="anonymous"
     />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
     <link rel="stylesheet" href="../css/ui.css" />
     <style>
       body {
@@ -27,7 +28,7 @@
       .legal-container {
         max-width: 800px;
         margin: 0 auto;
-        padding: 40px 20px 60px;
+        padding: 150px 20px 60px;
       }
       .legal-nav {
         background: #111;
@@ -56,6 +57,10 @@
         margin-bottom: 12px;
         border-bottom: 1px solid #333;
         padding-bottom: 6px;
+        scroll-margin-top: 130px;
+      }
+      h2[id] {
+        scroll-margin-top: 130px;
       }
       h3 {
         color: #ccc;
@@ -140,16 +145,7 @@
     </style>
   </head>
   <body>
-    <nav class="legal-nav">
-      <a href="../index.html">Home</a>
-      <a href="../store/index.html">Merch</a>
-      <a href="privacy-policy.html">Privacy</a>
-      <a href="terms-and-conditions.html">Terms</a>
-      <a href="shipping-policy.html">Shipping</a>
-      <a href="cookie-policy.html">Cookies</a>
-      <a href="contact.html">Contact</a>
-    </nav>
-
+    <!-- Navbar loaded dynamically from navbar.html -->
     <div class="legal-container">
       <h1>Shipping &amp; Returns Policy</h1>
       <p class="last-updated">
@@ -157,7 +153,65 @@
         <span id="last-updated"></span>
       </p>
 
-      <h2>1. Print-on-Demand Production</h2>
+      <h2>1. Order Confirmation</h2>
+      <p>
+        When you complete your purchase, you will immediately receive a confirmation email to the address you provided
+        at checkout. This email contains your order number, itemized details of what you ordered, the total amount
+        charged, and a link to track your order. Please save this email for your records.
+      </p>
+
+      <h2>2. Order Status</h2>
+      <p>
+        Our Order Status feature allows you to track your order from production through delivery. You can access this
+        feature on our website by visiting the Order Status page and entering your order number and email address.
+      </p>
+      <p>
+        <strong>What the Order Status page displays:</strong>
+      </p>
+      <ul>
+        <li>
+          <strong>Order Details:</strong>
+          Your order number, order date, and items ordered
+        </li>
+        <li>
+          <strong>Production Status:</strong>
+          Whether your merchandise is currently in production
+        </li>
+        <li>
+          <strong>Shipping Status:</strong>
+          Current location of your package and carrier information
+        </li>
+        <li>
+          <strong>Estimated Delivery Date:</strong>
+          When your package is expected to arrive
+        </li>
+        <li>
+          <strong>Tracking Information:</strong>
+          Real-time updates as your package moves through the shipping network
+        </li>
+        <li>
+          <strong>Contact Support:</strong>
+          Quick access to our support team if you have questions
+        </li>
+      </ul>
+      <p>
+        Simply enter your order number (found in your confirmation email) and the email address associated with your
+        purchase to view all current details. The status updates automatically as your order progresses through our
+        fulfillment process and shipping network.
+      </p>
+      <p>
+        For additional assistance with your order, you can contact us at
+        <a href="mailto:christa@letgomedia.com">christa@letgomedia.com</a>
+        with your order number.
+      </p>
+
+      <h2 id="tracking">3. Order Tracking</h2>
+      <p>
+        Once your order ships, you will receive an email with a tracking number and a link to track your package. Please
+        allow 24–48 hours after receiving the tracking email for tracking information to become active.
+      </p>
+
+      <h2>4. Print-on-Demand Production</h2>
       <p>
         All Kicked Out Of The Sky merchandise is produced on-demand by our fulfillment partner,
         <strong>Printful</strong>
@@ -165,7 +219,7 @@
         — your merchandise is printed, cut, and assembled specifically for you.
       </p>
 
-      <h2>2. Production Time</h2>
+      <h2>5. Production Time</h2>
       <p>
         Production typically takes
         <strong>2–5 business days</strong>
@@ -173,33 +227,56 @@
         longer. You will receive an email notification with tracking information once your order has shipped.
       </p>
 
-      <h2>3. Shipping Methods and Estimated Delivery Times</h2>
+      <h2 id="regions">6. Shipping Regions and Delivery Times</h2>
+      <p>
+        We ship to most countries supported by our fulfillment partner,
+        <strong>Printful</strong>
+        . Below is a summary of regional shipping information:
+      </p>
       <table>
         <thead>
           <tr>
             <th>Region</th>
-            <th>Estimated Delivery</th>
+            <th>Ships From</th>
+            <th>Fulfillment</th>
+            <th>Typical Delivery</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td>United States (domestic)</td>
+            <td>United States (Domestic)</td>
+            <td>Printful (US)</td>
+            <td>Print-on-demand</td>
             <td>3–7 business days after shipping</td>
           </tr>
           <tr>
-            <td>Europe</td>
-            <td>6–12 business days after shipping</td>
-          </tr>
-          <tr>
             <td>Canada</td>
+            <td>Printful (CA)</td>
+            <td>Print-on-demand</td>
             <td>6–10 business days after shipping</td>
           </tr>
           <tr>
-            <td>Australia / New Zealand</td>
+            <td>Europe</td>
+            <td>Printful (EU)</td>
+            <td>Print-on-demand</td>
+            <td>6–12 business days after shipping</td>
+          </tr>
+          <tr>
+            <td>Australia & New Zealand</td>
+            <td>Printful (AU)</td>
+            <td>Print-on-demand</td>
             <td>8–15 business days after shipping</td>
           </tr>
           <tr>
+            <td>UK & Ireland</td>
+            <td>Printful (UK)</td>
+            <td>Print-on-demand</td>
+            <td>6–10 business days after shipping</td>
+          </tr>
+          <tr>
             <td>Rest of World</td>
+            <td>Printful (Various)</td>
+            <td>Print-on-demand</td>
             <td>8–20 business days after shipping</td>
           </tr>
         </tbody>
@@ -209,25 +286,19 @@
         processing, and local postal services.
       </p>
 
-      <h2>4. Shipping Carriers</h2>
+      <h2>7. Shipping Carriers</h2>
       <p>
         Printful ships orders through various carriers depending on the destination, including USPS, UPS, FedEx, DHL,
         and local postal services. The carrier is selected automatically based on the destination and package type.
       </p>
 
-      <h2>5. Order Tracking</h2>
-      <p>
-        Once your order ships, you will receive an email with a tracking number and a link to track your package. Please
-        allow 24–48 hours after receiving the tracking email for tracking information to become active.
-      </p>
-
-      <h2>6. Shipping Costs</h2>
+      <h2>8. Shipping Costs</h2>
       <p>
         Shipping costs are calculated at checkout based on the destination, item weight, and package dimensions. The
         shipping cost is displayed before you complete your purchase. We do not currently offer free shipping.
       </p>
 
-      <h2>7. International Orders</h2>
+      <h2>9. International Orders</h2>
       <p>We ship to most countries supported by Printful. For international orders:</p>
       <ul>
         <li>
@@ -242,7 +313,50 @@
         </li>
       </ul>
 
-      <h2>8. Returns Policy</h2>
+      <h2 id="duties">Duties, Taxes, and VAT</h2>
+      <p>
+        <strong>Prices in USD.</strong>
+        Orders outside the US may be subject to import duties or VAT charged on delivery.
+      </p>
+      <p>
+        When ordering from outside the United States, you may be required to pay additional duties or Value Added Tax
+        (VAT) upon delivery. These charges:
+      </p>
+      <ul>
+        <li>Are assessed by your country's customs authority, not by us</li>
+        <li>Are separate from the product price and shipping cost you see at checkout (which are in USD)</li>
+        <li>Vary by country and item classification</li>
+        <li>
+          Are typically calculated based on the product value, shipping cost, and your country's tariff rates and VAT
+          thresholds
+        </li>
+      </ul>
+      <p>
+        We have no control over these charges and cannot predict them. Your shipping carrier or customs service will
+        notify you if duties or taxes are due and how to pay them. Please budget accordingly when placing international
+        orders.
+      </p>
+
+      <h2 id="restricted">Restricted Destinations</h2>
+      <p>
+        Due to carrier limitations, sanctions, and regulatory restrictions, we cannot ship to the following
+        destinations:
+      </p>
+      <ul>
+        <li>Afghanistan</li>
+        <li>Belarus</li>
+        <li>Cuba</li>
+        <li>Iran</li>
+        <li>North Korea</li>
+        <li>Russia</li>
+        <li>Syria</li>
+      </ul>
+      <p>
+        If your country or region is not listed at checkout as an option, it means we are currently unable to ship
+        there. We apologize for any inconvenience.
+      </p>
+
+      <h2 id="returns">10. Returns Policy</h2>
       <p>
         Because all merchandise is custom-made to order,
         <strong>we generally do not accept returns for buyer's remorse</strong>
@@ -253,7 +367,7 @@
         page.
       </p>
 
-      <h2>9. Defective or Damaged Items</h2>
+      <h2>11. Defective or Damaged Items</h2>
       <p>
         If your item arrives damaged or with a print defect, Printful will replace it at no cost. To initiate a
         replacement:
@@ -273,7 +387,7 @@
         <li>We will work with Printful to send a replacement as quickly as possible</li>
       </ol>
 
-      <h2>10. Wrong Item Received</h2>
+      <h2>12. Wrong Item Received</h2>
       <p>
         If you receive the wrong item (different size, color, or product than ordered), we will replace it at no cost.
         Contact us at
@@ -281,7 +395,7 @@
         with your order number and a photo of the incorrect item.
       </p>
 
-      <h2>11. Refund Processing</h2>
+      <h2>13. Refund Processing</h2>
       <p>
         If a refund is approved (for defective items where a replacement is not possible), the refund will be processed
         to your original payment method within
@@ -289,7 +403,7 @@
         . You will receive an email confirmation when the refund is issued.
       </p>
 
-      <h2>12. Lost Packages</h2>
+      <h2>14. Lost Packages</h2>
       <p>If your package has not arrived within the estimated delivery timeframe:</p>
       <ol>
         <li>Check the tracking information for the latest status</li>
@@ -301,7 +415,7 @@
         <li>We will file a claim with the carrier and work to send a replacement or issue a refund</li>
       </ol>
 
-      <h2>13. Contact Us</h2>
+      <h2>15. Contact Us</h2>
       <p>
         For any shipping or return inquiries, contact us at:
         <br />
@@ -337,6 +451,7 @@
     <script>
       document.getElementById("last-updated").textContent = new Date().toLocaleDateString();
     </script>
+    <script src="../js/navbar-loader.js"></script>
     <script src="../js/analytics.js"></script>
     <script src="../js/cookie-consent.js"></script>
   </body>

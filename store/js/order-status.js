@@ -1,6 +1,5 @@
 // Order Status Page
 
-import { initializeCurrency } from "./utils/currency.js";
 import {
   isValidEmail,
   isValidPrintfulOrderId,
@@ -16,7 +15,6 @@ import {
 let products = [];
 
 document.addEventListener("DOMContentLoaded", async () => {
-  await initializeCurrency();
   await loadProducts();
   setupEventListeners();
 

@@ -52,11 +52,11 @@ describe("Product Display", () => {
 
   describe("getPriceDisplay", () => {
     test("should return single price if all variants have same price", () => {
-      expect(getPriceDisplay(mockProduct)).toBe("$25.00");
+      expect(getPriceDisplay(mockProduct)).toBe("$25.00 USD");
     });
 
     test("should return price range for products with different prices", () => {
-      expect(getPriceDisplay(mockStickerProduct)).toBe("$4.50 - $5.50");
+      expect(getPriceDisplay(mockStickerProduct)).toBe("$4.50 USD – $5.50 USD");
     });
   });
 
@@ -147,7 +147,7 @@ describe("Product Display", () => {
   describe("getPriceDisplay edge cases", () => {
     test("should fallback to display_price when no variants", () => {
       const product = { display_price: "$15.00" };
-      expect(getPriceDisplay(product)).toBe("$15.00");
+      expect(getPriceDisplay(product)).toBe("$15.00 USD");
     });
 
     test("should fallback to display_price when variants have no sizes", () => {
@@ -155,7 +155,7 @@ describe("Product Display", () => {
         display_price: "$15.00",
         variants: { Black: { image: "black.jpg" } },
       };
-      expect(getPriceDisplay(product)).toBe("$15.00");
+      expect(getPriceDisplay(product)).toBe("$15.00 USD");
     });
 
     test("should fallback to display_price when sizes have no price_cents", () => {
@@ -167,7 +167,7 @@ describe("Product Display", () => {
           },
         },
       };
-      expect(getPriceDisplay(product)).toBe("$15.00");
+      expect(getPriceDisplay(product)).toBe("$15.00 USD");
     });
   });
 

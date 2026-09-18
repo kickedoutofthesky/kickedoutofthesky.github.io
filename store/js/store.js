@@ -1,5 +1,7 @@
 // Store - Product Grid
 
+import { formatUSD } from "../../js/money.js";
+
 function getProductCategory(title) {
   const t = title.toLowerCase();
   if (t.includes("sticker")) return "stickers";
@@ -143,9 +145,14 @@ function getPriceDisplay(product) {
     });
   }
 
-  // If no variant prices found, fall back to display_price
+  // If no variant prices found, check for display_price fallback
   if (prices.length === 0) {
-    return product.display_price;
+    if (product.display_price) {
+      // Ensure display_price has USD suffix
+      const displayPrice = product.display_price;
+      return displayPrice.includes("USD") ? displayPrice : `${displayPrice} USD`;
+    }
+    return formatUSD(0);
   }
 
   // Sort prices and get min and max
@@ -155,11 +162,11 @@ function getPriceDisplay(product) {
 
   // If all prices are the same, show single price
   if (minPrice === maxPrice) {
-    return `$${(minPrice / 100).toFixed(2)}`;
+    return formatUSD(minPrice);
   }
 
   // If prices differ, show range
-  return `$${(minPrice / 100).toFixed(2)} - $${(maxPrice / 100).toFixed(2)}`;
+  return `${formatUSD(minPrice)} – ${formatUSD(maxPrice)}`;
 }
 
 // Allow importing in Node.js (Jest tests) while keeping browser globals

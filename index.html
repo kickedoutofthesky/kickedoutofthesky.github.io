@@ -299,6 +299,26 @@
     </script>
 
     <!-- Google Analytics (loaded via cookie consent) -->
+    <script>
+      // Dynamically adjust scroll offset based on navbar height for anchor links
+      document.addEventListener("click", e => {
+        const link = e.target.closest('a[href^="#"]');
+        if (!link) return;
+
+        const navbar = document.getElementById("navbarMain");
+        if (navbar) {
+          const offset = navbar.offsetHeight + 20; // 20px buffer
+          const targetId = link.getAttribute("href").substring(1);
+          const target = document.getElementById(targetId);
+
+          if (target) {
+            e.preventDefault();
+            const targetPosition = target.getBoundingClientRect().top + window.scrollY - offset;
+            window.scrollTo({ top: targetPosition, behavior: "smooth" });
+          }
+        }
+      });
+    </script>
     <script src="js/analytics.js"></script>
     <script src="js/cookie-consent.js"></script>
 
