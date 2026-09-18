@@ -291,40 +291,30 @@
             <div id="summary-content" style="display: none">
               <!-- Currency Display -->
               <div class="flex-between text-secondary mb-15 pb-15 border-bottom-dark">
-                <span style="font-size: 0.85rem">Prices in:</span>
-                <span
-                  id="currency-display"
-                  style="font-size: 0.85rem; font-weight: bold"
-                  data-testid="currency-display"
-                >
+                <span>Prices in:</span>
+                <span id="currency-display" style="color: #999; font-size: 0.95rem" data-testid="currency-display">
                   —
                 </span>
               </div>
               <div class="flex-between text-secondary mb-15 pb-15 border-bottom-dark">
-                <span>Subtotal:</span>
-                <span id="subtotal" data-testid="cart-subtotal">—</span>
+                <span style="font-weight: bold">Subtotal:</span>
+                <span id="subtotal" data-testid="cart-subtotal" style="font-weight: bold">—</span>
               </div>
               <div class="flex-between text-secondary mb-15 pb-15 border-bottom-dark">
                 <span>Shipping:</span>
-                <span id="shipping-value" data-testid="cart-shipping">—</span>
+                <span id="shipping-value" data-testid="cart-shipping" style="color: #999; font-size: 0.95rem">
+                  Calculated at checkout
+                </span>
               </div>
-              <div
-                id="shipping-note"
-                style="display: none; font-size: 0.85rem; color: #999; margin-bottom: 10px; font-style: italic"
-              ></div>
               <div class="flex-between text-secondary mb-15 pb-15 border-bottom-dark" id="tax-row">
-                <span id="tax-label">Tax/VAT:</span>
-                <span id="tax-value" data-testid="cart-tax">Calculated after country is selected</span>
+                <span id="tax-label">
+                  Tax/VAT:
+                  <span id="tax-label-note" style="font-size: 0.95rem; color: #999"></span>
+                </span>
+                <span id="tax-value" data-testid="cart-tax" style="color: #999; font-size: 0.95rem">
+                  Calculated after country is selected
+                </span>
               </div>
-              <div
-                id="tax-note"
-                style="display: none; font-size: 0.85rem; color: #999; margin-bottom: 10px; font-style: italic"
-              ></div>
-              <div class="flex-between text-light fw-bold" style="font-size: 1.2rem; margin-bottom: 15px">
-                <span>Total:</span>
-                <span id="total">—</span>
-              </div>
-
               <!-- Import Duties Note -->
               <div
                 id="import-duties-note"

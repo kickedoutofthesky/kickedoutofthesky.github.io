@@ -525,13 +525,8 @@ function updateOrderSummaryDisplay(quote) {
   const cartLoading = document.getElementById("cart-loading");
   const currencyEl = document.getElementById("currency-display");
   const subtotalEl = document.getElementById("subtotal");
-  const shippingEl = document.getElementById("shipping-value");
-  const shippingNoteEl = document.getElementById("shipping-note");
   const taxLabelEl = document.getElementById("tax-label");
   const taxValueEl = document.getElementById("tax-value");
-  const taxRowEl = document.getElementById("tax-row");
-  const taxNoteEl = document.getElementById("tax-note");
-  const totalEl = document.getElementById("total");
   const importDutiesEl = document.getElementById("import-duties-note");
 
   if (!contentEl || !subtotalEl) return;
@@ -561,81 +556,44 @@ function updateOrderSummaryDisplay(quote) {
 
   // Get prices from normalized quote (already in cents from utility function)
   const subtotalConverted = normalizedQuote.subtotal;
-  const shippingConverted = normalizedQuote.shipping;
   const taxConverted = normalizedQuote.tax;
   const totalConverted = normalizedQuote.total;
 
   // Format amounts using the target currency
   const subtotalFormatted = formatPrice(subtotalConverted, currency);
-  const shippingFormatted = formatPrice(shippingConverted, currency);
   const taxFormatted = formatPrice(taxConverted, currency);
-  const totalFormatted = formatPrice(totalConverted, currency);
 
-  // Update subtotal, shipping, and total
+  // Update subtotal
   subtotalEl.textContent = subtotalFormatted;
-  shippingEl.textContent = shippingFormatted;
 
-  // Display shipping note if provided by backend (e.g., "Calculated at checkout based on your address")
-  if (normalizedQuote.shippingNote && shippingNoteEl) {
-    shippingNoteEl.textContent = normalizedQuote.shippingNote;
-    shippingNoteEl.style.display = "block";
-  } else if (shippingNoteEl) {
-    shippingNoteEl.style.display = "none";
-  }
+  // Handle tax/VAT label and display
+  let taxLabel;
+  let taxLabelNote;
+  let taxValue;
 
-  totalEl.textContent = totalFormatted;
-
-  // Handle tax/VAT display - use backend's taxLabel if provided
-  // eslint-disable-next-line no-useless-assignment
-  let taxLabel = "Tax/VAT:";
-  // eslint-disable-next-line no-useless-assignment
-  let taxValue = taxFormatted;
-  let taxNote = "";
-
-  // Use backend-provided taxLabel if available (e.g., "Sales tax (8.5%) will be added at checkout")
-  if (normalizedQuote.taxLabel) {
-    taxLabel = normalizedQuote.taxLabel;
-    // If taxLabel is provided, assume it's a note about when tax will be calculated
+  // Determine if this is a VAT country based on taxIncluded flag
+  if (normalizedQuote.taxIncluded) {
+    // VAT country - tax is included in the price
+    taxLabel = "VAT:";
+    taxLabelNote = "";
+    taxValue = "Included in price";
+  } else {
+    // Tax country - tax will be calculated at checkout
+    taxLabel = "Tax:";
+    taxLabelNote = "";
+    // If tax value is 0 and we don't have it yet, show the note in the value
     if (taxConverted === 0) {
-      taxValue = "";
-      taxNote = normalizedQuote.taxLabel;
+      taxValue = "Calculated at checkout";
     } else {
       taxValue = taxFormatted;
-      taxNote = "";
-    }
-  } else {
-    // Fallback to original logic if no taxLabel provided
-    if (taxConverted > 0) {
-      taxLabel = "Tax:";
-      taxValue = taxFormatted;
-    } else {
-      // If tax is 0, show "VAT" and "Included"
-      taxLabel = "VAT:";
-      taxValue = "Included";
     }
   }
 
-  taxLabelEl.textContent = taxLabel;
+  // Update tax label with colon and note
+  if (taxLabelEl) {
+    taxLabelEl.innerHTML = `${taxLabel}<span id="tax-label-note" style="font-size: 0.95rem; color: #999">${taxLabelNote}</span>`;
+  }
   taxValueEl.textContent = taxValue;
-
-  // Display tax note if provided
-  if (taxNote) {
-    if (taxNoteEl) {
-      taxNoteEl.textContent = taxNote;
-      taxNoteEl.style.display = "block";
-    }
-  } else if (taxNoteEl) {
-    taxNoteEl.style.display = "none";
-  }
-
-  // Style tax row: muted if tax is included in price
-  if (quote.taxIncluded) {
-    taxRowEl.style.opacity = "0.6";
-    taxRowEl.style.fontSize = "0.9rem";
-  } else {
-    taxRowEl.style.opacity = "1";
-    taxRowEl.style.fontSize = "1rem";
-  }
 
   // Show import duties note if applicable
   if (importDutiesEl) {
