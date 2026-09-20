@@ -231,7 +231,7 @@ function updateShippingToLine() {
 
   const countryName = getCountryName(select.value);
   shippingToEl.innerHTML = `
-    <p style="margin: 0; color: #ccc; font-size: 0.9rem; line-height: 1.6;">
+    <p style="margin: 0; color: #999; font-size: 0.9rem; line-height: 1.6;">
       Shipping to <strong>${countryName}</strong>, calculated at checkout.<br/>
       To ship somewhere else, change the country above before continuing.
     </p>
