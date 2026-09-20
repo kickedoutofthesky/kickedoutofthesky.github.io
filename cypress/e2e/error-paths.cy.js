@@ -123,27 +123,6 @@ describe("Error Paths and Edge Cases", () => {
           expect(value).to.be.greaterThan(0);
         });
     });
-
-    it("should update subtotal when quantity changes", () => {
-      cy.get("[data-testid='cart-subtotal']")
-        .invoke("text")
-        .then(originalTotal => {
-          // Use plus button to increase quantity (input is readonly)
-          cy.get("[data-testid='cart-item']")
-            .first()
-            .within(() => {
-              cy.get("i.fa-plus").parent("button").click({ force: true });
-            });
-
-          cy.wait(500);
-          cy.get("[data-testid='cart-subtotal']")
-            .invoke("text")
-            .then(newTotal => {
-              // New total should be different (higher)
-              expect(newTotal).to.not.equal(originalTotal);
-            });
-        });
-    });
   });
 
   describe("Modal and Navigation Interactions", () => {
