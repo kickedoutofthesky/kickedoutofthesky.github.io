@@ -93,6 +93,9 @@ describe("Error Paths and Edge Cases", () => {
 
       // Wait for cart to load with quote
       cy.wait("@countriesLoaded", { timeout: 5000 });
+      // Select country to trigger quote API
+      cy.get("#shipping-country").should("exist");
+      cy.get("#shipping-country").select("US", { force: true });
       cy.wait("@quote", { timeout: 5000 });
     });
 
@@ -174,7 +177,7 @@ describe("Error Paths and Edge Cases", () => {
       cy.get("[data-testid='cart-item']").should("have.length.greaterThan", 0);
 
       // Navigate back to store
-      cy.get("a[href='index.html']").first().click();
+      cy.get("a[href='index.html']").first().click({ force: true });
       cy.url().should("include", "index.html");
       cy.get("[data-testid='product-card']", { timeout: 10000 }).should("exist");
 

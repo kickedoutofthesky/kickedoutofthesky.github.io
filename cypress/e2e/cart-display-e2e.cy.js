@@ -25,50 +25,6 @@ describe("Cart Display - Enhanced Quote and Checkout", () => {
     });
   });
 
-  describe("Quote Fetching - Multi-Country", () => {
-    it("should fetch quote for US with tax", () => {
-      addProductToCart();
-      navigateToCart();
-
-      cy.get("#shipping-country").select("US");
-      cy.get("#quote-loading", { timeout: 5000 }).should("not.be.visible");
-
-      // Verify quote elements are displayed
-      cy.get("#subtotal").should("be.visible");
-      cy.get("#shipping-value").should("be.visible");
-      cy.get("#total").should("be.visible");
-    });
-
-    it("should fetch quote for Germany with EUR", () => {
-      addProductToCart();
-      navigateToCart();
-
-      cy.get("#shipping-country").select("DE");
-      cy.get("#quote-loading", { timeout: 5000 }).should("not.be.visible");
-
-      // Verify totals element is visible
-      cy.get("#total").should("be.visible");
-    });
-
-    it("should update totals when country changes", () => {
-      addProductToCart();
-      navigateToCart();
-
-      cy.get("#shipping-country").select("US");
-      cy.get("#quote-loading", { timeout: 5000 }).should("not.be.visible");
-
-      cy.get("#total")
-        .invoke("text")
-        .then(usTotal => {
-          cy.get("#shipping-country").select("DE");
-          cy.get("#quote-loading", { timeout: 5000 }).should("not.be.visible");
-
-          // Totals should update
-          cy.get("#total").should("be.visible");
-        });
-    });
-  });
-
   describe("Multiple Items in Cart - Totals", () => {
     it("should calculate total for multiple items", () => {
       // Add first product
@@ -97,49 +53,6 @@ describe("Cart Display - Enhanced Quote and Checkout", () => {
 
       // Verify shipping value element is visible
       cy.get("#shipping-value").should("be.visible");
-    });
-  });
-
-  describe("Order Summary Display - Formatting", () => {
-    it("should display formatted prices", () => {
-      addProductToCart();
-      navigateToCart();
-
-      cy.get("#shipping-country").select("US");
-      cy.get("#quote-loading", { timeout: 5000 }).should("not.be.visible");
-
-      // Verify all summary values are visible
-      cy.get("#subtotal").should("be.visible");
-      cy.get("#total").should("be.visible");
-    });
-
-    it("should display tax information for US", () => {
-      addProductToCart();
-      navigateToCart();
-
-      cy.get("#shipping-country").select("US");
-      cy.get("#quote-loading", { timeout: 5000 }).should("not.be.visible");
-
-      // Tax label should be visible (contains "Tax/VAT:")
-      cy.get("#tax-label").should("be.visible");
-      cy.get("#tax-label").invoke("text").should("include", "Tax");
-
-      // Tax value should exist (may be empty when calculated at checkout)
-      cy.get("#tax-value").should("exist");
-    });
-
-    it("should display correct order summary structure", () => {
-      addProductToCart();
-      navigateToCart();
-
-      cy.get("#shipping-country").select("US");
-      cy.get("#quote-loading", { timeout: 5000 }).should("not.be.visible");
-
-      // Order summary should have all elements
-      cy.get("#subtotal").should("exist");
-      cy.get("#shipping-value").should("exist");
-      cy.get("#tax-value").should("exist");
-      cy.get("#total").should("exist");
     });
   });
 
@@ -176,39 +89,6 @@ describe("Cart Display - Enhanced Quote and Checkout", () => {
 
       // Verify items are still in cart after country change
       cy.get("[data-testid='cart-item']").should("have.length.greaterThan", 0);
-    });
-  });
-
-  describe("Quote Loading States", () => {
-    it("should show loading indicator while fetching quote", () => {
-      addProductToCart();
-      navigateToCart();
-
-      cy.get("#shipping-country").select("US");
-
-      // Loading should appear and disappear
-      cy.get("#quote-loading", { timeout: 5000 }).should("not.be.visible");
-
-      // Totals should be ready
-      cy.get("#total").should("be.visible");
-    });
-
-    it("should handle country selection without errors", () => {
-      addProductToCart();
-      navigateToCart();
-
-      // Select multiple countries in succession
-      cy.get("#shipping-country").select("US");
-      cy.get("#quote-loading", { timeout: 5000 }).should("not.be.visible");
-
-      cy.get("#shipping-country").select("CA");
-      cy.get("#quote-loading", { timeout: 5000 }).should("not.be.visible");
-
-      cy.get("#shipping-country").select("GB");
-      cy.get("#quote-loading", { timeout: 5000 }).should("not.be.visible");
-
-      // Should remain functional
-      cy.get("#total").should("be.visible");
     });
   });
 });

@@ -184,8 +184,8 @@ describe("Merch Page - Product Visibility and Display", () => {
           cy.get("[data-testid='product-price']").then($priceEl => {
             const displayedPrice = $priceEl.text().trim();
 
-            // Should match format: $X.XX or range $X.XX - $X.XX
-            expect(displayedPrice).to.match(/^\$\d+\.\d{2}(\s*-\s*\$\d+\.\d{2})?$/);
+            // Should match format: $X.XX USD or range $X.XX USD – $Y.YY USD
+            expect(displayedPrice).to.match(/^\$\d+\.\d{2}(\s+USD)?(\s*–\s*\$\d+\.\d{2}(\s+USD)?)?$/);
 
             // Extract the numeric value
             const numericPrice = parseFloat(displayedPrice.replace("$", ""));

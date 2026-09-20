@@ -46,7 +46,7 @@ describe("Product Display - Variants and Carousel", () => {
           // Get initial image
           cy.get("#product-image")
             .invoke("attr", "src")
-            .then(initialSrc => {
+            .then(_initialSrc => {
               // Select a color
               cy.get("[data-testid='color-select'] option")
                 .eq(0)
@@ -125,7 +125,7 @@ describe("Product Display - Variants and Carousel", () => {
 
       cy.get("[data-testid='product-price']")
         .invoke("text")
-        .then(initialPrice => {
+        .then(_initialPrice => {
           cy.get("[data-testid='color-select']").then($select => {
             if ($select.length > 0) {
               cy.get("[data-testid='color-select'] option")
@@ -166,7 +166,7 @@ describe("Product Display - Variants and Carousel", () => {
           // Get initial image src
           cy.get("#product-image")
             .invoke("attr", "src")
-            .then(initialSrc => {
+            .then(_initialSrc => {
               // Click next
               cy.get("#carousel-next").click({ force: true });
 
@@ -240,7 +240,7 @@ describe("Product Display - Variants and Carousel", () => {
         if ($select.length > 0) {
           cy.get("#product-image")
             .invoke("attr", "src")
-            .then(initialSrc => {
+            .then(_initialSrc => {
               cy.get("[data-testid='color-select'] option")
                 .eq(0)
                 .invoke("attr", "value")

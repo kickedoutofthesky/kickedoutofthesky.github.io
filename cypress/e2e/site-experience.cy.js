@@ -97,7 +97,7 @@ describe("Site Experience - Overall Site Functionality", () => {
       cy.get("a[href*='index.html'], a[href='/']").then($homeLink => {
         if ($homeLink.length > 0) {
           cy.wrap($homeLink).first().click();
-          cy.url().should("include", "index.html");
+          cy.url().should("match", /^http:\/\/localhost:3000\/?$/);
         } else {
           // If no explicit home link, go back
           cy.go("back");

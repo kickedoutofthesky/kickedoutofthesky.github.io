@@ -65,7 +65,7 @@ describe("Responsive Design - Mobile and Tablet Viewports", () => {
 
       // Add product to cart
       cy.get("[data-testid='product-card']").first().click();
-      cy.url().should("include", "product.html");
+      cy.url().should("include", "/store/p/product_");
 
       selectFirstRealSize();
       cy.get("#add-to-cart-btn").click({ force: true });
@@ -78,7 +78,7 @@ describe("Responsive Design - Mobile and Tablet Viewports", () => {
       cy.get("[data-testid='cart-page']").should("be.visible");
 
       // Select country to trigger quote fetch
-      cy.get("#shipping-country").select("US");
+      cy.get("#shipping-country").scrollIntoView().select("US", { force: true });
 
       // Wait for quote to load
       cy.get("#quote-loading", { timeout: 5000 }).should("not.be.visible");

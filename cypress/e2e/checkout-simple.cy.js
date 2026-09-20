@@ -97,11 +97,8 @@ describe("Checkout Flow", () => {
     // addToCart() redirects to cart.html automatically
     cy.url().should("include", "cart.html");
 
-    // Wait for countries to load so dropdown is populated
-    cy.wait("@countriesLoaded", { timeout: 5000 });
-
-    // Wait for the auto-selected country to trigger quote fetch
-    cy.wait("@quoteUS", { timeout: 5000 });
+    // Wait for cart to load - wait for country selector to be visible
+    cy.get("[data-testid='shipping-country-select']", { timeout: 5000 }).should("be.visible");
   });
 
   it("should have items in cart before checkout", () => {
@@ -113,18 +110,27 @@ describe("Checkout Flow", () => {
   });
 
   it("should have checkout button available", () => {
-    // Button starts disabled until terms are accepted (country already selected in beforeEach)
+    // Button starts disabled - country must be selected first
     cy.get("button").contains("Proceed to Checkout").should("exist").should("be.disabled");
+
+    // Select a country
+    cy.get("[data-testid='shipping-country-select']").select("US");
+
+    // Button still disabled until terms are accepted
+    cy.get("button").contains("Proceed to Checkout").should("be.disabled");
 
     acceptTerms();
 
-    // After terms are accepted, button should be enabled (country and quote already set in beforeEach)
+    // After terms are accepted and country selected, button should be enabled
     cy.get("button").contains("Proceed to Checkout").should("not.be.disabled");
   });
 
   it("should display cart subtotal before checkout", () => {
-    // Quote is already calculated in beforeEach (country auto-selected and quote fetched)
-    cy.get("[data-testid='cart-subtotal']").should("exist");
+    // Subtotal should be visible after a country is selected
+    cy.get("[data-testid='shipping-country-select']").select("US");
+
+    // Wait for cart subtotal to appear
+    cy.get("[data-testid='cart-subtotal']", { timeout: 3000 }).should("exist");
     cy.get("[data-testid='cart-subtotal']").invoke("text").should("include", "$");
   });
 

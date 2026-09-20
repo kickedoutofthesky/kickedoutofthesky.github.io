@@ -262,8 +262,9 @@ describe("Checkout API Payload Tests", () => {
       // Verify success page loads
       cy.get("body").should("be.visible");
 
-      // Verify confirmation content is present
-      cy.contains(/thank|success|order|confirmation/i).should("be.visible");
+      // Verify confirmation content is present - look for the h1 or the thank you message
+      cy.contains("Order Successful").should("exist");
+      cy.contains("Thank you for your purchase").should("exist");
     });
 
     it("should handle missing session_id gracefully", () => {

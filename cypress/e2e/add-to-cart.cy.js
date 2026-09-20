@@ -108,7 +108,7 @@ describe("Add to Cart Flow", () => {
   it("should add multiple different products to cart", () => {
     // Add first product
     cy.get("[data-testid='product-card']").eq(0).click();
-    cy.url().should("include", "product.html");
+    cy.url().should("include", "/store/p/product_");
     cy.get("[data-testid='product-detail']").should("be.visible");
 
     selectFirstRealSize();

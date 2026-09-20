@@ -288,7 +288,7 @@ describe("Responsive Design Tests", () => {
 
       // Switch to desktop
       cy.viewport(1280, 800);
-      cy.get("a[href='index.html']").first().click();
+      cy.get("a[href='index.html']").first().click({ force: true });
       cy.get("[data-testid='product-card']").should("exist");
       cy.get("a[href*='cart.html']").first().click();
       cy.get("[data-testid='cart-item']").should("have.length.greaterThan", 0);

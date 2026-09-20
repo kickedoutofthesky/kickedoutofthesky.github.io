@@ -331,28 +331,28 @@
       document.getElementById("last-updated").textContent = new Date().toLocaleDateString();
     </script>
     <script>
-        // Position legal container to account for navbar height
-        function positionContent() {
-          const navbar = document.getElementById("navbarMain");
-          const container = document.querySelector(".legal-container");
-          if (navbar && container) {
-            const navHeight = navbar.offsetHeight;
-            container.style.paddingTop = (navHeight + 20) + "px";
-          }
+      // Position legal container to account for navbar height
+      function positionContent() {
+        const navbar = document.getElementById("navbarMain");
+        const container = document.querySelector(".legal-container");
+        if (navbar && container) {
+          const navHeight = navbar.offsetHeight;
+          container.style.paddingTop = navHeight + 20 + "px";
         }
-        // Run on DOMContentLoaded
-        if (document.readyState === "loading") {
-          document.addEventListener("DOMContentLoaded", () => {
-            setTimeout(positionContent, 50);
-          });
-        } else {
+      }
+      // Run on DOMContentLoaded
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", () => {
           setTimeout(positionContent, 50);
-        }
-        // Run on load event
-        window.addEventListener("load", positionContent);
-        window.addEventListener("resize", positionContent);
-      <script src="../js/navbar-loader.js">
+        });
+      } else {
+        setTimeout(positionContent, 50);
+      }
+      // Run on load event
+      window.addEventListener("load", positionContent);
+      window.addEventListener("resize", positionContent);
     </script>
+    <script src="../js/navbar-loader.js"></script>
     <script src="../js/analytics.js"></script>
     <script src="../js/cookie-consent.js"></script>
   </body>

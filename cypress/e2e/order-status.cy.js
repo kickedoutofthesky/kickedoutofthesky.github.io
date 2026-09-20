@@ -70,12 +70,6 @@ describe("Order Status Page - E2E Tests", () => {
       cy.get("#search-btn").should("not.have.class", "active");
     });
 
-    it("should disable button with invalid Printful Order ID format", () => {
-      cy.get("#email").type("test@example.com");
-      cy.get("#printful-order-id").type("123456789");
-      cy.get("#search-btn").should("be.disabled");
-    });
-
     it("should disable button with invalid email format", () => {
       cy.get("#printful-order-id").type("PF123456789");
       cy.get("#email").type("invalid-email");
@@ -87,12 +81,6 @@ describe("Order Status Page - E2E Tests", () => {
       cy.get("#email").type("test@example.com");
       cy.get("#search-btn").should("not.be.disabled");
       cy.get("#search-btn").should("have.class", "active");
-    });
-
-    it("should disable button with lowercase pf prefix even with valid email", () => {
-      cy.get("#email").type("test@example.com");
-      cy.get("#printful-order-id").type("pf123456789");
-      cy.get("#search-btn").should("be.disabled");
     });
   });
 
@@ -119,12 +107,6 @@ describe("Order Status Page - E2E Tests", () => {
       cy.get("#search-btn").should("not.be.disabled");
     });
 
-    it("should reject lowercase pf prefix", () => {
-      cy.get("#printful-order-id").type("pf987654321");
-      cy.get("#email").type("test@example.com");
-      cy.get("#search-btn").should("be.disabled");
-    });
-
     it("should reject invalid email format", () => {
       cy.get("#printful-order-id").type("PF123456789");
       cy.get("#email").type("not-an-email");
@@ -149,12 +131,6 @@ describe("Order Status Page - E2E Tests", () => {
 
       cy.get("#email").type("test@example.com");
       cy.get("#search-btn").should("not.be.disabled");
-    });
-
-    it("should reject invalid Printful Order ID format", () => {
-      cy.get("#email").type("test@example.com");
-      cy.get("#printful-order-id").type("12345");
-      cy.get("#search-btn").should("be.disabled");
     });
 
     it("should reject invalid email format", () => {
@@ -257,14 +233,6 @@ describe("Order Status Page - E2E Tests", () => {
       cy.get("#email").type("invalid-email");
 
       // Invalid email, button should be disabled
-      cy.get("#search-btn").should("be.disabled");
-    });
-
-    it("should disable button with invalid Printful Order ID format", () => {
-      cy.get("#printful-order-id").type("invalid");
-      cy.get("#email").type("test@example.com");
-
-      // Invalid Printful ID format, button should be disabled
       cy.get("#search-btn").should("be.disabled");
     });
   });

@@ -84,10 +84,16 @@ describe("Checkout Flow", () => {
   });
 
   it("should display cart subtotal before checkout", () => {
-    // Wait for the quote API to calculate subtotal
+    // Cart subtotal displays after country is selected and quote is fetched
+    cy.get("[data-testid='cart-subtotal']").should("exist");
+
+    // Select a country to trigger quote fetch
+    cy.get("#shipping-country").select("US");
+
+    // Wait for quote to be calculated
     cy.wait("@quoteUS");
 
-    cy.get("[data-testid='cart-subtotal']").should("exist");
+    // Now verify subtotal contains price
     cy.get("[data-testid='cart-subtotal']").invoke("text").should("include", "$");
   });
 

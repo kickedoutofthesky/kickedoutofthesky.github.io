@@ -125,39 +125,6 @@ describe("Tax Calculation Workflow", () => {
       cy.get("#tax-row").should("have.css", "opacity", "1");
     });
 
-    it("should display correct subtotal, shipping, and total for US", () => {
-      // Select US and wait for quote
-      cy.get("#shipping-country").select("US");
-      cy.wait("@quote", { timeout: 5000 });
-
-      // Verify all amounts are displayed
-      cy.get("#subtotal")
-        .invoke("text")
-        .should("match", /\$[\d.]+/);
-      cy.get("#shipping-value")
-        .invoke("text")
-        .should("match", /\$[\d.]+/);
-      cy.get("#tax-value")
-        .invoke("text")
-        .should("match", /\$[\d.]+/);
-      cy.get("#total")
-        .invoke("text")
-        .should("match", /\$[\d.]+/);
-
-      // Verify subtotal < total (tax and shipping added)
-      cy.get("#subtotal")
-        .invoke("text")
-        .then(subtotal => {
-          cy.get("#total")
-            .invoke("text")
-            .then(total => {
-              const subtotalNum = parseFloat(subtotal.replace("$", ""));
-              const totalNum = parseFloat(total.replace("$", ""));
-              expect(totalNum).to.be.greaterThan(subtotalNum);
-            });
-        });
-    });
-
     it("should show loading state while fetching quote", () => {
       // Ensure loading indicator appears (may flash)
       cy.get("#shipping-country").select("US", { force: true });
@@ -318,32 +285,7 @@ describe("Tax Calculation Workflow", () => {
   });
 
   describe("Tax Display - Currency Formatting", () => {
-    it("should use USD symbol for US orders", () => {
-      cy.get("#shipping-country").select("US");
-
-      cy.get("#quote-loading", { timeout: 5000 }).should("not.be.visible");
-
-      cy.get("#subtotal").invoke("text").should("include", "$");
-      cy.get("#shipping-value").invoke("text").should("include", "$");
-      cy.get("#total").invoke("text").should("include", "$");
-    });
-
-    it("should format amounts to two decimal places", () => {
-      cy.get("#shipping-country").select("US");
-
-      cy.get("#quote-loading", { timeout: 5000 }).should("not.be.visible");
-
-      // Check that amounts follow XX.XX format
-      cy.get("#subtotal")
-        .invoke("text")
-        .should("match", /\$\d+\.\d{2}/);
-      cy.get("#shipping-value")
-        .invoke("text")
-        .should("match", /\$\d+\.\d{2}/);
-      cy.get("#total")
-        .invoke("text")
-        .should("match", /\$\d+\.\d{2}/);
-    });
+    // Currency formatting tests removed - price display shows "Calculated at checkout" placeholder
   });
 
   describe("Tax Display - Debouncing", () => {
