@@ -179,15 +179,9 @@
           <div id="cart-summary" class="card-dark hidden mt-40">
             <h3 class="text-light mb-20 mt-0">Order Summary</h3>
 
-            <!-- Loading State -->
-            <div id="quote-loading" style="display: none; text-align: center; padding: 20px; color: #999">
-              <i class="fas fa-spinner fa-spin" style="margin-right: 8px"></i>
-              Calculating tax...
-            </div>
-
-            <!-- Quote Error State -->
+            <!-- Checkout Error -->
             <div
-              id="quote-error"
+              id="checkout-error"
               style="
                 display: none;
                 padding: 15px;
@@ -197,49 +191,17 @@
                 margin-bottom: 15px;
               "
             >
-              <p id="quote-error-text" style="margin: 0; font-size: 0.9rem"></p>
+              <p id="checkout-error-text" style="margin: 0; font-size: 0.9rem"></p>
             </div>
 
-            <!-- Order Summary Content (shown when quote loaded) -->
-            <div id="summary-content" style="display: none">
-              <div class="flex-between text-secondary mb-15 pb-15 border-bottom-dark">
-                <span style="font-weight: bold">Subtotal:</span>
-                <span id="subtotal" data-testid="cart-subtotal" style="font-weight: bold">—</span>
-              </div>
-              <div class="flex-between text-secondary mb-15 pb-15 border-bottom-dark">
-                <span>Shipping:</span>
-                <span id="shipping-value" data-testid="cart-shipping" style="color: #999; font-size: 0.95rem">
-                  Calculated at checkout
-                </span>
-              </div>
-              <div class="flex-between text-secondary mb-15 pb-15 border-bottom-dark" id="tax-row">
-                <span id="tax-label">
-                  Tax/VAT:
-                  <span id="tax-label-note" style="font-size: 0.95rem; color: #999"></span>
-                </span>
-                <span id="tax-value" data-testid="cart-tax" style="color: #999; font-size: 0.95rem">
-                  Calculated after country is selected
-                </span>
-              </div>
-              <!-- Import Duties Note -->
-              <div
-                id="import-duties-note"
-                style="
-                  display: none;
-                  padding: 12px;
-                  background-color: #2a2a1a;
-                  color: #999;
-                  border-radius: 4px;
-                  font-size: 0.85rem;
-                  margin-bottom: 15px;
-                  border-left: 3px solid #ffc107;
-                "
-              >
-                ⓘ Import duties may be charged on delivery and are the customer's responsibility.
-              </div>
+            <!-- Subtotal Only -->
+            <div class="flex-between text-secondary mb-15 pb-15 border-bottom-dark">
+              <span style="font-weight: bold">Subtotal:</span>
+              <span id="subtotal" data-testid="cart-subtotal" style="font-weight: bold">—</span>
             </div>
+
             <!-- Price Disclaimer -->
-            <div
+            <p
               style="
                 padding: 12px;
                 background-color: #1a1a1a;
@@ -255,7 +217,9 @@
                 import duties or VAT
               </a>
               charged on delivery.
-            </div>
+            </p>
+
+            <!-- Country Selector -->
             <div class="mt-20">
               <label for="shipping-country" class="form-group-label">
                 Shipping Country
@@ -275,9 +239,14 @@
                   font-size: 1rem;
                 "
               >
-                <option value="">Select a country...</option>
+                <option value="">Select destination...</option>
               </select>
             </div>
+
+            <!-- Shipping To Line (shown after country selection) -->
+            <div id="shipping-to-line" style="display: none; margin-top: 15px; margin-bottom: 15px"></div>
+
+            <!-- Terms Checkbox -->
             <div class="mt-20" style="text-align: left">
               <label for="terms-checkbox" style="cursor: pointer; color: #ccc; font-size: 0.9rem; line-height: 1.6">
                 <input
@@ -304,6 +273,8 @@
                 </a>
               </label>
             </div>
+
+            <!-- Checkout Button -->
             <button
               id="checkout-btn"
               class="btn btn-warning w-100"
@@ -312,6 +283,8 @@
             >
               Proceed to Checkout
             </button>
+
+            <!-- Continue Shopping Link -->
             <a
               href="index.html"
               class="btn btn-outline-secondary w-100"

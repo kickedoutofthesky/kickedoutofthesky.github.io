@@ -1,69 +1,14 @@
-// Cart Display & Checkout
+// Cart Display & Checkout - New Implementation
 /* eslint-disable-next-line no-unused-vars */
 /* global cart, updateCartQuantity, removeFromCart, showCartBadgeBurst */
 
-import { formatUSD, PRICE_DISCLAIMER_WITH_LINK } from "../../js/money.js";
-import { extractQuoteData, isValidQuote } from "./utils/fixtures/cart-utilities.js";
-import { getVariantIdForColorSize, getImageForColor } from "./utils/fixtures/product-utilities.js";
+import { formatUSD } from "../../js/money.js";
+import { getVariantIdForColorSize } from "./utils/fixtures/product-utilities.js";
+import { getCountryName, sortCountries } from "../../js/allowed-countries.js";
 
 let products = [];
-let countries = [];
-let quoteDebounceTimer = null;
-let currentQuote = null;
+let countryCodes = [];
 let isCheckingOut = false;
-
-/**
- * Country selection is stored in localStorage
- * Defaults to "Select a country..." until customer makes a choice
- */
-
-// Debounce utility function
-function debounce(func, delayMs) {
-  return function debounced(...args) {
-    clearTimeout(quoteDebounceTimer);
-    quoteDebounceTimer = setTimeout(() => {
-      func.apply(this, args);
-    }, delayMs);
-  };
-}
-
-// CSRF Token Management
-function generateCSRFToken() {
-  // Generate a random token (in production, get this from server)
-  if (typeof crypto !== "undefined" && crypto.getRandomValues) {
-    return Array.from(crypto.getRandomValues(new Uint8Array(32)))
-      .map(b => b.toString(16).padStart(2, "0"))
-      .join("");
-  }
-  // Fallback for Node.js environment (tests)
-  return Math.random().toString(36).substr(2) + Math.random().toString(36).substr(2);
-}
-
-function getCSRFToken() {
-  // Only try to use sessionStorage in browser environment
-  if (typeof sessionStorage === "undefined") {
-    return generateCSRFToken();
-  }
-
-  let token = sessionStorage.getItem("csrf_token");
-  if (!token) {
-    token = generateCSRFToken();
-    sessionStorage.setItem("csrf_token", token);
-    // Also set in meta tag if it doesn't exist
-    if (!document.querySelector('meta[name="csrf-token"]')) {
-      const meta = document.createElement("meta");
-      meta.name = "csrf-token";
-      meta.content = token;
-      document.head.appendChild(meta);
-    }
-  }
-  return token;
-}
-
-// Initialize CSRF token on page load (only in browser environment)
-if (typeof sessionStorage !== "undefined") {
-  getCSRFToken();
-}
 
 // Make sure cart is ready before displaying
 function waitForCart(callback) {
@@ -102,9 +47,11 @@ async function loadProducts() {
 
 async function loadCountries() {
   try {
-    const response = await fetch("./data/printful-shipping-countries.json");
+    const backendUrl = window.__API_URL__ || "http://localhost:3001";
+    const response = await fetch(`${backendUrl}/api/allowed-countries`);
     if (!response.ok) throw new Error("Failed to load countries");
-    countries = await response.json();
+    const data = await response.json();
+    countryCodes = data.countries || [];
     populateCountrySelect();
   } catch (error) {
     console.error("Error loading countries:", error);
@@ -115,11 +62,14 @@ function populateCountrySelect() {
   const select = document.getElementById("shipping-country");
   if (!select) return;
 
+  // Sort countries with priority at top
+  const sorted = sortCountries(countryCodes);
+
   // Add all countries as options
-  countries.forEach(country => {
+  sorted.forEach(code => {
     const option = document.createElement("option");
-    option.value = country.code;
-    option.textContent = country.name;
+    option.value = code;
+    option.textContent = getCountryName(code);
     select.appendChild(option);
   });
 }
@@ -132,10 +82,9 @@ function updateCheckoutButtonState() {
 
   const countrySelected = select && select.value !== "";
   const termsAccepted = termsCheckbox && termsCheckbox.checked;
-  const quoteLoaded = currentQuote !== null && currentQuote !== undefined;
 
-  // Disable if: no country, no terms, no quote, or already checking out
-  checkoutBtn.disabled = !countrySelected || !termsAccepted || !quoteLoaded || isCheckingOut;
+  // Disable if: no country, no terms, or already checking out
+  checkoutBtn.disabled = !countrySelected || !termsAccepted || isCheckingOut;
 }
 
 function setupCountrySelector() {
@@ -143,32 +92,34 @@ function setupCountrySelector() {
   const termsCheckbox = document.getElementById("terms-checkbox");
 
   if (select) {
-    // Restore previously selected country from localStorage
-    const savedCountry = localStorage.getItem("selectedShippingCountry");
-
-    if (savedCountry && select.querySelector(`option[value="${savedCountry}"]`)) {
-      select.value = savedCountry;
-      console.log(`✓ Cart: Restored country from storage: ${savedCountry}`);
-      // Fetch quote for the saved country
-      debouncedFetchQuote();
+    // Restore previously selected country from localStorage with try/catch for private browsing
+    try {
+      const savedCountry = localStorage.getItem("selectedShippingCountry");
+      if (savedCountry && select.querySelector(`option[value="${savedCountry}"]`)) {
+        select.value = savedCountry;
+        console.log(`✓ Cart: Restored country from storage: ${savedCountry}`);
+        updateShippingToLine();
+      }
+    } catch {
+      // Private browsing or localStorage disabled - silently continue
+      console.warn("localStorage unavailable, proceeding without saved country");
     }
 
     select.addEventListener("change", () => {
       if (!isCheckingOut) {
-        // Save customer's chosen country to localStorage
-        localStorage.setItem("selectedShippingCountry", select.value);
-        console.log(`✓ Cart: Updated shipping country to ${select.value}`);
-
-        // IMPORTANT: Clear current quote immediately so checkout button is disabled
-        // until a fresh quote loads. This prevents stale calculationId issues.
-        currentQuote = null;
-        updateOrderSummaryDisplay(null);
-
-        updateCheckoutButtonState();
-        // Fetch quote with debouncing for the new country
-        if (select.value) {
-          debouncedFetchQuote();
+        // Save customer's chosen country to localStorage with try/catch for private browsing
+        try {
+          if (select.value) {
+            localStorage.setItem("selectedShippingCountry", select.value);
+            console.log(`✓ Cart: Updated shipping country to ${select.value}`);
+          }
+        } catch {
+          // Private browsing or localStorage disabled - silently continue
+          console.warn("localStorage unavailable, country not persisted");
         }
+
+        updateShippingToLine();
+        updateCheckoutButtonState();
       }
     });
   }
@@ -182,28 +133,39 @@ function setupCountrySelector() {
   updateCheckoutButtonState();
 }
 
-// Debounced quote fetch (~400ms)
-const debouncedFetchQuote = debounce(fetchQuote, 400);
+function updateShippingToLine() {
+  const select = document.getElementById("shipping-country");
+  const shippingToEl = document.getElementById("shipping-to-line");
+
+  if (!shippingToEl || !select || !select.value) {
+    if (shippingToEl) shippingToEl.style.display = "none";
+    return;
+  }
+
+  const countryName = getCountryName(select.value);
+  shippingToEl.innerHTML = `
+    <p style="margin: 0; color: #ccc; font-size: 0.9rem; line-height: 1.6;">
+      Shipping to <strong>${countryName}</strong>, calculated at checkout.<br/>
+      To ship somewhere else, change the country above before continuing.
+    </p>
+  `;
+  shippingToEl.style.display = "block";
+}
 
 function displayCart() {
   const cartItems = document.getElementById("cart-items");
   const cartSummary = document.getElementById("cart-summary");
   const emptyCart = document.getElementById("empty-cart");
-  const cartLoading = document.getElementById("cart-loading");
 
   if (!cart || !cart.items || cart.items.length === 0) {
     cartItems.style.display = "none";
-    cartLoading.style.display = "none";
     emptyCart.style.display = "block";
     if (cartSummary) cartSummary.style.display = "none";
-    currentQuote = null;
     return;
   }
 
-  // Cart has items - always show items, loading widget shown during quote fetch
   emptyCart.style.display = "none";
-  cartLoading.style.display = "none"; // Hide initially - will show when quote is being fetched
-  cartItems.style.display = "grid"; // Always show items
+  cartItems.style.display = "grid";
   if (cartSummary) cartSummary.style.display = "block";
 
   cartItems.innerHTML = "";
@@ -260,249 +222,25 @@ function displayCart() {
     cartItems.appendChild(itemCard);
   });
 
-  // Trigger quote fetch if country is selected (with debouncing)
-  const countrySelect = document.getElementById("shipping-country");
-  if (countrySelect && countrySelect.value && !isCheckingOut) {
-    debouncedFetchQuote();
-  }
+  // Update subtotal display
+  updateSubtotalDisplay();
 }
 
-// Convert relative image paths to absolute URLs for Stripe
-function getAbsoluteImageUrl(relativePath) {
-  // If already an absolute URL, return as-is
-  if (!relativePath || /^https?:\/\//.test(relativePath)) {
-    return relativePath;
-  }
-
-  // Build absolute URL with production domain and store path
-  // Image paths like "assets/images/..." need to be /store/assets/images/...
-  const productionDomain = "https://kickedoutofthesky.com";
-  const imagePath = relativePath.startsWith("/") ? relativePath : `/${relativePath}`;
-  return `${productionDomain}/store${imagePath}`;
-}
-
-// Transform cart items to SKU format for API (wrapper around utility function)
-function buildQuoteItems() {
-  // Convert cart items to checkout format with full product details
-  const items = cart.items
-    .map(item => {
-      // Find the product for this cart item
-      const product = products.find(p => p.product_key === item.productKey);
-      if (!product) {
-        return null; // Skip items without products
-      }
-
-      // Get the variant_id for this color/size combination
-      const variantId = getVariantIdForColorSize(product, item.color, item.size);
-      if (!variantId) {
-        return null; // Skip items without valid variants
-      }
-
-      const imageUrl = getImageForColor(product, item.color) || product.image;
-      return {
-        variant_id: variantId,
-        quantity: item.quantity,
-        name: product.title || product.name, // Use title (from products.json) or name as fallback
-        image: getAbsoluteImageUrl(imageUrl),
-        color: item.color,
-        size: item.size,
-      };
-    })
-    .filter(item => item !== null); // Remove null items
-
-  return items;
-}
-
-async function fetchQuote() {
-  const countrySelect = document.getElementById("shipping-country");
-  if (!countrySelect || !countrySelect.value) {
-    currentQuote = null;
-    updateOrderSummaryDisplay(null);
-    return;
-  }
-
-  const country = countrySelect.value;
-  if (!cart || !cart.items || cart.items.length === 0) {
-    currentQuote = null;
-    updateOrderSummaryDisplay(null);
-    return;
-  }
-
-  // Show loading state for both cart and quote sections
-  const cartLoading = document.getElementById("cart-loading");
-  if (cartLoading) cartLoading.style.display = "block";
-  showQuoteLoading(true);
-  hideQuoteError();
-
-  try {
-    // Build payload: cart items have productKey/color/size, need to resolve to variant_id/sku
-    const items = cart.items
-      .map(item => {
-        // Validate quantity exists and is a positive integer
-        if (!item.quantity || !Number.isInteger(item.quantity) || item.quantity <= 0) {
-          console.error(`Invalid quantity for cart item: ${item.productKey} - quantity: ${item.quantity}`);
-          return null;
-        }
-
-        const product = products.find(p => p.product_key === item.productKey);
-        if (!product) {
-          console.error(`Product not found for cart item: ${item.productKey}`);
-          return null;
-        }
-
-        const variantId = getVariantIdForColorSize(product, item.color, item.size);
-        if (!variantId) {
-          console.error(`Variant not found for ${item.productKey} - ${item.color} - ${item.size}`);
-          return null;
-        }
-
-        return {
-          sku: String(variantId),
-          quantity: item.quantity,
-        };
-      })
-      .filter(item => item !== null);
-
-    if (items.length === 0) {
-      throw new Error("No valid cart items to quote");
-    }
-
-    const backendUrl = window.__API_URL__ || "https://api.kickedoutofthesky.com";
-    const response = await fetch(`${backendUrl}/api/quote`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        items,
-        country,
-      }),
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.error || "Failed to fetch quote");
-    }
-
-    const quoteData = await response.json();
-    console.log("Quote response:", quoteData); // Debug: log the full quote response
-
-    // Use utility function to normalize quote data
-    currentQuote = extractQuoteData(quoteData);
-
-    if (!isValidQuote(currentQuote)) {
-      throw new Error("Invalid quote data received from server");
-    }
-
-    updateOrderSummaryDisplay(currentQuote);
-    showQuoteLoading(false);
-    // Hide loading widget on success
-    const cartLoading = document.getElementById("cart-loading");
-    if (cartLoading) cartLoading.style.display = "none";
-  } catch (error) {
-    console.error("Error fetching quote:", error);
-    showQuoteError(error.message || "Failed to calculate order total. Please try again.");
-    showQuoteLoading(false);
-    // Hide loading widget on error too
-    const cartLoading = document.getElementById("cart-loading");
-    if (cartLoading) cartLoading.style.display = "none";
-  }
-}
-
-function showQuoteLoading(isLoading) {
-  const loadingEl = document.getElementById("quote-loading");
-  const contentEl = document.getElementById("summary-content");
-  if (loadingEl && contentEl) {
-    loadingEl.style.display = isLoading ? "block" : "none";
-    contentEl.style.display = isLoading ? "none" : "block";
-  }
-}
-
-function showQuoteError(errorMessage) {
-  const errorEl = document.getElementById("quote-error");
-  const errorTextEl = document.getElementById("quote-error-text");
-  if (errorEl && errorTextEl) {
-    errorTextEl.textContent = errorMessage;
-    errorEl.style.display = "block";
-  }
-}
-
-function hideQuoteError() {
-  const errorEl = document.getElementById("quote-error");
-  if (errorEl) {
-    errorEl.style.display = "none";
-  }
-}
-
-function updateOrderSummaryDisplay(quote) {
-  const contentEl = document.getElementById("summary-content");
-  const cartLoading = document.getElementById("cart-loading");
+function updateSubtotalDisplay() {
   const subtotalEl = document.getElementById("subtotal");
-  const taxLabelEl = document.getElementById("tax-label");
-  const taxValueEl = document.getElementById("tax-value");
-  const importDutiesEl = document.getElementById("import-duties-note");
+  if (!subtotalEl) return;
 
-  if (!contentEl || !subtotalEl) return;
-
-  if (!quote) {
-    contentEl.style.display = "none";
-    // Hide loading widget when quote is cleared
-    if (cartLoading) cartLoading.style.display = "none";
-    return;
-  }
-
-  // Hide loading widget when quote is ready
-  if (cartLoading) cartLoading.style.display = "none";
-
-  // Use utility function to normalize quote data if not already normalized
-  const normalizedQuote = quote.subtotal !== undefined ? quote : extractQuoteData(quote);
-
-  contentEl.style.display = "block";
-
-  // Get prices from normalized quote (already in cents from utility function)
-  const subtotalConverted = normalizedQuote.subtotal;
-  const taxConverted = normalizedQuote.tax;
-
-  // Format amounts using USD only
-  const subtotalFormatted = formatUSD(subtotalConverted);
-  const taxFormatted = formatUSD(taxConverted);
-
-  // Update subtotal
-  subtotalEl.textContent = subtotalFormatted;
-
-  // Handle tax/VAT label and display
-  let taxLabel;
-  let taxValue;
-
-  // Determine if this is a VAT country based on taxIncluded flag
-  if (normalizedQuote.taxIncluded) {
-    // VAT country - tax is included in the price
-    taxLabel = "VAT:";
-    taxValue = "Included in price";
-  } else {
-    // Tax country - tax will be calculated at checkout
-    taxLabel = "Tax:";
-    // If tax value is 0 and we don't have it yet, show the note in the value
-    if (taxConverted === 0) {
-      taxValue = "Calculated at checkout";
-    } else {
-      taxValue = taxFormatted;
+  // Calculate subtotal from cart items
+  let subtotalCents = 0;
+  cart.items.forEach(item => {
+    const product = products.find(p => p.product_key === item.productKey);
+    if (product) {
+      const price = cart.getPriceForVariant(product, item.color, item.size);
+      subtotalCents += price * item.quantity;
     }
-  }
+  });
 
-  // Update tax label
-  if (taxLabelEl) {
-    taxLabelEl.textContent = taxLabel;
-  }
-  taxValueEl.textContent = taxValue;
-
-  // Show import duties note if applicable
-  if (importDutiesEl) {
-    importDutiesEl.style.display = quote.importDutiesNote ? "block" : "none";
-  }
-
-  // Update checkout button state (only enable if quote is fresh and terms accepted)
-  updateCheckoutButtonState();
+  subtotalEl.textContent = formatUSD(subtotalCents);
 }
 
 function updateCartQuantity(index, quantity) {
@@ -537,36 +275,53 @@ function setupCheckout() {
   }
 }
 
+function showCheckoutError(errorMessage) {
+  const errorEl = document.getElementById("checkout-error");
+  const errorTextEl = document.getElementById("checkout-error-text");
+  if (errorEl && errorTextEl) {
+    errorTextEl.textContent = errorMessage;
+    errorEl.style.display = "block";
+    // Scroll to error
+    errorEl.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }
+}
+
+function hideCheckoutError() {
+  const errorEl = document.getElementById("checkout-error");
+  if (errorEl) {
+    errorEl.style.display = "none";
+  }
+}
+
 async function proceedToCheckout() {
+  // Prevent double-click
+  if (isCheckingOut) return;
+
+  hideCheckoutError();
+
   if (cart.items.length === 0) {
-    alert("Your cart is empty");
+    showCheckoutError("Your cart is empty");
     return;
   }
 
   // Check if country is selected
   const countrySelect = document.getElementById("shipping-country");
   if (!countrySelect || countrySelect.value === "") {
-    alert("Please select a shipping country");
+    showCheckoutError("Please select a shipping country");
     return;
   }
 
   // Check if terms are accepted
   const termsCheckbox = document.getElementById("terms-checkbox");
   if (!termsCheckbox || !termsCheckbox.checked) {
-    alert("You must agree to the Terms & Conditions to place an order.");
-    return;
-  }
-
-  // Check if quote is loaded
-  if (!currentQuote || !currentQuote.calculationId) {
-    alert("Unable to proceed: Order total calculation failed. Please try again.");
+    showCheckoutError("You must agree to the Terms & Conditions to place an order.");
     return;
   }
 
   // Validate cart items before proceeding
   const validation = cart.validateItemsForCheckout(products);
   if (!validation.valid) {
-    alert("Cannot proceed to checkout:\n\n" + validation.errors.join("\n"));
+    showCheckoutError("Cannot proceed to checkout:\n\n" + validation.errors.join("\n"));
     console.error("Checkout validation errors:", validation.errors);
     return;
   }
@@ -577,79 +332,78 @@ async function proceedToCheckout() {
     // Lock country selector during checkout
     countrySelect.disabled = true;
 
-    // Country already saved to localStorage when dropdown changed
-    // No need to save again here (already saved in event listener)
-
-    // Disable checkout button during processing
+    // Disable checkout button and show pending state
     const checkoutBtn = document.getElementById("checkout-btn");
     checkoutBtn.disabled = true;
+    const originalText = checkoutBtn.textContent;
     checkoutBtn.textContent = "Processing...";
 
-    // Build items in SKU format for checkout
-    const items = buildQuoteItems();
+    // Build items for checkout: variant_id and quantity only
+    const items = cart.items
+      .map(item => {
+        const product = products.find(p => p.product_key === item.productKey);
+        if (!product) return null;
 
-    // Call backend checkout endpoint with calculationId
-    const backendUrl = window.__API_URL__ || "https://api.kickedoutofthesky.com";
-    const isLocalhost = backendUrl.includes("localhost");
-    const isStaging = backendUrl.includes("api-staging.");
-    const headers = {
-      "Content-Type": "application/json",
-    };
+        const variantId = getVariantIdForColorSize(product, item.color, item.size);
+        if (!variantId) return null;
 
-    // Only add CSRF token for production URLs
-    if (!isLocalhost && !isStaging) {
-      const csrfToken = getCSRFToken();
-      headers["X-CSRF-Token"] = csrfToken;
+        return {
+          variantId: String(variantId),
+          quantity: item.quantity,
+        };
+      })
+      .filter(item => item !== null);
+
+    if (items.length === 0) {
+      throw new Error("No valid cart items");
     }
 
-    const requestBody = {
-      calculationId: currentQuote.calculationId,
-      items,
-      shippingCountry: countrySelect.value,
-      termsAccepted: termsCheckbox.checked,
-    };
-
-    let checkoutUrl = backendUrl + "/api/create-checkout-session";
-    if (backendUrl.includes("api-staging.kickedoutofthesky.com")) {
-      checkoutUrl += "?x-vercel-protection-bypass=Xq8xpir5ZCR25Za5w6rpHxLofddagWJA";
-    }
-
-    const response = await fetch(checkoutUrl, {
+    // Call backend checkout endpoint
+    const backendUrl = window.__API_URL__ || "http://localhost:3001";
+    const response = await fetch(`${backendUrl}/api/create-checkout-session`, {
       method: "POST",
-      headers,
-      body: JSON.stringify(requestBody),
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        items,
+        country: countrySelect.value,
+      }),
     });
 
     const data = await response.json();
 
     if (!response.ok) {
-      const errorMessage = data.error || data.message || "Checkout failed";
-      console.error("Checkout error:", errorMessage);
-      alert("Checkout failed: " + errorMessage);
+      // Handle specific error cases
+      if (response.status === 422 && data.code === "unsupported_destination") {
+        const countryName = getCountryName(countrySelect.value);
+        showCheckoutError(
+          `We're not able to ship to ${countryName} right now. Try another destination, or email us and we'll see what we can do.`
+        );
+      } else {
+        showCheckoutError(data.error || data.message || "Checkout failed. Please try again.");
+      }
 
       // Restore UI state on error
       isCheckingOut = false;
       countrySelect.disabled = false;
       checkoutBtn.disabled = false;
-      checkoutBtn.textContent = "Proceed to Checkout";
+      checkoutBtn.textContent = originalText;
       return;
     }
 
     console.log("Checkout response:", data);
 
-    // Cart will be cleared on success.html after payment is confirmed
-    // This preserves items if user abandons checkout or encounters an error
-
-    // Redirect to Stripe Checkout Session (handle both redirect_url and url fields)
+    // Redirect to Stripe Checkout Session
     const stripeUrl = data.redirect_url || data.url;
     if (stripeUrl) {
       window.location.href = stripeUrl;
     } else {
-      throw new Error("No redirect_url or url provided by server");
+      throw new Error("No redirect_url provided by server");
     }
   } catch (error) {
     console.error("Checkout error:", error);
-    alert("Checkout failed: " + (error.message || "Please try again."));
+    showCheckoutError(error.message || "Checkout failed. Please try again.");
 
     // Restore UI state on error
     isCheckingOut = false;
@@ -672,11 +426,6 @@ window.removeFromCart = removeFromCart;
 if (typeof module !== "undefined" && module.exports) {
   module.exports = {
     getProductImage,
-    debounce,
-    generateCSRFToken,
-    getCSRFToken,
     updateCheckoutButtonState,
-    buildQuoteItems,
-    populateCountrySelect,
   };
 }
