@@ -9,6 +9,8 @@ import { getCountryName, sortCountries } from "../../js/allowed-countries.js";
 let products = [];
 let countryCodes = [];
 let isCheckingOut = false;
+let currentShippingCost = null;
+let shippingCalculationTimeout = null;
 
 // Make sure cart is ready before displaying
 function waitForCart(callback) {
@@ -87,6 +89,88 @@ function updateCheckoutButtonState() {
   checkoutBtn.disabled = !countrySelected || !termsAccepted || isCheckingOut;
 }
 
+async function calculateShippingEstimate(country) {
+  if (!country) {
+    // Clear shipping estimate if no country
+    currentShippingCost = null;
+    updateShippingEstimateDisplay();
+    return;
+  }
+
+  // Show loading state
+  const shippingEl = document.getElementById("shipping-estimate");
+  if (shippingEl) {
+    shippingEl.textContent = "Calculating...";
+    shippingEl.style.color = "#999";
+  }
+
+  try {
+    const backendUrl = window.__API_URL__ || "http://localhost:3001";
+    const response = await fetch(`${backendUrl}/api/calculate-shipping`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ country }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      console.warn("Shipping calculation error:", data);
+      currentShippingCost = null;
+      updateShippingEstimateDisplay(data.error || "Unable to calculate");
+      return;
+    }
+
+    // Extract first shipping option
+    if (data.shipping_options && data.shipping_options.length > 0) {
+      const firstOption = data.shipping_options[0];
+      const amount = firstOption.shipping_rate_data?.fixed_amount?.amount;
+      if (amount !== undefined) {
+        currentShippingCost = amount;
+        updateShippingEstimateDisplay();
+        return;
+      }
+    }
+
+    currentShippingCost = null;
+    updateShippingEstimateDisplay("No shipping available");
+  } catch (error) {
+    console.error("Shipping calculation error:", error);
+    currentShippingCost = null;
+    updateShippingEstimateDisplay("Unable to calculate");
+  }
+}
+
+function updateShippingEstimateDisplay(errorMessage = null) {
+  const shippingEl = document.getElementById("shipping-estimate");
+  if (!shippingEl) return;
+
+  if (errorMessage) {
+    shippingEl.textContent = `Error: ${errorMessage}`;
+    shippingEl.style.color = "#ff6b6b";
+  } else if (currentShippingCost !== null) {
+    shippingEl.textContent = formatUSD(currentShippingCost);
+    shippingEl.style.color = "#ffc107";
+  } else {
+    shippingEl.textContent = "—";
+    shippingEl.style.color = "inherit";
+  }
+}
+
+function debouncedCalculateShipping(country) {
+  // Clear any pending timeout
+  if (shippingCalculationTimeout) {
+    clearTimeout(shippingCalculationTimeout);
+  }
+
+  // Set new timeout for 500ms after country change
+  shippingCalculationTimeout = setTimeout(() => {
+    calculateShippingEstimate(country);
+  }, 500);
+}
+
 function setupCountrySelector() {
   const select = document.getElementById("shipping-country");
   const termsCheckbox = document.getElementById("terms-checkbox");
@@ -99,6 +183,8 @@ function setupCountrySelector() {
         select.value = savedCountry;
         console.log(`✓ Cart: Restored country from storage: ${savedCountry}`);
         updateShippingToLine();
+        // Calculate shipping for restored country
+        calculateShippingEstimate(savedCountry);
       }
     } catch {
       // Private browsing or localStorage disabled - silently continue
@@ -120,6 +206,7 @@ function setupCountrySelector() {
 
         updateShippingToLine();
         updateCheckoutButtonState();
+        debouncedCalculateShipping(select.value);
       }
     });
   }
