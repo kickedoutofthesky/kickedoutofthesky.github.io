@@ -101,7 +101,7 @@ async function calculateShippingEstimate(country) {
   const shippingEl = document.getElementById("shipping-estimate");
   if (shippingEl) {
     shippingEl.textContent = "Calculating...";
-    shippingEl.style.color = "#999";
+    shippingEl.style.color = "";
   }
 
   try {
@@ -152,10 +152,10 @@ function updateShippingEstimateDisplay(errorMessage = null) {
     shippingEl.style.color = "#ff6b6b";
   } else if (currentShippingCost !== null) {
     shippingEl.textContent = formatUSD(currentShippingCost);
-    shippingEl.style.color = "#ffc107";
+    shippingEl.style.color = "";
   } else {
     shippingEl.textContent = "—";
-    shippingEl.style.color = "inherit";
+    shippingEl.style.color = "";
   }
 }
 
