@@ -55,7 +55,7 @@ describe("Add to Cart Flow", () => {
     cy.get("[data-testid='product-card']").first().click();
 
     // Should navigate to product page
-    cy.url().should("include", "product.html");
+    cy.url().should("include", "/store/p/product_");
 
     // Wait for product detail to load
     cy.get("[data-testid='product-detail']").should("be.visible");

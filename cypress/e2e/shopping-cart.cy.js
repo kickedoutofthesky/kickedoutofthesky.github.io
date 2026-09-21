@@ -8,57 +8,9 @@ describe("Shopping Cart", () => {
       win.sessionStorage.clear();
     });
 
-    // Mock quote API - use wildcard to match all quote requests
-    cy.intercept("POST", "**/api/quote*", req => {
-      // Check request body for country to determine which response to send
-      const body = req.body || {};
-      const country = body.country || "US";
-
-      if (country === "DE") {
-        req.reply({
-          statusCode: 200,
-          body: {
-            calculationId: "calc-test-de",
-            subtotal: 5000,
-            shipping: 1500,
-            tax: 950,
-            total: 7450,
-            currency: "EUR",
-            taxIncluded: false,
-          },
-        });
-      } else if (country === "GB") {
-        req.reply({
-          statusCode: 200,
-          body: {
-            calculationId: "calc-test-gb",
-            subtotal: 4250,
-            shipping: 895,
-            tax: 0,
-            total: 5145,
-            currency: "GBP",
-            taxIncluded: true,
-          },
-        });
-      } else {
-        req.reply({
-          statusCode: 200,
-          body: {
-            calculationId: "calc-test-12345",
-            subtotal: 5000,
-            shipping: 1000,
-            tax: 0,
-            total: 6000,
-            currency: "USD",
-            taxIncluded: false,
-          },
-        });
-      }
-    }).as("quote");
-
     // Add a product to cart
     cy.get("[data-testid='product-card']").first().click();
-    cy.url().should("include", "product.html");
+    cy.url().should("include", "/store/p/product_");
     cy.get("[data-testid='product-detail']").should("be.visible");
 
     // Select size
@@ -161,7 +113,7 @@ describe("Shopping Cart", () => {
 
     // Add product to cart
     cy.get("[data-testid='product-card']").first().click();
-    cy.url().should("include", "product.html");
+    cy.url().should("include", "/store/p/product_");
     selectFirstRealSize();
     cy.get("#add-to-cart-btn").click({ force: true });
 
@@ -182,7 +134,7 @@ describe("Shopping Cart", () => {
 
     // Add first product
     cy.get("[data-testid='product-card']").first().click();
-    cy.url().should("include", "product.html");
+    cy.url().should("include", "/store/p/product_");
     selectFirstRealSize();
     cy.get("#add-to-cart-btn").click({ force: true });
 
@@ -193,7 +145,7 @@ describe("Shopping Cart", () => {
     cy.get("[data-testid='product-card']").should("have.length.greaterThan", 0);
 
     cy.get("[data-testid='product-card']").first().click();
-    cy.url().should("include", "product.html");
+    cy.url().should("include", "/store/p/product_");
     selectFirstRealSize();
     cy.get("#add-to-cart-btn").click({ force: true });
 
@@ -323,7 +275,7 @@ describe("Shopping Cart", () => {
 
     // Add first product
     cy.get("[data-testid='product-card']").eq(0).click();
-    cy.url().should("include", "product.html");
+    cy.url().should("include", "/store/p/product_");
     cy.get("[data-testid='product-price']")
       .invoke("text")
       .then(price1 => {

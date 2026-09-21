@@ -16,6 +16,62 @@
 /* global cy */
 /* eslint-disable no-undef */
 
+// Setup default API mocks before each test
+beforeEach(() => {
+  // Mock the allowed countries endpoint
+  cy.intercept("GET", "**/api/allowed-countries", {
+    statusCode: 200,
+    body: {
+      countries: ["US", "CA", "GB", "AU", "DE", "FR", "IT", "ES", "JP", "CN", "IN", "BR", "MX", "ZA"],
+    },
+  }).as("allowedCountries");
+
+  // Mock the calculate-shipping endpoint
+  cy.intercept("POST", "**/api/calculate-shipping", req => {
+    const country = req.body.country || "US";
+    const shippingCosts = {
+      US: 999,
+      CA: 1500,
+      GB: 1200,
+      AU: 2500,
+      DE: 1400,
+      FR: 1400,
+      IT: 1400,
+      ES: 1400,
+      JP: 2000,
+      CN: 2200,
+      IN: 2500,
+      BR: 3000,
+      MX: 1800,
+      ZA: 3500,
+    };
+    const shippingCost = shippingCosts[country] || 1500;
+
+    req.reply({
+      statusCode: 200,
+      body: {
+        shipping_options: [
+          {
+            id: `shipping_${country}`,
+            shipping_rate_data: {
+              type: "fixed_amount",
+              fixed_amount: {
+                amount: shippingCost,
+                currency: "usd",
+              },
+              display_name: "Standard Shipping",
+              delivery_estimate: {
+                minimum: { unit: "business_day", value: 5 },
+                maximum: { unit: "business_day", value: 10 },
+              },
+            },
+          },
+        ],
+      },
+    });
+  }).as("calculateShipping");
+});
+
 // Shared test helpers for all Cypress tests
 
 function selectFirstRealSize() {
@@ -57,12 +113,16 @@ function selectFirstRealColor() {
 }
 
 function selectShippingCountry(countryCode = "US") {
-  // Select country with force:true to bypass any coverage issues
-  cy.get("#shipping-country", { timeout: 5000 }).select(countryCode, { force: true });
+  // Wait for country select to be populated with options
+  cy.get("#shipping-country", { timeout: 5000 }).should("exist");
+  cy.get("#shipping-country option", { timeout: 5000 }).should("have.length.greaterThan", 1);
 
-  // Wait for quote to load
-  cy.get("#summary-content", { timeout: 10000 }).should("have.css", "display", "block");
-  cy.get("#subtotal", { timeout: 10000 }).invoke("text").should("not.equal", "—");
+  // Select country
+  cy.get("#shipping-country").select(countryCode, { force: true });
+
+  // Wait for shipping estimate to be calculated (should not show "—" or "Calculating...")
+  cy.get("#shipping-estimate", { timeout: 5000 }).should("not.have.text", "—");
+  cy.get("#shipping-estimate", { timeout: 5000 }).should("not.have.text", "Calculating...");
 }
 
 function acceptTerms() {

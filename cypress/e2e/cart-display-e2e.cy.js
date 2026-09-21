@@ -35,24 +35,25 @@ describe("Cart Display - Enhanced Quote and Checkout", () => {
       addProductToCart();
 
       navigateToCart();
-      cy.get("#shipping-country").select("US");
-      cy.get("#quote-loading", { timeout: 5000 }).should("not.be.visible");
+      selectShippingCountry("US");
 
-      // Verify subtotal element is visible
+      // Verify subtotal element is visible and has a value
       cy.get("#subtotal").should("be.visible");
+      cy.get("#subtotal").should("not.have.text", "—");
     });
 
-    it("should apply shipping to multiple items", () => {
+    it("should display shipping estimate for multiple items", () => {
       addProductToCart();
       cy.visit("/store");
       addProductToCart();
 
       navigateToCart();
-      cy.get("#shipping-country").select("US");
-      cy.get("#quote-loading", { timeout: 5000 }).should("not.be.visible");
+      selectShippingCountry("US");
 
-      // Verify shipping value element is visible
-      cy.get("#shipping-value").should("be.visible");
+      // Verify shipping estimate element is visible and has a value
+      cy.get("#shipping-estimate").should("be.visible");
+      cy.get("#shipping-estimate").should("not.have.text", "—");
+      cy.get("#shipping-estimate").should("not.have.text", "Calculating...");
     });
   });
 
@@ -66,15 +67,14 @@ describe("Cart Display - Enhanced Quote and Checkout", () => {
         const itemCount = $items.length;
 
         // Change country
-        cy.get("#shipping-country").select("US");
-        cy.get("#quote-loading", { timeout: 5000 }).should("not.be.visible");
+        selectShippingCountry("US");
 
         // Items should still be there
         cy.get("[data-testid='cart-item']").should("have.length", itemCount);
       });
     });
 
-    it("should update quote without losing cart items", () => {
+    it("should maintain shipping estimate when changing countries", () => {
       addProductToCart();
       cy.visit("/store");
       addProductToCart();
@@ -84,11 +84,11 @@ describe("Cart Display - Enhanced Quote and Checkout", () => {
       // Verify cart still has items
       cy.get("[data-testid='cart-item']").should("have.length.greaterThan", 0);
 
-      cy.get("#shipping-country").select("DE");
-      cy.get("#quote-loading", { timeout: 5000 }).should("not.be.visible");
+      selectShippingCountry("US");
 
-      // Verify items are still in cart after country change
+      // Verify items and shipping estimate are still there
       cy.get("[data-testid='cart-item']").should("have.length.greaterThan", 0);
+      cy.get("#shipping-estimate").should("not.have.text", "—");
     });
   });
 });

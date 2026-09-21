@@ -91,12 +91,8 @@ describe("Error Paths and Edge Cases", () => {
       cy.wait(1500);
       cy.get("a[href*='cart.html']").first().click({ force: true });
 
-      // Wait for cart to load with quote
-      cy.wait("@countriesLoaded", { timeout: 5000 });
-      // Select country to trigger quote API
-      cy.get("#shipping-country").should("exist");
-      cy.get("#shipping-country").select("US", { force: true });
-      cy.wait("@quote", { timeout: 5000 });
+      // Select country and wait for shipping estimate
+      selectShippingCountry("US");
     });
 
     it("should handle zero quantity gracefully", () => {
