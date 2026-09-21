@@ -6,6 +6,8 @@ describe("Shopping Cart", () => {
     cy.window().then(win => {
       win.localStorage.clear();
       win.sessionStorage.clear();
+      // Accept cookie consent to hide banner
+      win.localStorage.setItem("cookie_consent", "accepted");
     });
 
     // Add a product to cart
@@ -22,6 +24,12 @@ describe("Shopping Cart", () => {
     // Wait for cart notification animation to clear
     cy.wait(1500);
   });
+
+  // Helper to navigate to cart
+  function navigateToCart() {
+    cy.get("a[href*='cart.html']").first().click();
+    cy.url().should("include", "cart.html");
+  }
 
   it("should navigate to cart page", () => {
     cy.get("a[href*='cart.html']").first().click();
