@@ -405,14 +405,13 @@ describe("Shopping Cart", () => {
       cy.get("a[href*='cart.html']").first().click();
       cy.url().should("include", "cart.html");
 
-      // Select a country to trigger quote fetch
-      cy.get("#shipping-country").select("US", { force: true });
+      // Select a country to trigger shipping estimate fetch
+      selectShippingCountry("US");
 
-      // Wait for quote API and order summary to load
-      cy.wait("@quote");
-      cy.get("#summary-content", { timeout: 10000 }).scrollIntoView().should("be.visible");
+      // Order summary should be visible
+      cy.get("#cart-summary").should("be.visible");
 
-      // Loading widget should be hidden after quote loads
+      // Loading widget should be hidden
       cy.get("#cart-loading").should("not.be.visible");
     });
 
@@ -424,10 +423,10 @@ describe("Shopping Cart", () => {
       cy.get("[data-testid='cart-item']").should("have.length.greaterThan", 0);
 
       // Select country for order summary
-      cy.get("#shipping-country").select("US", { force: true });
+      selectShippingCountry("US");
 
       // Order summary should be visible
-      cy.get("#summary-content", { timeout: 10000 }).scrollIntoView().should("be.visible");
+      cy.get("#cart-summary").should("be.visible");
       cy.get("[data-testid='cart-subtotal']").should("be.visible");
     });
 
@@ -445,13 +444,10 @@ describe("Shopping Cart", () => {
       cy.url().should("include", "cart.html");
 
       // When cart has items, continue shopping link should not show
-      // Loading widget shows briefly then hides when order summary loads
       cy.get("#empty-cart").should("not.be.visible");
 
-      // Select country to trigger quote and order summary to load
-      cy.get("#shipping-country").select("US", { force: true });
-      cy.wait("@quote");
-      cy.get("#summary-content", { timeout: 10000 }).scrollIntoView().should("be.visible");
+      // Select country to trigger shipping estimate and order summary to load
+      selectShippingCountry("US");
 
       // After loading, loading widget should be hidden
       cy.get("#cart-loading").should("not.be.visible");
@@ -461,11 +457,12 @@ describe("Shopping Cart", () => {
       cy.get("a[href*='cart.html']").first().click();
       cy.url().should("include", "cart.html");
 
-      // Select country to trigger quote and order summary to load
-      cy.get("#shipping-country").select("US", { force: true });
-      cy.wait("@quote");
-      cy.get("#summary-content").should("be.visible");
-      cy.get("#summary-content").should("contain", "Subtotal");
+      // Select country to trigger shipping estimate and order summary to load
+      selectShippingCountry("US");
+
+      // Order summary should be visible with subtotal
+      cy.get("#cart-summary").should("be.visible");
+      cy.get("#subtotal").should("be.visible");
     });
 
     it("should show empty cart message when no items in cart", () => {
@@ -493,13 +490,12 @@ describe("Shopping Cart", () => {
       cy.get("a[href*='cart.html']").first().click();
       cy.url().should("include", "cart.html");
 
-      // Select country to trigger quote
-      cy.get("#shipping-country").select("DE", { force: true });
+      // Select country to trigger shipping estimate
+      selectShippingCountry("DE");
 
-      // Wait for quote and verify summary loads
-      cy.wait("@quote");
-      cy.get("#summary-content", { timeout: 10000 }).scrollIntoView().should("be.visible");
-      cy.get("#summary-content").should("contain", "Subtotal");
+      // Verify summary loads with subtotal
+      cy.get("#cart-summary").should("be.visible");
+      cy.get("#subtotal").should("be.visible");
     });
 
     it("should hide loading widget after changing country selection", () => {
@@ -507,17 +503,17 @@ describe("Shopping Cart", () => {
       cy.url().should("include", "cart.html");
 
       // Select first country
-      cy.get("#shipping-country").select("US", { force: true });
+      selectShippingCountry("US");
 
-      // Wait for loading to complete
-      cy.get("#summary-content", { timeout: 10000 }).scrollIntoView().should("be.visible");
+      // Summary should be visible
+      cy.get("#cart-summary").should("be.visible");
       cy.get("#cart-loading").should("not.be.visible");
 
-      // Change country - loading should appear briefly
-      cy.get("#shipping-country").select("DE", { force: true });
+      // Change country
+      selectShippingCountry("DE");
 
-      // Eventually loading should hide again
-      cy.get("#summary-content", { timeout: 10000 }).scrollIntoView().should("be.visible");
+      // Summary should still be visible
+      cy.get("#cart-summary").should("be.visible");
       cy.get("#cart-loading").should("not.be.visible");
     });
   });
