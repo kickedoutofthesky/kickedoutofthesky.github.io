@@ -38,8 +38,12 @@ function selectFirstRealSize() {
 describe("Add All Products and Variants to Cart", () => {
   beforeEach(() => {
     // Clear storage before setting up intercepts
-    localStorage.clear();
-    sessionStorage.clear();
+    cy.window().then(win => {
+      win.localStorage.clear();
+      win.sessionStorage.clear();
+      // Accept cookie consent to hide banner
+      win.localStorage.setItem("cookie_consent", "accepted");
+    });
 
     // Mock the /api/geo endpoint
     cy.intercept("GET", "**/api/geo", {
@@ -57,20 +61,6 @@ describe("Add All Products and Variants to Cart", () => {
         isEU: false,
       },
     }).as("geoDetection");
-
-    // Mock the /api/quote endpoint
-    cy.intercept("POST", "**/api/quote", {
-      statusCode: 200,
-      body: {
-        calculationId: "calc-12345",
-        subtotal: 2500,
-        shipping: 1000,
-        tax: 0,
-        total: 3500,
-        currency: "USD",
-        taxIncluded: false,
-      },
-    }).as("quoteUS");
 
     cy.visit("/store");
   });
@@ -145,14 +135,11 @@ describe("Add All Products and Variants to Cart", () => {
         // Go to cart and verify subtotal
         cy.visit("/store/cart.html");
 
-        // Wait for cart page to fully load
-        cy.get("#shipping-country", { timeout: 5000 }).should("be.visible");
+        // Select country to load shipping estimate and cart summary
+        selectShippingCountry("US");
 
-        // Select a country to trigger the shipping quote calculation
-        cy.get("#shipping-country").select("US", { force: true });
-
-        // Wait for shipping calculation to complete and summary to become visible
-        cy.get("#summary-content", { timeout: 5000 }).should("be.visible");
+        // Verify the cart summary is visible
+        cy.get("#cart-summary", { timeout: 5000 }).should("be.visible");
 
         // Verify the subtotal is displayed in the summary
         cy.get("#subtotal").should("be.visible").invoke("text").should("include", "$");
