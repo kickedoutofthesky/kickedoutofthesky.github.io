@@ -46,6 +46,8 @@ describe("Complete Shopping Experience E2E", () => {
     cy.window().then(win => {
       win.localStorage.clear();
       win.sessionStorage.clear();
+      // Accept cookie consent to hide banner
+      win.localStorage.setItem("cookie_consent", "accepted");
     });
 
     // Mock geo-location API
@@ -55,20 +57,6 @@ describe("Complete Shopping Experience E2E", () => {
         country_code: "US",
       },
     }).as("geoDetection");
-
-    // Mock quote API for various countries
-    cy.intercept("POST", "**/api/quote", {
-      statusCode: 200,
-      body: {
-        calculationId: "calc-test-123",
-        subtotal: 2500,
-        shipping: 1000,
-        tax: 250,
-        total: 3750,
-        currency: "USD",
-        taxIncluded: false,
-      },
-    }).as("quote");
 
     // Mock countries file
     cy.intercept("GET", "**/data/printful-shipping-countries.json", {
@@ -128,8 +116,8 @@ describe("Complete Shopping Experience E2E", () => {
     // Select country from dropdown
     selectShippingCountry(selectedCountry.code);
 
-    // Wait for quote to be fetched and prices to update
-    cy.get("#summary-content", { timeout: 10000 }).should("exist");
+    // Verify cart summary has loaded
+    cy.get("#cart-summary", { timeout: 10000 }).should("exist");
 
     // Wait for prices to load - verify they're not placeholder text (em dash)
     cy.get("#subtotal", { timeout: 15000 }).invoke("text").should("not.be.empty").should("not.equal", "—");
@@ -209,17 +197,17 @@ describe("Complete Shopping Experience E2E", () => {
     // Test currency change for multiple countries
     // Test first country
     selectShippingCountry(countries[0].code);
-    cy.get("#summary-content", { timeout: 10000 }).should("exist");
+    cy.get("#cart-summary", { timeout: 10000 }).should("exist");
     cy.get("#subtotal", { timeout: 5000 }).invoke("text").should("not.include", "NaN");
 
     // Test second country
     selectShippingCountry(countries[1].code);
-    cy.get("#summary-content", { timeout: 10000 }).should("exist");
+    cy.get("#cart-summary", { timeout: 10000 }).should("exist");
     cy.get("#subtotal", { timeout: 5000 }).invoke("text").should("not.include", "NaN");
 
     // Test third country
     selectShippingCountry(countries[2].code);
-    cy.get("#summary-content", { timeout: 10000 }).should("exist");
+    cy.get("#cart-summary", { timeout: 10000 }).should("exist");
     cy.get("#subtotal", { timeout: 5000 }).invoke("text").should("not.include", "NaN");
   });
 
