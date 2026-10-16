@@ -101,20 +101,16 @@ describe("Checkout API Payload Tests", () => {
         expect(Array.isArray(body.items)).to.be.true;
 
         body.items.forEach(item => {
-          // App sends: variant_id, quantity, name, image, color, size
-          expect(item).to.have.property("variant_id");
+          // App sends: variantId, quantity
+          expect(item).to.have.property("variantId");
           expect(item).to.have.property("quantity");
-          expect(item).to.have.property("name");
-          expect(item).to.have.property("image");
-          expect(item).to.have.property("color");
-          expect(item).to.have.property("size");
 
           // Verify NO shipping address fields
           expect(item).to.not.have.property("shipping");
           expect(item).to.not.have.property("address");
 
           // Verify type correctness
-          expect(item.variant_id).to.be.a("number");
+          expect(item.variantId).to.be.a("string");
           expect(item.quantity).to.be.a("number");
           expect(item.quantity).to.be.greaterThan(0);
         });
@@ -144,14 +140,7 @@ describe("Checkout API Payload Tests", () => {
       // Verify the API was called with correct payload
       cy.wait("@payloadCheck").then(interception => {
         expect(interception.request.body.items).to.have.length.greaterThan(0);
-        expect(interception.request.body.items[0]).to.have.all.keys(
-          "variant_id",
-          "quantity",
-          "name",
-          "image",
-          "color",
-          "size"
-        );
+        expect(interception.request.body.items[0]).to.have.all.keys("variantId", "quantity");
       });
     });
 
@@ -442,11 +431,8 @@ describe("Checkout API Payload Tests", () => {
       cy.get("#add-to-cart-btn").click({ force: true });
 
       // addToCart() redirects to cart.html, so we're already at the cart page
-      selectShippingCountry();
+      selectShippingCountry("US");
       acceptTerms();
-
-      // Wait for quote to be calculated
-      cy.wait("@quoteUS");
 
       cy.get("button").contains("Proceed to Checkout").click();
 
@@ -484,18 +470,15 @@ describe("Checkout API Payload Tests", () => {
       cy.get("button").contains("Proceed to Checkout").should("be.disabled");
 
       // Select a country
-      cy.get("#shipping-country").select("US");
-
-      // Wait for quote to be calculated
-      cy.wait("@quoteUS");
+      selectShippingCountry("US");
 
       // Button should now be enabled (both country and T&C accepted)
       cy.get("button").contains("Proceed to Checkout").should("not.be.disabled");
     });
 
-    it("should send shippingCountry in checkout API payload", () => {
+    it("should send country in checkout API payload", () => {
       cy.intercept("POST", "**/api/create-checkout-session", req => {
-        expect(req.body).to.have.property("shippingCountry", "CA");
+        expect(req.body).to.have.property("country", "CA");
         req.reply({
           statusCode: 200,
           body: { url: "https://checkout.stripe.com/test", sessionId: "cs_test_123" },
@@ -511,9 +494,6 @@ describe("Checkout API Payload Tests", () => {
 
       selectShippingCountry("CA");
       acceptTerms();
-
-      // Wait for quote to be calculated
-      cy.wait("@quoteUS");
 
       cy.get("button").contains("Proceed to Checkout").click();
 
@@ -531,10 +511,7 @@ describe("Checkout API Payload Tests", () => {
       acceptTerms();
 
       // Select a country
-      cy.get("#shipping-country").select("US");
-
-      // Wait for quote to be calculated
-      cy.wait("@quoteUS");
+      selectShippingCountry("US");
 
       cy.get("button").contains("Proceed to Checkout").should("not.be.disabled");
 
