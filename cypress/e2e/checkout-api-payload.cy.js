@@ -404,9 +404,9 @@ describe("Checkout API Payload Tests", () => {
         expect(body.items.length).to.equal(2);
 
         body.items.forEach(item => {
-          expect(item).to.have.property("variant_id");
+          expect(item).to.have.property("variantId");
           expect(item).to.have.property("quantity");
-          expect(item.variant_id).to.be.a("number");
+          expect(item.variantId).to.be.a("string");
           expect(item.quantity).to.equal(1);
         });
 
