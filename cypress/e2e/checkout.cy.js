@@ -31,6 +31,8 @@ describe("Checkout Flow", () => {
     cy.window().then(win => {
       win.localStorage.clear();
       win.sessionStorage.clear();
+      // Accept cookie consent to hide banner
+      win.localStorage.setItem("cookie_consent", "accepted");
     });
 
     cy.visit("/store");
