@@ -22,6 +22,8 @@ describe("Cart Display - Enhanced Quote and Checkout", () => {
     cy.window().then(win => {
       win.localStorage.clear();
       win.sessionStorage.clear();
+      // Accept cookie consent to hide banner
+      win.localStorage.setItem("cookie_consent", "accepted");
     });
   });
 
@@ -97,8 +99,8 @@ describe("Cart Display - Enhanced Quote and Checkout", () => {
 function addProductToCart() {
   cy.get("[data-testid='product-card']").first().click();
 
-  // Wait for product detail page to load
-  cy.url().should("include", "product.html");
+  // Wait for product detail page to load (new format: /store/p/product_XXX/)
+  cy.url().should("include", "/store/p/product_");
   cy.get("[data-testid='product-detail']").should("be.visible");
 
   // Select first available size
@@ -126,4 +128,11 @@ function addProductToCart() {
 function navigateToCart() {
   cy.get("a[href*='cart.html']").first().click();
   cy.get("[data-testid='cart-page']").should("exist");
+  // Accept cookie consent if banner is present
+  cy.get("#cookie-consent-banner", { timeout: 2000 }).then($banner => {
+    if ($banner.length > 0 && $banner.is(":visible")) {
+      cy.get("#cookie-accept-btn").click({ force: true });
+      cy.wait(300);
+    }
+  });
 }
