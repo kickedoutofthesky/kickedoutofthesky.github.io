@@ -128,11 +128,4 @@ function addProductToCart() {
 function navigateToCart() {
   cy.get("a[href*='cart.html']").first().click();
   cy.get("[data-testid='cart-page']").should("exist");
-  // Accept cookie consent if banner is present
-  cy.get("#cookie-consent-banner", { timeout: 2000 }).then($banner => {
-    if ($banner.length > 0 && $banner.is(":visible")) {
-      cy.get("#cookie-accept-btn").click({ force: true });
-      cy.wait(300);
-    }
-  });
 }
