@@ -17,7 +17,7 @@ describe("Complete Purchase Flow - Customer Buying Merch", () => {
 
     // Step 2: Click a product
     cy.get("[data-testid='product-card']").first().click();
-    cy.url().should("include", "product.html");
+    cy.url().should("include", "/store/p/product_");
     cy.get("[data-testid='product-detail']").should("be.visible");
 
     // Step 3: Select color then size variant (MUST be in this order)
@@ -95,7 +95,7 @@ describe("Complete Purchase Flow - Customer Buying Merch", () => {
 
     // Navigate to product page and add to cart
     cy.get("[data-testid='product-card']").first().click();
-    cy.url().should("include", "product.html");
+    cy.url().should("include", "/store/p/product_");
 
     // Get product details before adding
     cy.get("[data-testid='product-price']")
@@ -129,14 +129,14 @@ describe("Complete Purchase Flow - Customer Buying Merch", () => {
 
           if (requestBody.items && requestBody.items.length > 0) {
             const item = requestBody.items[0];
-            // Verify product details in request
-            expect(item).to.have.property("variant_id");
+            // Verify product details in request (uses camelCase variantId)
+            expect(item).to.have.property("variantId");
             expect(item).to.have.property("quantity");
             expect(item.quantity).to.equal(1);
           }
 
           // Verify shipping country
-          expect(requestBody).to.have.property("shippingCountry");
+          expect(requestBody).to.have.property("country");
         });
       });
   });
@@ -168,7 +168,7 @@ describe("Complete Purchase Flow - Customer Buying Merch", () => {
 
     // Add product to cart
     cy.get("[data-testid='product-card']").first().click();
-    cy.url().should("include", "product.html");
+    cy.url().should("include", "/store/p/product_");
     selectFirstRealColor();
     selectFirstRealSize();
     cy.get("#add-to-cart-btn").click({ force: true });
@@ -215,7 +215,7 @@ describe("Complete Purchase Flow - Customer Buying Merch", () => {
   it("should return user to cart with items intact when using cancel URL from Stripe", () => {
     // First, add items to cart
     cy.get("[data-testid='product-card']").first().click();
-    cy.url().should("include", "product.html");
+    cy.url().should("include", "/store/p/product_");
     selectFirstRealSize();
     cy.get("#add-to-cart-btn").click({ force: true });
 

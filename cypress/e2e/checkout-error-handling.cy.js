@@ -1,115 +1,12 @@
 /* eslint-disable no-undef */
-// Helper functions - use same pattern as checkout-api-payload.cy.js (which has all 15 tests passing)
-
-// Helper function to select a proper size (not placeholder)
-function selectFirstRealSize() {
-  // Wait for size options to be populated (not just the placeholder)
-  cy.get("[data-testid='size-select'] option").should("have.length.greaterThan", 1);
-
-  cy.get("[data-testid='size-select']").then($select => {
-    const value = $select.val();
-    // If placeholder is selected (empty value), select first real option
-    if (!value || value === "") {
-      cy.get("[data-testid='size-select'] option")
-        .eq(1)
-        .invoke("attr", "value")
-        .then(sizeValue => {
-          cy.get("[data-testid='size-select']").select(sizeValue, { force: true });
-        });
-    }
-  });
-}
-
-// Helper function to select first real color option
-function selectFirstRealColor() {
-  // Wait for color select to be visible and have options
-  cy.get("[data-testid='color-select']").should("exist");
-  cy.get("[data-testid='color-select'] option").should("have.length.greaterThan", 0);
-
-  cy.get("[data-testid='color-select']").then($select => {
-    if ($select.length > 0 && $select.find("option").length > 0) {
-      cy.get("[data-testid='color-select'] option")
-        .eq(0) // Get the first color (no placeholder in color select)
-        .invoke("attr", "value")
-        .then(colorValue => {
-          // Use force:true to bypass navbar coverage issue
-          cy.get("[data-testid='color-select']").select(colorValue, { force: true });
-          // Wait for color change to update sizes
-          cy.get("[data-testid='size-select'] option").should("have.length.greaterThan", 1);
-        });
-    }
-  });
-}
-
-function selectShippingCountry() {
-  // Wait for countries to be populated (more than just placeholder)
-  cy.get("#shipping-country option").should("have.length.greaterThan", 1);
-
-  // Select country from dropdown (use US for testing)
-  cy.get("#shipping-country").then($select => {
-    if ($select.find("option[value='US']").length > 0) {
-      cy.get("#shipping-country").select("US");
-    } else {
-      // Fallback: select second option
-      cy.get("#shipping-country")
-        .find("option")
-        .eq(1)
-        .then($option => {
-          cy.get("#shipping-country").select($option.val());
-        });
-    }
-  });
-}
-
-function acceptTerms() {
-  // Check terms checkbox if visible
-  cy.get("#terms-checkbox").then($checkbox => {
-    if (!$checkbox.prop("checked")) {
-      cy.get("#terms-checkbox").click({ force: true });
-    }
-  });
-}
 
 describe("Checkout Flow — Modified Error Handling", () => {
   beforeEach(() => {
     cy.window().then(win => {
       win.localStorage.clear();
+      win.localStorage.setItem("cookie_consent", "accepted");
       win.sessionStorage.clear();
     });
-
-    // Mock geo-location API to return US
-    cy.intercept("GET", "**/api/geo", {
-      statusCode: 200,
-      body: {
-        country_code: "US",
-      },
-    }).as("geoDetection");
-
-    // Mock quote API to return a quote for US
-    cy.intercept("POST", "**/api/quote", {
-      statusCode: 200,
-      body: {
-        calculationId: "calc-12345",
-        subtotal: 2500,
-        shipping: 1000,
-        tax: 0,
-        total: 3500,
-        currency: "USD",
-        taxIncluded: false,
-      },
-    }).as("quoteUS");
-
-    // Mock countries file
-    cy.intercept("GET", "**/data/printful-shipping-countries.json", {
-      statusCode: 200,
-      body: [
-        { name: "United States", code: "US" },
-        { name: "Canada", code: "CA" },
-        { name: "United Kingdom", code: "GB" },
-        { name: "Australia", code: "AU" },
-        { name: "Germany", code: "DE" },
-      ],
-    }).as("countriesLoaded");
   });
 
   describe("Scenario 1: API 500 Error - Friendly Error Message", () => {
@@ -137,15 +34,12 @@ describe("Checkout Flow — Modified Error Handling", () => {
       // addToCart() redirects to cart.html, so wait for URL to update
       cy.url().should("include", "cart.html");
 
-      // Wait for countries to load
-      cy.wait("@countriesLoaded", { timeout: 5000 });
-
       // Select shipping country and click checkout
-      selectShippingCountry();
+      selectShippingCountry("US");
       acceptTerms();
 
-      // Wait for quote to be calculated
-      cy.wait("@quoteUS");
+      // Wait for shipping estimate to be calculated
+      cy.get("#shipping-estimate").should("not.have.text", "—");
 
       // Wait for checkout button to be visible and enabled
       cy.get("button").contains("Proceed to Checkout").should("not.be.disabled");
@@ -188,11 +82,11 @@ describe("Checkout Flow — Modified Error Handling", () => {
 
       // addToCart() redirects to cart.html
       cy.url().should("include", "cart.html");
-      selectShippingCountry();
+      selectShippingCountry("US");
       acceptTerms();
 
-      // Wait for quote to be calculated
-      cy.wait("@quoteUS");
+      // Wait for shipping estimate
+      cy.get("#shipping-estimate").should("not.have.text", "—");
 
       cy.get("button").contains("Proceed to Checkout").click();
 
@@ -231,11 +125,11 @@ describe("Checkout Flow — Modified Error Handling", () => {
 
       // addToCart() redirects to cart.html
       cy.url().should("include", "cart.html");
-      selectShippingCountry();
+      selectShippingCountry("US");
       acceptTerms();
 
-      // Wait for quote to be calculated
-      cy.wait("@quoteUS");
+      // Wait for shipping estimate
+      cy.get("#shipping-estimate").should("not.have.text", "—");
 
       cy.get("button").contains("Proceed to Checkout").click();
 
@@ -275,13 +169,13 @@ describe("Checkout Flow — Modified Error Handling", () => {
       // addToCart() redirects to cart.html
       cy.url().should("include", "cart.html");
       cy.get("[data-testid='cart-item']").should("have.length.greaterThan", 0);
-      selectShippingCountry();
+      selectShippingCountry("US");
       acceptTerms();
 
-      // Wait for quote to be calculated
-      cy.wait("@quoteUS");
+      // Wait for shipping estimate
+      cy.get("#shipping-estimate").should("not.have.text", "—");
 
-      cy.get("#checkout-btn").should("not.be.disabled").click({ force: true });
+      cy.get("button").contains("Proceed to Checkout").should("not.be.disabled").click({ force: true });
 
       // Wait for timeout error
       cy.wait("@checkoutTimeout", { timeout: 10000 });
@@ -320,8 +214,12 @@ describe("Checkout Flow — Modified Error Handling", () => {
 
       // addToCart() redirects to cart.html
       cy.url().should("include", "cart.html");
-      selectShippingCountry();
+      selectShippingCountry("US");
       acceptTerms();
+
+      // Wait for shipping estimate
+      cy.get("#shipping-estimate").should("not.have.text", "—");
+
       cy.get("button").contains("Proceed to Checkout").click();
 
       // Verify user-friendly timeout message in alert
@@ -359,15 +257,12 @@ describe("Checkout Flow — Modified Error Handling", () => {
       // addToCart() redirects to cart.html
       cy.url().should("include", "cart.html");
 
-      // Wait for countries to load
-      cy.wait("@countriesLoaded", { timeout: 5000 });
-
       // Select country then click checkout
-      selectShippingCountry();
+      selectShippingCountry("US");
       acceptTerms();
 
-      // Wait for quote to be calculated
-      cy.wait("@quoteUS");
+      // Wait for shipping estimate
+      cy.get("#shipping-estimate").should("not.have.text", "—");
 
       // Wait for button to be enabled
       cy.get("button").contains("Proceed to Checkout").should("not.be.disabled");
@@ -410,21 +305,18 @@ describe("Checkout Flow — Modified Error Handling", () => {
       // addToCart() redirects to cart.html
       cy.url().should("include", "cart.html");
 
-      // Wait for countries to load
-      cy.wait("@countriesLoaded", { timeout: 5000 });
-
       // Select country and click checkout button
-      selectShippingCountry();
+      selectShippingCountry("US");
       acceptTerms();
 
-      // Wait for quote to be calculated
-      cy.wait("@quoteUS");
+      // Wait for shipping estimate
+      cy.get("#shipping-estimate").should("not.have.text", "—");
 
       // Wait for button to be enabled
       cy.get("button").contains("Proceed to Checkout").should("not.be.disabled").click({ force: true });
 
       // Verify button is disabled after click (while processing)
-      cy.get("#checkout-btn").should("be.disabled");
+      cy.get("button").contains("Proceed to Checkout").should("be.disabled");
     });
   });
 
@@ -455,22 +347,22 @@ describe("Checkout Flow — Modified Error Handling", () => {
       cy.url().should("include", "cart.html");
 
       // Select country and click checkout
-      selectShippingCountry();
+      selectShippingCountry("US");
       acceptTerms();
 
-      // Wait for quote to be calculated
-      cy.wait("@quoteUS");
+      // Wait for shipping estimate
+      cy.get("#shipping-estimate").should("not.have.text", "—");
 
       cy.get("button").contains("Proceed to Checkout").click();
 
       // Verify button is disabled during processing
-      cy.get("#checkout-btn").should("be.disabled");
+      cy.get("button").contains("Proceed to Checkout").should("be.disabled");
 
       // Verify processing message or spinner is shown
       // Check for spinner, loading indicator, or "Processing..." text
       cy.get("body").then(() => {
         // At minimum, button should be disabled
-        cy.get("#checkout-btn").should("be.disabled");
+        cy.get("button").contains("Proceed to Checkout").should("be.disabled");
       });
 
       // Wait for processing to complete
@@ -503,18 +395,19 @@ describe("Checkout Flow — Modified Error Handling", () => {
       cy.url().should("include", "cart.html");
 
       // Select country, click checkout, and immediately check for loading state
-      selectShippingCountry();
+      selectShippingCountry("US");
       acceptTerms();
 
-      // Wait for quote to be calculated
-      cy.wait("@quoteUS");
+      // Wait for shipping estimate
+      cy.get("#shipping-estimate").should("not.have.text", "—");
 
       cy.get("button").contains("Proceed to Checkout").click();
 
       // Look for processing indicator (could be text, spinner, or disabled state)
       cy.get("body").then($body => {
         const processingText = $body.text();
-        const isDisabled = $body.find("button:contains('Proceed to Checkout')").prop("disabled");
+        const proceedBtn = $body.find("button:contains('Proceed to Checkout')");
+        const isDisabled = proceedBtn.length > 0 && proceedBtn.prop("disabled");
 
         // Either show "Processing" text or button is disabled
         const hasProcessingIndicator =
@@ -549,11 +442,11 @@ describe("Checkout Flow — Modified Error Handling", () => {
       cy.url().should("include", "cart.html");
 
       // Select country and click checkout
-      selectShippingCountry();
+      selectShippingCountry("US");
       acceptTerms();
 
-      // Wait for quote to be calculated
-      cy.wait("@quoteUS");
+      // Wait for shipping estimate
+      cy.get("#shipping-estimate").should("not.have.text", "—");
 
       cy.get("button").contains("Proceed to Checkout").click();
 
@@ -585,8 +478,12 @@ describe("Checkout Flow — Modified Error Handling", () => {
       // addToCart() redirects to cart.html
       cy.url().should("include", "cart.html");
 
-      selectShippingCountry();
+      selectShippingCountry("US");
       acceptTerms();
+
+      // Wait for shipping estimate
+      cy.get("#shipping-estimate").should("not.have.text", "—");
+
       cy.get("button").contains("Proceed to Checkout").click();
 
       cy.wait("@checkoutForRedirect");
@@ -707,11 +604,11 @@ describe("Checkout Flow — Modified Error Handling", () => {
       // addToCart() redirects to cart.html
       cy.url().should("include", "cart.html");
 
-      selectShippingCountry();
+      selectShippingCountry("US");
       acceptTerms();
 
-      // Wait for quote to be calculated
-      cy.wait("@quoteUS");
+      // Wait for shipping estimate
+      cy.get("#shipping-estimate").should("not.have.text", "—");
 
       cy.get("button").contains("Proceed to Checkout").click();
 
@@ -776,11 +673,11 @@ describe("Checkout Flow — Modified Error Handling", () => {
       cy.url().should("include", "cart.html");
 
       // First attempt - should fail
-      selectShippingCountry();
+      selectShippingCountry("US");
       acceptTerms();
 
-      // Wait for quote to be calculated
-      cy.wait("@quoteUS");
+      // Wait for shipping estimate
+      cy.get("#shipping-estimate").should("not.have.text", "—");
 
       cy.get("button").contains("Proceed to Checkout").click();
 
@@ -793,7 +690,7 @@ describe("Checkout Flow — Modified Error Handling", () => {
       });
 
       // Button should be re-enabled after error
-      cy.get("#checkout-btn").should("not.be.disabled");
+      cy.get("button").contains("Proceed to Checkout").should("not.be.disabled");
 
       // Retry - should succeed (country still selected)
       cy.get("button").contains("Proceed to Checkout").click();

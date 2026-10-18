@@ -16,15 +16,37 @@
 
   const hostname = window.location.hostname;
 
-  // Determine backend URL based on hostname
+  // Check for API override via URL parameter (?api=local|staging|prod)
+  // or use previously saved sessionStorage value for persistent override
+  const urlParams = new URLSearchParams(window.location.search);
+  const apiParam = urlParams.get("api");
+  let apiTarget = null;
+
+  if (apiParam && ["local", "staging", "prod"].includes(apiParam)) {
+    apiTarget = apiParam;
+    sessionStorage.setItem("apiTarget", apiTarget);
+  } else {
+    apiTarget = sessionStorage.getItem("apiTarget");
+  }
+
+  // Determine backend URL: use override if set, otherwise detect from hostname
   let backendUrl;
 
-  if (hostname === "localhost" || hostname === "127.0.0.1") {
-    // Local development: point to local Vercel dev server (vercel dev on port 3001)
+  if (apiTarget === "staging") {
+    backendUrl = "https://api-staging.kickedoutofthesky.com";
+  } else if (apiTarget === "prod") {
+    backendUrl = "https://api.kickedoutofthesky.com";
+  } else if (apiTarget === "local") {
     backendUrl = "http://localhost:3001";
   } else {
-    // Production: point to production API via custom domain
-    backendUrl = "https://api.kickedoutofthesky.com";
+    // No override: fall back to hostname detection
+    if (hostname === "localhost" || hostname === "127.0.0.1") {
+      backendUrl = "http://localhost:3001";
+    } else if (hostname.endsWith(".vercel.app")) {
+      backendUrl = "https://api-staging.kickedoutofthesky.com";
+    } else {
+      backendUrl = "https://api.kickedoutofthesky.com";
+    }
   }
 
   // Make globally available

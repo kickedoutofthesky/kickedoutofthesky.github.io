@@ -18,6 +18,7 @@
 
 // Setup default API mocks before each test
 beforeEach(() => {
+
   // Mock the allowed countries endpoint
   cy.intercept("GET", "**/api/allowed-countries", {
     statusCode: 200,
@@ -72,15 +73,11 @@ beforeEach(() => {
   }).as("calculateShipping");
 });
 
-// Shared test helpers for all Cypress tests
-
-function selectFirstRealSize() {
-  // Wait for size options to be populated (not just the placeholder)
+// Shared test helpers - globally available functions
+window.selectFirstRealSize = function() {
   cy.get("[data-testid='size-select'] option").should("have.length.greaterThan", 1);
-
   cy.get("[data-testid='size-select']").then($select => {
     const value = $select.val();
-    // If placeholder is selected (empty value), select first real option
     if (!value || value === "") {
       cy.get("[data-testid='size-select'] option")
         .eq(1)
@@ -90,51 +87,41 @@ function selectFirstRealSize() {
         });
     }
   });
-}
+};
 
-function selectFirstRealColor() {
-  // Wait for color select to be visible and have options
+window.selectFirstRealColor = function() {
   cy.get("[data-testid='color-select']").should("exist");
   cy.get("[data-testid='color-select'] option").should("have.length.greaterThan", 0);
-
   cy.get("[data-testid='color-select']").then($select => {
     if ($select.length > 0 && $select.find("option").length > 0) {
       cy.get("[data-testid='color-select'] option")
-        .eq(0) // Get the first color (no placeholder in color select)
+        .eq(0)
         .invoke("attr", "value")
         .then(colorValue => {
-          // Use force:true to bypass navbar coverage issue
           cy.get("[data-testid='color-select']").select(colorValue, { force: true });
-          // Wait for color change to update sizes
           cy.get("[data-testid='size-select'] option").should("have.length.greaterThan", 1);
         });
     }
   });
-}
+};
 
-function selectShippingCountry(countryCode = "US") {
-  // Wait for country select to be populated with options
+window.selectShippingCountry = function(countryCode = "US") {
   cy.get("#shipping-country", { timeout: 5000 }).should("exist");
   cy.get("#shipping-country option", { timeout: 5000 }).should("have.length.greaterThan", 1);
-
-  // Select country
   cy.get("#shipping-country").select(countryCode, { force: true });
-
-  // Wait for shipping estimate to be calculated (should not show "—" or "Calculating...")
   cy.get("#shipping-estimate", { timeout: 5000 }).should("not.have.text", "—");
   cy.get("#shipping-estimate", { timeout: 5000 }).should("not.have.text", "Calculating...");
-}
+};
 
-function acceptTerms() {
-  // Check terms with force:true since it may be in a fixed position
+window.acceptTerms = function() {
   cy.get("#terms-checkbox").check({ force: true });
-}
+};
 
-// Make helpers available globally
-window.selectFirstRealSize = selectFirstRealSize;
-window.selectFirstRealColor = selectFirstRealColor;
-window.selectShippingCountry = selectShippingCountry;
-window.acceptTerms = acceptTerms;
+// Also add as Cypress Commands for use with cy. prefix
+Cypress.Commands.add("selectFirstRealSize", window.selectFirstRealSize);
+Cypress.Commands.add("selectFirstRealColor", window.selectFirstRealColor);
+Cypress.Commands.add("selectShippingCountry", (countryCode = "US") => window.selectShippingCountry(countryCode));
+Cypress.Commands.add("acceptTerms", window.acceptTerms);
 
 // Ignore cross-origin script errors from CDN resources (Bootstrap, Font Awesome)
 // These are expected and don't affect test functionality

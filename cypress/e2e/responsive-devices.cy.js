@@ -77,11 +77,11 @@ describe("Responsive Design - Mobile and Tablet Viewports", () => {
       // Wait for cart page to load
       cy.get("[data-testid='cart-page']").should("be.visible");
 
-      // Select country to trigger quote fetch
+      // Select country to trigger shipping calculation
       cy.get("#shipping-country").scrollIntoView().select("US", { force: true });
 
-      // Wait for quote to load
-      cy.get("#quote-loading", { timeout: 5000 }).should("not.be.visible");
+      // Wait for shipping estimate to load
+      cy.get("#shipping-estimate", { timeout: 5000 }).should("exist").and("not.have.text", "");
 
       // Cart items should be readable
       cy.get("[data-testid='cart-item']").should("have.length.greaterThan", 0);
@@ -289,11 +289,11 @@ describe("Responsive Design - Mobile and Tablet Viewports", () => {
       // Wait for cart page to load
       cy.get("[data-testid='cart-page']").should("be.visible");
 
-      // Select country to trigger quote fetch
+      // Select country to trigger shipping calculation
       cy.get("#shipping-country").select("US");
 
-      // Wait for quote to load
-      cy.get("#quote-loading", { timeout: 5000 }).should("not.be.visible");
+      // Wait for shipping estimate to load
+      cy.get("#shipping-estimate", { timeout: 5000 }).should("exist").and("not.have.text", "");
 
       // Cart items should be well-laid out
       cy.get("[data-testid='cart-item']").should("have.length.greaterThan", 0);
@@ -412,11 +412,11 @@ describe("Responsive Design - Mobile and Tablet Viewports", () => {
       // Wait for cart page to load
       cy.get("[data-testid='cart-page']").should("be.visible");
 
-      // Select country to trigger quote fetch
+      // Select country to trigger shipping calculation
       cy.get("#shipping-country").select("US");
 
-      // Wait for quote to load
-      cy.get("#quote-loading", { timeout: 5000 }).should("not.be.visible");
+      // Wait for shipping estimate to load
+      cy.get("#shipping-estimate", { timeout: 5000 }).should("exist").and("not.have.text", "");
 
       // Cart should display as a comprehensive table or list
       cy.get("#cart-items").then($cartItems => {

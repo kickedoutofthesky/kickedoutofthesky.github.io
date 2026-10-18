@@ -51,7 +51,7 @@ describe("Merch Page - Product Visibility and Display", () => {
 
   it("should have clickable product cards that navigate to product detail", () => {
     cy.get("[data-testid='product-card']").first().click();
-    cy.url().should("include", "product.html");
+    cy.url().should("include", "/store/p/product_");
     cy.get("[data-testid='product-detail']").should("be.visible");
   });
 
@@ -141,9 +141,11 @@ describe("Merch Page - Product Visibility and Display", () => {
     cy.get("[data-testid='product-card']").first().click();
 
     // After clicking, either:
-    // 1. Navigate to product detail page
+    // 1. Navigate to product detail page (supports both new and legacy URL patterns)
     cy.url().then(url => {
-      expect(url).to.include("product.html");
+      const isNewPattern = url.includes("/store/p/product_");
+      const isLegacyPattern = url.includes("/store/product.html") && url.includes("product_");
+      expect(isNewPattern || isLegacyPattern).to.be.true;
     });
 
     // Or the product detail should be visible
@@ -165,7 +167,7 @@ describe("Merch Page - Product Visibility and Display", () => {
 
       // Navigate to a product
       cy.get("[data-testid='product-card']").first().click();
-      cy.url().should("include", "product.html");
+      cy.url().should("include", "/store/p/product_");
 
       // Go back to store using the back link
       cy.get('a[href="/store/index.html"]').first().click();
@@ -226,7 +228,7 @@ describe("Merch Page - Product Visibility and Display", () => {
     cy.get("[data-testid='product-card']").first().click();
 
     // Should navigate to product detail page
-    cy.url().should("include", "product.html");
+    cy.url().should("include", "/store/p/product_");
 
     // Product detail view should be visible
     cy.get("[data-testid='product-detail']").should("be.visible");
@@ -250,7 +252,7 @@ describe("Merch Page - Product Visibility and Display", () => {
 
   it("should update displayed price when switching between variants", () => {
     cy.get("[data-testid='product-card']").first().click();
-    cy.url().should("include", "product.html");
+    cy.url().should("include", "/store/p/product_");
 
     // Get initial price
     cy.get("[data-testid='product-price']")
@@ -285,7 +287,7 @@ describe("Merch Page - Product Visibility and Display", () => {
 
   it("should display product descriptions that are visible and contain no raw HTML tags", () => {
     cy.get("[data-testid='product-card']").first().click();
-    cy.url().should("include", "product.html");
+    cy.url().should("include", "/store/p/product_");
 
     // Product detail should be visible — description may or may not exist
     cy.get("[data-testid='product-detail']").should("be.visible");

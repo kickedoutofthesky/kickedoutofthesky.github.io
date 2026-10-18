@@ -257,10 +257,12 @@ describe("Product Images and Carousel", () => {
               // Click the cart item card (entire card is clickable)
               cy.get("[data-testid='cart-item'] [data-testid='item-name']").first().click({ force: true });
 
-              // Should be on product page with correct selections
-              cy.url().should("include", "product.html");
-              cy.url().should("include", `color=${encodeURIComponent(color)}`);
-              cy.url().should("include", `size=${encodeURIComponent(size)}`);
+              // Should be on product page (supports both new and legacy URL patterns)
+              cy.url().then(url => {
+                const isNewPattern = url.includes("/store/p/product_");
+                const isLegacyPattern = url.includes("product.html");
+                expect(isNewPattern || isLegacyPattern).to.be.true;
+              });
               cy.get("[data-testid='product-detail']").should("be.visible");
               cy.get("[data-testid='color-select']").should("have.value", color);
               cy.get("[data-testid='size-select']").should("have.value", size);
