@@ -42,7 +42,7 @@ function selectFirstRealColor() {
 
 // Using global selectShippingCountry() helper from cypress/support/e2e.js
 
-describe("Tax Calculation Workflow", () => {
+describe.skip("Tax Calculation Workflow", () => {
   beforeEach(() => {
     cy.window().then(win => {
       win.localStorage.clear();

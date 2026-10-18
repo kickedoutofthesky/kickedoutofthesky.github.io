@@ -1,3 +1,4 @@
+/* global cy, Cypress, before */
 /**
  * Integration Tests - Real API (No Mocks)
  *

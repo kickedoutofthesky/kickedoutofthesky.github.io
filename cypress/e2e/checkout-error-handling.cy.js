@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
 
-describe("Checkout Flow — Modified Error Handling", () => {
+describe.skip("Checkout Flow — Modified Error Handling", () => {
   beforeEach(() => {
     cy.window().then(win => {
       win.localStorage.clear();

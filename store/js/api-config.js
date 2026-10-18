@@ -20,7 +20,7 @@
   // or use previously saved sessionStorage value for persistent override
   const urlParams = new URLSearchParams(window.location.search);
   const apiParam = urlParams.get("api");
-  let apiTarget = null;
+  let apiTarget;
 
   if (apiParam && ["local", "staging", "prod"].includes(apiParam)) {
     apiTarget = apiParam;
@@ -41,7 +41,14 @@
   } else {
     // No override: fall back to hostname detection
     if (hostname === "localhost" || hostname === "127.0.0.1") {
-      backendUrl = "http://localhost:3001";
+      // Local development: detect backend by frontend port
+      // :3000 = local API, :3002 = staging API, :empty = local API
+      const port = window.location.port;
+      if (port === "3002") {
+        backendUrl = "https://api-staging.kickedoutofthesky.com";
+      } else {
+        backendUrl = "http://localhost:3001";
+      }
     } else if (hostname.endsWith(".vercel.app")) {
       backendUrl = "https://api-staging.kickedoutofthesky.com";
     } else {

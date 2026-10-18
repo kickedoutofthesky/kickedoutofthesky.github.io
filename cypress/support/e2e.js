@@ -18,7 +18,6 @@
 
 // Setup default API mocks before each test
 beforeEach(() => {
-
   // Mock the allowed countries endpoint
   cy.intercept("GET", "**/api/allowed-countries", {
     statusCode: 200,
@@ -74,7 +73,7 @@ beforeEach(() => {
 });
 
 // Shared test helpers - globally available functions
-window.selectFirstRealSize = function() {
+window.selectFirstRealSize = function () {
   cy.get("[data-testid='size-select'] option").should("have.length.greaterThan", 1);
   cy.get("[data-testid='size-select']").then($select => {
     const value = $select.val();
@@ -89,7 +88,7 @@ window.selectFirstRealSize = function() {
   });
 };
 
-window.selectFirstRealColor = function() {
+window.selectFirstRealColor = function () {
   cy.get("[data-testid='color-select']").should("exist");
   cy.get("[data-testid='color-select'] option").should("have.length.greaterThan", 0);
   cy.get("[data-testid='color-select']").then($select => {
@@ -105,7 +104,7 @@ window.selectFirstRealColor = function() {
   });
 };
 
-window.selectShippingCountry = function(countryCode = "US") {
+window.selectShippingCountry = function (countryCode = "US") {
   cy.get("#shipping-country", { timeout: 5000 }).should("exist");
   cy.get("#shipping-country option", { timeout: 5000 }).should("have.length.greaterThan", 1);
   cy.get("#shipping-country").select(countryCode, { force: true });
@@ -113,7 +112,7 @@ window.selectShippingCountry = function(countryCode = "US") {
   cy.get("#shipping-estimate", { timeout: 5000 }).should("not.have.text", "Calculating...");
 };
 
-window.acceptTerms = function() {
+window.acceptTerms = function () {
   cy.get("#terms-checkbox").check({ force: true });
 };
 
