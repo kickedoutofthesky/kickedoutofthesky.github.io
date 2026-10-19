@@ -2,6 +2,12 @@
  * API Configuration
  * Detects environment from hostname and sets backend URL accordingly
  * No build step needed - this runs directly in the browser
+ *
+ * Environment detection:
+ * - Port 3000 (localhost) → http://localhost:3001
+ * - Port 3002 (staging) → https://kickedoutofthesky-store.vercel.app/api
+ * - kickedoutofthesky.com (production) → https://kickedoutofthesky-store.vercel.app/api
+ * - *.vercel.app (preview) → https://kickedoutofthesky-store.vercel.app/api
  */
 
 (function () {
@@ -15,6 +21,7 @@
   }
 
   const hostname = window.location.hostname;
+  const port = window.location.port;
 
   // Check for API override via URL parameter (?api=local|staging|prod)
   // or use previously saved sessionStorage value for persistent override
@@ -32,32 +39,34 @@
   // Determine backend URL: use override if set, otherwise detect from hostname
   let backendUrl;
 
-  if (apiTarget === "staging") {
-    backendUrl = "https://api-staging.kickedoutofthesky.com";
-  } else if (apiTarget === "prod") {
-    backendUrl = "https://api.kickedoutofthesky.com";
-  } else if (apiTarget === "local") {
+  if (apiTarget === "local") {
     backendUrl = "http://localhost:3001";
+  } else if (apiTarget === "staging" || apiTarget === "prod") {
+    backendUrl = "https://kickedoutofthesky-store.vercel.app/api";
   } else {
     // No override: fall back to hostname detection
     if (hostname === "localhost" || hostname === "127.0.0.1") {
       // Local development: detect backend by frontend port
-      // :3000 = local API, :3002 = staging API, :empty = local API
-      const port = window.location.port;
+      // :3000 = local API, :3002 = staging API (Vercel), :empty = local API
       if (port === "3002") {
-        backendUrl = "https://api-staging.kickedoutofthesky.com";
+        backendUrl = "https://kickedoutofthesky-store.vercel.app/api";
       } else {
         backendUrl = "http://localhost:3001";
       }
+    } else if (hostname === "kickedoutofthesky.com" || hostname === "www.kickedoutofthesky.com") {
+      // Production domain → use Vercel API
+      backendUrl = "https://kickedoutofthesky-store.vercel.app/api";
     } else if (hostname.endsWith(".vercel.app")) {
-      backendUrl = "https://api-staging.kickedoutofthesky.com";
+      // Preview deployments → use Vercel API
+      backendUrl = "https://kickedoutofthesky-store.vercel.app/api";
     } else {
-      backendUrl = "https://api.kickedoutofthesky.com";
+      // Fallback to production API
+      backendUrl = "https://kickedoutofthesky-store.vercel.app/api";
     }
   }
 
-  // Make globally available
-  window.__API_URL__ = backendUrl;
+  // Make globally available, ensuring no trailing slash
+  window.__API_URL__ = backendUrl.replace(/\/$/, "");
 
   // Add form validation handler for country select
   document.addEventListener(

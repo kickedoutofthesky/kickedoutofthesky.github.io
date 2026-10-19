@@ -49,10 +49,21 @@ async function loadProducts() {
 
 async function loadCountries() {
   try {
-    const backendUrl = window.__API_URL__ || "http://localhost:3001";
-    const response = await fetch(`${backendUrl}/api/allowed-countries`);
-    if (!response.ok) throw new Error("Failed to load countries");
+    const backendUrl = window.__API_URL__;
+    const response = await fetch(`${backendUrl}/api/allowed-countries`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
     const data = await response.json();
+
+    if (!response.ok) {
+      console.error(`API error (GET /api/allowed-countries): ${response.status} - ${data.error || data.message}`);
+      return;
+    }
+
     countryCodes = data.countries || [];
     populateCountrySelect();
   } catch (error) {
@@ -105,7 +116,7 @@ async function calculateShippingEstimate(country) {
   }
 
   try {
-    const backendUrl = window.__API_URL__ || "http://localhost:3001";
+    const backendUrl = window.__API_URL__;
     const response = await fetch(`${backendUrl}/api/calculate-shipping`, {
       method: "POST",
       headers: {
@@ -117,7 +128,7 @@ async function calculateShippingEstimate(country) {
     const data = await response.json();
 
     if (!response.ok) {
-      console.warn("Shipping calculation error:", data);
+      console.warn(`API error (POST /api/calculate-shipping): ${response.status} - ${data.error || data.message}`);
       currentShippingCost = null;
       updateShippingEstimateDisplay(data.error || "Unable to calculate");
       return;
@@ -446,7 +457,7 @@ async function proceedToCheckout() {
     }
 
     // Call backend checkout endpoint
-    const backendUrl = window.__API_URL__ || "http://localhost:3001";
+    const backendUrl = window.__API_URL__;
     const response = await fetch(`${backendUrl}/api/create-checkout-session`, {
       method: "POST",
       headers: {
@@ -461,6 +472,10 @@ async function proceedToCheckout() {
     const data = await response.json();
 
     if (!response.ok) {
+      console.error(
+        `API error (POST /api/create-checkout-session): ${response.status} - ${data.error || data.message}`
+      );
+
       // Handle specific error cases
       if (response.status === 422 && data.code === "unsupported_destination") {
         const countryName = getCountryName(countrySelect.value);

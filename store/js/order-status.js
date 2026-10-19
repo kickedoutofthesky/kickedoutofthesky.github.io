@@ -148,7 +148,7 @@ async function handleSearch() {
     // Disable search button during request
     searchBtn.disabled = true;
 
-    const backendUrl = window.__API_URL__ || "https://api.kickedoutofthesky.com";
+    const backendUrl = window.__API_URL__;
     const url = new URL(`${backendUrl}/api/order-status`);
     url.searchParams.append("email", email);
     if (printfulOrderId) {
@@ -178,7 +178,7 @@ async function handleSearch() {
         errorMsg = "The email address does not match this order. Please verify and try again.";
       }
 
-      console.error("API error:", errorMsg);
+      console.error(`API error (GET /api/order-status): ${response.status} - ${errorMsg}`);
       showError(errorMsg);
       searchBtn.disabled = false;
       return;
