@@ -55,7 +55,7 @@ describe("Add to Cart Flow", () => {
     cy.get("[data-testid='product-card']").first().click();
 
     // Should navigate to product page
-    cy.url().should("include", "/store/p/product_");
+    cy.url().should("include", "product.html?key=");
 
     // Wait for product detail to load
     cy.get("[data-testid='product-detail']").should("be.visible");
@@ -108,7 +108,7 @@ describe("Add to Cart Flow", () => {
   it("should add multiple different products to cart", () => {
     // Add first product
     cy.get("[data-testid='product-card']").eq(0).click();
-    cy.url().should("include", "/store/p/product_");
+    cy.url().should("include", "product.html?key=");
     cy.get("[data-testid='product-detail']").should("be.visible");
 
     selectFirstRealSize();
@@ -120,7 +120,7 @@ describe("Add to Cart Flow", () => {
 
     // Add second product
     cy.get("[data-testid='product-card']").eq(1).click();
-    cy.url().should("include", "product.html");
+    cy.url().should("include", "product.html?key=");
     cy.get("[data-testid='product-detail']").should("be.visible");
 
     selectFirstRealSize();

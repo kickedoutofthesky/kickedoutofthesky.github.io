@@ -498,9 +498,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (el) el.setAttribute(update.attr, update.value);
       }
       // Update address bar to shareable URL
-      if (window.location.pathname.includes("product.html")) {
-        history.replaceState(null, "", `p/${product.product_key}/`);
-      }
+      // URL is already in correct format (product.html?key=...)
     } catch (e) {
       console.error("Failed to update meta tags:", e);
     }

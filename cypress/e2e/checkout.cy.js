@@ -39,7 +39,7 @@ describe("Checkout Flow", () => {
 
     // Add a product to cart
     cy.get("[data-testid='product-card']").first().click();
-    cy.url().should("include", "product.html");
+    cy.url().should("include", "product.html?key=");
     cy.get("[data-testid='product-detail']").should("be.visible");
 
     // Select size

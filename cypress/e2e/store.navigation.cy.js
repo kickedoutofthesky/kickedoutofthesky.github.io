@@ -25,7 +25,7 @@ describe("Store Homepage and Navigation", () => {
 
   it("should navigate to product detail page when clicking a product", () => {
     cy.get("[data-testid='product-card']").first().click();
-    cy.url().should("include", "product.html");
+    cy.url().should("include", "product.html?key=");
     cy.get("[data-testid='product-detail']").should("exist");
   });
 

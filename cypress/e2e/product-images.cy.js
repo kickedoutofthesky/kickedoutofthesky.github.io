@@ -259,7 +259,7 @@ describe("Product Images and Carousel", () => {
 
               // Should be on product page (supports both new and legacy URL patterns)
               cy.url().then(url => {
-                const isNewPattern = url.includes("/store/p/product_");
+                const isNewPattern = url.includes("product.html?key=");
                 const isLegacyPattern = url.includes("product.html");
                 expect(isNewPattern || isLegacyPattern).to.be.true;
               });

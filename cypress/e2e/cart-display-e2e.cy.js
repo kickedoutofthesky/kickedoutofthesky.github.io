@@ -99,8 +99,8 @@ describe("Cart Display - Enhanced Quote and Checkout", () => {
 function addProductToCart() {
   cy.get("[data-testid='product-card']").first().click();
 
-  // Wait for product detail page to load (new format: /store/p/product_XXX/)
-  cy.url().should("include", "/store/p/product_");
+  // Wait for product detail page to load (new format: product.html?key=...)
+  cy.url().should("include", "product.html?key=");
   cy.get("[data-testid='product-detail']").should("be.visible");
 
   // Select first available size

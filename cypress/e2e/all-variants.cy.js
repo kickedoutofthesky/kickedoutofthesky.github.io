@@ -68,7 +68,7 @@ describe("Add All Products and Variants to Cart", () => {
   it("should add products to cart", () => {
     // Add first product
     cy.get("[data-testid='product-card']").eq(0).click();
-    cy.url().should("include", "/store/p/");
+    cy.url().should("include", "product.html?key=");
     cy.get("[data-testid='product-detail']").should("be.visible");
 
     selectFirstRealSize();
@@ -78,7 +78,7 @@ describe("Add All Products and Variants to Cart", () => {
     // Go back and add second product
     cy.visit("/store");
     cy.get("[data-testid='product-card']").eq(1).click();
-    cy.url().should("include", "/store/p/");
+    cy.url().should("include", "product.html?key=");
     cy.get("[data-testid='product-detail']").should("be.visible");
 
     selectFirstRealSize();
@@ -92,7 +92,7 @@ describe("Add All Products and Variants to Cart", () => {
 
   it("should handle products with color variants", () => {
     cy.get("[data-testid='product-card']").eq(0).click();
-    cy.url().should("include", "/store/p/");
+    cy.url().should("include", "product.html?key=");
     cy.get("[data-testid='product-detail']").should("be.visible");
 
     // Check if color select exists

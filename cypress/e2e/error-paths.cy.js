@@ -131,7 +131,7 @@ describe("Error Paths and Edge Cases", () => {
 
     it("should handle going back while on product detail", () => {
       cy.get("[data-testid='product-card']").first().click();
-      cy.url().should("include", "product.html");
+      cy.url().should("include", "product.html?key=");
 
       // Click back/store link
       cy.get("a[href*='index.html']").first().click();

@@ -65,7 +65,7 @@ describe("Responsive Design - Mobile and Tablet Viewports", () => {
 
       // Add product to cart
       cy.get("[data-testid='product-card']").first().click();
-      cy.url().should("include", "/store/p/product_");
+      cy.url().should("include", "product.html?key=");
 
       selectFirstRealSize();
       cy.get("#add-to-cart-btn").click({ force: true });
@@ -130,8 +130,7 @@ describe("Responsive Design - Mobile and Tablet Viewports", () => {
     it("should position product dropdowns within their parent container at mobile viewport", () => {
       cy.visit("/store");
       cy.get("[data-testid='product-card']").first().click();
-      cy.url().should("include", "product.html");
-      cy.get("[data-testid='product-detail']").should("be.visible");
+      cy.url().should("include", "product.html?key=");
 
       // Get the product-detail-info container bounds
       cy.get(".product-detail-info").then($info => {
@@ -215,7 +214,7 @@ describe("Responsive Design - Mobile and Tablet Viewports", () => {
       cy.visit("/store");
 
       cy.get("[data-testid='product-card']").first().click();
-      cy.url().should("include", "product.html");
+      cy.url().should("include", "product.html?key=");
 
       // Product image should be visible
       cy.get("[data-testid='product-detail-image'], [data-testid='product-image']").then($img => {
@@ -368,7 +367,7 @@ describe("Responsive Design - Mobile and Tablet Viewports", () => {
 
       // Click on a product
       cy.get("[data-testid='product-card']").first().click();
-      cy.url().should("include", "product.html");
+      cy.url().should("include", "product.html?key=");
 
       // Product detail page should show full layout
       cy.get("[data-testid='product-detail']").should("be.visible");
@@ -484,9 +483,7 @@ describe("Responsive Design - Mobile and Tablet Viewports", () => {
 
       // Product functionality should work at all sizes
       cy.get("[data-testid='product-card']").first().click();
-      cy.url().should("include", "product.html");
-
-      // Resize while on product page
+      cy.url().should("include", "product.html?key=");
       cy.viewport(375, 667);
       cy.get("[data-testid='product-detail']").should("be.visible");
 
