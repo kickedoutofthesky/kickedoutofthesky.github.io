@@ -10,12 +10,12 @@ The frontend now automatically detects its environment and routes all API calls 
 
 ### Base URLs by Environment
 
-| Environment            | Frontend URL                    | Backend URL                                      | Detection                  |
-| ---------------------- | ------------------------------- | ------------------------------------------------ | -------------------------- |
-| **Local Development**  | `http://localhost:3000`         | `http://localhost:3001`                          | Port 3000 detected         |
-| **Staging/Preview**    | `http://localhost:3002`         | `https://kickedoutofthesky-store.vercel.app/api` | Port 3002 detected         |
-| **Preview Deployment** | `https://*.vercel.app`          | `https://kickedoutofthesky-store.vercel.app/api` | Vercel domain detected     |
-| **Production**         | `https://kickedoutofthesky.com` | `https://kickedoutofthesky-store.vercel.app/api` | Production domain detected |
+| Environment            | Frontend URL                    | Backend URL                                 | Detection                  |
+| ---------------------- | ------------------------------- | ------------------------------------------- | -------------------------- |
+| **Local Development**  | `http://localhost:3000`         | `http://localhost:3001`                     | Port 3000 detected         |
+| **Staging/Preview**    | `http://localhost:3002`         | `https://api-staging.kickedoutofthesky.com` | Port 3002 detected         |
+| **Preview Deployment** | `https://*.vercel.app`          | `https://api-staging.kickedoutofthesky.com` | Vercel domain detected     |
+| **Production**         | `https://kickedoutofthesky.com` | `https://api.kickedoutofthesky.com`         | Production domain detected |
 
 ### Override Mechanism
 
@@ -35,8 +35,8 @@ Example: `http://localhost:3000/?api=staging` will route to the Vercel API even 
 
 **Changes:**
 
-- Updated to use the exact Vercel API URL: `https://kickedoutofthesky-store.vercel.app/api`
-- Removed old staging/production API domains
+- Uses the Vercel-hosted custom domains `https://api.kickedoutofthesky.com` (prod) and `https://api-staging.kickedoutofthesky.com` (staging); base URLs exclude the `/api` prefix
+- Removed the non-existent `kickedoutofthesky-store.vercel.app` URL
 - Added better documentation with clear environment-to-URL mappings
 - Ensures no trailing slashes on the base URL
 - URL parameter and sessionStorage override mechanism unchanged
@@ -45,17 +45,11 @@ Example: `http://localhost:3000/?api=staging` will route to the Vercel API even 
 
 ### 2. [store/js/cart-display.js](store/js/cart-display.js)
 
-**API Endpoints updated:** 3 calls
+**API Endpoints:** 2 calls (plus local country list)
 
-#### a) `loadCountries()` - GET /api/allowed-countries
+#### a) `loadCountries()` - no API call
 
-- **Line:** ~53
-- **Changes:**
-  - Uses `window.__API_URL__` (no fallback)
-  - Added `method: "GET"` for clarity
-  - Added only necessary header: `Content-Type: application/json`
-  - Improved error logging with endpoint name and status code
-  - Error no longer throws (silently continues) to prevent page break
+- Country list now comes from the local `COUNTRY_NAMES` map in `js/allowed-countries.js`; the backend has no `/api/allowed-countries` endpoint.
 
 #### b) `calculateShippingEstimate()` - POST /api/calculate-shipping
 
@@ -106,8 +100,8 @@ All changes follow CORS best practices to prevent preflight request failures:
 ### ✅ URL Handling
 
 - Base URL has no trailing slash
-- Endpoint paths start with `/` (e.g., `/api/allowed-countries`)
-- Results in clean URLs like `https://kickedoutofthesky-store.vercel.app/api/allowed-countries`
+- Endpoint paths start with `/` (e.g., `/api/calculate-shipping`)
+- Results in clean URLs like `https://api.kickedoutofthesky.com/api/calculate-shipping`
 - No double slashes, no protocol mismatches
 
 ### ✅ Error Handling
@@ -144,7 +138,7 @@ Third-party scripts (Stripe.js, Printful embeds) were also left untouched.
 
 ```javascript
 const backendUrl = window.__API_URL__; // Always defined
-const response = await fetch(`${backendUrl}/api/allowed-countries`);
+const response = await fetch(`${backendUrl}/api/order-status?sessionId=...`);
 ```
 
 ### 3. Error Logging (After each API call)
@@ -152,7 +146,7 @@ const response = await fetch(`${backendUrl}/api/allowed-countries`);
 ```javascript
 if (!response.ok) {
   const data = await response.json();
-  console.error(`API error (GET /api/allowed-countries): ${response.status} - ${data.error}`);
+  console.error(`API error (GET /api/order-status): ${response.status} - ${data.error}`);
 }
 ```
 
@@ -171,7 +165,7 @@ npm run dev
 ```bash
 # Start frontend on port 3002 manually, then:
 # Frontend: http://localhost:3002
-# API calls to: https://kickedoutofthesky-store.vercel.app/api
+# API calls to: https://api-staging.kickedoutofthesky.com
 ```
 
 ### Override Local to Use Staging API
@@ -179,19 +173,19 @@ npm run dev
 ```bash
 # At http://localhost:3000/?api=staging
 # Frontend: http://localhost:3000
-# API calls to: https://kickedoutofthesky-store.vercel.app/api
+# API calls to: https://api-staging.kickedoutofthesky.com
 ```
 
 ### Production
 
 ```bash
 # Frontend: https://kickedoutofthesky.com
-# API calls to: https://kickedoutofthesky-store.vercel.app/api
+# API calls to: https://api.kickedoutofthesky.com
 ```
 
 ## Backend Requirements
 
-The backend (`https://kickedoutofthesky-store.vercel.app/api`) must:
+The backend (`https://api.kickedoutofthesky.com`) must:
 
 1. **Accept CORS preflight requests** (OPTIONS)
    - Respond with appropriate `Access-Control-Allow-*` headers
@@ -200,8 +194,8 @@ The backend (`https://kickedoutofthesky-store.vercel.app/api`) must:
    - Redirects break CORS preflight and cause browser to reject the request
 
 3. **Respond to clean URLs** (no trailing slashes)
-   - `https://kickedoutofthesky-store.vercel.app/api/allowed-countries` ✅
-   - NOT `https://kickedoutofthesky-store.vercel.app/api/allowed-countries/` ❌
+   - `https://api.kickedoutofthesky.com/api/calculate-shipping` ✅
+   - NOT `https://api.kickedoutofthesky.com/api/calculate-shipping/` ❌
 
 4. **Return proper HTTP status codes**
    - 200/201 for success
@@ -222,7 +216,7 @@ Open browser console and type:
 ```javascript
 console.log(window.__API_URL__);
 // Output: http://localhost:3001
-// or: https://kickedoutofthesky-store.vercel.app/api
+// or: https://api.kickedoutofthesky.com
 ```
 
 ### See API errors as they happen
