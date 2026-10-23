@@ -452,6 +452,7 @@ async function proceedToCheckout() {
       body: JSON.stringify({
         items,
         country: countrySelect.value,
+        termsAccepted: termsCheckbox.checked,
       }),
     });
 
