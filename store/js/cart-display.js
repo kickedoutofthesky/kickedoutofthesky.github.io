@@ -64,7 +64,13 @@ async function loadCountries() {
       return;
     }
 
-    countryCodes = data.countries || [];
+    // Handle both formats: array of codes OR object mapping codes to names
+    let countries = data.countries || [];
+    if (typeof countries === "object" && !Array.isArray(countries)) {
+      // If it's an object (code -> name mapping), extract just the codes
+      countries = Object.keys(countries);
+    }
+    countryCodes = countries;
     populateCountrySelect();
   } catch (error) {
     console.error("Error loading countries:", error);
