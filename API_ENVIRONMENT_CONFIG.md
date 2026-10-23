@@ -60,6 +60,10 @@ Example: `http://localhost:3000/?api=staging` will route to the Vercel API even 
   - Headers: only `Content-Type: application/json` (no custom headers)
   - Improved error logging with endpoint name and status code
   - Reads JSON error body and logs it
+- **Request body:** `{ country, items: [{ variant_id, quantity }] }` so the estimate prices the actual cart
+- **Triggers:** country change, quantity change, item removal (debounced 300ms; stale responses ignored)
+- **Empty cart:** no request; estimate shows `—`
+- **Errors:** "can't ship to this country" for disabled destinations, otherwise "Shipping will be calculated at checkout." Estimate failures never block checkout.
 
 #### c) `proceedToCheckout()` - POST /api/create-checkout-session
 

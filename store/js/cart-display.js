@@ -11,6 +11,7 @@ let countryCodes = [];
 let isCheckingOut = false;
 let currentShippingCost = null;
 let shippingCalculationTimeout = null;
+let shippingRequestId = 0;
 
 // Make sure cart is ready before displaying
 function waitForCart(callback) {
@@ -86,9 +87,46 @@ function updateCheckoutButtonState() {
   checkoutBtn.disabled = !countrySelected || !termsAccepted || isCheckingOut;
 }
 
+// Resolve cart items to Printful sync variant IDs; items that can't be resolved are skipped
+function getCartVariantItems() {
+  if (!cart || !Array.isArray(cart.items)) return [];
+  return cart.items
+    .map(item => {
+      const product = products.find(p => p.product_key === item.productKey);
+      if (!product) return null;
+
+      const variantId = getVariantIdForColorSize(product, item.color, item.size);
+      if (!variantId) return null;
+
+      return { variantId, quantity: item.quantity };
+    })
+    .filter(item => item !== null);
+}
+
+function getShippingErrorMessage(apiError) {
+  const message = String(apiError || "").toLowerCase();
+  if (message.includes("shipping to this country") || message.includes("has been disabled")) {
+    return "We can't ship to this country.";
+  }
+  return "Shipping will be calculated at checkout.";
+}
+
 async function calculateShippingEstimate(country) {
-  if (!country) {
-    // Clear shipping estimate if no country
+  if (shippingCalculationTimeout) {
+    clearTimeout(shippingCalculationTimeout);
+    shippingCalculationTimeout = null;
+  }
+
+  // Invalidates any in-flight request so its response is ignored
+  const requestId = ++shippingRequestId;
+
+  const items = getCartVariantItems().map(item => ({
+    variant_id: Number(item.variantId),
+    quantity: item.quantity,
+  }));
+
+  // Without items the backend falls back to a one-tee estimate, which would be misleading
+  if (!country || items.length === 0) {
     currentShippingCost = null;
     updateShippingEstimateDisplay();
     return;
@@ -108,44 +146,52 @@ async function calculateShippingEstimate(country) {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ country }),
+      body: JSON.stringify({ country, items }),
     });
 
-    const data = await response.json();
+    const data = await response.json().catch(() => ({}));
+
+    if (requestId !== shippingRequestId) return;
 
     if (!response.ok) {
-      console.warn(`API error (POST /api/calculate-shipping): ${response.status} - ${data.error || data.message}`);
+      const apiError = data.error || data.message;
+      console.warn(`API error (POST /api/calculate-shipping): ${response.status} - ${apiError}`);
       currentShippingCost = null;
-      updateShippingEstimateDisplay(data.error || "Unable to calculate");
+
+      const isBadCartData = /quantity for variant|must have a variant_id/i.test(apiError || "");
+      if (isBadCartData) {
+        console.error("Shipping estimate rejected cart data:", apiError, items);
+        updateShippingEstimateDisplay();
+      } else {
+        updateShippingEstimateDisplay(getShippingErrorMessage(apiError));
+      }
       return;
     }
 
-    // Extract first shipping option
-    if (data.shipping_options && data.shipping_options.length > 0) {
-      const firstOption = data.shipping_options[0];
-      const amount = firstOption.shipping_rate_data?.fixed_amount?.amount;
-      if (amount !== undefined) {
-        currentShippingCost = amount;
-        updateShippingEstimateDisplay();
-        return;
-      }
+    // Options are sorted cheapest first
+    const amount = data.shipping_options?.[0]?.shipping_rate_data?.fixed_amount?.amount;
+    if (amount !== undefined) {
+      currentShippingCost = amount;
+      updateShippingEstimateDisplay();
+      return;
     }
 
     currentShippingCost = null;
-    updateShippingEstimateDisplay("No shipping available");
+    updateShippingEstimateDisplay("Shipping will be calculated at checkout.");
   } catch (error) {
+    if (requestId !== shippingRequestId) return;
     console.error("Shipping calculation error:", error);
     currentShippingCost = null;
-    updateShippingEstimateDisplay("Unable to calculate");
+    updateShippingEstimateDisplay("Shipping will be calculated at checkout.");
   }
 }
 
-function updateShippingEstimateDisplay(errorMessage = null) {
+function updateShippingEstimateDisplay(message = null) {
   const shippingEl = document.getElementById("shipping-estimate");
   if (!shippingEl) return;
 
-  if (errorMessage) {
-    shippingEl.textContent = `Error: ${errorMessage}`;
+  if (message) {
+    shippingEl.textContent = message;
     shippingEl.style.color = "#ff6b6b";
   } else if (currentShippingCost !== null) {
     shippingEl.textContent = formatUSD(currentShippingCost);
@@ -156,16 +202,17 @@ function updateShippingEstimateDisplay(errorMessage = null) {
   }
 }
 
-function debouncedCalculateShipping(country) {
-  // Clear any pending timeout
+// Re-estimates 300ms after the last change, using the country selected at that moment
+function debouncedCalculateShipping() {
   if (shippingCalculationTimeout) {
     clearTimeout(shippingCalculationTimeout);
   }
 
-  // Set new timeout for 500ms after country change
   shippingCalculationTimeout = setTimeout(() => {
-    calculateShippingEstimate(country);
-  }, 500);
+    shippingCalculationTimeout = null;
+    const select = document.getElementById("shipping-country");
+    calculateShippingEstimate(select ? select.value : "");
+  }, 300);
 }
 
 function setupCountrySelector() {
@@ -203,7 +250,7 @@ function setupCountrySelector() {
 
         updateShippingToLine();
         updateCheckoutButtonState();
-        debouncedCalculateShipping(select.value);
+        debouncedCalculateShipping();
       }
     });
   }
@@ -334,6 +381,7 @@ function updateCartQuantity(index, quantity) {
     cart.updateQuantity(index, quantity);
     displayCart();
     showCartBadgeBurst();
+    debouncedCalculateShipping();
   }
 }
 
@@ -341,6 +389,7 @@ function removeFromCart(index) {
   cart.removeItem(index);
   displayCart();
   showCartBadgeBurst();
+  debouncedCalculateShipping();
 }
 
 function getProductImage(product, color) {
@@ -423,20 +472,10 @@ async function proceedToCheckout() {
     checkoutBtn.textContent = "Processing...";
 
     // Build items for checkout: variant_id and quantity only
-    const items = cart.items
-      .map(item => {
-        const product = products.find(p => p.product_key === item.productKey);
-        if (!product) return null;
-
-        const variantId = getVariantIdForColorSize(product, item.color, item.size);
-        if (!variantId) return null;
-
-        return {
-          variantId: String(variantId),
-          quantity: item.quantity,
-        };
-      })
-      .filter(item => item !== null);
+    const items = getCartVariantItems().map(item => ({
+      variantId: String(item.variantId),
+      quantity: item.quantity,
+    }));
 
     if (items.length === 0) {
       throw new Error("No valid cart items");
