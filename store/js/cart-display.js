@@ -4,7 +4,7 @@
 
 import { formatUSD } from "../../js/money.js";
 import { getVariantIdForColorSize } from "./utils/fixtures/product-utilities.js";
-import { getCountryName, sortCountries } from "../../js/allowed-countries.js";
+import { COUNTRY_NAMES, getCountryName, sortCountries } from "../../js/allowed-countries.js";
 
 let products = [];
 let countryCodes = [];
@@ -49,28 +49,8 @@ async function loadProducts() {
 
 async function loadCountries() {
   try {
-    const backendUrl = window.__API_URL__;
-    const response = await fetch(`${backendUrl}/api/allowed-countries`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      console.error(`API error (GET /api/allowed-countries): ${response.status} - ${data.error || data.message}`);
-      return;
-    }
-
-    // Handle both formats: array of codes OR object mapping codes to names
-    let countries = data.countries || [];
-    if (typeof countries === "object" && !Array.isArray(countries)) {
-      // If it's an object (code -> name mapping), extract just the codes
-      countries = Object.keys(countries);
-    }
-    countryCodes = countries;
+    // Use local allowed countries data instead of API call
+    countryCodes = Object.keys(COUNTRY_NAMES);
     populateCountrySelect();
   } catch (error) {
     console.error("Error loading countries:", error);
