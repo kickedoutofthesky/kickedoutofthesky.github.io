@@ -2,10 +2,10 @@
 /**
  * Integration Tests - Live staging API (no mocks)
  *
- * Calls https://api-staging.kickedoutofthesky.com for real. Skipped unless
- * CYPRESS_API_TARGET=staging, so the default suite never hits the live API.
+ * Calls https://api-staging.kickedoutofthesky.com for real. Lives outside
+ * cypress/e2e so the default suite never hits the live API.
  *
- * Run: CYPRESS_API_TARGET=staging npx cypress run --spec "cypress/e2e/integration/*.cy.js" --browser chrome
+ * Run: npm run dev:staging, then npm run test:e2e:staging
  *
  * The checkout test completes a real Stripe test-mode payment (card 4242) on staging.
  *
@@ -14,7 +14,6 @@
  */
 
 const STAGING_API = "https://api-staging.kickedoutofthesky.com";
-const runLive = Cypress.env("API_TARGET") === "staging";
 
 // Unisex Tee w/ Color Block Graphic - Black / XS
 const TEE = { productKey: "product_425342399", color: "Black", size: "XS", variantId: 5246069560 };
@@ -41,7 +40,7 @@ const estimateShipping = (country, quantity) => {
   return cy.wait("@shipping", { timeout: 30000 });
 };
 
-(runLive ? describe : describe.skip)("Integration Tests - Live staging API (no mocks)", () => {
+describe("Integration Tests - Live staging API (no mocks)", () => {
   beforeEach(() => {
     // Registered after the global mocks in cypress/support/e2e.js, so these take
     // precedence and let the requests through to the real API
