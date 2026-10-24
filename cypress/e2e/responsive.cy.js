@@ -14,8 +14,7 @@ const PAGES = [
   { path: "/", ready: "#navbarMain" },
   { path: "/store/", ready: "[data-testid='product-card']" },
   { path: "/store/product.html?key=product_421296994", ready: "[data-testid='product-title']" },
-  // Cart item cards are ~15px wider than a 375px screen (production layout bug), so phones are skipped
-  { path: "/store/cart.html", ready: "[data-testid='cart-item']", minWidth: 768 },
+  { path: "/store/cart.html", ready: "[data-testid='cart-item']" },
   { path: "/store/order-status.html", ready: "#search-form" },
   { path: "/legal/privacy-policy.html", ready: "#navbarMain" },
 ];
@@ -38,7 +37,7 @@ describe("Responsive layout", () => {
       });
 
       it("renders every main page without horizontal scrolling", () => {
-        PAGES.filter(({ minWidth = 0 }) => viewport.width >= minWidth).forEach(({ path, ready }) => {
+        PAGES.forEach(({ path, ready }) => {
           cy.visitWith(path, { cart: CART });
           cy.get(ready).should("be.visible");
           expectNoHorizontalOverflow(path);

@@ -330,22 +330,24 @@ function displayCart() {
     });
 
     itemCard.innerHTML = `
-      <div style="width: 120px; height: 120px; flex-shrink: 0; background: #1a1a1a; border-radius: 4px; overflow: hidden;">
+      <div class="cart-item-image" style="background: #1a1a1a; border-radius: 4px; overflow: hidden;">
         <img loading="lazy" src="${image}" alt="${product.title}" style="width: 100%; height: 100%; object-fit: cover; image-rendering: auto;${itemIsSticker ? " transform: scale(1.75);" : ""}">
       </div>
-      <div style="flex: 1; text-align: left;">
+      <div class="cart-item-details" style="text-align: left;">
         <h4 style="color: #fff; margin-bottom: 8px;" data-testid="item-name">${product.title}</h4>
         <p style="color: #ccc; font-size: 0.9rem; margin: 4px 0;">Color: ${item.color}</p>
         <p style="color: #ccc; font-size: 0.9rem; margin: 4px 0;">Size: ${item.size}</p>
-        <div style="display: flex; gap: 10px; align-items: center; margin-top: 15px;">
+        <div class="cart-item-qty-row" style="display: flex; gap: 10px; align-items: center; margin-top: 15px;">
           <span style="color: #ffc107; font-weight: bold;" data-testid="item-price">${formatUSD(pricePerItem)}</span>
           <span style="color: #ccc;">×</span>
           <button class="cart-qty-btn" onclick="updateCartQuantity(${index}, ${item.quantity - 1})" style="background: #3a3a3a; color: #fff; border: none; width: 22px; height: 22px; padding: 0; cursor: pointer; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.65rem; line-height: 1;"><i class="fas fa-minus" style="font-size: 0.55rem;"></i></button>
           <input type="text" class="quantity-input" data-testid="quantity-input" value="${item.quantity}" readonly style="width: 50px; padding: 5px; background: #1a1a1a; color: #fff; border: 1px solid #333; text-align: center; border-radius: 4px;">
           <button class="cart-qty-btn" onclick="updateCartQuantity(${index}, ${item.quantity + 1})" style="background: #3a3a3a; color: #fff; border: none; width: 22px; height: 22px; padding: 0; cursor: pointer; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.65rem; line-height: 1;"><i class="fas fa-plus" style="font-size: 0.55rem;"></i></button>
-          <span style="color: #ccc; margin-left: auto;">=</span>
-          <span style="color: #ffc107; font-weight: bold;">${formatUSD(lineTotal)}</span>
-          <button onclick="removeFromCart(${index})" data-testid="remove-item" style="background: none; color: #fff; border: none; padding: 8px 0 8px 12px; cursor: pointer; font-size: 1.1rem;"><i class="fas fa-trash"></i></button>
+          <span class="cart-item-line-total" style="display: flex; align-items: center; gap: 10px; margin-left: auto;">
+            <span style="color: #ccc;">=</span>
+            <span style="color: #ffc107; font-weight: bold;">${formatUSD(lineTotal)}</span>
+            <button onclick="removeFromCart(${index})" data-testid="remove-item" style="background: none; color: #fff; border: none; padding: 8px 0 8px 12px; cursor: pointer; font-size: 1.1rem;"><i class="fas fa-trash"></i></button>
+          </span>
         </div>
       </div>
     `;
