@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
 
-// Main site: home page, EPK, legal pages (shared navbar from navbar.html) and 404.
+// Main site: home page, legal pages (shared navbar from navbar.html) and 404.
 
 const LEGAL_PAGES = [
   { path: "/legal/terms-and-conditions.html", heading: "Terms" },
@@ -74,34 +74,6 @@ describe("Main site", () => {
         const hasName = $link.text().trim() || $link.attr("aria-label") || $link.find("img[alt], svg, i").length;
         expect(Boolean(hasName), $link.attr("href")).to.be.true;
       });
-    });
-  });
-
-  describe("EPK", () => {
-    beforeEach(() => {
-      cy.intercept("GET", "https://open.spotify.com/**", { statusCode: 200, body: "<html></html>" });
-      cy.intercept("GET", "https://www.youtube.com/**", { statusCode: 200, body: "<html></html>" });
-      cy.visitWith("/epk.html");
-    });
-
-    it("shows the press kit sections, contact details and downloadable PDF", () => {
-      cy.title().should("eq", "Kicked Out Of The Sky — EPK");
-      ["ABOUT THE SONG", "ABOUT THE ARTIST", "STREAM / WATCH", "CONTACT / BOOKING"].forEach(heading =>
-        cy.contains("h2", heading).should("be.visible")
-      );
-      cy.get("a[href='mailto:kickedoutofthesky@gmail.com']").should("exist");
-      cy.get("a[href='Kicked-Out-of-the-Sky-EPK.pdf']").should("exist");
-      cy.request("/Kicked-Out-of-the-Sky-EPK.pdf").its("status").should("eq", 200);
-    });
-
-    it("loads the Spotify and YouTube players only when their placeholders are clicked", () => {
-      cy.get("iframe").should("not.exist");
-
-      cy.get(".facade-spotify").first().click();
-      cy.get("iframe[src='https://open.spotify.com/embed/track/4yt5M4iMAEPSkBVjdJT6NW']").should("exist");
-
-      cy.get(".facade-youtube").first().click();
-      cy.get(".youtube-container iframe[src='https://www.youtube.com/embed/Rb7_To1AFD4']").should("exist");
     });
   });
 

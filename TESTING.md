@@ -45,7 +45,7 @@ npx cypress run --spec cypress/e2e/cart.cy.js   # one spec
 
 | Spec                   | Covers                                                                                                                                      |
 | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
-| `site.cy.js`           | Home page, EPK, legal pages with the shared navbar, 404                                                                                     |
+| `site.cy.js`           | Home page, legal pages with the shared navbar, 404                                                                                          |
 | `cookie-consent.cy.js` | Banner accept/decline; analytics only after accept                                                                                          |
 | `release-pages.cy.js`  | `/betterpartofme/` rendering, pre-save → "Listen now" switch, `/listen/` and `/presave.html` redirects, UTM forwarding, pixel after consent |
 | `store.cy.js`          | Product grid, images, navbar cart badge, error state, filters (URL param + saved choice)                                                    |

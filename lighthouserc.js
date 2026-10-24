@@ -3,12 +3,7 @@ module.exports = {
     collect: {
       startServerCommand: "PORT=9222 node server.js",
       startServerReadyPattern: "Development Server Running",
-      url: [
-        "http://localhost:9222/",
-        "http://localhost:9222/store/",
-        "http://localhost:9222/store/cart.html",
-        // "http://localhost:9222/epk.html",
-      ],
+      url: ["http://localhost:9222/", "http://localhost:9222/store/", "http://localhost:9222/store/cart.html"],
       numberOfRuns: 1,
       settings: {
         preset: "desktop",

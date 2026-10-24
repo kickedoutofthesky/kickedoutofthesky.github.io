@@ -14,7 +14,6 @@ shipping, checkout (Stripe) and order lookups; Printful fulfils orders.
 | Path                                    | What it does                                                                                         |
 | --------------------------------------- | ---------------------------------------------------------------------------------------------------- |
 | `/` ([index.html](index.html))          | Home: music, videos, tour, sign-up, contact form (Formspree)                                         |
-| `/epk.html`                             | Electronic press kit                                                                                 |
 | `/betterpartofme/`                      | Release page driven by [data/releases.json](data/releases.json) and [js/releases.js](js/releases.js) |
 | `/listen/`                              | Redirects to the push.fm fan link (keeps UTM params, consent-gated Meta Pixel)                       |
 | `/presave.html`                         | Redirects to `/listen/`                                                                              |
@@ -109,7 +108,7 @@ Other tools in [scripts/](scripts): `generate-og-pages.js` (builds `store/p/*` s
 ## Project layout
 
 ```
-index.html, epk.html, 404.html, navbar.html   main site
+index.html, 404.html, navbar.html   main site
 betterpartofme/, listen/, presave.html        release pages
 legal/                                        legal pages
 js/                                           shared scripts (consent, analytics, releases, money, countries)
