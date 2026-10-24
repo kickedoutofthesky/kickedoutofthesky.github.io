@@ -63,7 +63,7 @@ export function formatDate(timestamp) {
     };
 
     return date.toLocaleDateString("en-US", options);
-  } catch (error) {
+  } catch {
     return "—";
   }
 }
@@ -92,7 +92,7 @@ export function formatShortDate(timestamp) {
     };
 
     return date.toLocaleDateString("en-US", options);
-  } catch (error) {
+  } catch {
     return "—";
   }
 }
@@ -151,7 +151,7 @@ export function getCountryFlag(countryCode) {
       .split("")
       .map(char => 127397 + char.charCodeAt(0));
     return String.fromCodePoint(...codePoints);
-  } catch (error) {
+  } catch {
     return "🌍";
   }
 }

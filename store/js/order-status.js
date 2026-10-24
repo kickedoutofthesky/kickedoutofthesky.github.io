@@ -7,9 +7,6 @@ import {
   formatStatus,
   formatTrackingStatus,
   getCountryFlag,
-  parseCostCents,
-  formatCurrencyAmount,
-  buildErrorMessage,
 } from "./utils/fixtures/order-status-utilities.js";
 
 let products = [];
