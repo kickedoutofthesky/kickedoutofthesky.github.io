@@ -1,208 +1,159 @@
-/* global cy, Cypress, before */
+/* global cy, Cypress */
 /**
- * Integration Tests - Real API (No Mocks)
+ * Integration Tests - Live staging API (no mocks)
  *
- * These tests validate against the real API without mocks.
- * Run with: CYPRESS_API_TARGET=staging npx cypress run --spec "cypress/e2e/integration/*.cy.js"
+ * Calls https://api-staging.kickedoutofthesky.com for real. Skipped unless
+ * CYPRESS_API_TARGET=staging, so the default suite never hits the live API.
  *
- * Environment variables:
- * - CYPRESS_API_TARGET: "staging" | "prod" | "local" (default: "local")
+ * Run: CYPRESS_API_TARGET=staging npx cypress run --spec "cypress/e2e/integration/*.cy.js" --browser chrome
  *
- * SKIPPED: These tests require a specific backend API server that is not available
- * in the current test environment. All core functionality is tested using mocks.
+ * The checkout test completes a real Stripe test-mode payment (card 4242) on staging.
+ *
+ * Prices aren't hard-coded because Printful rates change; the UI is checked
+ * against whatever the API returns.
  */
 
-describe.skip("Integration Tests - Real API (No Mocks)", () => {
-  const API_TARGET = Cypress.env("API_TARGET") || "local";
-  const BASE_URL = `http://localhost:3002?api=${API_TARGET}`;
+const STAGING_API = "https://api-staging.kickedoutofthesky.com";
+const runLive = Cypress.env("API_TARGET") === "staging";
 
+// Unisex Tee w/ Color Block Graphic - Black / XS
+const TEE = { productKey: "product_425342399", color: "Black", size: "XS", variantId: 5246069560 };
+
+const formatCents = cents => `$${(cents / 100).toFixed(2)}`;
+
+const visitCartWith = quantity => {
+  // ?api=staging forces the staging API regardless of which port serves the frontend
+  cy.visit("/store/cart.html?api=staging", {
+    onBeforeLoad(win) {
+      win.localStorage.setItem(
+        "kots_cart",
+        JSON.stringify([{ productKey: TEE.productKey, color: TEE.color, size: TEE.size, quantity }])
+      );
+      win.localStorage.removeItem("selectedShippingCountry");
+    },
+  });
+  cy.window().its("__API_URL__").should("eq", STAGING_API);
+};
+
+const estimateShipping = (country, quantity) => {
+  visitCartWith(quantity);
+  cy.get("#shipping-country").select(country);
+  return cy.wait("@shipping", { timeout: 30000 });
+};
+
+(runLive ? describe : describe.skip)("Integration Tests - Live staging API (no mocks)", () => {
   beforeEach(() => {
-    // Clear storage and set API target
-    cy.window().then(win => {
-      win.localStorage.clear();
-      win.sessionStorage.clear();
-    });
+    // Registered after the global mocks in cypress/support/e2e.js, so these take
+    // precedence and let the requests through to the real API
+    cy.intercept("POST", "**/api/calculate-shipping", req => req.continue()).as("shipping");
+    cy.intercept("POST", "**/api/create-checkout-session", req => req.continue()).as("checkout");
   });
 
-  before(() => {
-    cy.log(`🔗 Testing against API target: ${API_TARGET}`);
-  });
+  describe("POST /api/calculate-shipping", () => {
+    it("sends the cart items and shows the cheapest option returned", () => {
+      estimateShipping("US", 2).then(({ request, response }) => {
+        expect(request.body).to.deep.equal({
+          country: "US",
+          items: [{ variant_id: TEE.variantId, quantity: 2 }],
+        });
+        expect(response.statusCode).to.eq(200);
 
-  describe("Happy Path: Add to Cart → Select Country → Checkout", () => {
-    it("should add a product to cart and proceed through checkout flow", () => {
-      // Visit the store (no mocks - real API calls)
-      cy.visit("/store");
-
-      // Wait for product cards to load
-      cy.get("[data-testid='product-card']", { timeout: 10000 }).should("exist");
-
-      // Find and click first product
-      cy.get("[data-testid='product-card']").first().click();
-
-      // Wait for product page to load
-      cy.get("h1").should("exist");
-
-      // Select a size (first available option)
-      cy.get("select[name='size']").then($select => {
-        const options = $select.find("option");
-        if (options.length > 1) {
-          cy.get("select[name='size']").select(1);
-        }
-      });
-
-      // Add to cart
-      cy.get("button")
-        .contains(/add to cart|add item/i)
-        .click({ force: true });
-
-      // Wait for cart to update (real API latency)
-      cy.wait(1000);
-
-      // Navigate to cart
-      cy.get("a[href*='cart']").first().click({ force: true });
-
-      // Wait for cart page to load with real API calls
-      cy.get("#cart-items, #cart-summary", { timeout: 10000 }).should("exist");
-
-      // Select a country (real API will fetch country list)
-      cy.get("select[name='country']", { timeout: 10000 }).should("not.be.disabled");
-      cy.get("select[name='country']").select(1);
-
-      // Wait for shipping estimate calculation (real API call)
-      cy.wait(2000);
-
-      // Accept terms
-      cy.get("input[name='terms']").check({ force: true });
-
-      // Verify checkout button becomes enabled
-      cy.get("button")
-        .contains(/checkout|proceed/i)
-        .should("not.be.disabled");
-
-      // Verify API call succeeded by checking for shipping estimate
-      cy.get("#shipping-estimate, #shipping-value").should("exist").and("not.be.empty");
-
-      cy.log("✅ Successfully added product to cart and verified shipping estimate from real API");
-    });
-
-    it("should fetch real country list from API", () => {
-      // Navigate to cart directly
-      cy.visit("/store/cart.html");
-
-      // Wait for country selector to load
-      cy.get("select[name='country']", { timeout: 10000 }).should("exist");
-
-      // Check that multiple countries are available (real API response)
-      cy.get("select[name='country'] option").then($options => {
-        // Should have more than just placeholder
-        expect($options.length).to.be.greaterThan(2);
-        cy.log(`✅ Loaded ${$options.length} countries from real API`);
+        const amount = response.body.shipping_options[0].shipping_rate_data.fixed_amount.amount;
+        expect(amount).to.be.a("number").and.be.greaterThan(0);
+        cy.get("#shipping-estimate").should("contain", formatCents(amount));
       });
     });
 
-    it("should calculate shipping estimate for different countries", () => {
-      // Add item to cart first
-      cy.visit("/store");
+    it("prices the whole cart, not a single item", () => {
+      estimateShipping("PT", 1).then(({ response: single }) => {
+        const singleAmount = single.body.shipping_options[0].shipping_rate_data.fixed_amount.amount;
 
-      // Wait for product cards to load
-      cy.get("[data-testid='product-card']", { timeout: 10000 }).should("exist");
-
-      cy.get("[data-testid='product-card']").first().click();
-      cy.get("select[name='size']").then($select => {
-        const options = $select.find("option");
-        if (options.length > 1) {
-          cy.get("select[name='size']").select(1);
-        }
-      });
-      cy.get("button")
-        .contains(/add to cart/i)
-        .click({ force: true });
-      cy.wait(1000);
-
-      // Go to cart
-      cy.visit("/store/cart.html");
-
-      // Select first country and note shipping
-      cy.get("select[name='country']", { timeout: 10000 }).select(1);
-      cy.wait(2000);
-
-      cy.get("#shipping-estimate, #shipping-value").then($shipping1 => {
-        const firstShipping = $shipping1.text();
-        expect(firstShipping).to.not.be.empty;
-
-        // Select different country
-        cy.get("select[name='country']").select(2);
-        cy.wait(2000);
-
-        // Shipping should update (real API responds with different cost)
-        cy.get("#shipping-estimate, #shipping-value").then($shipping2 => {
-          const secondShipping = $shipping2.text();
-          expect(secondShipping).to.not.be.empty;
-          // Note: shipping costs may be same for different countries, so we just verify it's not empty
-          cy.log(`✅ Shipping estimate updated via real API: ${secondShipping}`);
+        estimateShipping("PT", 5).then(({ response: multiple }) => {
+          const multipleAmount = multiple.body.shipping_options[0].shipping_rate_data.fixed_amount.amount;
+          expect(multipleAmount).to.be.greaterThan(singleAmount);
+          cy.get("#shipping-estimate").should("contain", formatCents(multipleAmount));
         });
       });
     });
+
+    it("shows a can't-ship message for a disabled country without blocking checkout", () => {
+      estimateShipping("RU", 1).its("response.statusCode").should("eq", 400);
+      cy.get("#shipping-estimate").should("have.text", "We can't ship to this country.");
+
+      cy.get("#terms-checkbox").check({ force: true });
+      cy.get("#checkout-btn").should("not.be.disabled");
+    });
   });
 
-  describe("API Endpoint Validation", () => {
-    it("should successfully call GET /api/allowed-countries", () => {
-      // Mock with validation (validates response structure)
-      cy.intercept("GET", "**/api/allowed-countries", {
-        statusCode: 200,
-        body: {
-          countries: ["US", "CA", "GB", "AU", "DE", "FR", "IT", "ES", "JP", "CN", "IN", "BR", "MX", "ZA"],
-        },
-      }).as("allowedCountries");
+  describe("Checkout with Stripe test card", () => {
+    it("pays with 4242 card and shows the order on the success page", () => {
+      cy.intercept("GET", "**/api/order-details*", req => req.continue()).as("orderDetails");
 
-      cy.visit("/store/cart.html");
-      cy.get("select[name='country']", { timeout: 10000 }).should("exist");
+      // Stripe's success_url points at the live site; serve the success page under test instead
+      cy.intercept({ method: "GET", url: /^https:\/\/(www\.)?kickedoutofthesky\.com\/store\/success\.html/ }, req => {
+        const query = req.url.slice(req.url.indexOf("?"));
+        req.redirect(`${Cypress.config("baseUrl")}/store/success.html${query}`);
+      }).as("successRedirect");
 
-      // Validate countries were loaded
-      cy.get("select[name='country'] option").then($options => {
-        expect($options.length).to.be.greaterThan(2);
-        cy.log(`✅ GET /api/allowed-countries validated: ${$options.length} countries loaded`);
+      // Stripe's wallet buttons (Apple/Google Pay) can't mount inside Cypress's frame; the card form still works
+      cy.origin("https://checkout.stripe.com", () => {
+        cy.on("uncaught:exception", err => !err.message.includes("expressCheckout Element"));
       });
-    });
 
-    it("should successfully call POST /api/calculate-shipping", () => {
-      // Add product to cart
-      cy.visit("/store");
+      visitCartWith(1);
+      cy.get("#shipping-country").select("US");
+      cy.get("#terms-checkbox").check({ force: true });
+      cy.get("#checkout-btn").click();
 
-      // Wait for product cards to load
-      cy.get("[data-testid='product-card']", { timeout: 10000 }).should("exist");
-
-      cy.get("[data-testid='product-card']").first().click();
-      cy.get("select[name='size']").then($select => {
-        const options = $select.find("option");
-        if (options.length > 1) {
-          cy.get("select[name='size']").select(1);
-        }
+      cy.wait("@checkout", { timeout: 30000 }).then(({ request, response }) => {
+        expect(request.body).to.deep.equal({
+          items: [{ variantId: String(TEE.variantId), quantity: 1 }],
+          country: "US",
+          termsAccepted: true,
+        });
+        expect(response.statusCode).to.eq(200);
+        expect(response.body.url).to.match(/^https:\/\/checkout\.stripe\.com\/c\/pay\/cs_test_/);
       });
-      cy.get("button")
-        .contains(/add to cart/i)
-        .click({ force: true });
-      cy.wait(1000);
 
-      // Go to cart and validate shipping endpoint with mock
-      cy.visit("/store/cart.html");
+      cy.origin("https://checkout.stripe.com", () => {
+        cy.get("#email", { timeout: 30000 }).type("staging-test@example.com");
 
-      cy.intercept("POST", "**/api/calculate-shipping", {
-        statusCode: 200,
-        body: {
-          shipping_options: [
-            { id: "standard", label: "Standard", cost: 10 },
-            { id: "express", label: "Express", cost: 25 },
-          ],
-        },
-      }).as("calculateShipping");
+        cy.get("body").then($body => {
+          const manualEntry = $body.find("button:contains('Enter address manually')");
+          if (manualEntry.length) cy.wrap(manualEntry).click();
+        });
+        cy.get("#shippingName").type("Staging Test");
+        cy.get("#shippingAddressLine1").type("123 Main St");
+        cy.get("#shippingLocality").type("Dallas");
+        cy.get("#shippingPostalCode").type("75201");
+        cy.get("#shippingAdministrativeArea").select("TX");
 
-      cy.get("select[name='country']", { timeout: 10000 }).select(1);
-      cy.wait(2000);
+        cy.get("#cardNumber").type("4242424242424242");
+        cy.get("#cardExpiry").type("1234");
+        cy.get("#cardCvc").type("123");
 
-      // Validate shipping estimate appears
-      cy.get("#shipping-estimate, #shipping-value").should("exist").and("not.be.empty");
-      cy.log(`✅ POST /api/calculate-shipping validated: shipping estimate calculated`);
+        // Don't save the test details with Stripe Link
+        cy.get("body").then($body => {
+          if ($body.find("#enableStripePass").length) {
+            cy.get("#enableStripePass").uncheck({ force: true });
+            cy.get("#enableStripePass").should("not.be.checked");
+          }
+        });
+
+        cy.get("[data-testid=hosted-payment-submit-button]").click();
+      });
+
+      cy.location("pathname", { timeout: 60000 }).should("eq", "/store/success.html");
+      cy.location("search").should("match", /session_id=cs_test_/);
+
+      cy.wait("@orderDetails", { timeout: 30000 }).its("response.statusCode").should("eq", 200);
+      cy.contains("h1", "Order Successful");
+      cy.get("#order-items").should("contain", "Unisex Tee w/ Color Block Graphic");
+      cy.get("#customer-email").should("have.text", "staging-test@example.com");
+      cy.get("#shipping-address").should("contain", "123 Main St").and("contain", "Dallas");
+      cy.get("#summary-total")
+        .invoke("text")
+        .should("match", /^\$\d+\.\d{2}$/);
     });
   });
 });
