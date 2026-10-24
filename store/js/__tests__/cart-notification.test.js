@@ -1,175 +1,270 @@
-const { playDingSound, createCartBurst } = require("../cart-notification");
+/**
+ * Cart Notification Tests
+ * Tests the real playDingSound and createCartBurst from store/js/cart-notification.js
+ */
 
-describe("Cart Notifications - playDingSound", () => {
-  let mockAudioContext;
-  let mockOscillator;
-  let mockGainNode;
+import { playDingSound, createCartBurst } from "../cart-notification";
 
-  beforeEach(() => {
-    // Mock Audio API
-    mockOscillator = {
-      connect: jest.fn(),
-      start: jest.fn(),
-      stop: jest.fn(),
-      frequency: { value: 0 },
-      type: "",
-    };
+describe("Cart Notification", () => {
+  describe("playDingSound", () => {
+    let mockAudioContext;
+    let mockOscillator;
+    let mockGainNode;
 
-    mockGainNode = {
-      connect: jest.fn(),
-      gain: {
-        setValueAtTime: jest.fn(),
-        exponentialRampToValueAtTime: jest.fn(),
-      },
-    };
+    beforeEach(() => {
+      // Mock Web Audio API
+      mockOscillator = {
+        connect: jest.fn(),
+        start: jest.fn(),
+        stop: jest.fn(),
+        frequency: { value: 0 },
+        type: "",
+      };
 
-    mockAudioContext = {
-      createOscillator: jest.fn(() => mockOscillator),
-      createGain: jest.fn(() => mockGainNode),
-      destination: {},
-      currentTime: 0,
-    };
+      mockGainNode = {
+        connect: jest.fn(),
+        gain: {
+          setValueAtTime: jest.fn(),
+          exponentialRampToValueAtTime: jest.fn(),
+        },
+      };
 
-    window.AudioContext = jest.fn(() => mockAudioContext);
-    window.webkitAudioContext = jest.fn(() => mockAudioContext);
+      mockAudioContext = {
+        createOscillator: jest.fn(() => mockOscillator),
+        createGain: jest.fn(() => mockGainNode),
+        destination: {},
+        currentTime: 0,
+      };
 
-    // Clear DOM
-    document.body.innerHTML = "";
+      global.AudioContext = jest.fn(() => mockAudioContext);
+      global.webkitAudioContext = jest.fn(() => mockAudioContext);
+    });
+
+    afterEach(() => {
+      delete global.AudioContext;
+      delete global.webkitAudioContext;
+    });
+
+    it("should create audio context", () => {
+      playDingSound();
+      expect(global.AudioContext).toHaveBeenCalled();
+    });
+
+    it("should create oscillator", () => {
+      playDingSound();
+      expect(mockAudioContext.createOscillator).toHaveBeenCalled();
+    });
+
+    it("should create gain node", () => {
+      playDingSound();
+      expect(mockAudioContext.createGain).toHaveBeenCalled();
+    });
+
+    it("should connect oscillator to gain node", () => {
+      playDingSound();
+      expect(mockOscillator.connect).toHaveBeenCalledWith(mockGainNode);
+    });
+
+    it("should connect gain node to audio destination", () => {
+      playDingSound();
+      expect(mockGainNode.connect).toHaveBeenCalledWith(mockAudioContext.destination);
+    });
+
+    it("should set oscillator frequency to 1000 Hz", () => {
+      playDingSound();
+      expect(mockOscillator.frequency.value).toBe(1000);
+    });
+
+    it("should set oscillator type to sine wave", () => {
+      playDingSound();
+      expect(mockOscillator.type).toBe("sine");
+    });
+
+    it("should set initial gain to 0.3", () => {
+      playDingSound();
+      expect(mockGainNode.gain.setValueAtTime).toHaveBeenCalledWith(0.3, mockAudioContext.currentTime);
+    });
+
+    it("should ramp down gain to 0.01 over 0.1 seconds", () => {
+      playDingSound();
+      expect(mockGainNode.gain.exponentialRampToValueAtTime).toHaveBeenCalledWith(
+        0.01,
+        mockAudioContext.currentTime + 0.1
+      );
+    });
+
+    it("should start oscillator", () => {
+      playDingSound();
+      expect(mockOscillator.start).toHaveBeenCalledWith(mockAudioContext.currentTime);
+    });
+
+    it("should stop oscillator after 0.1 seconds", () => {
+      playDingSound();
+      expect(mockOscillator.stop).toHaveBeenCalledWith(mockAudioContext.currentTime + 0.1);
+    });
+
+    it("should handle webkit audio context", () => {
+      delete global.AudioContext;
+      playDingSound();
+      expect(global.webkitAudioContext).toHaveBeenCalled();
+    });
+
+    it("should handle missing audio context gracefully", () => {
+      // When both AudioContext and webkitAudioContext are unavailable,
+      // the function will throw (which is acceptable behavior)
+      // This tests that it at least attempts to create one
+      delete global.AudioContext;
+      delete global.webkitAudioContext;
+
+      // The function will throw when trying to call new on undefined
+      expect(() => {
+        playDingSound();
+      }).toThrow();
+    });
   });
 
-  afterEach(() => {
-    jest.clearAllMocks();
+  describe("createCartBurst", () => {
+    beforeEach(() => {
+      // Setup DOM
+      document.body.innerHTML = `
+        <input id="quantity" value="2">
+        <div id="cart-badge">3</div>
+        <a href="cart.html" class="nav-link">Cart</a>
+      `;
+    });
+
+    afterEach(() => {
+      document.body.innerHTML = "";
+    });
+
+    it("should return a promise", () => {
+      const result = createCartBurst();
+      expect(result).toBeInstanceOf(Promise);
+    });
+
+    it("should create flying badge element", async () => {
+      createCartBurst();
+      await new Promise(resolve => setTimeout(resolve, 50));
+
+      const elements = document.querySelectorAll("div[style*='position: fixed']");
+      expect(elements.length).toBeGreaterThan(0);
+    });
+
+    it("should display quantity in flying badge", async () => {
+      const quantityInput = document.getElementById("quantity");
+      quantityInput.value = "5";
+
+      createCartBurst();
+      await new Promise(resolve => setTimeout(resolve, 50));
+
+      const badge = Array.from(document.querySelectorAll("div")).find(
+        el => el.textContent === "5" && el.style.position === "fixed"
+      );
+      expect(badge).toBeTruthy();
+    });
+
+    it("should handle missing quantity input gracefully", async () => {
+      document.getElementById("quantity").remove();
+
+      const result = createCartBurst();
+      const resolved = await result;
+
+      expect(resolved).toBeUndefined();
+    });
+
+    it("should fallback to cart link when badge not visible", async () => {
+      const badge = document.getElementById("cart-badge");
+      badge.style.display = "none";
+
+      createCartBurst();
+      await new Promise(resolve => setTimeout(resolve, 50));
+
+      // Should still create animation with cart link as target
+      const elements = document.querySelectorAll("div[style*='position: fixed']");
+      expect(elements.length).toBeGreaterThan(0);
+    });
+
+    it("should handle missing cart link gracefully", async () => {
+      document.querySelector("a[href='cart.html']").remove();
+
+      const result = createCartBurst();
+      const resolved = await result;
+
+      expect(resolved).toBeUndefined();
+    });
+
+    it("should parse quantity as integer", async () => {
+      const quantityInput = document.getElementById("quantity");
+      quantityInput.value = "3.5";
+
+      createCartBurst();
+      await new Promise(resolve => setTimeout(resolve, 50));
+
+      // The quantity should be parsed as 3
+      const badge = Array.from(document.querySelectorAll("div")).find(
+        el => el.textContent === "3" && el.style.position === "fixed"
+      );
+      expect(badge).toBeTruthy();
+    });
+
+    it("should handle non-numeric quantity", async () => {
+      const quantityInput = document.getElementById("quantity");
+      quantityInput.value = "not-a-number";
+
+      createCartBurst();
+      await new Promise(resolve => setTimeout(resolve, 50));
+
+      // Should default to 1
+      const badge = Array.from(document.querySelectorAll("div")).find(
+        el => el.textContent === "1" && el.style.position === "fixed"
+      );
+      expect(badge).toBeTruthy();
+    });
+
+    it("should resolve promise eventually", async () => {
+      const result = createCartBurst();
+
+      // Should be a promise
+      expect(result).toBeInstanceOf(Promise);
+
+      // Wait for promise to resolve (animation is 1200ms + buffer)
+      const resolved = await Promise.race([
+        result.then(() => true),
+        new Promise(resolve => setTimeout(() => resolve(false), 2000)),
+      ]);
+
+      // Should have resolved by now
+      expect(resolved).toBe(true);
+    });
+
+    it("should apply animation styles to flying badge", async () => {
+      createCartBurst();
+      await new Promise(resolve => setTimeout(resolve, 50));
+
+      // Check that fixed positioned elements are created
+      const elements = document.querySelectorAll("div[style*='position: fixed']");
+      expect(elements.length).toBeGreaterThan(0);
+
+      // At least one should be a badge with animation styles
+      const hasAnimatedBadge = Array.from(elements).some(
+        el => el.style.borderRadius === "50%" && el.textContent.match(/^\d+$/)
+      );
+      expect(hasAnimatedBadge).toBe(true);
+    });
   });
 
-  it("should create oscillator and gain node", () => {
-    playDingSound();
-    expect(mockAudioContext.createOscillator).toHaveBeenCalled();
-    expect(mockAudioContext.createGain).toHaveBeenCalled();
-  });
+  describe("Error handling", () => {
+    it("should handle audio context creation error", () => {
+      global.AudioContext = jest.fn(() => {
+        throw new Error("AudioContext not available");
+      });
 
-  it("should connect oscillator to gain node", () => {
-    playDingSound();
-    expect(mockOscillator.connect).toHaveBeenCalledWith(mockGainNode);
-  });
+      // Function will throw when audio context can't be created
+      expect(() => {
+        playDingSound();
+      }).toThrow();
 
-  it("should connect gain node to audio context destination", () => {
-    playDingSound();
-    expect(mockGainNode.connect).toHaveBeenCalledWith(mockAudioContext.destination);
-  });
-
-  it("should set oscillator frequency to 1000 Hz", () => {
-    playDingSound();
-    expect(mockOscillator.frequency.value).toBe(1000);
-  });
-
-  it("should set oscillator type to sine wave", () => {
-    playDingSound();
-    expect(mockOscillator.type).toBe("sine");
-  });
-
-  it("should set initial gain to 0.3", () => {
-    playDingSound();
-    expect(mockGainNode.gain.setValueAtTime).toHaveBeenCalledWith(0.3, mockAudioContext.currentTime);
-  });
-
-  it("should ramp down gain to 0.01 over 0.1 seconds", () => {
-    playDingSound();
-    expect(mockGainNode.gain.exponentialRampToValueAtTime).toHaveBeenCalledWith(
-      0.01,
-      mockAudioContext.currentTime + 0.1
-    );
-  });
-
-  it("should start oscillator", () => {
-    playDingSound();
-    expect(mockOscillator.start).toHaveBeenCalledWith(mockAudioContext.currentTime);
-  });
-
-  it("should stop oscillator after 0.1 seconds", () => {
-    playDingSound();
-    expect(mockOscillator.stop).toHaveBeenCalledWith(mockAudioContext.currentTime + 0.1);
-  });
-});
-
-describe("Cart Notifications - createCartBurst", () => {
-  beforeEach(() => {
-    // Setup DOM
-    document.body.innerHTML = `
-      <input id="quantity" type="number" value="1" />
-      <div id="cart-badge" style="display: block;">Badge</div>
-      <a class="nav-link" href="cart.html">Cart</a>
-    `;
-  });
-
-  afterEach(() => {
-    document.body.innerHTML = "";
-  });
-
-  it("should return a Promise", () => {
-    const result = createCartBurst();
-    expect(result).toBeInstanceOf(Promise);
-  });
-
-  it("should resolve immediately if quantity input not found", async () => {
-    document.body.innerHTML = "";
-    const result = createCartBurst();
-    await expect(result).resolves.toBeUndefined();
-  });
-
-  it("should find cart badge element", () => {
-    const spy = jest.spyOn(document, "getElementById");
-    createCartBurst();
-    expect(spy).toHaveBeenCalledWith("quantity");
-    expect(spy).toHaveBeenCalledWith("cart-badge");
-    spy.mockRestore();
-  });
-
-  it("should handle missing quantity input gracefully", async () => {
-    const quantityInput = document.getElementById("quantity");
-    quantityInput.remove();
-
-    const result = createCartBurst();
-    await expect(result).resolves.toBeUndefined();
-  });
-
-  it("should parse quantity from input", () => {
-    const quantityInput = document.getElementById("quantity");
-    quantityInput.value = "5";
-
-    const result = createCartBurst();
-    expect(result).toBeInstanceOf(Promise);
-  });
-
-  it("should fallback to quantity 1 for invalid input", () => {
-    const quantityInput = document.getElementById("quantity");
-    quantityInput.value = "invalid";
-
-    const result = createCartBurst();
-    expect(result).toBeInstanceOf(Promise);
-  });
-
-  it("should use cart badge if visible", () => {
-    const badge = document.getElementById("cart-badge");
-    badge.style.display = "block";
-
-    const result = createCartBurst();
-    expect(result).toBeInstanceOf(Promise);
-  });
-
-  it("should fallback to nav link if badge not visible", () => {
-    const badge = document.getElementById("cart-badge");
-    badge.style.display = "none";
-
-    const result = createCartBurst();
-    expect(result).toBeInstanceOf(Promise);
-  });
-
-  it("should complete the animation promise", () => {
-    const result = createCartBurst();
-    expect(result).toBeInstanceOf(Promise);
-    // The Promise will resolve after the animation timeout
-    // Just verify it's a valid Promise
-    expect(result.then).toBeDefined();
-    expect(result.catch).toBeDefined();
+      delete global.AudioContext;
+    });
   });
 });

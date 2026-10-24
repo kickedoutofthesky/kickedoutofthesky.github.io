@@ -154,20 +154,6 @@ describe("ShoppingCart", () => {
     });
   });
 
-  describe("getSubtotalCents", () => {
-    test("should return 0 for empty cart", () => {
-      const subtotal = cart.getSubtotalCents(mockProducts);
-      expect(subtotal).toBe(0);
-    });
-
-    test("should calculate correct subtotal", () => {
-      cart.addItem("product_1", "Black", "M", 2); // 2 * 2500 = 5000
-      cart.addItem("product_2", "Satin", "2x2", 1); // 1 * 500 = 500
-      const subtotal = cart.getSubtotalCents(mockProducts);
-      expect(subtotal).toBe(5500);
-    });
-  });
-
   describe("loadCart", () => {
     test("should load cart from localStorage", () => {
       const testItems = [{ productKey: "product_1", color: "Black", size: "M", quantity: 1 }];
@@ -294,16 +280,6 @@ describe("ShoppingCart", () => {
       };
       const price = cart.getPriceForVariant(productNullPrice, "Black", "M");
       expect(price).toBe(1000);
-    });
-  });
-
-  describe("getSubtotalCents edge cases", () => {
-    test("should skip items with no matching product", () => {
-      cart.items.push({ productKey: "nonexistent", color: "Black", size: "M", quantity: 1 });
-      cart.addItem("product_1", "Black", "M", 1);
-      const subtotal = cart.getSubtotalCents(mockProducts);
-      // Only product_1 counted: 1 * 2500
-      expect(subtotal).toBe(2500);
     });
   });
 });

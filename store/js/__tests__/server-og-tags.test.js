@@ -1,182 +1,61 @@
-// Tests for server.js dynamic OG tag injection
+// Tests for server.js dynamic OG tag injection.
+// Spawns the real dev server (server.js) on a test port and inspects its responses.
 const http = require("http");
 const path = require("path");
+const { spawn } = require("child_process");
 
-// Use a random high port to avoid conflicts with running dev server
+// Use a high port to avoid conflicts with a running dev server
 const TEST_PORT = 9876;
-let server;
+const SERVER_PATH = path.join(__dirname, "..", "..", "..", "server.js");
+let serverProcess;
 
 function startServer() {
   return new Promise((resolve, reject) => {
-    // Override PORT before requiring server
-    process.env.PORT = TEST_PORT;
-
-    // We can't require server.js directly since it calls server.listen().
-    // Instead, replicate the OG injection logic for unit testing.
-    const fs = require("fs");
-    const BASE_DIR = path.join(__dirname, "..", "..", "..");
-
-    const mimeTypes = {
-      ".html": "text/html",
-      ".json": "application/json",
-    };
-
-    server = http.createServer((req, res) => {
-      const parsedUrl = new URL(req.url, `http://localhost:${TEST_PORT}`);
-      let filePath = decodeURIComponent(parsedUrl.pathname);
-      filePath = path.normalize(filePath);
-
-      if (filePath === "/") filePath = "/index.html";
-
-      const fullPath = path.join(BASE_DIR, filePath);
-
-      const ext = path.extname(fullPath).toLowerCase();
-      const mimeType = mimeTypes[ext] || "application/octet-stream";
-
-      fs.readFile(fullPath, (err, data) => {
-        if (err) {
-          res.writeHead(404);
-          res.end("Not Found");
-          return;
-        }
-
-        // Replicate OG injection logic from server.js
-        if (fullPath.endsWith(path.join("store", "index.html")) && parsedUrl.searchParams.has("type")) {
-          const type = parsedUrl.searchParams.get("type");
-          try {
-            const productsPath = path.join(BASE_DIR, "store", "data", "products.json");
-            const products = JSON.parse(fs.readFileSync(productsPath, "utf8"));
-            const categoryLabels = {
-              tees: "Tees",
-              "long-sleeve": "Long Sleeve Tees",
-              hoodies: "Hoodies",
-              sweatshirts: "Sweatshirts",
-              hats: "Hats",
-              stickers: "Stickers",
-            };
-            const label = categoryLabels[type];
-            if (label) {
-              const getCategory = title => {
-                const t = title.toLowerCase();
-                if (t.includes("sticker")) return "stickers";
-                if (t.includes("hoodie")) return "hoodies";
-                if (t.includes("sweatshirt") || t.includes("crewneck")) return "sweatshirts";
-                if (t.includes("long sleeve")) return "long-sleeve";
-                if (t.includes("snapback") || t.includes("trucker") || t.includes("cap") || t.includes("hat"))
-                  return "hats";
-                if (t.includes("tee")) return "tees";
-                return "other";
-              };
-              const firstProduct = products.find(p => getCategory(p.title) === type);
-              if (firstProduct) {
-                const ogTitle = `${label} - Kicked Out Of The Sky Merch`;
-                const ogDesc = `Shop ${label} from Kicked Out Of The Sky.`;
-                const ogImage = firstProduct.image.startsWith("http")
-                  ? firstProduct.image
-                  : `https://www.kickedoutofthesky.com/store/${firstProduct.image}`;
-                let html = data.toString();
-                html = html.replace(
-                  /<meta\s+property="og:title"[\s\S]*?\/?>/,
-                  `<meta property="og:title" content="${ogTitle}" />`
-                );
-                html = html.replace(
-                  /<meta\s+property="og:image"[\s\S]*?\/?>/,
-                  `<meta property="og:image" content="${ogImage}" />`
-                );
-                html = html.replace(
-                  /<meta\s+property="og:description"[\s\S]*?\/?>/,
-                  `<meta property="og:description" content="${ogDesc}" />`
-                );
-                html = html.replace(
-                  /<meta\s+name="twitter:title"[\s\S]*?\/?>/,
-                  `<meta name="twitter:title" content="${ogTitle}" />`
-                );
-                html = html.replace(
-                  /<meta\s+name="twitter:description"[\s\S]*?\/?>/,
-                  `<meta name="twitter:description" content="${ogDesc}" />`
-                );
-                res.writeHead(200, { "Content-Type": mimeType });
-                res.end(html);
-                return;
-              }
-            }
-          } catch (ogErr) {
-            // Fall through to default
-          }
-        }
-
-        // Replicate product detail OG injection from server.js
-        if (fullPath.endsWith(path.join("store", "product.html")) && parsedUrl.searchParams.has("key")) {
-          const key = parsedUrl.searchParams.get("key");
-          try {
-            const productsPath = path.join(BASE_DIR, "store", "data", "products.json");
-            const products = JSON.parse(fs.readFileSync(productsPath, "utf8"));
-            const product = products.find(p => p.product_key === key);
-            if (product) {
-              const ogTitle = `${product.title} - Kicked Out Of The Sky`;
-              const ogDesc = `Shop ${product.title}. Official Kicked Out Of The Sky merchandise.`;
-              const ogImage = product.image.startsWith("http")
-                ? product.image
-                : `https://www.kickedoutofthesky.com/store/${encodeURI(product.image)}`;
-              const ogUrl = `https://www.kickedoutofthesky.com/store/p/${product.product_key}/`;
-              let html = data.toString();
-              html = html.replace(
-                /<meta\s+property="og:title"[\s\S]*?\/?>/,
-                `<meta property="og:title" content="${ogTitle}" />`
-              );
-              html = html.replace(
-                /<meta\s+property="og:image"[\s\S]*?\/?>/,
-                `<meta property="og:image" content="${ogImage}" />`
-              );
-              html = html.replace(
-                /<meta\s+property="og:description"[\s\S]*?\/?>/,
-                `<meta property="og:description" content="${ogDesc}" />`
-              );
-              html = html.replace(
-                /<meta\s+property="og:url"[\s\S]*?\/?>/,
-                `<meta property="og:url" content="${ogUrl}" />`
-              );
-              html = html.replace(
-                /<meta\s+name="twitter:title"[\s\S]*?\/?>/,
-                `<meta name="twitter:title" content="${ogTitle}" />`
-              );
-              html = html.replace(
-                /<meta\s+name="twitter:description"[\s\S]*?\/?>/,
-                `<meta name="twitter:description" content="${ogDesc}" />`
-              );
-              res.writeHead(200, { "Content-Type": mimeType });
-              res.end(html);
-              return;
-            }
-          } catch (ogErr) {
-            // Fall through to default
-          }
-        }
-
-        res.writeHead(200, { "Content-Type": mimeType });
-        res.end(data);
-      });
+    serverProcess = spawn(process.execPath, [SERVER_PATH], {
+      cwd: path.dirname(SERVER_PATH),
+      env: { ...process.env, PORT: String(TEST_PORT) },
+      stdio: ["ignore", "pipe", "pipe"],
     });
 
-    server.listen(TEST_PORT, () => resolve());
-    server.on("error", reject);
+    let stderr = "";
+    const timeout = setTimeout(() => reject(new Error(`server.js did not start in time. ${stderr}`)), 10000);
+
+    serverProcess.stdout.on("data", chunk => {
+      if (chunk.toString().includes("Development Server Running")) {
+        clearTimeout(timeout);
+        resolve();
+      }
+    });
+    serverProcess.stderr.on("data", chunk => {
+      stderr += chunk.toString();
+    });
+    serverProcess.on("exit", code => {
+      clearTimeout(timeout);
+      reject(new Error(`server.js exited early with code ${code}. ${stderr}`));
+    });
+    serverProcess.on("error", err => {
+      clearTimeout(timeout);
+      reject(err);
+    });
   });
 }
 
 function stopServer() {
   return new Promise(resolve => {
-    if (server) {
-      server.close(resolve);
-    } else {
+    if (!serverProcess || serverProcess.exitCode !== null) {
       resolve();
+      return;
     }
+    serverProcess.removeAllListeners("exit");
+    serverProcess.on("exit", () => resolve());
+    serverProcess.kill("SIGTERM");
   });
 }
 
 function httpGet(urlPath) {
   return new Promise((resolve, reject) => {
     http
-      .get(`http://localhost:${TEST_PORT}${urlPath}`, res => {
+      .get(`http://127.0.0.1:${TEST_PORT}${urlPath}`, res => {
         let data = "";
         res.on("data", chunk => {
           data += chunk;

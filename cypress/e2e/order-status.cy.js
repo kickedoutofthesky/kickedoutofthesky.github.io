@@ -1,323 +1,232 @@
 /* eslint-disable no-undef */
 
-describe("Order Status Page - E2E Tests", () => {
+// Order status lookup (store/order-status.html + order-status.js):
+// GET /api/order-status?email=...&printful_order_id=...
+
+const EMAIL = "fan@example.com";
+const ORDER_ID = "PF123456789";
+
+const SHIPPED_ORDER = {
+  printful_order_id: ORDER_ID,
+  status: "shipped",
+  created_at: "1767225600000",
+  recipient: {
+    name: "Sam Fan",
+    email: EMAIL,
+    address: {
+      line1: "1 Main St",
+      city: "Austin",
+      state: "TX",
+      zip: "78701",
+      country: "United States",
+      country_code: "US",
+    },
+  },
+  items: [{ variant_id: 5211354650, quantity: 2, price_cents: 2500 }],
+  costs: { subtotal_cents: 5000, shipping_cents: 999, tax_cents: 0, total_cents: 5999 },
+  shipments: [
+    {
+      id: "shp-778899",
+      carrier: "USPS",
+      tracking_number: "9400111899223",
+      tracking_url: "https://tools.usps.com/go/TrackConfirmAction?tLabels=9400111899223",
+      shipped_date: "1767484800000",
+    },
+  ],
+};
+
+function fillForm(orderId = ORDER_ID, email = EMAIL) {
+  if (orderId) cy.get("#printful-order-id").clear().type(orderId);
+  if (email) cy.get("#email").clear().type(email);
+}
+
+describe("Order status page", () => {
   beforeEach(() => {
-    cy.visit("/store/order-status.html");
+    cy.visitWith("/store/order-status.html", { onBeforeLoad: win => win.sessionStorage.clear() });
   });
 
-  describe("Form Elements", () => {
-    it("should display the order status page", () => {
+  describe("Search form", () => {
+    it("shows the labelled, required fields with the Track Order button disabled", () => {
       cy.get("[data-testid='order-status-page']").should("be.visible");
-    });
-
-    it("should have search form with correct fields", () => {
-      cy.get("#search-form").should("be.visible");
-      cy.get("#printful-order-id").should("exist");
-      cy.get("#email").should("exist");
-      cy.get("#search-btn").should("exist");
-    });
-
-    it("should display correct labels and placeholders", () => {
-      cy.get("label[for='printful-order-id']").should("contain", "Printful Order ID");
-      cy.get("label[for='email']").should("contain", "Email Address");
+      cy.get("label[for='printful-order-id']").should("contain", "Printful Order ID").and("contain", "*");
+      cy.get("label[for='email']").should("contain", "Email Address").and("contain", "*");
       cy.get("#printful-order-id").should("have.attr", "placeholder", "e.g., PF123456789");
       cy.get("#email").should("have.attr", "placeholder", "your@example.com");
+      cy.get("#search-btn").should("be.disabled").and("contain", "Track Order").and("not.have.class", "active");
     });
 
-    it("should have form description text", () => {
-      cy.get(".search-form p").should("contain", "Printful Order ID");
-    });
-  });
-
-  describe("Button State - Initial", () => {
-    it("should start with button disabled", () => {
-      cy.get("#search-btn").should("be.disabled");
-    });
-
-    it("should have button with disabled styling", () => {
-      cy.get("#search-btn").should("have.class", "search-button");
-      cy.get("#search-btn").should("not.have.class", "active");
-    });
-  });
-
-  describe("Button Highlighting - Both Fields Required", () => {
-    it("should require both email and Printful Order ID to enable button", () => {
-      cy.get("#printful-order-id").type("PF123456789");
+    it("enables the button only when both a valid order ID and a valid email are entered", () => {
+      fillForm(ORDER_ID, null);
       cy.get("#search-btn").should("be.disabled");
 
-      cy.get("#email").type("test@example.com");
-      cy.get("#search-btn").should("not.be.disabled");
-      cy.get("#search-btn").should("have.class", "active");
-    });
-
-    it("should disable button when Printful Order ID is cleared", () => {
-      cy.get("#printful-order-id").type("PF123456789");
-      cy.get("#email").type("test@example.com");
-      cy.get("#search-btn").should("not.be.disabled");
-
-      cy.get("#printful-order-id").clear();
-      cy.get("#search-btn").should("be.disabled");
-      cy.get("#search-btn").should("not.have.class", "active");
-    });
-
-    it("should disable button when email is cleared", () => {
-      cy.get("#printful-order-id").type("PF123456789");
-      cy.get("#email").type("test@example.com");
-      cy.get("#search-btn").should("not.be.disabled");
-
-      cy.get("#email").clear();
-      cy.get("#search-btn").should("be.disabled");
-      cy.get("#search-btn").should("not.have.class", "active");
-    });
-
-    it("should disable button with invalid email format", () => {
-      cy.get("#printful-order-id").type("PF123456789");
-      cy.get("#email").type("invalid-email");
-      cy.get("#search-btn").should("be.disabled");
-    });
-
-    it("should enable button with valid Printful Order ID and email", () => {
-      cy.get("#printful-order-id").type("PF123456789");
-      cy.get("#email").type("test@example.com");
-      cy.get("#search-btn").should("not.be.disabled");
-      cy.get("#search-btn").should("have.class", "active");
-    });
-  });
-
-  describe("Form Fields - Required", () => {
-    it("should require both Printful Order ID and email for button enable", () => {
-      cy.get("#printful-order-id").should("have.value", "");
-      cy.get("#email").should("have.value", "");
-      cy.get("#search-btn").should("be.disabled");
-    });
-
-    it("should require email when Printful Order ID is valid", () => {
-      cy.get("#printful-order-id").type("PF123456789");
-      cy.get("#search-btn").should("be.disabled");
-
-      cy.get("#email").type("test@example.com");
-      cy.get("#search-btn").should("not.be.disabled");
-    });
-
-    it("should require valid Printful Order ID when email is valid", () => {
-      cy.get("#email").type("test@example.com");
-      cy.get("#search-btn").should("be.disabled");
-
-      cy.get("#printful-order-id").type("PF123456789");
-      cy.get("#search-btn").should("not.be.disabled");
-    });
-
-    it("should reject invalid email format", () => {
-      cy.get("#printful-order-id").type("PF123456789");
       cy.get("#email").type("not-an-email");
       cy.get("#search-btn").should("be.disabled");
-    });
 
-    it("should accept valid email formats", () => {
-      cy.get("#printful-order-id").type("PF123456789");
-      const validEmails = ["test@example.com", "user.name@domain.co.uk", "first+last@example.org"];
+      cy.get("#email").clear().type(EMAIL);
+      cy.get("#search-btn").should("not.be.disabled").and("have.class", "active");
 
-      validEmails.forEach(email => {
+      ["first+last@example.org", "user.name@domain.co.uk"].forEach(email => {
         cy.get("#email").clear().type(email);
         cy.get("#search-btn").should("not.be.disabled");
       });
+
+      cy.get("#printful-order-id").clear().type("PF12");
+      cy.get("#search-btn").should("be.disabled");
+
+      cy.get("#printful-order-id").clear();
+      cy.get("#search-btn").should("be.disabled").and("not.have.class", "active");
     });
   });
 
-  describe("Form Submission - Validation", () => {
-    it("should require both fields for submission", () => {
-      cy.get("#printful-order-id").type("PF123456");
-      cy.get("#search-btn").should("be.disabled");
+  describe("Search results", () => {
+    it("looks up the order and shows items, costs, address and tracking", () => {
+      cy.intercept("GET", "**/api/order-status*", { statusCode: 200, body: SHIPPED_ORDER }).as("orderStatus");
 
-      cy.get("#email").type("test@example.com");
-      cy.get("#search-btn").should("not.be.disabled");
+      fillForm();
+      cy.get("#search-btn").click();
+
+      cy.wait("@orderStatus").then(({ request }) => {
+        const url = new URL(request.url);
+        expect(url.pathname).to.eq("/api/order-status");
+        expect(url.searchParams.get("email")).to.eq(EMAIL);
+        expect(url.searchParams.get("printful_order_id")).to.eq(ORDER_ID);
+      });
+
+      cy.get("#search-form").should("not.be.visible");
+      cy.get("#order-display").should("be.visible");
+      cy.get("#processing-section").within(() => {
+        cy.contains("h3", `Order #${ORDER_ID}`);
+        cy.get(".status-badge").should("have.text", "Shipped");
+        cy.contains("Unisex Tee w/ Text - Black - M");
+        cy.contains("Qty: 2 × $25.00 each");
+        cy.get("img[alt='Unisex Tee w/ Text']").should("exist");
+        cy.contains("Subtotal:").next().should("have.text", "$50.00");
+        cy.contains("Shipping:").next().should("have.text", "$9.99");
+        cy.contains("Total:").next().should("have.text", "$59.99");
+        cy.contains("Sam Fan");
+        cy.contains("1 Main St");
+        cy.contains("Austin, TX 78701");
+        cy.contains("USPS");
+        cy.contains("9400111899223");
+        cy.contains("Shipment ID:").next().should("contain", "#778899");
+        cy.contains("a", "Track This Shipment")
+          .should("have.attr", "href", SHIPPED_ORDER.shipments[0].tracking_url)
+          .and("have.attr", "target", "_blank");
+      });
     });
 
-    it("should reject invalid email format", () => {
-      cy.get("#printful-order-id").type("PF123456");
-      cy.get("#email").type("invalid-email");
-      cy.get("#search-btn").should("be.disabled");
+    it("searches when Enter is pressed in a field", () => {
+      cy.intercept("GET", "**/api/order-status*", { statusCode: 200, body: SHIPPED_ORDER }).as("orderStatus");
+      fillForm();
+      cy.get("#email").type("{enter}");
+      cy.wait("@orderStatus");
+      cy.get("#order-display").should("be.visible");
     });
 
-    it("should allow submission with valid email and valid Printful Order ID", () => {
-      cy.get("#printful-order-id").type("PF123456789");
-      cy.get("#email").type("test@example.com");
-      cy.get("#search-btn").should("not.be.disabled");
-
-      // Verify that button can be clicked
-      cy.get("#search-btn").should("not.have.attr", "disabled");
-    });
-  });
-
-  describe("Form Reset", () => {
-    it("should allow clearing fields and searching again", () => {
-      cy.get("#printful-order-id").type("PF123456");
-      cy.get("#email").type("test@example.com");
-
-      // Both fields are populated
-      cy.get("#printful-order-id").should("have.value", "PF123456");
-      cy.get("#email").should("have.value", "test@example.com");
-
-      // Button is enabled
-      cy.get("#search-btn").should("not.be.disabled");
-    });
-
-    it("should return to search form after error with Search Again button", () => {
-      cy.get("#printful-order-id").type("PF123456");
-      cy.get("#email").type("test@example.com");
-
-      // Mock API error
-      cy.intercept("GET", "**/api/order-status**", {
-        statusCode: 400,
-        body: { error: "Order not found" },
+    it("shows the pending message for orders not yet in production", () => {
+      cy.intercept("GET", "**/api/order-status*", {
+        statusCode: 200,
+        body: { status: "pending", message: "Your order is being prepared. We will ship it soon." },
       }).as("orderStatus");
 
+      fillForm();
       cy.get("#search-btn").click();
+      cy.wait("@orderStatus");
 
-      // Wait a moment for the error to display
-      cy.get("#error-message", { timeout: 5000 }).should("be.visible");
+      cy.get("#pending-section").should("be.visible");
+      cy.get("#pending-message").should("have.text", "Your order is being prepared. We will ship it soon.");
+      cy.get("#processing-section").should("not.be.visible");
+    });
 
-      cy.get("button").contains("Search Again").should("be.visible");
+    it("restores the last order after a reload and resets with 'Search Another Order'", () => {
+      cy.intercept("GET", "**/api/order-status*", { statusCode: 200, body: SHIPPED_ORDER }).as("orderStatus");
+      fillForm();
+      cy.get("#search-btn").click();
+      cy.wait("@orderStatus");
 
-      // Click Search Again to reset form
-      cy.get("button").contains("Search Again").click();
+      cy.reload();
+      cy.get("#processing-section").should("be.visible").and("contain", `Order #${ORDER_ID}`);
 
-      // Error should be hidden and form visible
+      cy.get("#search-another-btn").click();
       cy.get("#search-form").should("be.visible");
-    });
-  });
-
-  describe("URL Parameters Auto-Load", () => {
-    it("should auto-load search when email and Printful Order ID in URL", () => {
-      cy.visit("/store/order-status.html?printful_order_id=PF123456789&email=test@example.com");
-
-      cy.get("#printful-order-id").should("have.value", "PF123456789");
-      cy.get("#email").should("have.value", "test@example.com");
-
-      // Button should be enabled since both fields have values
-      cy.get("#search-btn").should("not.be.disabled");
-    });
-
-    it("should populate email field but not enable button with just email in URL", () => {
-      cy.visit("/store/order-status.html?email=test@example.com");
-
-      cy.get("#email").should("have.value", "test@example.com");
+      cy.get("#order-display").should("not.be.visible");
       cy.get("#printful-order-id").should("have.value", "");
-
-      // Button should be disabled since Printful Order ID is missing
-      cy.get("#search-btn").should("be.disabled");
-    });
-
-    it("should populate Printful Order ID but not enable button without email in URL", () => {
-      cy.visit("/store/order-status.html?printful_order_id=PF123456789");
-
-      cy.get("#printful-order-id").should("have.value", "PF123456789");
       cy.get("#email").should("have.value", "");
-
-      // Button should be disabled since email is missing
-      cy.get("#search-btn").should("be.disabled");
+      cy.window().its("sessionStorage").invoke("getItem", "kots_order_data").should("be.null");
     });
   });
 
-  describe("Keyboard Navigation", () => {
-    it("should enable button with valid input in both fields", () => {
-      cy.get("#printful-order-id").type("PF123456");
-      cy.get("#email").type("test@example.com");
-
-      // Both fields valid, button should be enabled
-      cy.get("#search-btn").should("not.be.disabled");
-    });
-
-    it("should disable button with invalid email", () => {
-      cy.get("#printful-order-id").type("PF123456");
-      cy.get("#email").type("invalid-email");
-
-      // Invalid email, button should be disabled
-      cy.get("#search-btn").should("be.disabled");
-    });
-  });
-
-  describe("Accessibility", () => {
-    it("should have proper labels for form inputs", () => {
-      cy.get("label[for='printful-order-id']").should("exist");
-      cy.get("label[for='email']").should("exist");
-    });
-
-    it("should have descriptive button text", () => {
-      cy.get("#search-btn").should("contain", "Track Order");
-    });
-
-    it("should have proper form structure", () => {
-      cy.get(".search-form h2").should("exist");
-      cy.get(".search-form p").should("exist");
-    });
-
-    it("should mark required fields with asterisk", () => {
-      cy.get("label[for='printful-order-id']").should("contain", "*");
-      cy.get("label[for='email']").should("contain", "*");
-    });
-  });
-
-  describe("Order Submission", () => {
-    it("should enable button with both Printful Order ID and email", () => {
-      cy.get("#printful-order-id").type("PF123456789");
-      cy.get("#email").type("test@example.com");
-
-      // Button should be enabled when both fields are valid
-      cy.get("#search-btn").should("not.be.disabled");
-      cy.get("#search-btn").should("have.class", "active");
-    });
-
-    it("should show error message on failed search", () => {
-      cy.get("#printful-order-id").type("PF000000000");
-      cy.get("#email").type("wrong@example.com");
-
-      // Mock API error response
-      cy.intercept("GET", "**/api/order-status**", {
+  describe("Errors", () => {
+    const cases = [
+      {
         statusCode: 404,
-        body: { error: "Order not found" },
-      }).as("orderNotFound");
-
-      cy.get("#search-btn").click();
-
-      // Wait for error message to display
-      cy.get("#error-message", { timeout: 5000 }).should("be.visible");
-      cy.get("#error-message").should("contain", "Order not found");
-    });
-
-    it("should show permission error for wrong email", () => {
-      cy.get("#printful-order-id").type("PF123456789");
-      cy.get("#email").type("wrong@example.com");
-
-      // Mock API permission error
-      cy.intercept("GET", "**/api/order-status**", {
+        body: { error: "Not found" },
+        message: "Order not found. Please check your Order ID and email address.",
+      },
+      {
         statusCode: 403,
-        body: { error: "Email does not match order" },
-      }).as("permissionDenied");
+        body: { error: "Forbidden" },
+        message: "The email address does not match this order. Please verify and try again.",
+      },
+      { statusCode: 500, body: { error: "Printful is unavailable" }, message: "Printful is unavailable" },
+    ];
 
-      cy.get("#search-btn").click();
+    cases.forEach(({ statusCode, body, message }) => {
+      it(`shows a helpful message for a ${statusCode} response`, () => {
+        cy.intercept("GET", "**/api/order-status*", { statusCode, body }).as("orderStatus");
+        fillForm();
+        cy.get("#search-btn").click();
+        cy.wait("@orderStatus");
 
-      // Wait for error message to display
-      cy.get("#error-message", { timeout: 5000 }).should("be.visible");
+        cy.get("#error-container").should("be.visible");
+        cy.get("#error-message").should("have.text", message);
+        cy.get("#search-form").should("be.visible");
+        cy.get("#search-btn").should("not.be.disabled");
+      });
     });
 
-    it("should display pending order status message", () => {
-      cy.get("#printful-order-id").type("PF123456789");
-      cy.get("#email").type("test@example.com");
-
-      // Mock pending status response
-      cy.intercept("GET", "**/api/order-status**", {
-        statusCode: 200,
-        body: {
-          status: "pending",
-          message: "Your order is being prepared. We will ship it soon.",
-        },
-      }).as("pendingOrder");
-
+    it("shows a connection error when the API is unreachable and resets with 'Search Again'", () => {
+      cy.intercept("GET", "**/api/order-status*", { forceNetworkError: true }).as("orderStatus");
+      fillForm();
       cy.get("#search-btn").click();
+      cy.wait("@orderStatus");
 
-      // Order display should be visible
-      cy.get("#order-display", { timeout: 5000 }).should("be.visible");
+      cy.get("#error-message").should("have.text", "Unable to connect to the server. Please try again later.");
+      cy.contains("button", "Search Again").click();
+      cy.get("#error-container").should("not.be.visible");
+      cy.get("#printful-order-id").should("have.value", "").and("have.focus");
+    });
+  });
+
+  describe("URL parameters", () => {
+    it("auto-searches when both printful_order_id and email are in the URL", () => {
+      cy.intercept("GET", "**/api/order-status*", { statusCode: 200, body: SHIPPED_ORDER }).as("orderStatus");
+      cy.visitWith(`/store/order-status.html?printful_order_id=${ORDER_ID}&email=${EMAIL}`, {
+        onBeforeLoad: win => win.sessionStorage.clear(),
+      });
+
+      cy.wait("@orderStatus").its("request.url").should("include", `printful_order_id=${ORDER_ID}`);
+      cy.get("#printful-order-id").should("have.value", ORDER_ID);
+      cy.get("#email").should("have.value", EMAIL);
+      cy.get("#processing-section").should("be.visible");
+    });
+
+    it("only pre-fills the field when one parameter is given", () => {
+      cy.intercept("GET", "**/api/order-status*", { statusCode: 200, body: SHIPPED_ORDER }).as("orderStatus");
+
+      cy.visitWith(`/store/order-status.html?email=${EMAIL}`, { onBeforeLoad: win => win.sessionStorage.clear() });
+      cy.get("#email").should("have.value", EMAIL);
+      cy.get("#printful-order-id").should("have.value", "");
+      cy.get("#search-btn").should("be.disabled");
+
+      cy.visitWith(`/store/order-status.html?printful_order_id=${ORDER_ID}`, {
+        onBeforeLoad: win => win.sessionStorage.clear(),
+      });
+      cy.get("#printful-order-id").should("have.value", ORDER_ID);
+      cy.get("#search-btn").should("be.disabled");
+
+      cy.wait(300);
+      cy.get("@orderStatus.all").should("have.length", 0);
     });
   });
 });
