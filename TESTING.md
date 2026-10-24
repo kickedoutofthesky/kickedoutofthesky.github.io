@@ -43,18 +43,18 @@ npm run e2e     # terminal 2 (headless); npm run e2e:open for the UI
 npx cypress run --spec cypress/e2e/cart.cy.js   # one spec
 ```
 
-| Spec                   | Covers                                                                                                                                      |
-| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
-| `site.cy.js`           | Home page, legal pages with the shared navbar, 404                                                                                          |
-| `cookie-consent.cy.js` | Banner accept/decline; analytics only after accept                                                                                          |
-| `release-pages.cy.js`  | `/betterpartofme/` rendering, pre-save → "Listen now" switch, `/listen/` and `/presave.html` redirects, UTM forwarding, pixel after consent |
-| `store.cy.js`          | Product grid, images, navbar cart badge, error state, filters (URL param + saved choice)                                                    |
-| `product-page.cy.js`   | Colours/sizes/prices, carousel, URL pre-selection, add to cart and merging identical items                                                  |
-| `cart.cy.js`           | Cart items, +/−, remove, subtotal, local country list, shipping estimate (payload, debounce, errors, empty cart), terms, API URL selection  |
-| `checkout.cy.js`       | Store → cart → checkout request body → Stripe redirect; double-click guard; error, retry and network-failure handling                       |
-| `success-page.cy.js`   | Order details from `/api/order-details`, cart cleared, error paths, no call without `session_id`                                            |
-| `order-status.cy.js`   | Validation, results, Enter key, reload restore, error messages                                                                              |
-| `responsive.cy.js`     | No horizontal overflow and correct grid columns at phone/tablet/desktop sizes                                                               |
+| Spec                   | Covers                                                                                                                                                                                                                                                        |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `site.cy.js`           | Home page, legal pages with the shared navbar, 404                                                                                                                                                                                                            |
+| `cookie-consent.cy.js` | Banner accept/decline; analytics only after accept                                                                                                                                                                                                            |
+| `release-pages.cy.js`  | `/betterpartofme/` rendering, pre-save → "Listen now" switch, `/listen/` and `/presave.html` redirects, UTM forwarding, pixel after consent                                                                                                                   |
+| `store.cy.js`          | Product grid, images, navbar cart badge, error state, filters (URL param + saved choice)                                                                                                                                                                      |
+| `product-page.cy.js`   | Colours/sizes/prices, carousel, URL pre-selection, add to cart and merging identical items                                                                                                                                                                    |
+| `cart.cy.js`           | Cart items, +/−, remove, subtotal, local country list, shipping estimate (payload, debounce, errors, empty cart), terms, API URL selection                                                                                                                    |
+| `checkout.cy.js`       | Store → cart → checkout request body → Stripe redirect; a multi-product, multi-quantity cart built in the store (merging, badge, subtotal, shipping and checkout payloads, success page lines); double-click guard; error, retry and network-failure handling |
+| `success-page.cy.js`   | Order details from `/api/order-details`, cart cleared, error paths, no call without `session_id`                                                                                                                                                              |
+| `order-status.cy.js`   | Validation, results, Enter key, reload restore, error messages                                                                                                                                                                                                |
+| `responsive.cy.js`     | No horizontal overflow and correct grid columns at phone/tablet/desktop sizes                                                                                                                                                                                 |
 
 [cypress/support/e2e.js](cypress/support/e2e.js) runs before every test. It:
 
@@ -69,7 +69,7 @@ shapes listed in [README.md](README.md#backend-api-separate-repo).
 ## Live staging tests
 
 [cypress/staging/staging-happy-path.cy.js](cypress/staging/staging-happy-path.cy.js) calls the real
-staging API and completes a Stripe test-mode payment with card `4242 4242 4242 4242`. See
+staging API and checks a multi-product, multi-quantity cart line by line on the Stripe page, and completes a test-mode payment with card `4242 4242 4242 4242`. See
 [cypress/staging/README.md](cypress/staging/README.md). These tests are kept out of `npm run e2e`
 and CI.
 

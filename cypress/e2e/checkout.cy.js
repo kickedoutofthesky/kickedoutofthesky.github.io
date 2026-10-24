@@ -59,32 +59,90 @@ describe("Checkout", () => {
     cy.window().its("localStorage").invoke("getItem", "kots_cart").should("eq", "[]");
   });
 
-  it("sends every cart line with its variant ID and the selected country", () => {
+  it("builds a multi-product cart in the store and sends every line, with quantities, to checkout", () => {
+    const MULTI_ORDER_DETAILS = {
+      ...ORDER_DETAILS,
+      lineItems: [
+        { name: "Unisex Tee w/ Text - Black / M", quantity: 3, unitPrice: 2500, amount: 7500 },
+        { name: "Unisex Tee w/ Text - Black / L", quantity: 1, unitPrice: 2500, amount: 2500 },
+        { name: "Die-cut Sticker w/ Text - 3″×3″", quantity: 3, unitPrice: 550, amount: 1650 },
+      ],
+      orderSummary: { subtotal: 11650, shipping: 999, tax: 0, total: 12649 },
+    };
     cy.intercept("POST", "**/api/create-checkout-session", { statusCode: 200, body: { url: STRIPE_URL } }).as(
       "createSession"
     );
-    cy.intercept("GET", "**/api/order-details*", { statusCode: 200, body: ORDER_DETAILS });
+    cy.intercept("GET", "**/api/order-details?session_id=cs_test_checkout", {
+      statusCode: 200,
+      body: MULTI_ORDER_DETAILS,
+    }).as("orderDetails");
 
-    readyCartForCheckout(
-      [
-        { ...TEE, quantity: 2 },
-        { ...STICKER, quantity: 1 },
-      ],
-      "CA"
-    );
+    // Same tee and size added twice (should merge), the tee in a second size, and a second product
+    [
+      { ...TEE, quantity: 2 },
+      { ...TEE, size: "L", quantity: 1 },
+      { ...STICKER, quantity: 3 },
+      { ...TEE, quantity: 1 },
+    ].forEach(({ productKey, color, size, quantity }, i) => {
+      if (i === 0) {
+        cy.visitWith(`/store/product.html?key=${productKey}`, { cart: [] });
+      } else {
+        cy.visit(`/store/product.html?key=${productKey}`);
+      }
+      cy.get("[data-testid='product-title']").should("be.visible");
+      cy.chooseVariant({ color, size, quantity });
+      cy.get("#add-to-cart-btn").click();
+      cy.location("pathname").should("eq", "/store/cart.html");
+    });
+
+    cy.get("[data-testid='cart-item']").should("have.length", 3);
+    cy.get("[data-testid='cart-count']").should("have.text", "7");
+    [
+      { name: "Unisex Tee w/ Text", detail: "Size: M", quantity: "3" },
+      { name: "Unisex Tee w/ Text", detail: "Size: L", quantity: "1" },
+      { name: "Die-cut Sticker w/ Text", detail: "Size: 3x3", quantity: "3" },
+    ].forEach(({ name, detail, quantity }, i) => {
+      cy.get("[data-testid='cart-item']")
+        .eq(i)
+        .within(() => {
+          cy.get("[data-testid='item-name']").should("have.text", name);
+          cy.contains("p", detail);
+          cy.get("[data-testid='quantity-input']").should("have.value", quantity);
+        });
+    });
+    cy.get("[data-testid='cart-subtotal']").should("have.text", "$116.50 USD");
+
+    cy.selectShippingCountry("CA");
+    cy.get("@calculateShipping")
+      .its("request.body.items")
+      .should("deep.equal", [
+        { variant_id: 5211354650, quantity: 3 },
+        { variant_id: 5211354651, quantity: 1 },
+        { variant_id: 5209549630, quantity: 3 },
+      ]);
+    cy.acceptTerms();
     cy.get("#checkout-btn").click();
 
     cy.wait("@createSession")
       .its("request.body")
       .should("deep.equal", {
         items: [
-          { variantId: "5211354650", quantity: 2 },
-          { variantId: "5209549630", quantity: 1 },
+          { variantId: "5211354650", quantity: 3 },
+          { variantId: "5211354651", quantity: 1 },
+          { variantId: "5209549630", quantity: 3 },
         ],
         country: "CA",
         termsAccepted: true,
       });
+
     cy.location("pathname").should("eq", "/store/success.html");
+    cy.wait("@orderDetails");
+    cy.get("#order-items > div").should("have.length", 3);
+    MULTI_ORDER_DETAILS.lineItems.forEach(({ name, quantity }, i) => {
+      cy.get("#order-items > div").eq(i).should("contain", name).and("contain", `Qty: ${quantity}`);
+    });
+    cy.get("#summary-subtotal").should("have.text", "$116.50");
+    cy.window().its("localStorage").invoke("getItem", "kots_cart").should("eq", "[]");
   });
 
   it("shows a processing state, locks the form and ignores repeat clicks while the session is created", () => {

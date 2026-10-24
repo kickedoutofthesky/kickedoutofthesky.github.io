@@ -18,7 +18,10 @@ There is no production mode: it would create live Stripe sessions.
 - The shipping estimate sends the cart items and shows the API's cheapest option.
 - Larger carts are priced higher than a single item.
 - A disabled country (RU) shows "We can't ship to this country." without blocking checkout.
-- Full checkout: Stripe test card `4242 4242 4242 4242` (Link opt-in unticked), then the success page loads the order from staging.
+- Full checkout of a cart built through the product pages: 2× tee XS, 1× tee L, 3× sticker (two products, three lines).
+  - The cart shows 3 lines, a badge of 6 and the right subtotal; the shipping and checkout requests carry every line and quantity.
+  - The Stripe page lists the same 3 lines with matching names, quantities, line totals and subtotal.
+  - Pays with test card `4242 4242 4242 4242` (Link opt-in unticked); the success page shows the same lines and the cart is cleared.
 
 Prices aren't hard-coded because Printful rates change; the page is checked against the API's response.
 
