@@ -548,6 +548,7 @@ function hideSearchForm() {
 function resetForm() {
   document.getElementById("printful-order-id").value = "";
   document.getElementById("email").value = "";
+  updateButtonState();
   document.getElementById("error-container").style.display = "none";
   document.getElementById("order-display").style.display = "none";
   document.getElementById("search-form").style.display = "block";

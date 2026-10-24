@@ -152,6 +152,7 @@ describe("Order status page", () => {
       cy.get("#order-display").should("not.be.visible");
       cy.get("#printful-order-id").should("have.value", "");
       cy.get("#email").should("have.value", "");
+      cy.get("#search-btn").should("be.disabled").and("not.have.class", "active");
       cy.window().its("sessionStorage").invoke("getItem", "kots_order_data").should("be.null");
     });
   });
@@ -195,6 +196,8 @@ describe("Order status page", () => {
       cy.contains("button", "Search Again").click();
       cy.get("#error-container").should("not.be.visible");
       cy.get("#printful-order-id").should("have.value", "").and("have.focus");
+      cy.get("#email").should("have.value", "");
+      cy.get("#search-btn").should("be.disabled").and("not.have.class", "active");
     });
   });
 

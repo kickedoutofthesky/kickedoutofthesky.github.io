@@ -138,6 +138,34 @@ describe("Product page", () => {
       cy.get("#product-image").should("have.attr", "style").and("include", "scale(1.75)");
       cy.get("#zoom-controls").should("not.be.visible");
     });
+
+    it("zooms in 20% steps up to 300%, pans while zoomed, and zooms out or resets to 100%", () => {
+      visitProduct(TEE);
+      cy.get("#zoom-level").should("not.be.visible");
+      cy.get("#pan-controls").should("not.be.visible");
+
+      cy.get("[aria-label='Zoom in to see product details']").click();
+      cy.get("#zoom-level").should("be.visible").and("have.text", "120%");
+      cy.get("#product-image").should("have.attr", "style").and("include", "scale(1.2)");
+      cy.get("#pan-controls").should("be.visible");
+
+      cy.get("[aria-label='Pan product image left']").click();
+      cy.get("#product-image").should("have.attr", "style").and("include", "translate(20px, 0px)");
+
+      for (let i = 0; i < 12; i++) cy.get("[aria-label='Zoom in to see product details']").click();
+      cy.get("#zoom-level").should("have.text", "300%");
+
+      for (let i = 0; i < 12; i++) cy.get("[aria-label='Zoom out to see full product']").click();
+      cy.get("#product-image").should("have.attr", "style").and("include", "scale(1) translate(0px, 0px)");
+      cy.get("#zoom-level").should("not.be.visible");
+      cy.get("#pan-controls").should("not.be.visible");
+
+      cy.get("[aria-label='Zoom in to see product details']").click().click();
+      cy.get("#zoom-level").should("have.text", "140%");
+      cy.get("[aria-label='Reset product image zoom to original size']").click();
+      cy.get("#product-image").should("have.attr", "style").and("include", "scale(1) translate(0px, 0px)");
+      cy.get("#zoom-level").should("not.be.visible");
+    });
   });
 
   describe("URL pre-selection", () => {

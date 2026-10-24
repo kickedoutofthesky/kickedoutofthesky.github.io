@@ -20,7 +20,10 @@ import {
 let currentProduct = null;
 let currentImageIndex = 0; // Track carousel position (0 = main, 1 = sleeve mockup)
 
-// Zoom and Pan state
+// Zoom and Pan state (zoomLevel is a scale multiplier: 1 = 100%)
+const ZOOM_MIN = 1;
+const ZOOM_MAX = 3;
+const ZOOM_STEP = 0.2;
 let zoomLevel = 1;
 let panX = 0;
 let panY = 0;
@@ -125,20 +128,20 @@ function applyImageTransform() {
   }
 }
 
+// Rounded to avoid float drift (e.g. 1.2 - 0.2 = 1.0000000000000002 would keep pan controls visible)
+function clampZoom(value) {
+  return Math.round(constrainZoomLevel(value, ZOOM_MIN, ZOOM_MAX) * 100) / 100;
+}
+
 function zoomIn() {
-  const increment = calculateZoomIncrement("in");
-  zoomLevel += increment;
-  zoomLevel = constrainZoomLevel(zoomLevel);
+  zoomLevel = clampZoom(zoomLevel + calculateZoomIncrement("in", ZOOM_STEP));
   updateZoomDisplay();
   applyImageTransform();
 }
 
 function zoomOut() {
-  const increment = calculateZoomIncrement("out");
-  zoomLevel += increment;
-  zoomLevel = constrainZoomLevel(zoomLevel);
-  if (zoomLevel <= 1) {
-    zoomLevel = 1;
+  zoomLevel = clampZoom(zoomLevel + calculateZoomIncrement("out", ZOOM_STEP));
+  if (zoomLevel === ZOOM_MIN) {
     panX = 0;
     panY = 0;
   }
@@ -180,11 +183,7 @@ function updateZoomDisplay() {
 }
 
 function handleImageWheel(e) {
-  const MIN_ZOOM = 1;
-  const MAX_ZOOM = 3;
-  const ZOOM_STEP = 0.2;
-
-  if (zoomLevel <= 1 && e.deltaY > 0) {
+  if (zoomLevel <= ZOOM_MIN && e.deltaY > 0) {
     return;
   }
 
@@ -192,9 +191,9 @@ function handleImageWheel(e) {
 
   const oldZoom = zoomLevel;
   const delta = e.deltaY > 0 ? -ZOOM_STEP : ZOOM_STEP;
-  zoomLevel = constrainZoomLevel(zoomLevel + delta, MIN_ZOOM, MAX_ZOOM);
+  zoomLevel = clampZoom(zoomLevel + delta);
 
-  if (zoomLevel === MIN_ZOOM) {
+  if (zoomLevel === ZOOM_MIN) {
     panX = 0;
     panY = 0;
   }
@@ -257,9 +256,6 @@ function handleImageTouchStart(e) {
 }
 
 function handleImageTouchMove(e) {
-  const MIN_ZOOM = 1;
-  const MAX_ZOOM = 3;
-
   if (e.touches.length === 2) {
     e.preventDefault();
     const touch1 = e.touches[0];
@@ -269,7 +265,7 @@ function handleImageTouchMove(e) {
     if (touchDistance > 0) {
       const scale = newDistance / touchDistance;
       const oldZoom = zoomLevel;
-      zoomLevel = constrainZoomLevel(zoomLevel * scale, MIN_ZOOM, MAX_ZOOM);
+      zoomLevel = clampZoom(zoomLevel * scale);
 
       if (zoomLevel !== oldZoom) {
         updateZoomDisplay();
@@ -525,29 +521,29 @@ document.addEventListener("DOMContentLoaded", async () => {
 
               <!-- Zoom Controls -->
               <div id="zoom-controls" style="position: absolute; bottom: 10px; right: 10px; display: flex; flex-direction: column; gap: 4px; z-index: 10; pointer-events: auto;">
-                <button type="button" onclick="zoomIn()" aria-label="Zoom in to see product details" title="Zoom In" style="width: 36px; height: 36px; border: none; border-radius: 6px; background: rgba(0,0,0,0.6); color: #fff; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; pointer-events: auto; padding: 0;"><i class="fas fa-search-plus"></i></button>
-                <button type="button" onclick="zoomOut()" aria-label="Zoom out to see full product" title="Zoom Out" style="width: 36px; height: 36px; border: none; border-radius: 6px; background: rgba(0,0,0,0.6); color: #fff; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; pointer-events: auto; padding: 0;"><i class="fas fa-search-minus"></i></button>
-                <button type="button" onclick="resetZoom()" aria-label="Reset product image zoom to original size" title="Reset Zoom" style="width: 36px; height: 36px; border: none; border-radius: 6px; background: rgba(0,0,0,0.6); color: #fff; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; pointer-events: auto; padding: 0;"><i class="fas fa-compress-arrows-alt"></i></button>
+                <button type="button" aria-label="Zoom in to see product details" title="Zoom In" style="width: 36px; height: 36px; border: none; border-radius: 6px; background: rgba(0,0,0,0.6); color: #fff; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; pointer-events: auto; padding: 0;"><i class="fas fa-search-plus"></i></button>
+                <button type="button" aria-label="Zoom out to see full product" title="Zoom Out" style="width: 36px; height: 36px; border: none; border-radius: 6px; background: rgba(0,0,0,0.6); color: #fff; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; pointer-events: auto; padding: 0;"><i class="fas fa-search-minus"></i></button>
+                <button type="button" aria-label="Reset product image zoom to original size" title="Reset Zoom" style="width: 36px; height: 36px; border: none; border-radius: 6px; background: rgba(0,0,0,0.6); color: #fff; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; pointer-events: auto; padding: 0;"><i class="fas fa-compress-arrows-alt"></i></button>
               </div>
 
               <!-- Pan Controls (visible only when zoomed) -->
               <div id="pan-controls" style="display: none; position: absolute; bottom: 10px; left: 10px; z-index: 10; pointer-events: auto;">
                 <div style="display: grid; grid-template-columns: 30px 30px 30px; grid-template-rows: 30px 30px 30px; gap: 2px;">
                   <div></div>
-                  <button type="button" onclick="panImage(0, 20)" aria-label="Pan product image up" title="Pan Up" style="width: 30px; height: 30px; border: none; border-radius: 4px; background: rgba(0,0,0,0.6); color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 12px; pointer-events: auto; padding: 0;"><i class="fas fa-chevron-up"></i></button>
+                  <button type="button" aria-label="Pan product image up" title="Pan Up" style="width: 30px; height: 30px; border: none; border-radius: 4px; background: rgba(0,0,0,0.6); color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 12px; pointer-events: auto; padding: 0;"><i class="fas fa-chevron-up"></i></button>
                   <div></div>
-                  <button type="button" onclick="panImage(20, 0)" aria-label="Pan product image left" title="Pan Left" style="width: 30px; height: 30px; border: none; border-radius: 4px; background: rgba(0,0,0,0.6); color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 12px; pointer-events: auto; padding: 0;"><i class="fas fa-chevron-left"></i></button>
+                  <button type="button" aria-label="Pan product image left" title="Pan Left" style="width: 30px; height: 30px; border: none; border-radius: 4px; background: rgba(0,0,0,0.6); color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 12px; pointer-events: auto; padding: 0;"><i class="fas fa-chevron-left"></i></button>
                   <div></div>
-                  <button type="button" onclick="panImage(-20, 0)" aria-label="Pan product image right" title="Pan Right" style="width: 30px; height: 30px; border: none; border-radius: 4px; background: rgba(0,0,0,0.6); color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 12px; pointer-events: auto; padding: 0;"><i class="fas fa-chevron-right"></i></button>
+                  <button type="button" aria-label="Pan product image right" title="Pan Right" style="width: 30px; height: 30px; border: none; border-radius: 4px; background: rgba(0,0,0,0.6); color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 12px; pointer-events: auto; padding: 0;"><i class="fas fa-chevron-right"></i></button>
                   <div></div>
-                  <button type="button" onclick="panImage(0, -20)" aria-label="Pan product image down" title="Pan Down" style="width: 30px; height: 30px; border: none; border-radius: 4px; background: rgba(0,0,0,0.6); color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 12px; pointer-events: auto; padding: 0;"><i class="fas fa-chevron-down"></i></button>
+                  <button type="button" aria-label="Pan product image down" title="Pan Down" style="width: 30px; height: 30px; border: none; border-radius: 4px; background: rgba(0,0,0,0.6); color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 12px; pointer-events: auto; padding: 0;"><i class="fas fa-chevron-down"></i></button>
                   <div></div>
                 </div>
               </div>
 
               <!-- Carousel Arrows for multiple mockup images -->
-              <button id="carousel-prev" type="button" aria-label="View previous product image" onclick="showPreviousImage()" style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); width: 36px; height: 36px; border: none; border-radius: 6px; background: rgba(0,0,0,0.6); color: #fff; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 10; transition: background 0.2s; pointer-events: auto; padding: 0;"><i class="fas fa-chevron-left"></i></button>
-              <button id="carousel-next" type="button" aria-label="View next product image" onclick="showNextImage()" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); width: 36px; height: 36px; border: none; border-radius: 6px; background: rgba(0,0,0,0.6); color: #fff; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 10; transition: background 0.2s; pointer-events: auto; padding: 0;"><i class="fas fa-chevron-right"></i></button>
+              <button id="carousel-prev" type="button" aria-label="View previous product image" style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); width: 36px; height: 36px; border: none; border-radius: 6px; background: rgba(0,0,0,0.6); color: #fff; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 10; transition: background 0.2s; pointer-events: auto; padding: 0;"><i class="fas fa-chevron-left"></i></button>
+              <button id="carousel-next" type="button" aria-label="View next product image" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); width: 36px; height: 36px; border: none; border-radius: 6px; background: rgba(0,0,0,0.6); color: #fff; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 10; transition: background 0.2s; pointer-events: auto; padding: 0;"><i class="fas fa-chevron-right"></i></button>
             </div>
           </div>
           <div class="col-md-5">
