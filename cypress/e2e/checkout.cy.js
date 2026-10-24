@@ -5,6 +5,8 @@
 
 const TEE = { productKey: "product_421296994", color: "Black", size: "M" }; // variant 5211354650
 const STICKER = { productKey: "product_421115395", color: "Satin", size: "3x3" }; // variant 5209549630
+const TEE_IMAGE = "Unisex Tee w Text - Front - Black.jpg";
+const STICKER_IMAGE = "Die-cut Sticker w Text - Front - Satin.jpg";
 
 // Same-origin stand-in for the Stripe Checkout URL so the redirect can be observed
 const STRIPE_URL = "/store/success.html?session_id=cs_test_checkout";
@@ -98,16 +100,17 @@ describe("Checkout", () => {
     cy.get("[data-testid='cart-item']").should("have.length", 3);
     cy.get("[data-testid='cart-count']").should("have.text", "7");
     [
-      { name: "Unisex Tee w/ Text", detail: "Size: M", quantity: "3" },
-      { name: "Unisex Tee w/ Text", detail: "Size: L", quantity: "1" },
-      { name: "Die-cut Sticker w/ Text", detail: "Size: 3x3", quantity: "3" },
-    ].forEach(({ name, detail, quantity }, i) => {
+      { name: "Unisex Tee w/ Text", detail: "Size: M", quantity: "3", image: TEE_IMAGE },
+      { name: "Unisex Tee w/ Text", detail: "Size: L", quantity: "1", image: TEE_IMAGE },
+      { name: "Die-cut Sticker w/ Text", detail: "Size: 3x3", quantity: "3", image: STICKER_IMAGE },
+    ].forEach(({ name, detail, quantity, image }, i) => {
       cy.get("[data-testid='cart-item']")
         .eq(i)
         .within(() => {
           cy.get("[data-testid='item-name']").should("have.text", name);
           cy.contains("p", detail);
           cy.get("[data-testid='quantity-input']").should("have.value", quantity);
+          cy.get("img").shouldShowImage(image);
         });
     });
     cy.get("[data-testid='cart-subtotal']").should("have.text", "$116.50 USD");
@@ -138,8 +141,10 @@ describe("Checkout", () => {
     cy.location("pathname").should("eq", "/store/success.html");
     cy.wait("@orderDetails");
     cy.get("#order-items > div").should("have.length", 3);
-    MULTI_ORDER_DETAILS.lineItems.forEach(({ name, quantity }, i) => {
+    [TEE_IMAGE, TEE_IMAGE, STICKER_IMAGE].forEach((image, i) => {
+      const { name, quantity } = MULTI_ORDER_DETAILS.lineItems[i];
       cy.get("#order-items > div").eq(i).should("contain", name).and("contain", `Qty: ${quantity}`);
+      cy.get("#order-items > div").eq(i).find("img").shouldShowImage(image);
     });
     cy.get("#summary-subtotal").should("have.text", "$116.50");
     cy.window().its("localStorage").invoke("getItem", "kots_cart").should("eq", "[]");

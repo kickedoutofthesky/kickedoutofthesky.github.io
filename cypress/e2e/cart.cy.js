@@ -53,7 +53,7 @@ describe("Cart page", () => {
           cy.get("[data-testid='item-price']").should("have.text", "$25.00 USD");
           cy.get("[data-testid='quantity-input']").should("have.value", "2");
           cy.contains("$50.00 USD");
-          cy.get("img").should("have.attr", "src").and("include", "Black");
+          cy.get("img").shouldShowImage("Unisex Tee w Text - Front - Black.jpg");
         });
 
       cy.get("[data-testid='cart-item']")
@@ -61,6 +61,7 @@ describe("Cart page", () => {
         .within(() => {
           cy.get("[data-testid='item-name']").should("have.text", "Die-cut Sticker w/ Text");
           cy.get("[data-testid='item-price']").should("have.text", "$5.50 USD");
+          cy.get("img").shouldShowImage("Die-cut Sticker w Text - Front - Satin.jpg");
         });
 
       cy.get("[data-testid='cart-subtotal']").should("have.text", "$55.50 USD");

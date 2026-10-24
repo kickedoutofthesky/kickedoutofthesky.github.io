@@ -90,6 +90,19 @@ Cypress.Commands.add("selectShippingCountry", (countryCode = "US") => {
   cy.get("#shipping-estimate").should("not.have.text", "Calculating...");
 });
 
+// Assert an <img> actually loaded (not just that it has a src). Scrolls it into view so lazy
+// images load. fileName (optional) is matched against the decoded src.
+Cypress.Commands.add("shouldShowImage", { prevSubject: true }, ($img, fileName) => {
+  cy.wrap($img)
+    .scrollIntoView()
+    .should($el => {
+      const img = $el[0];
+      if (fileName) expect(decodeURI(img.currentSrc || img.src), "image src").to.include(fileName);
+      expect(img.complete, "image finished loading").to.eq(true);
+      expect(img.naturalWidth, "image width").to.be.greaterThan(0);
+    });
+});
+
 Cypress.Commands.add("acceptTerms", () => {
   cy.get("#terms-checkbox").check();
 });

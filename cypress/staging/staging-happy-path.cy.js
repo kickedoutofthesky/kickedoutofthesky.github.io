@@ -7,7 +7,7 @@
  *
  * Run: npm run dev:staging, then npm run test:e2e:staging
  *
- * The checkout test builds a multi-product cart, checks every line on the Stripe page,
+ * The checkout test builds a multi-product cart, checks every line (incl. its image) on the Stripe page,
  * and completes a real Stripe test-mode payment (card 4242) on staging.
  *
  * Prices aren't hard-coded because Printful rates change; the UI is checked
@@ -96,6 +96,7 @@ describe("Integration Tests - Live staging API (no mocks)", () => {
         variantId: 5246069560,
         unitCents: 2500,
         name: "Unisex Tee w/ Color Block Graphic - Black / XS",
+        image: "Unisex Tee w Color Block Graphic - Front - Black.jpg",
       },
       {
         productKey: "product_425342399",
@@ -105,6 +106,7 @@ describe("Integration Tests - Live staging API (no mocks)", () => {
         variantId: 5246069569,
         unitCents: 2500,
         name: "Unisex Tee w/ Color Block Graphic - Black / L",
+        image: "Unisex Tee w Color Block Graphic - Front - Black.jpg",
       },
       {
         productKey: "product_421115395",
@@ -114,6 +116,7 @@ describe("Integration Tests - Live staging API (no mocks)", () => {
         variantId: 5209549630,
         unitCents: 550,
         name: "Die-cut Sticker w/ Text",
+        image: "Die-cut Sticker w Text - Front - Satin.jpg",
       },
     ];
     const LINES = ORDER.map(line => ({ ...line, total: formatCents(line.unitCents * line.quantity) }));
@@ -156,11 +159,12 @@ describe("Integration Tests - Live staging API (no mocks)", () => {
       cy.get("[data-testid='cart-item']").should("have.length", ORDER.length);
       cy.get("[data-testid='cart-count']").should("have.text", String(TOTAL_QUANTITY));
       cy.get("[data-testid='cart-subtotal']").should("have.text", `${SUBTOTAL} USD`);
-      LINES.forEach(({ quantity }, i) => {
+      LINES.forEach(({ quantity, image }, i) => {
         cy.get("[data-testid='cart-item']")
           .eq(i)
           .find("[data-testid='quantity-input']")
           .should("have.value", String(quantity));
+        cy.get("[data-testid='cart-item']").eq(i).find("img").shouldShowImage(image);
       });
 
       const expectedItems = ORDER.map(({ variantId, quantity }) => ({ variantId: String(variantId), quantity }));
@@ -191,13 +195,29 @@ describe("Integration Tests - Live staging API (no mocks)", () => {
         ({ lines, subtotal }) => {
           // Stripe lists one line per cart line, with the cart quantities and totals
           cy.get(".LineItem", { timeout: 30000 }).should("have.length", lines.length);
-          lines.forEach(({ name, quantity, total }, i) => {
+          // Stripe proxies product images; the original URL is hex-encoded in a path segment after cloudfront.net
+          const originalImageUrl = src => {
+            const parts = decodeURIComponent(src).split("/");
+            const hex = parts[parts.findIndex(part => part.endsWith("cloudfront.net")) + 2] || "";
+            return decodeURI((hex.match(/../g) || []).map(h => String.fromCharCode(parseInt(h, 16))).join(""));
+          };
+          lines.forEach(({ name, quantity, total, image }, i) => {
             cy.get(".LineItem")
               .eq(i)
               .within(() => {
                 cy.get("[data-testid='line-item-product-name']").should("contain", name);
                 cy.get("[data-testid='line-item-quantity']").should("have.text", `Qty ${quantity}`);
                 cy.get("[data-testid='line-item-total-amount']").should("have.text", total);
+                cy.get("[data-testid='line-item-image'] img")
+                  .scrollIntoView()
+                  .should($img => {
+                    const img = $img[0];
+                    expect(originalImageUrl(img.currentSrc || img.src), "image sent to Stripe").to.eq(
+                      `https://www.kickedoutofthesky.com/store/assets/images/${image}`
+                    );
+                    expect(img.complete, "image finished loading").to.eq(true);
+                    expect(img.naturalWidth, "image width").to.be.greaterThan(0);
+                  });
               });
           });
           cy.get("[data-testid='order-details-footer-subtotal-amount']").should("have.text", subtotal);
@@ -236,8 +256,9 @@ describe("Integration Tests - Live staging API (no mocks)", () => {
       cy.wait("@orderDetails", { timeout: 30000 }).its("response.statusCode").should("eq", 200);
       cy.contains("h1", "Order Successful");
       cy.get("#order-items > div").should("have.length", LINES.length);
-      LINES.forEach(({ name, quantity }, i) => {
+      LINES.forEach(({ name, quantity, image }, i) => {
         cy.get("#order-items > div").eq(i).should("contain", name).and("contain", `Qty: ${quantity}`);
+        cy.get("#order-items > div").eq(i).find("img").shouldShowImage(image);
       });
       cy.get("#summary-subtotal").should("have.text", SUBTOTAL);
       cy.get("#customer-email").should("have.text", "staging-test@example.com");

@@ -58,9 +58,8 @@ describe("Success page", () => {
         .and("contain", "Qty: 2 × $25.00 each")
         .and("contain", "$50.00")
         .find("img")
-        .should("have.attr", "src")
-        .and("include", "Unisex Tee w Text - Front - Black");
-      cy.get("#order-items > div").eq(1).should("contain", "Qty: 1 × $45.00 each").find("img").should("exist");
+        .shouldShowImage("Unisex Tee w Text - Front - Black.jpg");
+      cy.get("#order-items > div").eq(1).should("contain", "Qty: 1 × $45.00 each").find("img").shouldShowImage();
     });
 
     it("shows the order summary totals", () => {

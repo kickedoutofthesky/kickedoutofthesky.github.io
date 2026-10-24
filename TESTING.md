@@ -61,7 +61,7 @@ npx cypress run --spec cypress/e2e/cart.cy.js   # one spec
 - mocks `POST /api/calculate-shipping` (it checks the `{ country, items }` body; a bad body gets a 400),
 - stubs Google Analytics,
 - adds the commands `cy.visitWith` (pre-fills the cart and cookie choice), `cy.chooseVariant`,
-  `cy.selectShippingCountry` and `cy.acceptTerms`.
+  `cy.selectShippingCountry`, `cy.acceptTerms` and `shouldShowImage` (asserts an image actually loaded).
 
 Each spec mocks the other API calls with `cy.intercept`, using the real request and response
 shapes listed in [README.md](README.md#backend-api-separate-repo).
@@ -69,7 +69,7 @@ shapes listed in [README.md](README.md#backend-api-separate-repo).
 ## Live staging tests
 
 [cypress/staging/staging-happy-path.cy.js](cypress/staging/staging-happy-path.cy.js) calls the real
-staging API and checks a multi-product, multi-quantity cart line by line on the Stripe page, and completes a test-mode payment with card `4242 4242 4242 4242`. See
+staging API and checks a multi-product, multi-quantity cart line by line (name, quantity, total and product image) on the Stripe page, and completes a test-mode payment with card `4242 4242 4242 4242`. See
 [cypress/staging/README.md](cypress/staging/README.md). These tests are kept out of `npm run e2e`
 and CI.
 
