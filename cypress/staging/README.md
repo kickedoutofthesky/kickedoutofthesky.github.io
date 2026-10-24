@@ -1,37 +1,28 @@
-# Integration Tests (Real API)
+# Live staging tests
 
-These tests validate the staging API without mocks. They test real API responses and behavior.
+These Cypress tests call the real staging API (`https://api-staging.kickedoutofthesky.com`) with no
+mocks and complete a Stripe **test-mode** payment. They live outside `cypress/e2e`, so the normal
+suite (`npm run e2e`) and CI never run them.
 
-## Running Integration Tests
-
-These tests call the live **staging** API (`https://api-staging.kickedoutofthesky.com`) and complete a
-Stripe **test-mode** payment. They are skipped unless `CYPRESS_API_TARGET=staging` is set.
-
-Start the frontend (`npm run dev:staging`), then:
+## Run
 
 ```bash
-CYPRESS_API_TARGET=staging npx cypress run --spec "cypress/e2e/integration/*.cy.js" --browser chrome --config baseUrl=http://localhost:3002
+npm run dev:staging        # terminal 1: frontend on http://localhost:3002
+npm run test:e2e:staging   # terminal 2
 ```
 
 There is no production mode: it would create live Stripe sessions.
 
-## Differences from Unit Tests
+## What `staging-happy-path.cy.js` checks
 
-- **No mocks** - all requests go to real API
-- **Slower** - includes network latency
-- **More fragile** - depends on API and data availability
-- **Real validation** - catches actual API issues
-- **Separate folder** - doesn't interfere with unit tests
+- The shipping estimate sends the cart items and shows the API's cheapest option.
+- Larger carts are priced higher than a single item.
+- A disabled country (RU) shows "We can't ship to this country." without blocking checkout.
+- Full checkout: Stripe test card `4242 4242 4242 4242` (Link opt-in unticked), then the success page loads the order from staging.
 
-## Tests Included
+Prices aren't hard-coded because Printful rates change; the page is checked against the API's response.
 
-- `staging-happy-path.cy.js`
-  - Shipping estimate sends the cart items and shows the API's cheapest option
-  - Larger carts are priced higher than a single item
-  - A disabled country (RU) shows "We can't ship to this country." without blocking checkout
-  - Full checkout: Stripe test card `4242 4242 4242 4242` (Link opt-in unticked) → success page shows the order
-
-Notes:
+## Notes
 
 - Stripe's `success_url` points at the live site, so the test redirects it to the local success page.
 - `experimentalModifyObstructiveThirdPartyCode` in `cypress.config.js` lets Stripe Checkout render inside Cypress.
