@@ -34,6 +34,26 @@ function visitSuccess(query = `?session_id=${SESSION_ID}`) {
 }
 
 describe("Success page", () => {
+  it("uses the same shared navbar as the other store pages", () => {
+    const navSummary = () =>
+      cy.get("#navbarMain").then($nav => ({
+        links: [...$nav.find(".nav-link")].map(a => a.getAttribute("href")),
+        homeLabel: $nav.find("a[aria-label]").attr("aria-label"),
+        logoHeight: Math.round($nav.find("img.brand")[0].getBoundingClientRect().height),
+      }));
+
+    cy.visitWith("/store/cart.html", { cart: CART });
+    cy.get("#navbarMain").should("have.length", 1);
+    navSummary().then(cartNav => {
+      cy.intercept("GET", "/navbar.html").as("sharedNavbar");
+      cy.intercept("GET", "**/api/order-details?session_id=*", { statusCode: 200, body: ORDER_DETAILS });
+      visitSuccess();
+      cy.wait("@sharedNavbar");
+      cy.get("#navbarMain").should("have.length", 1);
+      navSummary().should("deep.equal", cartNav);
+    });
+  });
+
   describe("With order details", () => {
     beforeEach(() => {
       cy.intercept("GET", "**/api/order-details?session_id=*", { statusCode: 200, body: ORDER_DETAILS }).as(
