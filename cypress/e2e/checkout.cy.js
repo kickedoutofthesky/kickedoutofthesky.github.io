@@ -113,7 +113,7 @@ describe("Checkout", () => {
           cy.get("img").shouldShowImage(image);
         });
     });
-    cy.get("[data-testid='cart-subtotal']").should("have.text", "$116.50 USD");
+    cy.get("[data-testid='cart-subtotal']").should("have.text", "$116.50");
 
     cy.selectShippingCountry("CA");
     cy.get("@calculateShipping")

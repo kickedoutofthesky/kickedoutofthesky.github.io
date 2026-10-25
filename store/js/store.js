@@ -148,9 +148,7 @@ function getPriceDisplay(product) {
   // If no variant prices found, check for display_price fallback
   if (prices.length === 0) {
     if (product.display_price) {
-      // Ensure display_price has USD suffix
-      const displayPrice = product.display_price;
-      return displayPrice.includes("USD") ? displayPrice : `${displayPrice} USD`;
+      return product.display_price.replace(/\s*USD$/, "");
     }
     return formatUSD(0);
   }

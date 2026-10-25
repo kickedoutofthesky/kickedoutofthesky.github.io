@@ -807,9 +807,7 @@ function getPriceDisplay(product) {
 
   // If all prices are 0 and product has a display_price fallback, use it
   if (priceRange.min === 0 && priceRange.max === 0 && product.display_price) {
-    // Ensure display_price has USD suffix
-    const displayPrice = product.display_price;
-    return displayPrice.includes("USD") ? displayPrice : `${displayPrice} USD`;
+    return product.display_price.replace(/\s*USD$/, "");
   }
 
   // If all prices are 0, return zero

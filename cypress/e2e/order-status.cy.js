@@ -116,6 +116,8 @@ describe("Order status page", () => {
         cy.get(".status-badge").should("have.text", "Shipped");
         cy.contains("Unisex Tee w/ Text - Black - M");
         cy.contains("Qty: 2 × $25.00 each");
+        // Line total uses the cart's yellow
+        cy.contains("div", /^\$50\.00$/).should("have.css", "color", "rgb(255, 193, 7)");
         cy.get("img[alt='Unisex Tee w/ Text']").should("exist");
         cy.contains("Subtotal:").next().should("have.text", "$50.00");
         cy.contains("Shipping:").next().should("have.text", "$9.99");

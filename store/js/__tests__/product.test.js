@@ -22,7 +22,7 @@ describe("Product Page - Price Functions", () => {
       };
 
       const result = getPriceDisplay(product);
-      expect(result).toBe("$39.99 USD");
+      expect(result).toBe("$39.99");
     });
 
     it("should display price range when variants have different prices", () => {
@@ -38,7 +38,7 @@ describe("Product Page - Price Functions", () => {
       };
 
       const result = getPriceDisplay(product);
-      expect(result).toBe("$29.99 USD – $49.99 USD");
+      expect(result).toBe("$29.99 – $49.99");
     });
 
     it("should handle multiple colors with different prices", () => {
@@ -59,7 +59,7 @@ describe("Product Page - Price Functions", () => {
       };
 
       const result = getPriceDisplay(product);
-      expect(result).toBe("$29.99 USD – $49.99 USD");
+      expect(result).toBe("$29.99 – $49.99");
     });
 
     it("should return zero when no variant prices available", () => {
@@ -73,17 +73,17 @@ describe("Product Page - Price Functions", () => {
       };
 
       const result = getPriceDisplay(product);
-      expect(result).toBe("$35.00 USD");
+      expect(result).toBe("$35.00");
     });
 
     it("should handle null product gracefully", () => {
       const result = getPriceDisplay(null);
-      expect(result).toBe("$0.00 USD");
+      expect(result).toBe("$0.00");
     });
 
     it("should handle undefined product gracefully", () => {
       const result = getPriceDisplay(undefined);
-      expect(result).toBe("$0.00 USD");
+      expect(result).toBe("$0.00");
     });
 
     it("should format prices with two decimal places", () => {
@@ -116,7 +116,7 @@ describe("Product Page - Price Functions", () => {
       };
 
       const result = getPriceDisplay(product);
-      expect(result).toBe("$29.99 USD – $59.99 USD");
+      expect(result).toBe("$29.99 – $59.99");
     });
 
     it("should handle high prices correctly", () => {
@@ -149,13 +149,13 @@ describe("Product Page - Price Functions", () => {
       expect(result).toContain("1.99");
     });
 
-    it("should not double the USD suffix when display_price already includes it", () => {
+    it("should strip a USD suffix from display_price", () => {
       const product = {
         display_price: "$25.00 USD",
         variants: {},
       };
 
-      expect(getPriceDisplay(product)).toBe("$25.00 USD");
+      expect(getPriceDisplay(product)).toBe("$25.00");
     });
   });
 
@@ -386,7 +386,7 @@ describe("Product Page - Price Functions", () => {
       const displayPrice = getPriceDisplay(product);
       const priceRange = getPriceRange(product);
 
-      expect(displayPrice).toBe("$34.99 USD – $39.99 USD");
+      expect(displayPrice).toBe("$34.99 – $39.99");
       expect(priceRange.min).toBe(34.99);
       expect(priceRange.max).toBe(39.99);
     });

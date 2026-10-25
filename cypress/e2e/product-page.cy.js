@@ -22,7 +22,7 @@ describe("Product page", () => {
       visitProduct(TEE);
 
       cy.get("[data-testid='product-title']").should("have.text", "Unisex Tee w/ Text");
-      cy.get("[data-testid='product-price']").should("have.text", "$25.00 USD");
+      cy.get("[data-testid='product-price']").should("have.text", "$25.00");
       cy.get("[data-testid='color-select'] option")
         .then($opts => [...$opts].map(o => o.value))
         .should("deep.equal", ["Black", "Dark Grey Heather"]);
@@ -89,14 +89,14 @@ describe("Product page", () => {
 
     it("shows a price range and the exact price once a size is selected", () => {
       visitProduct(STICKER);
-      cy.get("[data-testid='product-price']").should("have.text", "$4.50 USD – $5.50 USD");
+      cy.get("[data-testid='product-price']").should("have.text", "$4.50 – $5.50");
 
       cy.get("[data-testid='size-select']").select("3x3");
-      cy.get("[data-testid='product-price']").should("have.text", "$5.50 USD");
+      cy.get("[data-testid='product-price']").should("have.text", "$5.50");
       cy.get("[data-testid='size-select']").select("2x2");
-      cy.get("[data-testid='product-price']").should("have.text", "$4.50 USD");
+      cy.get("[data-testid='product-price']").should("have.text", "$4.50");
       cy.get("[data-testid='size-select']").select("");
-      cy.get("[data-testid='product-price']").should("have.text", "$4.50 USD – $5.50 USD");
+      cy.get("[data-testid='product-price']").should("have.text", "$4.50 – $5.50");
     });
   });
 

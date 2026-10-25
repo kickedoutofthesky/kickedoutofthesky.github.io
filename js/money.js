@@ -5,15 +5,15 @@
  */
 
 /**
- * Format cents as USD with required " USD" suffix.
+ * Format cents as a USD amount. No currency suffix: the store states once that prices are in USD.
  *
  * @param {number} cents - Price in USD cents (e.g., 3400 = $34.00)
- * @returns {string} Formatted price like "$34.00 USD"
+ * @returns {string} Formatted price like "$34.00"
  *
  * Examples:
- *   formatUSD(2500) === "$25.00 USD"
- *   formatUSD(3400) === "$34.00 USD"
- *   formatUSD(1) === "$0.01 USD"
+ *   formatUSD(2500) === "$25.00"
+ *   formatUSD(3400) === "$34.00"
+ *   formatUSD(1) === "$0.01"
  */
 export function formatUSD(cents) {
   const formatter = new Intl.NumberFormat("en-US", {
@@ -22,7 +22,7 @@ export function formatUSD(cents) {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   });
-  return formatter.format(cents / 100) + " USD";
+  return formatter.format(cents / 100);
 }
 
 /**

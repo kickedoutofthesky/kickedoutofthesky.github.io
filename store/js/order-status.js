@@ -292,7 +292,7 @@ function displayProcessingOrder(orderData) {
         <div style="flex: 1; text-align: left;">
           <div style="display: flex; justify-content: space-between; gap: 10px; margin-bottom: 6px">
             <div>${productName}${colorDisplay ? " - " + colorDisplay : ""}${sizeDisplay ? " - " + sizeDisplay : ""}</div>
-            <div style="font-weight: bold; white-space: nowrap">${money(lineTotal)}</div>
+            <div style="color: #ffc107; font-weight: bold; white-space: nowrap">${money(lineTotal)}</div>
           </div>
           <div style="display: flex; justify-content: flex-start; color: #999; font-size: 0.85rem">
             <div>Qty: ${item.quantity} × ${money(priceCents)} each</div>

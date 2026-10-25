@@ -122,7 +122,7 @@ describe("Store Page", () => {
       };
 
       const result = getPriceDisplay(product);
-      expect(result).toBe("$39.99 USD");
+      expect(result).toBe("$39.99");
     });
 
     it("should display price range when variants have different prices", () => {
@@ -138,7 +138,7 @@ describe("Store Page", () => {
       };
 
       const result = getPriceDisplay(product);
-      expect(result).toBe("$29.99 USD – $49.99 USD");
+      expect(result).toBe("$29.99 – $49.99");
     });
 
     it("should handle multiple colors with different prices", () => {
@@ -159,7 +159,7 @@ describe("Store Page", () => {
       };
 
       const result = getPriceDisplay(product);
-      expect(result).toBe("$29.99 USD – $49.99 USD");
+      expect(result).toBe("$29.99 – $49.99");
     });
 
     it("should return zero when no variant prices available", () => {
@@ -173,7 +173,7 @@ describe("Store Page", () => {
       };
 
       const result = getPriceDisplay(product);
-      expect(result).toBe("$35.00 USD");
+      expect(result).toBe("$35.00");
     });
 
     it("should handle product with no variants", () => {
@@ -182,7 +182,11 @@ describe("Store Page", () => {
       };
 
       const result = getPriceDisplay(product);
-      expect(result).toBe("$25.00 USD");
+      expect(result).toBe("$25.00");
+    });
+
+    it("should strip a USD suffix from display_price", () => {
+      expect(getPriceDisplay({ display_price: "$25.00 USD" })).toBe("$25.00");
     });
 
     it("should handle null product gracefully", () => {
@@ -209,7 +213,7 @@ describe("Store Page", () => {
       };
 
       const result = getPriceDisplay(product);
-      expect(result).toMatch(/\$\d+\.\d{2}\s*USD\s*[-–]\s*\$\d+\.\d{2}\s*USD/);
+      expect(result).toMatch(/^\$\d+\.\d{2} – \$\d+\.\d{2}$/);
     });
 
     it("should sort prices correctly", () => {
@@ -226,7 +230,7 @@ describe("Store Page", () => {
       };
 
       const result = getPriceDisplay(product);
-      expect(result).toBe("$29.99 USD – $59.99 USD");
+      expect(result).toBe("$29.99 – $59.99");
     });
 
     it("should handle high prices correctly", () => {
@@ -241,7 +245,7 @@ describe("Store Page", () => {
       };
 
       const result = getPriceDisplay(product);
-      expect(result).toContain("199.99 USD");
+      expect(result).toContain("199.99");
     });
 
     it("should handle low prices correctly", () => {
@@ -256,7 +260,7 @@ describe("Store Page", () => {
       };
 
       const result = getPriceDisplay(product);
-      expect(result).toContain("1.99 USD");
+      expect(result).toContain("1.99");
     });
 
     it("should handle zero prices", () => {
@@ -271,7 +275,7 @@ describe("Store Page", () => {
       };
 
       const result = getPriceDisplay(product);
-      expect(result).toBe("$0.00 USD");
+      expect(result).toBe("$0.00");
     });
 
     it("should handle missing price_cents", () => {
@@ -289,7 +293,7 @@ describe("Store Page", () => {
       };
 
       const result = getPriceDisplay(product);
-      expect(result).toBe("$50.00 USD");
+      expect(result).toBe("$50.00");
     });
 
     it("should handle null price_cents", () => {
@@ -305,7 +309,7 @@ describe("Store Page", () => {
       };
 
       const result = getPriceDisplay(product);
-      expect(result).toBe("$40.00 USD");
+      expect(result).toBe("$40.00");
     });
 
     it("should handle undefined price_cents", () => {
@@ -321,7 +325,7 @@ describe("Store Page", () => {
       };
 
       const result = getPriceDisplay(product);
-      expect(result).toBe("$45.00 USD");
+      expect(result).toBe("$45.00");
     });
 
     it("should work with complex multi-variant products", () => {
@@ -356,7 +360,7 @@ describe("Store Page", () => {
       };
 
       const result = getPriceDisplay(product);
-      expect(result).toBe("$34.99 USD – $39.99 USD");
+      expect(result).toBe("$34.99 – $39.99");
     });
 
     it("should handle product with no display_price", () => {
@@ -371,7 +375,7 @@ describe("Store Page", () => {
       };
 
       const result = getPriceDisplay(product);
-      expect(result).toBe("$39.99 USD");
+      expect(result).toBe("$39.99");
     });
 
     it("should handle very large price values", () => {
@@ -386,7 +390,7 @@ describe("Store Page", () => {
       };
 
       const result = getPriceDisplay(product);
-      expect(result).toContain("$9,999.99 USD");
+      expect(result).toContain("$9,999.99");
     });
 
     it("should handle fractional cents (rounding)", () => {
@@ -402,7 +406,7 @@ describe("Store Page", () => {
       };
 
       const result = getPriceDisplay(product);
-      expect(result).toBe("$39.95 USD – $49.95 USD");
+      expect(result).toBe("$39.95 – $49.95");
     });
   });
 
@@ -438,11 +442,11 @@ describe("Store Page", () => {
       }));
 
       expect(results[0].category).toBe("hoodies");
-      expect(results[0].price).toBe("$49.99 USD");
+      expect(results[0].price).toBe("$49.99");
       expect(results[1].category).toBe("long-sleeve");
-      expect(results[1].price).toBe("$19.99 USD – $21.99 USD");
+      expect(results[1].price).toBe("$19.99 – $21.99");
       expect(results[2].category).toBe("hats");
-      expect(results[2].price).toBe("$24.99 USD");
+      expect(results[2].price).toBe("$24.99");
     });
   });
 
@@ -482,7 +486,7 @@ describe("Store Page", () => {
       };
 
       const result = getPriceDisplay(product);
-      expect(result).toBe("$30.00 USD");
+      expect(result).toBe("$30.00");
     });
 
     it("should handle variant without sizes property", () => {
@@ -496,7 +500,7 @@ describe("Store Page", () => {
       };
 
       const result = getPriceDisplay(product);
-      expect(result).toBe("$35.00 USD");
+      expect(result).toBe("$35.00");
     });
 
     it("should handle whitespace-only title", () => {

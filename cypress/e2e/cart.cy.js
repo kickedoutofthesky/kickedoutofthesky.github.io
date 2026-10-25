@@ -50,9 +50,9 @@ describe("Cart page", () => {
           cy.get("[data-testid='item-name']").should("have.text", "Unisex Tee w/ Text");
           cy.contains("Color: Black");
           cy.contains("Size: M");
-          cy.get("[data-testid='item-price']").should("have.text", "$25.00 USD");
+          cy.get("[data-testid='item-price']").should("have.text", "$25.00");
           cy.get("[data-testid='quantity-input']").should("have.value", "2");
-          cy.contains("$50.00 USD");
+          cy.contains("$50.00");
           cy.get("img").shouldShowImage("Unisex Tee w Text - Front - Black.jpg");
         });
 
@@ -60,11 +60,11 @@ describe("Cart page", () => {
         .eq(1)
         .within(() => {
           cy.get("[data-testid='item-name']").should("have.text", "Die-cut Sticker w/ Text");
-          cy.get("[data-testid='item-price']").should("have.text", "$5.50 USD");
+          cy.get("[data-testid='item-price']").should("have.text", "$5.50");
           cy.get("img").shouldShowImage("Die-cut Sticker w Text - Front - Satin.jpg");
         });
 
-      cy.get("[data-testid='cart-subtotal']").should("have.text", "$55.50 USD");
+      cy.get("[data-testid='cart-subtotal']").should("have.text", "$55.50");
       cy.get("[data-testid='cart-count']").should("have.text", "3");
     });
 
@@ -72,7 +72,7 @@ describe("Cart page", () => {
       cy.get("[data-testid='cart-item']").eq(0).find(".cart-qty-btn").last().click();
 
       cy.get("[data-testid='quantity-input']").eq(0).should("have.value", "3");
-      cy.get("[data-testid='cart-subtotal']").should("have.text", "$80.50 USD");
+      cy.get("[data-testid='cart-subtotal']").should("have.text", "$80.50");
       cy.get("[data-testid='cart-count']").should("have.text", "4");
       cy.window()
         .its("localStorage")
@@ -81,7 +81,7 @@ describe("Cart page", () => {
 
       cy.get("[data-testid='cart-item']").eq(0).find(".cart-qty-btn").first().click();
       cy.get("[data-testid='quantity-input']").eq(0).should("have.value", "2");
-      cy.get("[data-testid='cart-subtotal']").should("have.text", "$55.50 USD");
+      cy.get("[data-testid='cart-subtotal']").should("have.text", "$55.50");
     });
 
     it("removes an item when its quantity is decreased below 1", () => {
@@ -89,13 +89,13 @@ describe("Cart page", () => {
 
       cy.get("[data-testid='cart-item']").should("have.length", 1);
       cy.get("[data-testid='item-name']").should("have.text", "Unisex Tee w/ Text");
-      cy.get("[data-testid='cart-subtotal']").should("have.text", "$50.00 USD");
+      cy.get("[data-testid='cart-subtotal']").should("have.text", "$50.00");
     });
 
     it("removes items with the trash button and shows the empty state when none are left", () => {
       cy.get("[data-testid='remove-item']").first().click();
       cy.get("[data-testid='cart-item']").should("have.length", 1);
-      cy.get("[data-testid='cart-subtotal']").should("have.text", "$5.50 USD");
+      cy.get("[data-testid='cart-subtotal']").should("have.text", "$5.50");
 
       cy.get("[data-testid='remove-item']").click();
       cy.get("[data-testid='empty-cart-message']").should("be.visible");
@@ -139,13 +139,13 @@ describe("Cart page", () => {
           country: "US",
           items: [{ variant_id: 5211354650, quantity: 2 }],
         });
-      cy.get("[data-testid='shipping-estimate']").should("have.text", "$9.99 USD");
+      cy.get("[data-testid='shipping-estimate']").should("have.text", "$9.99");
       cy.get("#shipping-to-line").should("be.visible").and("contain", "Shipping to United States");
       cy.window().its("localStorage").invoke("getItem", "selectedShippingCountry").should("eq", "US");
 
       cy.get("#shipping-country").select("GB");
       cy.wait("@calculateShipping").its("request.body.country").should("eq", "GB");
-      cy.get("[data-testid='shipping-estimate']").should("have.text", "$12.00 USD");
+      cy.get("[data-testid='shipping-estimate']").should("have.text", "$12.00");
       cy.get("#shipping-to-line").should("contain", "United Kingdom");
     });
 
@@ -157,7 +157,7 @@ describe("Cart page", () => {
 
       cy.get("#shipping-country").should("have.value", "CA");
       cy.wait("@calculateShipping").its("request.body.country").should("eq", "CA");
-      cy.get("[data-testid='shipping-estimate']").should("have.text", "$15.00 USD");
+      cy.get("[data-testid='shipping-estimate']").should("have.text", "$15.00");
     });
 
     it("re-estimates once (debounced) with the new quantity after rapid quantity changes", () => {
@@ -177,7 +177,7 @@ describe("Cart page", () => {
 
     it("resets the estimate without calling the API when the last item is removed", () => {
       cy.selectShippingCountry("US");
-      cy.get("[data-testid='shipping-estimate']").should("have.text", "$9.99 USD");
+      cy.get("[data-testid='shipping-estimate']").should("have.text", "$9.99");
 
       cy.get("[data-testid='remove-item']").click();
       cy.get("[data-testid='empty-cart-message']").should("be.visible");
@@ -202,7 +202,7 @@ describe("Cart page", () => {
 
         cy.get("#shipping-country").select("US");
         cy.get("[data-testid='shipping-estimate']").should("not.contain", "can't ship");
-        cy.get("[data-testid='shipping-estimate']").should("have.text", "$9.99 USD");
+        cy.get("[data-testid='shipping-estimate']").should("have.text", "$9.99");
         cy.get("[data-testid='shipping-unavailable']").should("not.exist");
         cy.get("#shipping-to-line").should("contain", "Shipping to United States");
         cy.get("#checkout-btn").should("not.be.disabled");
@@ -273,7 +273,7 @@ describe("Cart page", () => {
       cy.get("#shipping-country").select("DE");
 
       cy.wait(["@racingEstimates", "@racingEstimates"]);
-      cy.get("[data-testid='shipping-estimate']").should("have.text", "$14.00 USD");
+      cy.get("[data-testid='shipping-estimate']").should("have.text", "$14.00");
     });
   });
 

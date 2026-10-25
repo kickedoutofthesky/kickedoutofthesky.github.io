@@ -30,14 +30,22 @@ describe("Store", () => {
         .filter(`:has(a[href='product.html?key=${tee.product_key}'])`)
         .within(() => {
           cy.get("[data-testid='product-title']").should("have.text", tee.title);
-          cy.get("[data-testid='product-price']").should("have.text", "$25.00 USD");
+          cy.get("[data-testid='product-price']").should("have.text", "$25.00");
           cy.get("img").should("have.attr", "alt", tee.title).and("have.attr", "src", tee.image);
         });
 
       cy.get("[data-testid='product-card']")
         .filter(":has(a[href='product.html?key=product_421115395'])")
         .find("[data-testid='product-price']")
-        .should("have.text", "$4.50 USD – $5.50 USD");
+        .should("have.text", "$4.50 – $5.50");
+    });
+
+    it("notes once that prices are in USD and shows prices without a currency suffix", () => {
+      cy.get("[data-testid='prices-note']")
+        .should("be.visible")
+        .invoke("text")
+        .then(text => expect(text.trim()).to.eq("All prices are in USD."));
+      cy.get("[data-testid='product-price']").each($price => expect($price.text()).not.to.include("USD"));
     });
 
     it("serves every product image", function () {

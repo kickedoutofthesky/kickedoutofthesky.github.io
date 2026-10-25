@@ -166,7 +166,7 @@ describe("Integration Tests - Live staging API (no mocks)", () => {
       cy.window().its("__API_URL__").should("eq", STAGING_API);
       cy.get("[data-testid='cart-item']").should("have.length", ORDER.length);
       cy.get("[data-testid='cart-count']").should("have.text", String(TOTAL_QUANTITY));
-      cy.get("[data-testid='cart-subtotal']").should("have.text", `${SUBTOTAL} USD`);
+      cy.get("[data-testid='cart-subtotal']").should("have.text", SUBTOTAL);
       LINES.forEach(({ quantity, image }, i) => {
         cy.get("[data-testid='cart-item']")
           .eq(i)

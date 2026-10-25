@@ -94,6 +94,11 @@ describe("Success page", () => {
         .find("img")
         .shouldShowImage("Unisex Tee w Text - Front - Black.jpg");
       cy.get("#order-items > div").eq(1).should("contain", "Qty: 1 × $45.00 each").find("img").shouldShowImage();
+      // Line totals use the cart's yellow
+      cy.get("#order-items > div")
+        .eq(0)
+        .contains("div", /^\$50\.00$/)
+        .should("have.css", "color", "rgb(255, 193, 7)");
     });
 
     it("shows the order summary totals", () => {
