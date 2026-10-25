@@ -10,6 +10,8 @@ import {
   formatDate,
   formatStatus,
   getCountryFlag,
+  parseCostCents,
+  formatCurrencyAmount,
 } from "../utils/fixtures/order-status-utilities";
 
 describe("Order Status Utilities - Email Validation", () => {
@@ -144,5 +146,44 @@ describe("Order Status Utilities - Country Flag", () => {
 
     expect(typeof uppercase).toBe("string");
     expect(typeof lowercase).toBe("string");
+  });
+});
+
+describe("Order Status Utilities - Cost Parsing", () => {
+  it("keeps integer cents as-is", () => {
+    expect(parseCostCents(2500)).toBe(2500);
+    expect(parseCostCents(0)).toBe(0);
+  });
+
+  it("converts dollar strings to cents", () => {
+    expect(parseCostCents("14.75")).toBe(1475);
+    expect(parseCostCents("0.10")).toBe(10);
+  });
+
+  it("treats whole-number strings as cents", () => {
+    expect(parseCostCents("2500")).toBe(2500);
+  });
+
+  it("returns 0 for missing or invalid values", () => {
+    expect(parseCostCents(undefined)).toBe(0);
+    expect(parseCostCents(null)).toBe(0);
+    expect(parseCostCents("abc")).toBe(0);
+  });
+});
+
+describe("Order Status Utilities - Currency Formatting", () => {
+  it("formats cents with the currency symbol", () => {
+    expect(formatCurrencyAmount(2500, "USD")).toBe("$25.00");
+    expect(formatCurrencyAmount(2950, "GBP")).toBe("£29.50");
+    expect(formatCurrencyAmount(1999, "EUR")).toBe("€19.99");
+  });
+
+  it("defaults to USD and to $ for unknown currencies", () => {
+    expect(formatCurrencyAmount(100)).toBe("$1.00");
+    expect(formatCurrencyAmount(100, "XYZ")).toBe("$1.00");
+  });
+
+  it("formats the absolute value so callers add their own sign", () => {
+    expect(formatCurrencyAmount(-500, "USD")).toBe("$5.00");
   });
 });

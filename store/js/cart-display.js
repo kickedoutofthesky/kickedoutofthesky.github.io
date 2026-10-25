@@ -105,7 +105,11 @@ function getCartVariantItems() {
 
 function getShippingErrorMessage(apiError) {
   const message = String(apiError || "").toLowerCase();
-  if (message.includes("shipping to this country") || message.includes("has been disabled")) {
+  if (
+    message.includes("shipping to this country") ||
+    message.includes("has been disabled") ||
+    message.includes("is not supported")
+  ) {
     return "We can't ship to this country.";
   }
   return "Shipping will be calculated at checkout.";

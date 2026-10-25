@@ -7,6 +7,8 @@ import {
   formatStatus,
   formatTrackingStatus,
   getCountryFlag,
+  parseCostCents,
+  formatCurrencyAmount,
 } from "./utils/fixtures/order-status-utilities.js";
 
 let products = [];
@@ -259,25 +261,20 @@ function displayProcessingOrder(orderData) {
     const costs = orderData.costs || {};
     const enrichedItems = items.map(item => enrichItemWithProductData(item));
 
-    // Parse costs
-    const subtotalCents =
-      typeof costs.subtotal_cents === "string"
-        ? parseFloat(costs.subtotal_cents) * 100
-        : parseInt(costs.subtotal_cents);
-    const shippingCents =
-      typeof costs.shipping_cents === "string"
-        ? parseFloat(costs.shipping_cents) * 100
-        : parseInt(costs.shipping_cents);
-    const taxCents =
-      typeof costs.tax_cents === "string" ? parseFloat(costs.tax_cents) * 100 : parseInt(costs.tax_cents);
-    const totalCents =
-      typeof costs.total_cents === "string" ? parseFloat(costs.total_cents) * 100 : parseInt(costs.total_cents);
+    // Amounts are integer cents in the order's currency
+    const currency = costs.currency || items[0]?.currency || "USD";
+    const money = cents => formatCurrencyAmount(cents, currency);
+    const subtotalCents = parseCostCents(costs.subtotal_cents);
+    const discountCents = parseCostCents(costs.discount_cents);
+    const shippingCents = parseCostCents(costs.shipping_cents);
+    const taxCents = parseCostCents(costs.tax_cents);
+    const totalCents = parseCostCents(costs.total_cents);
+    const statusLabel = orderData.status_display || formatStatus(orderData.status);
 
     // Build items (left column)
     const itemsHTML = enrichedItems
       .map(item => {
-        const priceCents =
-          typeof item.price_cents === "string" ? parseFloat(item.price_cents) * 100 : parseInt(item.price_cents);
+        const priceCents = parseCostCents(item.price_cents);
         const lineTotal = priceCents * item.quantity;
 
         const productName = item.product_title || item.product_name || "Unknown Product";
@@ -295,10 +292,10 @@ function displayProcessingOrder(orderData) {
         <div style="flex: 1; text-align: left;">
           <div style="display: flex; justify-content: space-between; gap: 10px; margin-bottom: 6px">
             <div>${productName}${colorDisplay ? " - " + colorDisplay : ""}${sizeDisplay ? " - " + sizeDisplay : ""}</div>
-            <div style="font-weight: bold; white-space: nowrap">$${(lineTotal / 100).toFixed(2)}</div>
+            <div style="font-weight: bold; white-space: nowrap">${money(lineTotal)}</div>
           </div>
           <div style="display: flex; justify-content: flex-start; color: #999; font-size: 0.85rem">
-            <div>Qty: ${item.quantity} × $${(priceCents / 100).toFixed(2)} each</div>
+            <div>Qty: ${item.quantity} × ${money(priceCents)} each</div>
           </div>
         </div>
       </div>`;
@@ -400,26 +397,34 @@ function displayProcessingOrder(orderData) {
         <div style="background: #1a1a1a; padding: 20px; border-radius: 8px; border: 1px solid #262626;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
             <h3 style="color: #fff; margin-bottom: 0; margin-top: 0; padding: 0;">Order #${orderData.printful_order_id || "—"}</h3>
-            <span class="status-badge status-${orderData.status}" style="text-align: center;" aria-label="Order status: ${formatStatus(orderData.status)}">${formatStatus(orderData.status)}</span>
+            <span class="status-badge status-${orderData.status}" style="text-align: center;" aria-label="Order status: ${statusLabel}">${statusLabel}</span>
           </div>
           <p style="color: #999; font-size: 0.9rem; margin-bottom: 25px; margin-top: 0; text-align: left;">${formatDate(orderData.created_at)}</p>
           ${itemsHTML}
           <div style="border-top: 1px solid #333; padding-top: 20px; margin-top: 20px">
             <div style="display: flex; justify-content: space-between; color: #ccc; margin-bottom: 12px; font-size: 0.95rem;">
               <span>Subtotal:</span>
-              <span>$${(subtotalCents / 100).toFixed(2)}</span>
+              <span>${money(subtotalCents)}</span>
             </div>
+            ${
+              discountCents > 0
+                ? `<div data-testid="order-discount" style="display: flex; justify-content: space-between; color: #ccc; margin-bottom: 12px; font-size: 0.95rem;">
+              <span>Discount:</span>
+              <span>−${money(discountCents)}</span>
+            </div>`
+                : ""
+            }
             <div style="display: flex; justify-content: space-between; color: #ccc; margin-bottom: 12px; font-size: 0.95rem;">
               <span>Shipping:</span>
-              <span>$${(shippingCents / 100).toFixed(2)}</span>
+              <span>${money(shippingCents)}</span>
             </div>
             <div style="display: flex; justify-content: space-between; color: #ccc; margin-bottom: 15px; font-size: 0.95rem;">
               <span>Tax:</span>
-              <span>$${(taxCents / 100).toFixed(2)}</span>
+              <span>${money(taxCents)}</span>
             </div>
             <div style="display: flex; justify-content: space-between; color: #ffc107; font-weight: bold; font-size: 1.15rem; border-top: 1px solid #333; padding-top: 15px;">
               <span>Total:</span>
-              <span>$${(totalCents / 100).toFixed(2)}</span>
+              <span>${money(totalCents)}</span>
             </div>
           </div>
         </div>
@@ -466,25 +471,13 @@ function displayTrackingInfo() {
 // Enrich item data with product catalog information
 function enrichItemWithProductData(item) {
   const enrichedItem = { ...item };
+  const syncVariantId = parseInt(item.sync_variant_id);
 
-  // Ensure price_cents and retail_price_cents are numbers
-  if (typeof enrichedItem.price_cents === "string") {
-    enrichedItem.price_cents = parseFloat(enrichedItem.price_cents) * 100;
-  }
-  if (typeof enrichedItem.retail_price_cents === "string") {
-    enrichedItem.retail_price_cents = parseFloat(enrichedItem.retail_price_cents) * 100;
-  }
-
-  // Try to find product in catalog using variant_id or sync_variant_id
+  // Catalog variant IDs in products.json are Printful sync variant IDs
   for (const product of products) {
     for (const [color, colorData] of Object.entries(product.variants || {})) {
       for (const [size, sizeData] of Object.entries(colorData.sizes || {})) {
-        if (
-          sizeData.variant_id === item.variant_id ||
-          sizeData.variant_id === item.sync_variant_id ||
-          sizeData.variant_id === parseInt(item.variant_id) ||
-          sizeData.variant_id === parseInt(item.sync_variant_id)
-        ) {
+        if (sizeData.variant_id === syncVariantId) {
           // Found matching product
           enrichedItem.product_title = product.title;
           enrichedItem.product_name = product.title; // For backward compatibility

@@ -186,15 +186,14 @@ describe("Cart page", () => {
       cy.get("@calculateShipping.all").should("have.length", 1);
     });
 
-    it("shows 'We can't ship to this country.' when the destination is disabled", () => {
-      cy.intercept("POST", "**/api/calculate-shipping", {
-        statusCode: 400,
-        body: { error: "Shipping to this country has been disabled" },
-      }).as("disabledCountry");
+    ["Shipping to RU is not supported", "Shipping to this country has been disabled"].forEach(error => {
+      it(`shows 'We can't ship to this country.' for "${error}"`, () => {
+        cy.intercept("POST", "**/api/calculate-shipping", { statusCode: 400, body: { error } }).as("disabledCountry");
 
-      cy.get("#shipping-country").select("AF");
-      cy.wait("@disabledCountry");
-      cy.get("[data-testid='shipping-estimate']").should("have.text", "We can't ship to this country.");
+        cy.get("#shipping-country").select("RU");
+        cy.wait("@disabledCountry");
+        cy.get("[data-testid='shipping-estimate']").should("have.text", "We can't ship to this country.");
+      });
     });
 
     it("falls back to 'calculated at checkout' when the estimate cannot be fetched", () => {

@@ -6,9 +6,11 @@
 const EMAIL = "fan@example.com";
 const ORDER_ID = "PF123456789";
 
+// Shape returned by GET /api/order-status (amounts are integer cents)
 const SHIPPED_ORDER = {
   printful_order_id: ORDER_ID,
-  status: "shipped",
+  status: "fulfilled",
+  status_display: "Shipped",
   created_at: "1767225600000",
   recipient: {
     name: "Sam Fan",
@@ -22,8 +24,23 @@ const SHIPPED_ORDER = {
       country_code: "US",
     },
   },
-  items: [{ variant_id: 5211354650, quantity: 2, price_cents: 2500 }],
-  costs: { subtotal_cents: 5000, shipping_cents: 999, tax_cents: 0, total_cents: 5999 },
+  items: [
+    {
+      sync_variant_id: 5211354650,
+      product_name: "Unisex Tee w/ Text / M",
+      quantity: 2,
+      price_cents: 2500,
+      currency: "USD",
+    },
+  ],
+  costs: {
+    currency: "USD",
+    subtotal_cents: 5000,
+    discount_cents: 0,
+    shipping_cents: 999,
+    tax_cents: 0,
+    total_cents: 5999,
+  },
   shipments: [
     {
       id: "shp-778899",
@@ -103,6 +120,7 @@ describe("Order status page", () => {
         cy.contains("Subtotal:").next().should("have.text", "$50.00");
         cy.contains("Shipping:").next().should("have.text", "$9.99");
         cy.contains("Total:").next().should("have.text", "$59.99");
+        cy.get("[data-testid='order-discount']").should("not.exist");
         cy.contains("Sam Fan");
         cy.contains("1 Main St");
         cy.contains("Austin, TX 78701");
@@ -112,6 +130,44 @@ describe("Order status page", () => {
         cy.contains("a", "Track This Shipment")
           .should("have.attr", "href", SHIPPED_ORDER.shipments[0].tracking_url)
           .and("have.attr", "target", "_blank");
+      });
+    });
+
+    it("shows a discount line, uses the order currency and status label, and falls back to product_name", () => {
+      cy.intercept("GET", "**/api/order-status*", {
+        statusCode: 200,
+        body: {
+          ...SHIPPED_ORDER,
+          status: "inprocess",
+          status_display: "In production",
+          items: [
+            { sync_variant_id: 999, product_name: "Retired Tee / L", quantity: 1, price_cents: 3000, currency: "GBP" },
+          ],
+          costs: {
+            currency: "GBP",
+            subtotal_cents: 3000,
+            discount_cents: 500,
+            shipping_cents: 450,
+            tax_cents: 0,
+            total_cents: 2950,
+          },
+          shipments: [],
+        },
+      }).as("orderStatus");
+
+      fillForm();
+      cy.get("#search-btn").click();
+      cy.wait("@orderStatus");
+
+      cy.get("#processing-section").within(() => {
+        cy.get(".status-badge").should("have.text", "In production").and("have.class", "status-inprocess");
+        cy.contains("Retired Tee / L");
+        cy.contains("No Image");
+        cy.contains("Qty: 1 × £30.00 each");
+        cy.contains("Subtotal:").next().should("have.text", "£30.00");
+        cy.get("[data-testid='order-discount']").should("contain", "Discount:").and("contain", "−£5.00");
+        cy.contains("Shipping:").next().should("have.text", "£4.50");
+        cy.contains("Total:").next().should("have.text", "£29.50");
       });
     });
 

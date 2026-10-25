@@ -56,14 +56,14 @@ store/data/products.json ──► store.js (grid) ──► product.js ──�
 The base URL is set by [store/js/api-config.js](store/js/api-config.js) as `window.__API_URL__`
 (no trailing slash, no `/api` suffix). Only `Content-Type: application/json` is sent; no cookies.
 
-| Call                                                | Request                                                                      | Response (200)                                                                                         |
-| --------------------------------------------------- | ---------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
-| `POST /api/calculate-shipping`                      | `{ country, items: [{ variant_id: number, quantity }] }`                     | `{ shipping_options: [{ shipping_rate_data: { fixed_amount: { amount } } }] }` (cents, cheapest first) |
-| `POST /api/create-checkout-session`                 | `{ items: [{ variantId: string, quantity }], country, termsAccepted: true }` | `{ url }` — Stripe Checkout URL                                                                        |
-| `GET /api/order-details?session_id=cs_…`            | —                                                                            | Order items, summary (subtotal/shipping/tax/total), customer, address                                  |
-| `GET /api/order-status?email=…&printful_order_id=…` | —                                                                            | Order status and shipments                                                                             |
+| Call                                                | Request                                                                      | Response (200)                                                                                                                                                                                          |
+| --------------------------------------------------- | ---------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `POST /api/calculate-shipping`                      | `{ country, items: [{ variant_id: number, quantity }] }`                     | `{ shipping_options: [{ shipping_rate_data: { fixed_amount: { amount } } }] }` (cents, cheapest first)                                                                                                  |
+| `POST /api/create-checkout-session`                 | `{ items: [{ variantId: string, quantity }], country, termsAccepted: true }` | `{ url }` — Stripe Checkout URL                                                                                                                                                                         |
+| `GET /api/order-details?session_id=cs_…`            | —                                                                            | Order items, summary (subtotal/shipping/tax/total), customer, address                                                                                                                                   |
+| `GET /api/order-status?email=…&printful_order_id=…` | —                                                                            | `{ status, status_display, items: [{ sync_variant_id, product_name, quantity, price_cents }], costs: { currency, subtotal_cents, discount_cents, shipping_cents, tax_cents, total_cents }, shipments }` |
 
-Errors are JSON `{ "error": "message" }`; the frontend logs them as
+Errors are JSON `{ "error": "message" }` (`calculate-shipping` returns 502 when Printful is down); the frontend logs them as
 `API error (METHOD /api/endpoint): STATUS - message`.
 
 ### Which API each environment uses
