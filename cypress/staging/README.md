@@ -28,6 +28,7 @@ Prices aren't hard-coded because Printful rates change; the page is checked agai
 
 ## Notes
 
-- Stripe's `success_url` points at the live site, so the test redirects it to the local success page.
+- The backend builds Stripe's return URLs from the request's `Origin`, so Stripe returns to `http://localhost:3002`. Cypress runs
+  with `chromeWebSecurity: false`, which drops that header, so the test adds it to the checkout request.
 - `experimentalModifyObstructiveThirdPartyCode` in `cypress.config.js` lets Stripe Checkout render inside Cypress.
 - The staging backend must not place real Printful orders for test payments.

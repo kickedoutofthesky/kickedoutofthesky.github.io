@@ -46,7 +46,12 @@ describe("Integration Tests - Live staging API (no mocks)", () => {
     // Registered after the global mocks in cypress/support/e2e.js, so these take
     // precedence and let the requests through to the real API
     cy.intercept("POST", "**/api/calculate-shipping", req => req.continue()).as("shipping");
-    cy.intercept("POST", "**/api/create-checkout-session", req => req.continue()).as("checkout");
+    // With chromeWebSecurity off (needed for Stripe), Chrome omits the Origin header that real browsers
+    // send; the backend builds Stripe's return URLs from it, so add it back
+    cy.intercept("POST", "**/api/create-checkout-session", req => {
+      req.headers.origin = new URL(Cypress.config("baseUrl")).origin;
+      req.continue();
+    }).as("checkout");
   });
 
   describe("POST /api/calculate-shipping", () => {
@@ -137,12 +142,6 @@ describe("Integration Tests - Live staging API (no mocks)", () => {
       cy.viewport(1280, 900);
 
       cy.intercept("GET", "**/api/order-details*", req => req.continue()).as("orderDetails");
-
-      // Stripe's success_url points at the live site; serve the success page under test instead
-      cy.intercept({ method: "GET", url: /^https:\/\/(www\.)?kickedoutofthesky\.com\/store\/success\.html/ }, req => {
-        const query = req.url.slice(req.url.indexOf("?"));
-        req.redirect(`${Cypress.config("baseUrl")}/store/success.html${query}`);
-      }).as("successRedirect");
 
       // Stripe's wallet buttons (Apple/Google Pay) can't mount inside Cypress's frame; the card form still works
       cy.origin("https://checkout.stripe.com", () => {
@@ -270,7 +269,9 @@ describe("Integration Tests - Live staging API (no mocks)", () => {
         )
       );
 
-      cy.location("pathname", { timeout: 60000 }).should("eq", "/store/success.html");
+      // Stripe returns to the frontend that started the checkout (success_url built from the request Origin)
+      cy.location("origin", { timeout: 60000 }).should("eq", new URL(Cypress.config("baseUrl")).origin);
+      cy.location("pathname").should("eq", "/store/success.html");
       cy.location("search").should("match", /session_id=cs_test_/);
 
       cy.wait("@orderDetails", { timeout: 30000 }).its("response.statusCode").should("eq", 200);
