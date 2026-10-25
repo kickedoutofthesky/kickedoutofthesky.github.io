@@ -35,7 +35,8 @@ jobs:
 
           for pattern in "${patterns[@]}"; do
             # Search in tracked files, excluding documentation placeholders
-            matches=$(git grep -l "$pattern" -- ':(exclude)*.md' ':(exclude)ENVIRONMENTS.md' ':(exclude)LOCAL_DEVELOPMENT.md' 2>/dev/null || true)
+            # Exclude docs and this workflow (it contains the patterns themselves)
+            matches=$(git grep -l "$pattern" -- ':(exclude)*.md' ':(exclude).github/workflows/ci.yml' 2>/dev/null || true)
 
             if [ ! -z "$matches" ]; then
               echo "Found potential credential pattern '$pattern' in:"
