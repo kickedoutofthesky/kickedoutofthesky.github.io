@@ -21,6 +21,7 @@ There is no production mode: it would create live Stripe sessions.
 - Full checkout of a cart built through the product pages: 2× tee XS, 1× tee L, 3× sticker (two products, three lines).
   - The cart shows 3 lines (each with its product image loaded), a badge of 6 and the right subtotal; the shipping and checkout requests carry every line and quantity.
   - The Stripe page lists the same 3 lines with matching names, quantities, line totals and subtotal, and each line's product image is the expected file and loads.
+  - After the address is entered, Stripe preselects and charges the same shipping rate (name and amount) the cart estimated; the success page shows that shipping amount.
   - Pays with test card `4242 4242 4242 4242` (Link opt-in unticked); the success page shows the same lines with their images and the cart is cleared.
 
 Prices aren't hard-coded because Printful rates change; the page is checked against the API's response.

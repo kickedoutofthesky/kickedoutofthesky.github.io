@@ -169,16 +169,18 @@ describe("Integration Tests - Live staging API (no mocks)", () => {
 
       const expectedItems = ORDER.map(({ variantId, quantity }) => ({ variantId: String(variantId), quantity }));
 
+      // The cheapest option is what the cart shows and what Stripe should preselect and charge
+      let estimate;
       cy.get("#shipping-country").select("US");
       cy.wait("@shipping", { timeout: 30000 }).then(({ request, response }) => {
         expect(request.body.items).to.deep.equal(
           ORDER.map(({ variantId, quantity }) => ({ variant_id: variantId, quantity }))
         );
         expect(response.statusCode).to.eq(200);
+        const rate = response.body.shipping_options[0].shipping_rate_data;
+        estimate = { name: rate.display_name, amount: formatCents(rate.fixed_amount.amount) };
+        cy.get("#shipping-estimate").should("contain", estimate.amount);
       });
-      cy.get("#shipping-estimate")
-        .invoke("text")
-        .should("match", /^\$\d+\.\d{2}/);
 
       cy.get("#terms-checkbox").check({ force: true });
       cy.get("#checkout-btn").click();
@@ -189,65 +191,74 @@ describe("Integration Tests - Live staging API (no mocks)", () => {
         expect(response.body.url).to.match(/^https:\/\/checkout\.stripe\.com\/c\/pay\/cs_test_/);
       });
 
-      cy.origin(
-        "https://checkout.stripe.com",
-        { args: { lines: LINES, subtotal: SUBTOTAL } },
-        ({ lines, subtotal }) => {
-          // Stripe lists one line per cart line, with the cart quantities and totals
-          cy.get(".LineItem", { timeout: 30000 }).should("have.length", lines.length);
-          // Stripe proxies product images; the original URL is hex-encoded in a path segment after cloudfront.net
-          const originalImageUrl = src => {
-            const parts = decodeURIComponent(src).split("/");
-            const hex = parts[parts.findIndex(part => part.endsWith("cloudfront.net")) + 2] || "";
-            return decodeURI((hex.match(/../g) || []).map(h => String.fromCharCode(parseInt(h, 16))).join(""));
-          };
-          lines.forEach(({ name, quantity, total, image }, i) => {
-            cy.get(".LineItem")
-              .eq(i)
-              .within(() => {
-                cy.get("[data-testid='line-item-product-name']").should("contain", name);
-                cy.get("[data-testid='line-item-quantity']").should("have.text", `Qty ${quantity}`);
-                cy.get("[data-testid='line-item-total-amount']").should("have.text", total);
-                cy.get("[data-testid='line-item-image'] img")
-                  .scrollIntoView()
-                  .should($img => {
-                    const img = $img[0];
-                    expect(originalImageUrl(img.currentSrc || img.src), "image sent to Stripe").to.eq(
-                      `https://www.kickedoutofthesky.com/store/assets/images/${image}`
-                    );
-                    expect(img.complete, "image finished loading").to.eq(true);
-                    expect(img.naturalWidth, "image width").to.be.greaterThan(0);
-                  });
-              });
-          });
-          cy.get("[data-testid='order-details-footer-subtotal-amount']").should("have.text", subtotal);
+      // cy.then so the args are read after the shipping estimate has been captured
+      cy.then(() =>
+        cy.origin(
+          "https://checkout.stripe.com",
+          { args: { lines: LINES, subtotal: SUBTOTAL, shipping: estimate } },
+          ({ lines, subtotal, shipping }) => {
+            // Stripe lists one line per cart line, with the cart quantities and totals
+            cy.get(".LineItem", { timeout: 30000 }).should("have.length", lines.length);
+            // Stripe proxies product images; the original URL is hex-encoded in a path segment after cloudfront.net
+            const originalImageUrl = src => {
+              const parts = decodeURIComponent(src).split("/");
+              const hex = parts[parts.findIndex(part => part.endsWith("cloudfront.net")) + 2] || "";
+              return decodeURI((hex.match(/../g) || []).map(h => String.fromCharCode(parseInt(h, 16))).join(""));
+            };
+            lines.forEach(({ name, quantity, total, image }, i) => {
+              cy.get(".LineItem")
+                .eq(i)
+                .within(() => {
+                  cy.get("[data-testid='line-item-product-name']").should("contain", name);
+                  cy.get("[data-testid='line-item-quantity']").should("have.text", `Qty ${quantity}`);
+                  cy.get("[data-testid='line-item-total-amount']").should("have.text", total);
+                  cy.get("[data-testid='line-item-image'] img")
+                    .scrollIntoView()
+                    .should($img => {
+                      const img = $img[0];
+                      expect(originalImageUrl(img.currentSrc || img.src), "image sent to Stripe").to.eq(
+                        `https://www.kickedoutofthesky.com/store/assets/images/${image}`
+                      );
+                      expect(img.complete, "image finished loading").to.eq(true);
+                      expect(img.naturalWidth, "image width").to.be.greaterThan(0);
+                    });
+                });
+            });
+            cy.get("[data-testid='order-details-footer-subtotal-amount']").should("have.text", subtotal);
 
-          cy.get("#email").type("staging-test@example.com");
+            cy.get("#email").type("staging-test@example.com");
 
-          cy.get("body").then($body => {
-            const manualEntry = $body.find("button:contains('Enter address manually')");
-            if (manualEntry.length) cy.wrap(manualEntry).click();
-          });
-          cy.get("#shippingName").type("Staging Test");
-          cy.get("#shippingAddressLine1").type("123 Main St");
-          cy.get("#shippingLocality").type("Dallas");
-          cy.get("#shippingPostalCode").type("75201");
-          cy.get("#shippingAdministrativeArea").select("TX");
+            cy.get("body").then($body => {
+              const manualEntry = $body.find("button:contains('Enter address manually')");
+              if (manualEntry.length) cy.wrap(manualEntry).click();
+            });
+            cy.get("#shippingName").type("Staging Test");
+            cy.get("#shippingAddressLine1").type("123 Main St");
+            cy.get("#shippingLocality").type("Dallas");
+            cy.get("#shippingPostalCode").type("75201");
+            cy.get("#shippingAdministrativeArea").select("TX");
 
-          cy.get("#cardNumber").type("4242424242424242");
-          cy.get("#cardExpiry").type("1234");
-          cy.get("#cardCvc").type("123");
+            // Stripe offers the same rates; the cart's estimate is preselected and charged
+            cy.get(".ShippingSelector--selectedOption", { timeout: 30000 })
+              .should("contain", shipping.name)
+              .and("contain", shipping.amount);
+            cy.get(".OrderDetailsFooter-subtotalItems").should("contain", "Shipping").and("contain", shipping.amount);
 
-          // Don't save the test details with Stripe Link
-          cy.get("body").then($body => {
-            if ($body.find("#enableStripePass").length) {
-              cy.get("#enableStripePass").uncheck({ force: true });
-              cy.get("#enableStripePass").should("not.be.checked");
-            }
-          });
+            cy.get("#cardNumber").type("4242424242424242");
+            cy.get("#cardExpiry").type("1234");
+            cy.get("#cardCvc").type("123");
 
-          cy.get("[data-testid=hosted-payment-submit-button]").click();
-        }
+            // Don't save the test details with Stripe Link
+            cy.get("body").then($body => {
+              if ($body.find("#enableStripePass").length) {
+                cy.get("#enableStripePass").uncheck({ force: true });
+                cy.get("#enableStripePass").should("not.be.checked");
+              }
+            });
+
+            cy.get("[data-testid=hosted-payment-submit-button]").click();
+          }
+        )
       );
 
       cy.location("pathname", { timeout: 60000 }).should("eq", "/store/success.html");
@@ -261,6 +272,7 @@ describe("Integration Tests - Live staging API (no mocks)", () => {
         cy.get("#order-items > div").eq(i).find("img").shouldShowImage(image);
       });
       cy.get("#summary-subtotal").should("have.text", SUBTOTAL);
+      cy.then(() => cy.get("#summary-shipping").should("have.text", estimate.amount));
       cy.get("#customer-email").should("have.text", "staging-test@example.com");
       cy.get("#shipping-address").should("contain", "123 Main St").and("contain", "Dallas");
       cy.get("#summary-total")
