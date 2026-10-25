@@ -17,7 +17,7 @@ There is no production mode: it would create live Stripe sessions.
 
 - The shipping estimate sends the cart items and shows the API's cheapest option.
 - Larger carts are priced higher than a single item.
-- A disabled country (RU) shows "We can't ship to this country." without blocking checkout.
+- A country we can't ship to (RU) shows "We can't ship to this country." and disables checkout; switching to a supported country clears it.
 - Full checkout of a cart built through the product pages: 2× tee XS, 1× tee L, 3× sticker (two products, three lines).
   - The cart shows 3 lines (each with its product image loaded), a badge of 6 and the right subtotal; the shipping and checkout requests carry every line and quantity.
   - The Stripe page lists the same 3 lines with matching names, quantities, line totals and subtotal, and each line's product image is the expected file and loads.

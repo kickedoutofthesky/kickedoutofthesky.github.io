@@ -187,13 +187,42 @@ describe("Cart page", () => {
     });
 
     ["Shipping to RU is not supported", "Shipping to this country has been disabled"].forEach(error => {
-      it(`shows 'We can't ship to this country.' for "${error}"`, () => {
-        cy.intercept("POST", "**/api/calculate-shipping", { statusCode: 400, body: { error } }).as("disabledCountry");
+      it(`blocks checkout for a country we can't ship to ("${error}") and clears it when the country changes`, () => {
+        // RU is rejected; other countries fall through to the default shipping mock
+        cy.intercept("POST", "**/api/calculate-shipping", req => {
+          if (req.body.country === "RU") req.reply({ statusCode: 400, body: { error } });
+        }).as("disabledCountry");
 
+        cy.acceptTerms();
         cy.get("#shipping-country").select("RU");
         cy.wait("@disabledCountry");
         cy.get("[data-testid='shipping-estimate']").should("have.text", "We can't ship to this country.");
+        cy.get("[data-testid='shipping-unavailable']").should("be.visible").and("contain", "We can't ship to Russia");
+        cy.get("#checkout-btn").should("be.disabled");
+
+        cy.get("#shipping-country").select("US");
+        cy.get("[data-testid='shipping-estimate']").should("not.contain", "can't ship");
+        cy.get("[data-testid='shipping-estimate']").should("have.text", "$9.99 USD");
+        cy.get("[data-testid='shipping-unavailable']").should("not.exist");
+        cy.get("#shipping-to-line").should("contain", "Shipping to United States");
+        cy.get("#checkout-btn").should("not.be.disabled");
       });
+    });
+
+    it("clears a checkout error when the shipping country changes", () => {
+      cy.intercept("POST", "**/api/create-checkout-session", {
+        statusCode: 400,
+        body: { error: "Shipping to CA is not supported" },
+      }).as("createSession");
+
+      cy.selectShippingCountry("CA");
+      cy.acceptTerms();
+      cy.get("#checkout-btn").click();
+      cy.wait("@createSession");
+      cy.get("#checkout-error").should("be.visible").and("contain", "Shipping to CA is not supported");
+
+      cy.get("#shipping-country").select("US");
+      cy.get("#checkout-error").should("not.be.visible");
     });
 
     it("falls back to 'calculated at checkout' when the estimate cannot be fetched", () => {
@@ -230,13 +259,17 @@ describe("Cart page", () => {
     });
 
     it("uses the latest response when the country changes before an estimate returns", () => {
+      const sent = [];
       cy.intercept("POST", "**/api/calculate-shipping", req => {
+        sent.push(req.body.country);
         const slow = req.body.country === "AU";
         req.reply({ ...shippingReply(slow ? 2500 : 1400), delay: slow ? 1500 : 0 });
       }).as("racingEstimates");
 
       cy.get("#shipping-country").select("AU");
       cy.get("[data-testid='shipping-estimate']").should("have.text", "Calculating...");
+      // Switch only once the slow AU request is in flight (after the debounce)
+      cy.wrap(sent).should("include", "AU");
       cy.get("#shipping-country").select("DE");
 
       cy.wait(["@racingEstimates", "@racingEstimates"]);

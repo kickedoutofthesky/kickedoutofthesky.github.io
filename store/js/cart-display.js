@@ -12,6 +12,8 @@ let isCheckingOut = false;
 let currentShippingCost = null;
 let shippingCalculationTimeout = null;
 let shippingRequestId = 0;
+// True only when the backend says it can't ship to the selected country
+let shippingUnavailable = false;
 
 // Make sure cart is ready before displaying
 function waitForCart(callback) {
@@ -83,8 +85,8 @@ function updateCheckoutButtonState() {
   const countrySelected = select && select.value !== "";
   const termsAccepted = termsCheckbox && termsCheckbox.checked;
 
-  // Disable if: no country, no terms, or already checking out
-  checkoutBtn.disabled = !countrySelected || !termsAccepted || isCheckingOut;
+  // Disable if: no country, a country we can't ship to, no terms, or already checking out
+  checkoutBtn.disabled = !countrySelected || shippingUnavailable || !termsAccepted || isCheckingOut;
 }
 
 // Resolve cart items to Printful sync variant IDs; items that can't be resolved are skipped
@@ -103,16 +105,25 @@ function getCartVariantItems() {
     .filter(item => item !== null);
 }
 
-function getShippingErrorMessage(apiError) {
+function isUnsupportedDestination(apiError) {
   const message = String(apiError || "").toLowerCase();
-  if (
+  return (
     message.includes("shipping to this country") ||
     message.includes("has been disabled") ||
     message.includes("is not supported")
-  ) {
-    return "We can't ship to this country.";
-  }
-  return "Shipping will be calculated at checkout.";
+  );
+}
+
+function getShippingErrorMessage(apiError) {
+  return isUnsupportedDestination(apiError)
+    ? "We can't ship to this country."
+    : "Shipping will be calculated at checkout.";
+}
+
+function setShippingUnavailable(value) {
+  shippingUnavailable = value;
+  updateShippingToLine();
+  updateCheckoutButtonState();
 }
 
 async function calculateShippingEstimate(country) {
@@ -133,6 +144,7 @@ async function calculateShippingEstimate(country) {
   if (!country || items.length === 0) {
     currentShippingCost = null;
     updateShippingEstimateDisplay();
+    setShippingUnavailable(false);
     return;
   }
 
@@ -169,6 +181,7 @@ async function calculateShippingEstimate(country) {
       } else {
         updateShippingEstimateDisplay(getShippingErrorMessage(apiError));
       }
+      setShippingUnavailable(isUnsupportedDestination(apiError));
       return;
     }
 
@@ -177,24 +190,30 @@ async function calculateShippingEstimate(country) {
     if (amount !== undefined) {
       currentShippingCost = amount;
       updateShippingEstimateDisplay();
+      setShippingUnavailable(false);
       return;
     }
 
     currentShippingCost = null;
     updateShippingEstimateDisplay("Shipping will be calculated at checkout.");
+    setShippingUnavailable(false);
   } catch (error) {
     if (requestId !== shippingRequestId) return;
     console.error("Shipping calculation error:", error);
     currentShippingCost = null;
     updateShippingEstimateDisplay("Shipping will be calculated at checkout.");
+    setShippingUnavailable(false);
   }
 }
 
-function updateShippingEstimateDisplay(message = null) {
+function updateShippingEstimateDisplay(message = null, neutralText = null) {
   const shippingEl = document.getElementById("shipping-estimate");
   if (!shippingEl) return;
 
-  if (message) {
+  if (neutralText) {
+    shippingEl.textContent = neutralText;
+    shippingEl.style.color = "";
+  } else if (message) {
     shippingEl.textContent = message;
     shippingEl.style.color = "#ff6b6b";
   } else if (currentShippingCost !== null) {
@@ -252,8 +271,11 @@ function setupCountrySelector() {
           console.warn("localStorage unavailable, country not persisted");
         }
 
-        updateShippingToLine();
-        updateCheckoutButtonState();
+        // Clear notices that belonged to the previous country until the new estimate arrives
+        hideCheckoutError();
+        currentShippingCost = null;
+        updateShippingEstimateDisplay(null, select.value ? "Calculating..." : null);
+        setShippingUnavailable(false);
         debouncedCalculateShipping();
       }
     });
@@ -278,7 +300,14 @@ function updateShippingToLine() {
   }
 
   const countryName = getCountryName(select.value);
-  shippingToEl.innerHTML = `
+  shippingToEl.innerHTML = shippingUnavailable
+    ? `
+    <p data-testid="shipping-unavailable" style="margin: 0; color: #ff6b6b; font-size: 0.9rem; line-height: 1.6;">
+      We can't ship to <strong>${countryName}</strong>.<br/>
+      Please choose a different country to continue.
+    </p>
+  `
+    : `
     <p style="margin: 0; color: #999; font-size: 0.9rem; line-height: 1.6;">
       Shipping to <strong>${countryName}</strong>, calculated at checkout.<br/>
       To ship somewhere else, change the country above before continuing.
@@ -447,6 +476,11 @@ async function proceedToCheckout() {
   const countrySelect = document.getElementById("shipping-country");
   if (!countrySelect || countrySelect.value === "") {
     showCheckoutError("Please select a shipping country");
+    return;
+  }
+
+  if (shippingUnavailable) {
+    showCheckoutError("We can't ship to this country. Please choose a different country.");
     return;
   }
 

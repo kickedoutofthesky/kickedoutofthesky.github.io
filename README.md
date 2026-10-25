@@ -47,7 +47,9 @@ store/data/products.json ──► store.js (grid) ──► product.js ──�
 - **Countries** in the cart dropdown come from [js/allowed-countries.js](js/allowed-countries.js)
   (no API call). The backend rejects destinations Printful can't ship to.
 - **Shipping estimate** re-runs 300 ms after the country, a quantity or the cart contents change.
-  Failures never block checkout; Stripe calculates final shipping.
+  Changing the country clears any previous estimate or checkout error. If the backend says it can't
+  ship to the country, checkout is disabled until another country is chosen; other estimate failures
+  never block checkout (Stripe calculates final shipping).
 - **Checkout** sends only variant IDs and quantities; the backend looks up prices, so browser
   values are never trusted.
 

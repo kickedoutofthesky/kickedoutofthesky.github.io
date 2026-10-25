@@ -76,11 +76,20 @@ describe("Integration Tests - Live staging API (no mocks)", () => {
       });
     });
 
-    it("shows a can't-ship message for a disabled country without blocking checkout", () => {
+    it("blocks checkout for a country we can't ship to and clears it for a supported one", () => {
       estimateShipping("RU", 1).its("response.statusCode").should("eq", 400);
       cy.get("#shipping-estimate").should("have.text", "We can't ship to this country.");
+      cy.get("[data-testid='shipping-unavailable']").should("contain", "We can't ship to Russia");
 
       cy.get("#terms-checkbox").check({ force: true });
+      cy.get("#checkout-btn").should("be.disabled");
+
+      cy.get("#shipping-country").select("US");
+      cy.wait("@shipping", { timeout: 30000 }).its("response.statusCode").should("eq", 200);
+      cy.get("#shipping-estimate")
+        .invoke("text")
+        .should("match", /^\$\d+\.\d{2}/);
+      cy.get("[data-testid='shipping-unavailable']").should("not.exist");
       cy.get("#checkout-btn").should("not.be.disabled");
     });
   });
