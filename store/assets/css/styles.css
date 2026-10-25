@@ -912,21 +912,16 @@ textarea[aria-invalid="true"]:focus {
   }
 }
 
-/* Subtle focus styling for cart fields */
+/* Focus styling for store form fields (cart, product page, order status):
+   dark border, yellow outline and glow */
 #shipping-country:focus,
-.quantity-input:focus {
-  background-color: #1a1a1a;
-  border-color: #555;
-  color: #ccc;
-  outline: 1px solid #ffc107;
-  outline-offset: 1px;
-  box-shadow: 0 0 0 0.1rem rgba(255, 193, 7, 0.1);
-}
-
+.quantity-input:focus,
+.store-field:focus,
 #shipping-country:focus-visible,
-.quantity-input:focus-visible {
+.quantity-input:focus-visible,
+.store-field:focus-visible {
   background-color: #1a1a1a;
-  border-color: #999;
+  border-color: #333;
   color: #ccc;
   outline: 1px solid #ffc107;
   outline-offset: 1px;

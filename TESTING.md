@@ -54,6 +54,7 @@ npx cypress run --spec cypress/e2e/cart.cy.js   # one spec
 | `checkout.cy.js`       | Store → cart → checkout request body → Stripe redirect; a multi-product, multi-quantity cart built in the store (merging, badge, subtotal, shipping and checkout payloads, success page lines); double-click guard; error, retry and network-failure handling |
 | `success-page.cy.js`   | Order details from `/api/order-details`, cart cleared, error paths, no call without `session_id`                                                                                                                                                              |
 | `order-status.cy.js`   | Validation, results, Enter key, reload restore, error messages                                                                                                                                                                                                |
+| `form-focus.cy.js`     | Focused fields on the product page and order status page look the same as the cart's (border, outline, glow, colours)                                                                                                                                         |
 | `responsive.cy.js`     | No horizontal overflow and correct grid columns at phone/tablet/desktop sizes                                                                                                                                                                                 |
 
 [cypress/support/e2e.js](cypress/support/e2e.js) runs before every test. It:

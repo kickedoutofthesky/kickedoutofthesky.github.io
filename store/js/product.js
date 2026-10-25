@@ -558,7 +558,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                         ? `
                 <div class="mb-3">
                   <label for="color" class="form-label">Color</label>
-                  <select id="color" data-testid="color-select" class="form-select" onchange="updateColorAndPrice(); checkFormComplete()">
+                  <select id="color" data-testid="color-select" class="form-select store-field" onchange="updateColorAndPrice(); checkFormComplete()">
                     ${availableColors.map(color => `<option value="${color}">${color}</option>`).join("")}
                   </select>
                 </div>
@@ -568,14 +568,14 @@ document.addEventListener("DOMContentLoaded", async () => {
 
                 <div class="mb-3">
                   <label for="size" class="form-label">Size</label>
-                  <select id="size" data-testid="size-select" class="form-select" onchange="updatePrice(); checkFormComplete()">
+                  <select id="size" data-testid="size-select" class="form-select store-field" onchange="updatePrice(); checkFormComplete()">
                     <option value="">-- Choose a size --</option>
                   </select>
                 </div>
 
                 <div class="mb-3">
                   <label for="quantity" class="form-label">Quantity</label>
-                  <input type="number" id="quantity" class="form-control" style="max-width: 100px;" min="1" value="1" onchange="checkFormComplete()">
+                  <input type="number" id="quantity" class="form-control store-field" style="max-width: 100px;" min="1" value="1" onchange="checkFormComplete()">
                 </div>
               </div>
 

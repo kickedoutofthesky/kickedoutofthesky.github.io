@@ -328,17 +328,6 @@
         font-size: 1rem;
       }
 
-      .form-group-custom input:focus {
-        outline: 2px solid #ffc107;
-        outline-offset: 2px;
-        border-color: #ffc107;
-      }
-
-      .form-group-custom input:focus-visible {
-        outline: 2px solid #ffc107;
-        outline-offset: 2px;
-      }
-
       .form-group-custom input:-webkit-autofill,
       .form-group-custom input:-webkit-autofill:hover,
       .form-group-custom input:-webkit-autofill:focus,
@@ -470,6 +459,7 @@
             <input
               type="text"
               id="printful-order-id"
+              class="store-field"
               placeholder="e.g., PF123456789"
               data-testid="printful-order-id-input"
               required
@@ -484,6 +474,7 @@
             <input
               type="email"
               id="email"
+              class="store-field"
               placeholder="your@example.com"
               data-testid="email-input"
               required
