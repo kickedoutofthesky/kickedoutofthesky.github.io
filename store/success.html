@@ -184,6 +184,7 @@
                   <span id="summary-shipping">$0.00</span>
                 </div>
                 <div
+                  id="summary-tax-row"
                   style="
                     display: flex;
                     justify-content: space-between;
@@ -570,6 +571,11 @@
             summaryShipping.textContent = `${currencySymbol}${((orderSummary.shipping || 0) / 100).toFixed(2)}`;
           }
           const summaryTax = document.getElementById("summary-tax");
+          const summaryTaxRow = document.getElementById("summary-tax-row");
+          // Only show the Tax line when tax was charged
+          if (summaryTaxRow) {
+            summaryTaxRow.style.display = Math.round(orderSummary.tax || 0) > 0 ? "flex" : "none";
+          }
           if (summaryTax) {
             summaryTax.textContent = `${currencySymbol}${((orderSummary.tax || 0) / 100).toFixed(2)}`;
           }

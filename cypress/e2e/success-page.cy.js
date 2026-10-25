@@ -54,6 +54,20 @@ describe("Success page", () => {
     });
   });
 
+  it("hides the Tax line when no tax was charged", () => {
+    cy.intercept("GET", "**/api/order-details?session_id=*", {
+      statusCode: 200,
+      body: { ...ORDER_DETAILS, orderSummary: { ...ORDER_DETAILS.orderSummary, tax: 0, total: 10499 } },
+    }).as("orderDetails");
+    visitSuccess();
+    cy.wait("@orderDetails");
+
+    cy.get("#summary-total").should("have.text", "$104.99");
+    cy.get("#summary-tax-row").should("not.be.visible");
+    cy.get("#summary-subtotal").should("be.visible");
+    cy.get("#summary-shipping").should("be.visible");
+  });
+
   describe("With order details", () => {
     beforeEach(() => {
       cy.intercept("GET", "**/api/order-details?session_id=*", { statusCode: 200, body: ORDER_DETAILS }).as(
@@ -85,6 +99,7 @@ describe("Success page", () => {
     it("shows the order summary totals", () => {
       cy.get("#summary-subtotal").should("have.text", "$95.00");
       cy.get("#summary-shipping").should("have.text", "$9.99");
+      cy.get("#summary-tax-row").should("be.visible");
       cy.get("#summary-tax").should("have.text", "$4.80");
       cy.get("#summary-total").should("have.text", "$109.79");
     });
