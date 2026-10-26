@@ -1,6 +1,6 @@
 <nav
   id="navbarMain"
-  class="navbar navbar-expand site-header fixed-top"
+  class="navbar navbar-expand site-header sticky-top"
   style="padding: 15px 40px 15px 0; background-color: #00000080; z-index: 1001"
 >
   <style>
@@ -17,6 +17,12 @@
       }
       #navbarMain .container-fluid img.brand {
         max-height: 35px !important;
+        /* Keep the logo inside narrow screens (the navbar is in the page flow, so overflow would scroll) */
+        max-width: calc(100vw - 40px);
+        height: auto;
+      }
+      #navbarMain .container-fluid > a {
+        max-width: 100%;
       }
       #navbarMain .nav {
         justify-content: center !important;

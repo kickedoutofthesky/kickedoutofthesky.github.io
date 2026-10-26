@@ -45,7 +45,7 @@ describe("Success page", () => {
     cy.visitWith("/store/cart.html", { cart: CART });
     cy.get("#navbarMain").should("have.length", 1);
     navSummary().then(cartNav => {
-      cy.intercept("GET", "/navbar.html").as("sharedNavbar");
+      cy.intercept("GET", "/navbar.html*").as("sharedNavbar");
       cy.intercept("GET", "**/api/order-details?session_id=*", { statusCode: 200, body: ORDER_DETAILS });
       visitSuccess();
       cy.wait("@sharedNavbar");

@@ -6,7 +6,7 @@
 async function loadNavbar() {
   try {
     // Fetch the navbar template from root directory
-    const response = await fetch("/navbar.html");
+    const response = await fetch("/navbar.html?v=20261026130000");
     if (!response.ok) throw new Error("Failed to load navbar");
 
     let navbarHtml = await response.text();
@@ -24,8 +24,8 @@ async function loadNavbar() {
     // Listen for storage changes (cart updates from other tabs)
     window.addEventListener("storage", updateCartBadge);
 
-    // Position content after navbar loads
-    setTimeout(positionContent, 50);
+    // Keep the merch page's sticky category bar directly below the navbar
+    pinCategoryFilter();
   } catch (error) {
     console.error("Error loading navbar:", error);
   }
@@ -49,29 +49,22 @@ function updateCartBadge() {
 }
 
 /**
- * Position content to account for navbar height
+ * The navbar is position: sticky, so page content flows below it on its own (no padding to compute).
+ * Only the merch page's sticky category bar needs to know the navbar height for its `top`. A
+ * ResizeObserver tracks real navbar size changes, unlike window resize events, which mobile
+ * browsers fire constantly while their toolbars collapse and expand.
  */
-function positionContent() {
+function pinCategoryFilter() {
   const navbar = document.getElementById("navbarMain");
-  const legalContainer = document.querySelector(".legal-container");
-  const mainContent = document.getElementById("main-content");
   const categoryFilter = document.getElementById("category-filter");
+  if (!navbar || !categoryFilter) return;
 
-  if (navbar) {
-    const navHeight = navbar.offsetHeight;
-
-    if (categoryFilter) {
-      // Merch page with category filter
-      categoryFilter.style.top = navHeight + "px";
-      const filterHeight = categoryFilter.offsetHeight;
-      mainContent.style.paddingTop = navHeight + filterHeight + "px";
-    } else if (mainContent) {
-      // Cart/Order Status pages without category filter
-      mainContent.style.paddingTop = navHeight + "px";
-    } else if (legalContainer) {
-      // Legal pages
-      legalContainer.style.paddingTop = navHeight + 20 + "px";
-    }
+  const update = () => {
+    categoryFilter.style.top = navbar.offsetHeight + "px";
+  };
+  update();
+  if (typeof ResizeObserver !== "undefined") {
+    new ResizeObserver(update).observe(navbar);
   }
 }
 
@@ -83,7 +76,3 @@ if (document.readyState === "loading") {
 } else {
   loadNavbar();
 }
-
-// Reposition on window resize
-window.addEventListener("resize", positionContent);
-window.addEventListener("load", positionContent);
