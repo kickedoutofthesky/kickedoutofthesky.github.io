@@ -4,6 +4,8 @@
   style="padding: 15px 40px 15px 0; background-color: #00000080; z-index: 1001"
 >
   <style>
+    /* The navbar is in the page flow (sticky), so anything wider than the screen would scroll the page.
+       The logo link and image may therefore shrink to fit (see the inline styles below). */
     @media (max-width: 767px) {
       #navbarMain {
         padding: 15px 20px !important;
@@ -17,12 +19,6 @@
       }
       #navbarMain .container-fluid img.brand {
         max-height: 35px !important;
-        /* Keep the logo inside narrow screens (the navbar is in the page flow, so overflow would scroll) */
-        max-width: calc(100vw - 40px);
-        height: auto;
-      }
-      #navbarMain .container-fluid > a {
-        max-width: 100%;
       }
       #navbarMain .nav {
         justify-content: center !important;
@@ -52,12 +48,16 @@
     }
   </style>
   <div class="container-fluid" style="display: flex; justify-content: space-between; align-items: center; gap: 20px">
-    <a href="/" style="flex-shrink: 0; display: flex; align-items: center" aria-label="Kicked Out of the Sky - Home">
+    <a
+      href="/"
+      style="min-width: 0; max-width: 100%; display: flex; align-items: center"
+      aria-label="Kicked Out of the Sky - Home"
+    >
       <img
         class="brand"
         src="/img/Kicked-Out-Of-The-Sky_transparent.png"
         alt="Kicked Out Of The Sky Logo"
-        style="width: auto; display: block; max-height: 50px"
+        style="width: auto; height: auto; max-width: 100%; display: block; max-height: 50px"
       />
     </a>
     <ul class="nav" style="gap: 30px; display: flex; margin: 0; list-style: none; justify-content: flex-end">
