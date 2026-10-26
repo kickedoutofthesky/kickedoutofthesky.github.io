@@ -47,14 +47,12 @@
     <a href="#main-content" class="skip-nav">Skip to content</a>
     <!-- Navbar loaded dynamically from navbar.html -->
 
-    <!-- Category Filter (fixed below navbar) -->
+    <!-- Category Filter (sticky below the navbar; navbar-loader.js sets its top to the navbar height) -->
     <div
       id="category-filter"
       style="
-        position: fixed;
-        top: 130px;
-        left: 0;
-        right: 0;
+        position: sticky;
+        top: 0;
         z-index: 1000;
         background: #000;
         display: flex;
@@ -78,7 +76,7 @@
       <button class="filter-btn" data-category="stickers" aria-label="Filter products by Stickers">Stickers</button>
     </div>
 
-    <div id="main-content" style="padding-top: 150px">
+    <div id="main-content">
       <div class="container">
         <main>
           <h1 class="text-light" style="margin-top: 0; margin-bottom: 10px">Merch</h1>
@@ -124,35 +122,9 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="../js/navbar-loader.js"></script>
+    <script src="../js/navbar-loader.js?v=20261026130000"></script>
     <script src="./js/cart.js"></script>
     <script type="module" src="./js/store.js?v=20261025165000"></script>
-    <script>
-      // Position filter bar and content after navbar loads
-      function positionFilterBar() {
-        const navbar = document.getElementById("navbarMain");
-        const filter = document.getElementById("category-filter");
-        const content = document.getElementById("main-content");
-        if (navbar && filter && content) {
-          const navHeight = navbar.offsetHeight;
-          filter.style.top = navHeight + "px";
-          const filterHeight = filter.offsetHeight;
-          const totalHeight = navHeight + filterHeight;
-          content.style.paddingTop = totalHeight + "px";
-        }
-      }
-      // Run on DOMContentLoaded
-      if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", () => {
-          setTimeout(positionFilterBar, 50);
-        });
-      } else {
-        setTimeout(positionFilterBar, 50);
-      }
-      // Run on load event
-      window.addEventListener("load", positionFilterBar);
-      window.addEventListener("resize", positionFilterBar);
-    </script>
     <script src="../js/analytics.js"></script>
     <script src="../js/cookie-consent.js"></script>
   </body>

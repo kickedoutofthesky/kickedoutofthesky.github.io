@@ -107,7 +107,7 @@ Cypress.Commands.add("acceptTerms", () => {
   cy.get("#terms-checkbox").check();
 });
 
-// Scroll targets to the centre so the fixed-top navbar never covers them
+// Scroll targets to the centre so the sticky navbar never covers them
 Cypress.config("scrollBehavior", "center");
 
 // Ignore cross-origin "Script error." noise from CDN resources (Bootstrap, Font Awesome)
