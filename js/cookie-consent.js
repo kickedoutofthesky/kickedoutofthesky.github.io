@@ -12,6 +12,8 @@
   var existing = localStorage.getItem(CONSENT_KEY);
   if (existing === "accepted") {
     if (typeof loadGA === "function") loadGA(); // eslint-disable-line no-undef
+    if (typeof window._loadMetaPixel === "function") window._loadMetaPixel();
+    if (typeof window.flushReleaseAnalyticsQueue === "function") window.flushReleaseAnalyticsQueue();
     return;
   }
   if (existing === "declined") {
@@ -84,6 +86,8 @@
       localStorage.setItem(CONSENT_KEY, "accepted");
       banner.remove();
       if (typeof loadGA === "function") loadGA(); // eslint-disable-line no-undef
+      if (typeof window._loadMetaPixel === "function") window._loadMetaPixel();
+      if (typeof window.flushReleaseAnalyticsQueue === "function") window.flushReleaseAnalyticsQueue();
     });
     document.getElementById("cookie-decline").addEventListener("click", function () {
       localStorage.setItem(CONSENT_KEY, "declined");

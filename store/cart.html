@@ -4,21 +4,21 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="csrf-token" content="" />
-    <title>Shopping Cart - Kicked Out of the Sky</title>
-    <meta name="description" content="Review your cart and checkout. Official Kicked Out of the Sky merch store." />
-    <meta property="og:title" content="Shopping Cart - Kicked Out of the Sky" />
-    <meta property="og:description" content="Review your cart and checkout at Kicked Out of the Sky merch store." />
+    <title>Shopping Cart - Kicked Out Of The Sky</title>
+    <meta name="description" content="Review your cart and checkout. Official Kicked Out Of The Sky merch store." />
+    <meta property="og:title" content="Shopping Cart - Kicked Out Of The Sky" />
+    <meta property="og:description" content="Review your cart and checkout at Kicked Out Of The Sky merch store." />
     <meta property="og:url" content="https://www.kickedoutofthesky.com/store/cart.html" />
     <meta name="twitter:card" content="summary" />
-    <meta name="twitter:title" content="Shopping Cart - Kicked Out of the Sky" />
+    <meta name="twitter:title" content="Shopping Cart - Kicked Out Of The Sky" />
     <meta name="twitter:description" content="Review your cart and checkout your order." />
     <link rel="canonical" href="https://www.kickedoutofthesky.com/store/cart.html" />
     <meta
       http-equiv="Content-Security-Policy"
       content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; img-src 'self' https: data:; font-src 'self' https://cdnjs.cloudflare.com; connect-src 'self' http://localhost:3001 https://api.kickedoutofthesky.com https://api-staging.kickedoutofthesky.com https://cdn.jsdelivr.net https://region1.google-analytics.com https://www.google-analytics.com"
     />
-    <link rel="icon" href="../img/star-64.ico" />
-    <link rel="apple-touch-icon" href="../img/star-64.ico" />
+    <link rel="icon" href="/img/star-64.ico" />
+    <link rel="apple-touch-icon" href="/img/star-64.ico" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
@@ -40,31 +40,40 @@
         margin-top: 0;
       }
 
+      .cart-item-image {
+        width: 120px;
+        height: 120px;
+        flex-shrink: 0;
+      }
+
+      .cart-item-details {
+        flex: 1;
+        min-width: 0;
+      }
+
       @media (max-width: 576px) {
+        /* min-width: 0 lets grid items shrink below their content width */
         #cart-items > div {
           flex-wrap: wrap;
+          min-width: 0;
         }
 
-        #cart-items > div > div:first-child {
-          width: 100%;
+        #cart-items .cart-item-qty-row {
+          flex-wrap: wrap;
+          gap: 8px;
+        }
+
+        /* Stack the image above the details */
+        .cart-item-image {
           margin-bottom: 15px;
         }
 
-        #cart-items > div > div:last-child {
-          width: 100%;
+        .cart-item-details {
+          flex-basis: 100%;
         }
       }
 
       @media (max-width: 767px) {
-        div[style*="margin-top: 100px"] {
-          margin-top: 180px !important;
-        }
-
-        div[style*="margin-top: 100px"] .container {
-          max-width: 100%;
-          padding: 0;
-        }
-
         .cart-container {
           display: block;
         }
@@ -156,75 +165,9 @@
   </head>
   <body class="text-center">
     <a href="#cart-items" class="skip-nav">Skip to content</a>
-    <!-- Navbar -->
-    <nav
-      id="navbarMain"
-      class="navbar navbar-expand site-header fixed-top"
-      style="padding: 15px 40px 15px 0; background-color: #00000080"
-    >
-      <div class="container-fluid" style="display: flex; justify-content: space-between; align-items: center">
-        <a href="../index.html" style="flex-shrink: 0; display: flex; align-items: center">
-          <img
-            class="brand"
-            src="../img/Kicked-Out-Of-The-Sky_transparent.png"
-            alt="Kicked Out of the Sky Logo"
-            style="width: auto; display: block"
-          />
-        </a>
-        <ul class="nav" style="gap: 30px; display: flex; flex-wrap: nowrap; margin: 0; list-style: none">
-          <li class="nav-item">
-            <a
-              class="nav-link"
-              href="index.html"
-              style="text-decoration: none; font-size: 1.2rem; display: flex; align-items: center; cursor: pointer"
-            >
-              Merch
-            </a>
-          </li>
-          <li class="nav-item" style="position: relative">
-            <a
-              class="nav-link"
-              href="cart.html"
-              style="
-                text-decoration: none;
-                font-size: 1.2rem;
-                display: flex;
-                align-items: center;
-                gap: 8px;
-                cursor: pointer;
-              "
-            >
-              <i class="fas fa-shopping-cart"></i>
-              Cart
-              <span
-                id="cart-badge"
-                class="badge"
-                style="
-                  background-color: #ffc107;
-                  color: #000;
-                  position: absolute;
-                  top: -5px;
-                  right: -10px;
-                  display: none;
-                  font-size: 0.7rem;
-                  width: 20px;
-                  height: 20px;
-                  border-radius: 50%;
-                  display: flex;
-                  align-items: center;
-                  justify-content: center;
-                  padding: 0;
-                "
-              >
-                0
-              </span>
-            </a>
-          </li>
-        </ul>
-      </div>
-    </nav>
+    <!-- Navbar loaded dynamically from navbar.html -->
 
-    <div style="margin-top: 100px">
+    <div id="main-content">
       <div class="container" data-testid="cart-page">
         <h1 class="text-light mb-40">Shopping Cart</h1>
 
@@ -232,6 +175,15 @@
         <div id="empty-cart" data-testid="empty-cart-message" class="empty-state">
           <p class="text-secondary">Your cart is empty</p>
           <a href="index.html" class="btn btn-primary">Continue Shopping</a>
+        </div>
+
+        <!-- Loading State (while cart items/quote load) -->
+        <div id="cart-loading" style="display: none; text-align: center; padding: 40px">
+          <i
+            class="fas fa-spinner fa-spin"
+            style="font-size: 2rem; color: #999; margin-bottom: 16px; display: block"
+          ></i>
+          <p style="color: #999; font-size: 1rem">Loading your cart...</p>
         </div>
 
         <!-- Cart Container -->
@@ -244,25 +196,54 @@
           <!-- Order Summary -->
           <div id="cart-summary" class="card-dark hidden mt-40">
             <h3 class="text-light mb-20 mt-0">Order Summary</h3>
+
+            <!-- Checkout Error -->
+            <div
+              id="checkout-error"
+              style="
+                display: none;
+                padding: 15px;
+                background-color: #3a2a2a;
+                color: #ff6b6b;
+                border-radius: 4px;
+                margin-bottom: 15px;
+              "
+            >
+              <p id="checkout-error-text" style="margin: 0; font-size: 0.9rem"></p>
+            </div>
+
+            <!-- Subtotal Only -->
             <div class="flex-between text-secondary mb-15 pb-15 border-bottom-dark">
               <span>Subtotal:</span>
-              <span id="subtotal" data-testid="cart-subtotal">$0.00</span>
+              <span id="subtotal" data-testid="cart-subtotal">—</span>
             </div>
+
+            <!-- Shipping Estimate -->
             <div class="flex-between text-secondary mb-15 pb-15 border-bottom-dark">
-              <span>Tax:</span>
-              <span>TBD</span>
+              <span>Shipping Estimate:</span>
+              <span id="shipping-estimate" data-testid="shipping-estimate">—</span>
             </div>
-            <div class="flex-between text-secondary mb-15 pb-15 border-bottom-dark">
-              <span>Shipping:</span>
-              <span>TBD</span>
-            </div>
-            <div class="flex-between text-light fw-bold" style="font-size: 1.2rem">
-              <span>Total:</span>
-              <span id="total">$0.00</span>
-            </div>
-            <p class="text-tertiary text-sm divider-dark">
-              Shipping address and taxes will be calculated during checkout.
+
+            <!-- Price Disclaimer -->
+            <p
+              style="
+                padding: 12px;
+                background-color: #1a1a1a;
+                border-radius: 4px;
+                margin-bottom: 40px;
+                font-size: 0.9rem;
+                color: #999;
+                line-height: 1.6;
+              "
+            >
+              Prices in USD. Orders outside the US may be subject to
+              <a href="../legal/shipping-policy.html#duties" style="color: #ffc107; text-decoration: underline">
+                import duties or VAT
+              </a>
+              charged on delivery.
             </p>
+
+            <!-- Country Selector -->
             <div class="mt-20">
               <label for="shipping-country" class="form-group-label">
                 Shipping Country
@@ -282,9 +263,14 @@
                   font-size: 1rem;
                 "
               >
-                <option value="">Select a country...</option>
+                <option value="">Select destination...</option>
               </select>
             </div>
+
+            <!-- Shipping To Line (shown after country selection) -->
+            <div id="shipping-to-line" style="display: none; margin-top: 15px; margin-bottom: 40px"></div>
+
+            <!-- Terms Checkbox -->
             <div class="mt-20" style="text-align: left">
               <label for="terms-checkbox" style="cursor: pointer; color: #ccc; font-size: 0.9rem; line-height: 1.6">
                 <input
@@ -311,6 +297,8 @@
                 </a>
               </label>
             </div>
+
+            <!-- Checkout Button -->
             <button
               id="checkout-btn"
               class="btn btn-warning w-100"
@@ -319,6 +307,8 @@
             >
               Proceed to Checkout
             </button>
+
+            <!-- Continue Shopping Link -->
             <a
               href="index.html"
               class="btn btn-outline-secondary w-100"
@@ -343,15 +333,21 @@
         <a href="../legal/contact.html">Contact</a>
       </div>
       <p>
-        &copy; 2026 Let Go Media. All rights reserved. Kicked Out of the Sky&reg; is a registered trademark of Let Go
-        Media. Music rights owned by Matthew Bachman. Published by Tight Box Publishing.
+        &copy; 2026 Let Go Media. All rights reserved.
+        <br />
+        Kicked Out Of The Sky&trade; is a trademark of Matthew Bachman.
+        <br />
+        Music and lyrics &copy; Matthew Bachman/Tight Box Publishing.
+        <br />
+        Recordings &#8471; Matthew Bachman. Distributed by Let Go Media.
       </p>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/navbar-loader.js"></script>
     <script src="js/cart.js"></script>
     <script src="js/cart-notification.js"></script>
-    <script src="js/cart-display.js?v=20260323120009"></script>
+    <script type="module" src="js/cart-display.js?v=20261025151500"></script>
     <script src="../js/analytics.js"></script>
     <script src="../js/cookie-consent.js"></script>
   </body>

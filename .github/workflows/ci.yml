@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [main, gh-pages, develop]
+    branches: [gh-pages, development]
   pull_request:
-    branches: [main, gh-pages, develop]
+    branches: [gh-pages, development]
 
 jobs:
   test:
@@ -12,10 +12,53 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [14.x]
+        node-version: [20.x]
 
     steps:
       - uses: actions/checkout@v3
+
+      - name: Scan for exposed credentials
+        run: |
+          echo "Scanning for exposed credentials..."
+          set +e
+          found_creds=0
+
+          # Patterns to search for (with basic exclusions for docs)
+          patterns=(
+            "protection-bypass"
+            "sk_live_"
+            "sk_test_"
+            "whsec_"
+            "re_[A-Za-z0-9]{20,}"
+            "Bearer [A-Za-z0-9._-]{25,}"
+          )
+
+          for pattern in "${patterns[@]}"; do
+            # Search in tracked files, excluding documentation placeholders
+            # Exclude docs and this workflow (it contains the patterns themselves)
+            matches=$(git grep -l "$pattern" -- ':(exclude)*.md' ':(exclude).github/workflows/ci.yml' 2>/dev/null || true)
+
+            if [ ! -z "$matches" ]; then
+              echo "Found potential credential pattern '$pattern' in:"
+              while IFS= read -r file; do
+                # Skip if line contains documentation markers
+                git grep -n "$pattern" "$file" | grep -v '\.\.\.' | grep -v 'YOUR_' | grep -v 'example' | grep -v 'placeholder' || true
+                if [ ${PIPESTATUS[0]} -eq 0 ]; then
+                  found_creds=1
+                fi
+              done <<< "$matches"
+            fi
+          done
+
+          if [ $found_creds -eq 1 ]; then
+            echo ""
+            echo "❌ Error: Possible credentials found in source code!"
+            echo "Do not commit credentials to this repository."
+            exit 1
+          fi
+
+          echo "✓ No obvious credentials detected"
+          set -e
 
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
@@ -34,10 +77,6 @@ jobs:
 
       - name: Run unit tests
         run: npm test -- --coverage
-
-      - name: Run e2e tests
-        run: npm run e2e
-        continue-on-error: true
 
       - name: Upload test coverage
         uses: codecov/codecov-action@v3

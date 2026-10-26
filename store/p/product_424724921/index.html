@@ -33,7 +33,21 @@
   </head>
   <body>
     <script>
-      window.location.replace("https://www.kickedoutofthesky.com/store/product.html?key=product_424724921");
+      // Environment-aware redirect: use localhost for development, live site for production
+      (function () {
+        const hostname = window.location.hostname;
+        let targetUrl;
+
+        if (hostname === "localhost" || hostname === "127.0.0.1") {
+          // Development environment - stay on localhost
+          targetUrl = "http://localhost:3000/store/product.html?key=product_424724921";
+        } else {
+          // Production environment - use live site
+          targetUrl = "https://www.kickedoutofthesky.com/store/product.html?key=product_424724921";
+        }
+
+        window.location.replace(targetUrl);
+      })();
     </script>
     <p>
       Redirecting to

@@ -246,7 +246,7 @@ main {
 .btn-warning:disabled {
   background-color: #999999 !important;
   border-color: #999999 !important;
-  color: #666666 !important;
+  color: #ffffff !important;
   opacity: 0.6;
   cursor: not-allowed !important;
 }
@@ -423,12 +423,6 @@ input[type="number"]::-webkit-inner-spin-button {
 
 input[type="number"] {
   -moz-appearance: textfield;
-}
-
-/* Logo responsive sizing */
-.brand {
-  max-height: 70px;
-  width: auto;
 }
 
 /* Navbar menu - prevent wrapping */
@@ -769,10 +763,6 @@ nav .container-fluid {
 }
 
 @media (max-width: 768px) {
-  .brand {
-    max-height: 35px;
-  }
-
   .nav {
     gap: 15px !important;
   }
@@ -812,10 +802,6 @@ nav .container-fluid {
 }
 
 @media (max-width: 576px) {
-  .brand {
-    max-height: 28px;
-  }
-
   .nav {
     gap: 10px !important;
   }
@@ -860,39 +846,6 @@ nav .container-fluid {
     width: 100% !important;
     justify-content: center !important;
     padding: 0 0 10px 0 !important;
-  }
-}
-
-/* Store navbar logo - smaller than main site */
-.brand {
-  height: 25px !important;
-}
-
-@media (min-width: 768px) {
-  .brand {
-    height: 40px !important;
-  }
-
-  .product-image {
-    height: 400px;
-  }
-}
-
-@media (min-width: 1000px) {
-  .brand {
-    height: 50px !important;
-  }
-}
-
-@media (min-width: 1200px) {
-  .brand {
-    height: 45px !important;
-  }
-}
-
-@media (min-width: 1400px) {
-  .brand {
-    height: 45px !important;
   }
 }
 
@@ -959,21 +912,16 @@ textarea[aria-invalid="true"]:focus {
   }
 }
 
-/* Subtle focus styling for cart fields */
+/* Focus styling for store form fields (cart, product page, order status):
+   dark border, yellow outline and glow */
 #shipping-country:focus,
-.quantity-input:focus {
-  background-color: #1a1a1a;
-  border-color: #555;
-  color: #ccc;
-  outline: 1px solid #ffc107;
-  outline-offset: 1px;
-  box-shadow: 0 0 0 0.1rem rgba(255, 193, 7, 0.1);
-}
-
+.quantity-input:focus,
+.store-field:focus,
 #shipping-country:focus-visible,
-.quantity-input:focus-visible {
+.quantity-input:focus-visible,
+.store-field:focus-visible {
   background-color: #1a1a1a;
-  border-color: #999;
+  border-color: #333;
   color: #ccc;
   outline: 1px solid #ffc107;
   outline-offset: 1px;

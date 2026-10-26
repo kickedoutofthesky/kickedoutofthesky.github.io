@@ -1,91 +1,122 @@
 // ***********************************************************
-// This example support/e2e.js is processed and
-// loaded automatically before your test files.
-//
-// This is a great place to put global configuration and
-// behavior that modifies Cypress.
-//
-// You can change the location of this file or turn off
-// automatically serving support files with the
-// 'supportFile' configuration option.
-//
-// You can read more here:
-// https://on.cypress.io/configuration
+// Global configuration and custom commands for the e2e suite.
+// Loaded automatically before every spec in cypress/e2e.
 // ***********************************************************
 
 /* global cy */
 /* eslint-disable no-undef */
 
-// Shared test helpers for all Cypress tests
+// Shipping cost (cents) returned by the default calculate-shipping mock
+const SHIPPING_COSTS = {
+  US: 999,
+  CA: 1500,
+  GB: 1200,
+  AU: 2500,
+  DE: 1400,
+};
+const DEFAULT_SHIPPING_COST = 1500;
 
-function selectFirstRealSize() {
-  // Wait for size options to be populated (not just the placeholder)
-  cy.get("[data-testid='size-select'] option").should("have.length.greaterThan", 1);
+// Default API mocks so no spec ever reaches a live backend
+beforeEach(() => {
+  // POST /api/calculate-shipping  body: { country, items: [{ variant_id: number, quantity }] }
+  cy.intercept("POST", "**/api/calculate-shipping", req => {
+    const { country, items } = req.body || {};
+    const validItems =
+      Array.isArray(items) &&
+      items.length > 0 &&
+      items.every(item => Number.isInteger(item.variant_id) && Number.isInteger(item.quantity) && item.quantity > 0);
 
-  cy.get("[data-testid='size-select']").then($select => {
-    const value = $select.val();
-    // If placeholder is selected (empty value), select first real option
-    if (!value || value === "") {
-      cy.get("[data-testid='size-select'] option")
-        .eq(1)
-        .invoke("attr", "value")
-        .then(sizeValue => {
-          cy.get("[data-testid='size-select']").select(sizeValue, { force: true });
-        });
+    if (!country || !validItems) {
+      req.reply({ statusCode: 400, body: { error: "Each item must have a variant_id and quantity" } });
+      return;
     }
-  });
-}
 
-function selectFirstRealColor() {
-  // Wait for color select to be visible and have options
-  cy.get("[data-testid='color-select']").should("exist");
-  cy.get("[data-testid='color-select'] option").should("have.length.greaterThan", 0);
+    req.reply({
+      statusCode: 200,
+      body: {
+        shipping_options: [
+          {
+            shipping_rate_data: {
+              type: "fixed_amount",
+              fixed_amount: { amount: SHIPPING_COSTS[country] || DEFAULT_SHIPPING_COST, currency: "usd" },
+              display_name: "Standard Shipping",
+            },
+          },
+        ],
+      },
+    });
+  }).as("calculateShipping");
 
-  cy.get("[data-testid='color-select']").then($select => {
-    if ($select.length > 0 && $select.find("option").length > 0) {
-      cy.get("[data-testid='color-select'] option")
-        .eq(0) // Get the first color (no placeholder in color select)
-        .invoke("attr", "value")
-        .then(colorValue => {
-          // Use force:true to bypass navbar coverage issue
-          cy.get("[data-testid='color-select']").select(colorValue, { force: true });
-          // Wait for color change to update sizes
-          cy.get("[data-testid='size-select'] option").should("have.length.greaterThan", 1);
-        });
-    }
-  });
-}
-
-function selectShippingCountry(countryCode = "US") {
-  cy.get("#shipping-country").should("exist").select(countryCode);
-}
-
-function acceptTerms() {
-  cy.get("#terms-checkbox").should("exist").check();
-}
-
-// Make helpers available globally
-window.selectFirstRealSize = selectFirstRealSize;
-window.selectFirstRealColor = selectFirstRealColor;
-window.selectShippingCountry = selectShippingCountry;
-window.acceptTerms = acceptTerms;
-
-// Ignore cross-origin script errors from CDN resources (Bootstrap, Font Awesome)
-// These are expected and don't affect test functionality
-// eslint-disable-next-line no-undef
-Cypress.on("uncaught:exception", (err, _runnable) => {
-  // Ignore Script errors (cross-origin resource errors from CDN)
-  if (err.message === "Script error." || err.message.includes("Script error")) {
-    // Log it for debugging but don't fail
-    console.warn("Ignoring cross-origin script error:", err);
-    return false; // Continue test execution
-  }
-  // Let other errors fail the tests
-  return true;
+  // Keep Google Analytics (loaded after cookie consent) off the network
+  cy.intercept("GET", "https://www.googletagmanager.com/**", { statusCode: 200, body: "" }).as("googleAnalytics");
 });
 
-// Alternatively you can use CommonJS syntax:
-// require('./commands')
+/**
+ * Visit a page with localStorage pre-seeded.
+ * - consent: value for "cookie_consent" ("declined" by default so the banner never covers the page;
+ *   pass null to leave it unset)
+ * - cart: array of { productKey, color, size, quantity } stored as "kots_cart"
+ */
+Cypress.Commands.add("visitWith", (path, { consent = "declined", cart, ...options } = {}) => {
+  cy.visit(path, {
+    ...options,
+    onBeforeLoad(win) {
+      if (consent) win.localStorage.setItem("cookie_consent", consent);
+      if (cart) win.localStorage.setItem("kots_cart", JSON.stringify(cart));
+      if (options.onBeforeLoad) options.onBeforeLoad(win);
+    },
+  });
+});
+
+// Choose a colour/size/quantity on the product page (product must already be loaded)
+Cypress.Commands.add("chooseVariant", ({ color, size, quantity } = {}) => {
+  if (color) cy.get("[data-testid='color-select']").select(color);
+  cy.get("[data-testid='size-select'] option").should("have.length.greaterThan", 1);
+  if (size) {
+    cy.get("[data-testid='size-select']").select(size);
+  } else {
+    cy.get("[data-testid='size-select'] option")
+      .eq(1)
+      .then($opt => cy.get("[data-testid='size-select']").select($opt.val()));
+  }
+  if (quantity) cy.get("#quantity").clear().type(String(quantity));
+});
+
+// Select a shipping country on the cart page and wait for the estimate to settle
+Cypress.Commands.add("selectShippingCountry", (countryCode = "US") => {
+  cy.get("#shipping-country option").should("have.length.greaterThan", 1);
+  cy.get("#shipping-country").select(countryCode);
+  cy.wait("@calculateShipping");
+  cy.get("#shipping-estimate").should("not.have.text", "Calculating...");
+});
+
+// Assert an <img> actually loaded (not just that it has a src). Scrolls it into view so lazy
+// images load. fileName (optional) is matched against the decoded src.
+Cypress.Commands.add("shouldShowImage", { prevSubject: true }, ($img, fileName) => {
+  cy.wrap($img)
+    .scrollIntoView()
+    .should($el => {
+      const img = $el[0];
+      if (fileName) expect(decodeURI(img.currentSrc || img.src), "image src").to.include(fileName);
+      expect(img.complete, "image finished loading").to.eq(true);
+      expect(img.naturalWidth, "image width").to.be.greaterThan(0);
+    });
+});
+
+Cypress.Commands.add("acceptTerms", () => {
+  cy.get("#terms-checkbox").check();
+});
+
+// Scroll targets to the centre so the fixed-top navbar never covers them
+Cypress.config("scrollBehavior", "center");
+
+// Ignore cross-origin "Script error." noise from CDN resources (Bootstrap, Font Awesome)
+Cypress.on("uncaught:exception", err => {
+  if (err.message.includes("Script error")) {
+    return false;
+  }
+  return true;
+});
 
 // Hide fetch/XHR requests in the Command Log
 const app = window.top;

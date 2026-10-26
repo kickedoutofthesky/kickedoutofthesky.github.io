@@ -11,7 +11,25 @@ class ShoppingCart {
 
   loadCart() {
     const saved = localStorage.getItem(this.storageKey);
-    return saved ? JSON.parse(saved) : [];
+    const items = saved ? JSON.parse(saved) : [];
+
+    // Clean up any malformed items (missing or invalid quantity)
+    const validItems = items.filter(item => {
+      if (!item || typeof item !== "object") return false;
+      if (!item.productKey || !item.color || !item.size) return false;
+      if (!item.quantity || !Number.isInteger(item.quantity) || item.quantity <= 0) {
+        console.warn("Removing malformed cart item:", item);
+        return false;
+      }
+      return true;
+    });
+
+    // If items were removed, save the cleaned cart
+    if (validItems.length !== items.length) {
+      localStorage.setItem(this.storageKey, JSON.stringify(validItems));
+    }
+
+    return validItems;
   }
 
   saveCart(skipBadgeUpdate = false) {

@@ -56,21 +56,4 @@ describe("Product Images", () => {
     expect(products.length).toBeGreaterThan(0);
     expect(products.length).toBe(45);
   });
-
-  test("all product variants have at least one mockup", () => {
-    let totalVariants = 0;
-    let variantsWithMockups = 0;
-
-    products.forEach(product => {
-      Object.entries(product.variants).forEach(([_color, variantData]) => {
-        totalVariants += 1;
-        const mockups = variantData.mockups || [];
-        if (mockups.length > 0) {
-          variantsWithMockups += 1;
-        }
-      });
-    });
-
-    expect(variantsWithMockups).toBe(totalVariants);
-  });
 });

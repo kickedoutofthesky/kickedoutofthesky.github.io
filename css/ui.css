@@ -195,6 +195,12 @@ h2 {
   height: 30px;
 }
 
+@media (min-width: 576px) {
+  .brand {
+    height: 40px;
+  }
+}
+
 @media (min-width: 768px) {
   .flex-md-equal > * {
     -ms-flex: 1;
@@ -214,9 +220,9 @@ h2 {
   }
 }
 
-@media (min-width: 1000px) {
+@media (min-width: 992px) {
   .brand {
-    height: 75px;
+    height: 70px;
   }
 
   .nav-link {
@@ -490,6 +496,11 @@ h2 {
   .ml-embedded {
     min-height: 500px;
   }
+}
+
+/* Anchor scroll offset for fixed navbar */
+[id] {
+  scroll-margin-top: 130px;
 }
 
 /* Legal Footer */

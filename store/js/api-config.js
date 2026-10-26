@@ -2,6 +2,14 @@
  * API Configuration
  * Detects environment from hostname and sets backend URL accordingly
  * No build step needed - this runs directly in the browser
+ *
+ * Environment detection:
+ * - Port 3000 (localhost) → http://localhost:3001
+ * - Port 3002 (staging) → https://api-staging.kickedoutofthesky.com
+ * - kickedoutofthesky.com (production) → https://api.kickedoutofthesky.com
+ * - *.vercel.app (preview) → https://api-staging.kickedoutofthesky.com
+ *
+ * Base URLs must NOT include the /api prefix; callers append /api/<endpoint>.
  */
 
 (function () {
@@ -14,23 +22,56 @@
     window.location.protocol = "https:";
   }
 
+  // Both custom domains are served by the Vercel backend project
+  const PROD_API = "https://api.kickedoutofthesky.com";
+  const STAGING_API = "https://api-staging.kickedoutofthesky.com";
+
   const hostname = window.location.hostname;
+  const port = window.location.port;
 
-  // Determine backend URL based on hostname
-  let backendUrl;
+  // Check for API override via URL parameter (?api=local|staging|prod)
+  // or use previously saved sessionStorage value for persistent override
+  const urlParams = new URLSearchParams(window.location.search);
+  const apiParam = urlParams.get("api");
+  let apiTarget;
 
-  if (hostname === "localhost" || hostname === "127.0.0.1") {
-    // Local development: point to local Vercel dev server (vercel dev on port 3001)
-    // backendUrl = "http://localhost:3001";
-    // Local development: point to Vercel staging API via custom domain
-    backendUrl = "https://api-staging.kickedoutofthesky.com";
+  if (apiParam && ["local", "staging", "prod"].includes(apiParam)) {
+    apiTarget = apiParam;
+    sessionStorage.setItem("apiTarget", apiTarget);
   } else {
-    // Production: point to production API via custom domain
-    backendUrl = "https://api.kickedoutofthesky.com";
+    apiTarget = sessionStorage.getItem("apiTarget");
   }
 
-  // Make globally available
-  window.__API_URL__ = backendUrl;
+  // Determine backend URL: use override if set, otherwise detect from hostname
+  let backendUrl;
+
+  if (apiTarget === "local") {
+    backendUrl = "http://localhost:3001";
+  } else if (apiTarget === "staging") {
+    backendUrl = STAGING_API;
+  } else if (apiTarget === "prod") {
+    backendUrl = PROD_API;
+  } else {
+    // No override: fall back to hostname detection
+    if (hostname === "localhost" || hostname === "127.0.0.1") {
+      // Local development: detect backend by frontend port
+      // :3000 = local API, :3002 = staging API (Vercel), :empty = local API
+      if (port === "3002") {
+        backendUrl = STAGING_API;
+      } else {
+        backendUrl = "http://localhost:3001";
+      }
+    } else if (hostname === "kickedoutofthesky.com" || hostname === "www.kickedoutofthesky.com") {
+      backendUrl = PROD_API;
+    } else if (hostname.endsWith(".vercel.app")) {
+      backendUrl = STAGING_API;
+    } else {
+      backendUrl = PROD_API;
+    }
+  }
+
+  // Make globally available, ensuring no trailing slash
+  window.__API_URL__ = backendUrl.replace(/\/$/, "");
 
   // Add form validation handler for country select
   document.addEventListener(

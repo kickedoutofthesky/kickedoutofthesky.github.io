@@ -1,9 +1,29 @@
 /* global cart, playDingSound, createCartBurst */
 // Product Detail Page
+/* eslint-disable no-unused-vars */
+import { formatUSD, PRICE_DISCLAIMER_WITH_LINK } from "../../js/money.js";
+import {
+  getColorNamesFromProduct,
+  getSizesForColor,
+  getVariantIdForColorSize,
+  getPriceForColorSize,
+  getImageForColor,
+  validateProductFormData,
+  constrainZoomLevel,
+  calculateZoomIncrement,
+  validateCarouselIndex,
+  isProductSticker,
+  getMockupsForColor,
+  getPriceRangeFromProduct,
+} from "./utils/fixtures/product-utilities.js";
+/* eslint-enable no-unused-vars */
 let currentProduct = null;
 let currentImageIndex = 0; // Track carousel position (0 = main, 1 = sleeve mockup)
 
-// Zoom and Pan state
+// Zoom and Pan state (zoomLevel is a scale multiplier: 1 = 100%)
+const ZOOM_MIN = 1;
+const ZOOM_MAX = 3;
+const ZOOM_STEP = 0.2;
 let zoomLevel = 1;
 let panX = 0;
 let panY = 0;
@@ -12,9 +32,6 @@ let dragStartX = 0;
 let dragStartY = 0;
 let dragStartPanX = 0;
 let dragStartPanY = 0;
-const MAX_ZOOM = 3;
-const MIN_ZOOM = 1;
-const ZOOM_STEP = 0.2;
 
 // Get the list of images for the current color (mockups array or fallback to single image)
 function getColorImages() {
@@ -57,7 +74,7 @@ function updateCarouselUI() {
 }
 
 // Navigate to previous image
-// eslint-disable-next-line no-unused-vars
+
 function showPreviousImage() {
   if (currentImageIndex > 0) {
     currentImageIndex--;
@@ -68,7 +85,7 @@ function showPreviousImage() {
 }
 
 // Navigate to next image
-// eslint-disable-next-line no-unused-vars
+
 function showNextImage() {
   const images = getColorImages();
   if (currentImageIndex < images.length - 1) {
@@ -111,29 +128,27 @@ function applyImageTransform() {
   }
 }
 
-// eslint-disable-next-line no-unused-vars
+// Rounded to avoid float drift (e.g. 1.2 - 0.2 = 1.0000000000000002 would keep pan controls visible)
+function clampZoom(value) {
+  return Math.round(constrainZoomLevel(value, ZOOM_MIN, ZOOM_MAX) * 100) / 100;
+}
+
 function zoomIn() {
-  if (zoomLevel < MAX_ZOOM) {
-    zoomLevel = Math.min(zoomLevel + ZOOM_STEP, MAX_ZOOM);
-    updateZoomDisplay();
-    applyImageTransform();
-  }
+  zoomLevel = clampZoom(zoomLevel + calculateZoomIncrement("in", ZOOM_STEP));
+  updateZoomDisplay();
+  applyImageTransform();
 }
 
-// eslint-disable-next-line no-unused-vars
 function zoomOut() {
-  if (zoomLevel > MIN_ZOOM) {
-    zoomLevel = Math.max(zoomLevel - ZOOM_STEP, MIN_ZOOM);
-    updateZoomDisplay();
-    applyImageTransform();
-    if (zoomLevel === MIN_ZOOM) {
-      panX = 0;
-      panY = 0;
-    }
+  zoomLevel = clampZoom(zoomLevel + calculateZoomIncrement("out", ZOOM_STEP));
+  if (zoomLevel === ZOOM_MIN) {
+    panX = 0;
+    panY = 0;
   }
+  updateZoomDisplay();
+  applyImageTransform();
 }
 
-// eslint-disable-next-line no-unused-vars
 function resetZoom() {
   if (isSticker()) return;
   zoomLevel = 1;
@@ -143,7 +158,6 @@ function resetZoom() {
   applyImageTransform();
 }
 
-// eslint-disable-next-line no-unused-vars
 function panImage(deltaX, deltaY) {
   if (zoomLevel <= 1) return;
 
@@ -169,7 +183,7 @@ function updateZoomDisplay() {
 }
 
 function handleImageWheel(e) {
-  if (zoomLevel <= 1 && e.deltaY > 0) {
+  if (zoomLevel <= ZOOM_MIN && e.deltaY > 0) {
     return;
   }
 
@@ -177,9 +191,9 @@ function handleImageWheel(e) {
 
   const oldZoom = zoomLevel;
   const delta = e.deltaY > 0 ? -ZOOM_STEP : ZOOM_STEP;
-  zoomLevel = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, zoomLevel + delta));
+  zoomLevel = clampZoom(zoomLevel + delta);
 
-  if (zoomLevel === MIN_ZOOM) {
+  if (zoomLevel === ZOOM_MIN) {
     panX = 0;
     panY = 0;
   }
@@ -251,7 +265,7 @@ function handleImageTouchMove(e) {
     if (touchDistance > 0) {
       const scale = newDistance / touchDistance;
       const oldZoom = zoomLevel;
-      zoomLevel = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, zoomLevel * scale));
+      zoomLevel = clampZoom(zoomLevel * scale);
 
       if (zoomLevel !== oldZoom) {
         updateZoomDisplay();
@@ -283,7 +297,7 @@ function handleImageTouchEnd() {
 }
 
 function isSticker() {
-  return currentProduct && currentProduct.title.toLowerCase().includes("sticker");
+  return isProductSticker(currentProduct);
 }
 
 function initializeZoomPan() {
@@ -348,6 +362,35 @@ function initializeZoomPan() {
     if (carouselPrev) carouselPrev.addEventListener("click", showPreviousImage);
     if (carouselNext) carouselNext.addEventListener("click", showNextImage);
   }
+}
+
+function generateGarmentSection(product) {
+  if (!product.garment) {
+    return "";
+  }
+
+  const garment = product.garment;
+  const features = garment.features || [];
+  const featuresHTML =
+    features.length > 0
+      ? `<ul style="margin: 8px 0 0 20px; padding: 0; list-style: disc; color: #ccc;">${features
+          .map(f => `<li style="margin-bottom: 4px;">${f}</li>`)
+          .join("")}</ul>`
+      : "";
+
+  return `
+    <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #333;">
+      <h4 style="color: #ffc107; margin-bottom: 15px;">Garment Details</h4>
+      <div style="color: #ccc; font-size: 0.95rem; line-height: 1.6;">
+        ${garment.name ? `<p style="margin-bottom: 10px;"><strong>${garment.name}</strong></p>` : ""}
+        ${garment.material ? `<p style="margin-bottom: 8px;"><strong>Material:</strong> ${garment.material}</p>` : ""}
+        ${garment.weight ? `<p style="margin-bottom: 8px;"><strong>Weight:</strong> ${garment.weight}</p>` : ""}
+        ${garment.fit ? `<p style="margin-bottom: 8px;"><strong>Fit:</strong> ${garment.fit}</p>` : ""}
+        ${features.length > 0 ? `<p style="margin-bottom: 8px;"><strong>Features:</strong>${featuresHTML}</p>` : ""}
+        ${garment.care ? `<p style="margin-top: 12px;"><strong>Care:</strong> ${garment.care}</p>` : ""}
+      </div>
+    </div>
+  `;
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -428,7 +471,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Update meta tags dynamically for SEO
     try {
-      const baseUrl = "https://www.kickedoutofthesky.com/store/";
+      const baseUrl = `${window.location.protocol}//${window.location.host}/store/`;
       const productUrl = `${baseUrl}p/${product.product_key}/`;
       const productImageUrl = `${baseUrl}${encodeURI(product.image)}`;
       const productDescription = `${product.title} - Official Kicked Out of the Sky merchandise. Available in multiple colors and sizes.`;
@@ -451,9 +494,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (el) el.setAttribute(update.attr, update.value);
       }
       // Update address bar to shareable URL
-      if (window.location.pathname.includes("product.html")) {
-        history.replaceState(null, "", `p/${product.product_key}/`);
-      }
+      // URL is already in correct format (product.html?key=...)
     } catch (e) {
       console.error("Failed to update meta tags:", e);
     }
@@ -480,29 +521,29 @@ document.addEventListener("DOMContentLoaded", async () => {
 
               <!-- Zoom Controls -->
               <div id="zoom-controls" style="position: absolute; bottom: 10px; right: 10px; display: flex; flex-direction: column; gap: 4px; z-index: 10; pointer-events: auto;">
-                <button type="button" onclick="zoomIn()" aria-label="Zoom in to see product details" title="Zoom In" style="width: 36px; height: 36px; border: none; border-radius: 6px; background: rgba(0,0,0,0.6); color: #fff; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; pointer-events: auto; padding: 0;"><i class="fas fa-search-plus"></i></button>
-                <button type="button" onclick="zoomOut()" aria-label="Zoom out to see full product" title="Zoom Out" style="width: 36px; height: 36px; border: none; border-radius: 6px; background: rgba(0,0,0,0.6); color: #fff; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; pointer-events: auto; padding: 0;"><i class="fas fa-search-minus"></i></button>
-                <button type="button" onclick="resetZoom()" aria-label="Reset product image zoom to original size" title="Reset Zoom" style="width: 36px; height: 36px; border: none; border-radius: 6px; background: rgba(0,0,0,0.6); color: #fff; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; pointer-events: auto; padding: 0;"><i class="fas fa-compress-arrows-alt"></i></button>
+                <button type="button" aria-label="Zoom in to see product details" title="Zoom In" style="width: 36px; height: 36px; border: none; border-radius: 6px; background: rgba(0,0,0,0.6); color: #fff; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; pointer-events: auto; padding: 0;"><i class="fas fa-search-plus"></i></button>
+                <button type="button" aria-label="Zoom out to see full product" title="Zoom Out" style="width: 36px; height: 36px; border: none; border-radius: 6px; background: rgba(0,0,0,0.6); color: #fff; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; pointer-events: auto; padding: 0;"><i class="fas fa-search-minus"></i></button>
+                <button type="button" aria-label="Reset product image zoom to original size" title="Reset Zoom" style="width: 36px; height: 36px; border: none; border-radius: 6px; background: rgba(0,0,0,0.6); color: #fff; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; pointer-events: auto; padding: 0;"><i class="fas fa-compress-arrows-alt"></i></button>
               </div>
 
               <!-- Pan Controls (visible only when zoomed) -->
               <div id="pan-controls" style="display: none; position: absolute; bottom: 10px; left: 10px; z-index: 10; pointer-events: auto;">
                 <div style="display: grid; grid-template-columns: 30px 30px 30px; grid-template-rows: 30px 30px 30px; gap: 2px;">
                   <div></div>
-                  <button type="button" onclick="panImage(0, 20)" aria-label="Pan product image up" title="Pan Up" style="width: 30px; height: 30px; border: none; border-radius: 4px; background: rgba(0,0,0,0.6); color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 12px; pointer-events: auto; padding: 0;"><i class="fas fa-chevron-up"></i></button>
+                  <button type="button" aria-label="Pan product image up" title="Pan Up" style="width: 30px; height: 30px; border: none; border-radius: 4px; background: rgba(0,0,0,0.6); color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 12px; pointer-events: auto; padding: 0;"><i class="fas fa-chevron-up"></i></button>
                   <div></div>
-                  <button type="button" onclick="panImage(20, 0)" aria-label="Pan product image left" title="Pan Left" style="width: 30px; height: 30px; border: none; border-radius: 4px; background: rgba(0,0,0,0.6); color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 12px; pointer-events: auto; padding: 0;"><i class="fas fa-chevron-left"></i></button>
+                  <button type="button" aria-label="Pan product image left" title="Pan Left" style="width: 30px; height: 30px; border: none; border-radius: 4px; background: rgba(0,0,0,0.6); color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 12px; pointer-events: auto; padding: 0;"><i class="fas fa-chevron-left"></i></button>
                   <div></div>
-                  <button type="button" onclick="panImage(-20, 0)" aria-label="Pan product image right" title="Pan Right" style="width: 30px; height: 30px; border: none; border-radius: 4px; background: rgba(0,0,0,0.6); color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 12px; pointer-events: auto; padding: 0;"><i class="fas fa-chevron-right"></i></button>
+                  <button type="button" aria-label="Pan product image right" title="Pan Right" style="width: 30px; height: 30px; border: none; border-radius: 4px; background: rgba(0,0,0,0.6); color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 12px; pointer-events: auto; padding: 0;"><i class="fas fa-chevron-right"></i></button>
                   <div></div>
-                  <button type="button" onclick="panImage(0, -20)" aria-label="Pan product image down" title="Pan Down" style="width: 30px; height: 30px; border: none; border-radius: 4px; background: rgba(0,0,0,0.6); color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 12px; pointer-events: auto; padding: 0;"><i class="fas fa-chevron-down"></i></button>
+                  <button type="button" aria-label="Pan product image down" title="Pan Down" style="width: 30px; height: 30px; border: none; border-radius: 4px; background: rgba(0,0,0,0.6); color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 12px; pointer-events: auto; padding: 0;"><i class="fas fa-chevron-down"></i></button>
                   <div></div>
                 </div>
               </div>
 
               <!-- Carousel Arrows for multiple mockup images -->
-              <button id="carousel-prev" type="button" aria-label="View previous product image" onclick="showPreviousImage()" style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); width: 36px; height: 36px; border: none; border-radius: 6px; background: rgba(0,0,0,0.6); color: #fff; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 10; transition: background 0.2s; pointer-events: auto; padding: 0;"><i class="fas fa-chevron-left"></i></button>
-              <button id="carousel-next" type="button" aria-label="View next product image" onclick="showNextImage()" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); width: 36px; height: 36px; border: none; border-radius: 6px; background: rgba(0,0,0,0.6); color: #fff; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 10; transition: background 0.2s; pointer-events: auto; padding: 0;"><i class="fas fa-chevron-right"></i></button>
+              <button id="carousel-prev" type="button" aria-label="View previous product image" style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); width: 36px; height: 36px; border: none; border-radius: 6px; background: rgba(0,0,0,0.6); color: #fff; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 10; transition: background 0.2s; pointer-events: auto; padding: 0;"><i class="fas fa-chevron-left"></i></button>
+              <button id="carousel-next" type="button" aria-label="View next product image" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); width: 36px; height: 36px; border: none; border-radius: 6px; background: rgba(0,0,0,0.6); color: #fff; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 10; transition: background 0.2s; pointer-events: auto; padding: 0;"><i class="fas fa-chevron-right"></i></button>
             </div>
           </div>
           <div class="col-md-5">
@@ -517,7 +558,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                         ? `
                 <div class="mb-3">
                   <label for="color" class="form-label">Color</label>
-                  <select id="color" data-testid="color-select" class="form-select" onchange="updateColorAndPrice(); checkFormComplete()">
+                  <select id="color" data-testid="color-select" class="form-select store-field" onchange="updateColorAndPrice(); checkFormComplete()">
                     ${availableColors.map(color => `<option value="${color}">${color}</option>`).join("")}
                   </select>
                 </div>
@@ -527,14 +568,14 @@ document.addEventListener("DOMContentLoaded", async () => {
 
                 <div class="mb-3">
                   <label for="size" class="form-label">Size</label>
-                  <select id="size" data-testid="size-select" class="form-select" onchange="updatePrice(); checkFormComplete()">
+                  <select id="size" data-testid="size-select" class="form-select store-field" onchange="updatePrice(); checkFormComplete()">
                     <option value="">-- Choose a size --</option>
                   </select>
                 </div>
 
                 <div class="mb-3">
                   <label for="quantity" class="form-label">Quantity</label>
-                  <input type="number" id="quantity" class="form-control" style="max-width: 100px;" min="1" value="1" onchange="checkFormComplete()">
+                  <input type="number" id="quantity" class="form-control store-field" style="max-width: 100px;" min="1" value="1" onchange="checkFormComplete()">
                 </div>
               </div>
 
@@ -542,6 +583,9 @@ document.addEventListener("DOMContentLoaded", async () => {
                 Add to Cart
               </button>
               </form>
+
+              <!-- Garment Specifications -->
+              ${generateGarmentSection(product)}
             </div>
           </div>
         </div>
@@ -604,11 +648,9 @@ function updateSizes(selectedColor) {
   // Clear existing sizes
   sizeSelect.innerHTML = '<option value="">-- Choose a size --</option>';
 
-  if (color && currentProduct.variants[color]) {
-    const colorData = currentProduct.variants[color];
-    const sizes = colorData.sizes
-      ? Object.keys(colorData.sizes)
-      : Object.keys(colorData).filter(k => k !== "image" && k !== "mockups");
+  if (color) {
+    // Use utility function to get sizes for color
+    const sizes = getSizesForColor(currentProduct, color);
 
     sizes.forEach(size => {
       const option = document.createElement("option");
@@ -642,7 +684,6 @@ function updateColorImage(selectedColor) {
   updateCarouselUI();
 }
 
-// eslint-disable-next-line no-unused-vars
 function updateColorAndPrice() {
   const colorSelect = document.getElementById("color");
   const selectedColor = colorSelect.value;
@@ -692,8 +733,7 @@ function updatePrice() {
   if (size && color) {
     const variantData = currentProduct.variants[color]?.sizes?.[size];
     if (variantData?.price_cents !== null && variantData?.price_cents !== undefined) {
-      const price = variantData.price_cents / 100;
-      document.getElementById("price-display").textContent = `$${price.toFixed(2)}`;
+      document.getElementById("price-display").textContent = formatUSD(variantData.price_cents);
       return;
     }
   }
@@ -724,7 +764,6 @@ function checkFormComplete() {
   }
 }
 
-// eslint-disable-next-line no-unused-vars
 async function addToCart() {
   if (!currentProduct) return;
 
@@ -752,76 +791,68 @@ async function addToCart() {
 
   // Update badge after animation completes
   cart.updateCartBadge();
+
+  // Navigate to shopping cart page
+  window.location.href = "/store/cart.html";
 }
 
 // Get all variant prices for a product and return display price (single or range)
 function getPriceDisplay(product) {
-  const prices = [];
-
-  // Collect all prices from all variants and sizes
-  if (product.variants && typeof product.variants === "object") {
-    Object.values(product.variants).forEach(colorData => {
-      if (colorData.sizes && typeof colorData.sizes === "object") {
-        Object.values(colorData.sizes).forEach(sizeData => {
-          // Try to get price from variant object first
-          if (sizeData.price_cents !== null && sizeData.price_cents !== undefined) {
-            prices.push(sizeData.price_cents);
-          }
-        });
-      }
-    });
+  if (!product) {
+    return formatUSD(0);
   }
 
-  // If no variant prices found, fall back to display_price
-  if (prices.length === 0) {
-    return product.display_price;
+  // Use utility function to get price range
+  const priceRange = getPriceRangeFromProduct(product);
+
+  // If all prices are 0 and product has a display_price fallback, use it
+  if (priceRange.min === 0 && priceRange.max === 0 && product.display_price) {
+    return product.display_price.replace(/\s*USD$/, "");
   }
 
-  // Sort prices and get min and max
-  prices.sort((a, b) => a - b);
-  const minPrice = prices[0];
-  const maxPrice = prices[prices.length - 1];
+  // If all prices are 0, return zero
+  if (priceRange.min === 0 && priceRange.max === 0) {
+    return formatUSD(0);
+  }
 
   // If all prices are the same, show single price
-  if (minPrice === maxPrice) {
-    return `$${(minPrice / 100).toFixed(2)}`;
+  if (priceRange.min === priceRange.max) {
+    return formatUSD(priceRange.min * 100);
   }
 
   // If prices differ, show range
-  return `$${(minPrice / 100).toFixed(2)} - $${(maxPrice / 100).toFixed(2)}`;
+  return `${formatUSD(priceRange.min * 100)} – ${formatUSD(priceRange.max * 100)}`;
 }
 
 // Helper function to get numeric price range for schema markup
 function getPriceRange(product) {
-  const prices = [];
-
-  // Collect all prices from all variants and sizes
-  if (product.variants && typeof product.variants === "object") {
-    Object.values(product.variants).forEach(colorData => {
-      if (colorData.sizes && typeof colorData.sizes === "object") {
-        Object.values(colorData.sizes).forEach(sizeData => {
-          if (sizeData.price_cents !== null && sizeData.price_cents !== undefined) {
-            prices.push(sizeData.price_cents);
-          }
-        });
-      }
-    });
+  if (!product) {
+    return { min: 0, max: 0 };
   }
 
-  // If no prices found, use display_price or default
-  if (prices.length === 0) {
-    const fallbackPrice = product.display_price ? parseFloat(product.display_price.replace("$", "")) * 100 : 0;
-    return { min: fallbackPrice / 100, max: fallbackPrice / 100 };
-  }
-
-  prices.sort((a, b) => a - b);
-  return {
-    min: prices[0] / 100,
-    max: prices[prices.length - 1] / 100,
-  };
+  // Use utility function to get price range
+  return getPriceRangeFromProduct(product);
 }
 
 // Allow importing in Node.js (Jest tests) while keeping browser globals
 if (typeof module !== "undefined" && module.exports) {
-  module.exports = { getPriceDisplay, getPriceRange };
+  module.exports = {
+    getPriceDisplay,
+    getPriceRange,
+    checkFormComplete,
+    isSticker,
+    resetZoom,
+    updateColorImage,
+    updateSizes,
+  };
+}
+
+// Expose functions to window for inline event handlers when loaded as ES6 module
+if (typeof window !== "undefined") {
+  window.updatePrice = updatePrice;
+  window.updateColorAndPrice = updateColorAndPrice;
+  window.checkFormComplete = checkFormComplete;
+  window.addToCart = addToCart;
+  window.showPreviousImage = showPreviousImage;
+  window.showNextImage = showNextImage;
 }

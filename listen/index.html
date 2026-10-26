@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kicked Out Of The Sky — Listen</title>
+    <meta name="description" content="Listen to Kicked Out Of The Sky." />
+    <meta name="robots" content="noindex, follow" />
+
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self' 'unsafe-inline' https://connect.facebook.net; style-src 'self' 'unsafe-inline'; img-src 'self' https: data:; connect-src 'self' https://facebook.com https://www.facebook.com; font-src 'self'"
+    />
+
+    <link rel="icon" href="/img/star-64.ico" />
+
+    <!-- No-JS fallback: redirect immediately -->
+    <noscript>
+      <meta http-equiv="refresh" content="0;url=https://push.fm/fl/kickedoutofthesky" />
+    </noscript>
+
+    <style>
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+        background: #000;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Visually-hidden fallback link; the page auto-redirects. -->
+    <a href="https://push.fm/fl/kickedoutofthesky" style="position: absolute; left: -9999px">
+      Continue to Kicked Out Of The Sky
+    </a>
+
+    <!-- Meta Pixel: only initializes if the visitor previously accepted cookies -->
+    <script src="/js/meta-pixel.js"></script>
+    <script>
+      (function () {
+        var DEST = "https://push.fm/fl/kickedoutofthesky";
+
+        // Carry ad/attribution params through to the fan link.
+        try {
+          var keep = ["utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term", "fbclid", "ttclid"];
+          var here = new URLSearchParams(location.search);
+          var out = new URL(DEST);
+          keep.forEach(function (k) {
+            if (here.has(k)) out.searchParams.set(k, here.get(k));
+          });
+          DEST = out.toString();
+        } catch (e) {}
+
+        // Only fire the pixel if the visitor has already accepted cookies (GDPR).
+        var consented = false;
+        try {
+          consented = localStorage.getItem("cookie_consent") === "accepted";
+        } catch (e) {}
+
+        var delay = 250;
+        if (consented && typeof window.fbq === "function") {
+          window.fbq("track", "PageView");
+          window.fbq("track", "Lead", { content_name: "Listen redirect" });
+          delay = 800; // give the pixel beacon time to send before leaving
+        }
+
+        setTimeout(function () {
+          location.replace(DEST);
+        }, delay);
+      })();
+    </script>
+  </body>
+</html>

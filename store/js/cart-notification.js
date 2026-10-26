@@ -21,7 +21,6 @@ function playDingSound() {
   oscillator.stop(audioContext.currentTime + 0.1);
 }
 
-// eslint-disable-next-line no-unused-vars
 function createCartBurst() {
   // Get the quantity input position
   const quantityInput = document.getElementById("quantity");
@@ -250,3 +249,8 @@ style.textContent = `
   }
 `;
 document.head.appendChild(style);
+
+// Allow importing in Node.js (Jest tests) while keeping browser globals
+if (typeof module !== "undefined" && module.exports) {
+  module.exports = { playDingSound, createCartBurst };
+}

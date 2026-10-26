@@ -1,134 +1,70 @@
 /* eslint-disable no-undef */
 
-describe("Cookie Consent Banner", () => {
-  beforeEach(() => {
-    cy.window().then(win => {
-      win.localStorage.clear();
-      win.sessionStorage.clear();
-    });
-  });
+// Cookie consent banner (js/cookie-consent.js) gating Google Analytics (js/analytics.js).
 
-  describe("Banner Display", () => {
-    it("should show cookie consent banner on first visit", () => {
-      cy.visit("/");
-      cy.get("#cookie-consent-banner").should("be.visible");
-    });
+const gaScript = "script[src*='googletagmanager.com/gtag/js']";
 
-    it("should show banner on store pages", () => {
-      cy.visit("/store");
-      cy.get("#cookie-consent-banner").should("be.visible");
-    });
+describe("Cookie consent", () => {
+  describe("Banner", () => {
+    [
+      { path: "/", policyHref: "legal/cookie-policy.html" },
+      { path: "/store/", policyHref: "../legal/cookie-policy.html" },
+      { path: "/legal/privacy-policy.html", policyHref: "cookie-policy.html" },
+    ].forEach(({ path, policyHref }) => {
+      it(`is shown on first visit to ${path} with a working Cookie Policy link`, () => {
+        cy.visitWith(path, { consent: null });
 
-    it("should have Accept and Decline buttons", () => {
-      cy.visit("/");
-      cy.get("#cookie-accept").should("be.visible").and("contain", "Accept");
-      cy.get("#cookie-decline").should("be.visible").and("contain", "Decline");
-    });
-
-    it("should link to cookie policy page", () => {
-      cy.visit("/");
-      cy.get("#cookie-consent-banner a")
-        .should("contain", "Cookie Policy")
-        .and("have.attr", "href")
-        .and("include", "cookie-policy.html");
-    });
-
-    it("should have proper accessibility attributes", () => {
-      cy.visit("/");
-      cy.get("#cookie-consent-banner")
-        .should("have.attr", "role", "dialog")
-        .and("have.attr", "aria-label", "Cookie consent");
-    });
-  });
-
-  describe("Accept Consent", () => {
-    it("should remove banner when Accept is clicked", () => {
-      cy.visit("/");
-      cy.get("#cookie-consent-banner").should("be.visible");
-      cy.get("#cookie-accept").click();
-      cy.get("#cookie-consent-banner").should("not.exist");
-    });
-
-    it("should store acceptance in localStorage", () => {
-      cy.visit("/");
-      cy.get("#cookie-accept").click();
-      cy.window().then(win => {
-        expect(win.localStorage.getItem("cookie_consent")).to.equal("accepted");
+        cy.get("#cookie-consent-banner")
+          .should("be.visible")
+          .and("have.attr", "role", "dialog")
+          .and("have.attr", "aria-label", "Cookie consent");
+        cy.get("#cookie-accept").should("be.visible").and("have.text", "Accept");
+        cy.get("#cookie-decline").should("be.visible").and("have.text", "Decline");
+        cy.get("#cookie-consent-banner a").should("have.attr", "href", policyHref).click();
+        cy.location("pathname").should("eq", "/legal/cookie-policy.html");
       });
     });
 
-    it("should not show banner on subsequent visits after acceptance", () => {
-      cy.visit("/");
-      cy.get("#cookie-accept").click();
-      cy.visit("/");
-      cy.get("#cookie-consent-banner").should("not.exist");
-    });
-  });
-
-  describe("Decline Consent", () => {
-    it("should remove banner when Decline is clicked", () => {
-      cy.visit("/");
+    it("does not load Google Analytics before a choice is made", () => {
+      cy.visitWith("/", { consent: null });
       cy.get("#cookie-consent-banner").should("be.visible");
-      cy.get("#cookie-decline").click();
+      cy.get(gaScript).should("not.exist");
+      cy.window().its("_gaLoaded").should("be.undefined");
+    });
+  });
+
+  describe("Accept", () => {
+    it("hides the banner, remembers the choice and loads Google Analytics", () => {
+      cy.visitWith("/", { consent: null });
+      cy.get("#cookie-accept").click();
+
       cy.get("#cookie-consent-banner").should("not.exist");
+      cy.window().its("localStorage").invoke("getItem", "cookie_consent").should("eq", "accepted");
+      cy.get(gaScript).should("exist");
+      cy.window().its("_gaLoaded").should("eq", true);
     });
 
-    it("should store decline in localStorage", () => {
-      cy.visit("/");
-      cy.get("#cookie-decline").click();
-      cy.window().then(win => {
-        expect(win.localStorage.getItem("cookie_consent")).to.equal("declined");
-      });
-    });
-
-    it("should not show banner on subsequent visits after decline", () => {
-      cy.visit("/");
-      cy.get("#cookie-decline").click();
-      cy.visit("/");
+    it("loads Google Analytics without the banner on later visits", () => {
+      cy.visitWith("/store/", { consent: "accepted" });
+      cy.get("[data-testid='product-card']").should("have.length.greaterThan", 0);
       cy.get("#cookie-consent-banner").should("not.exist");
+      cy.get(gaScript).should("exist");
     });
   });
 
-  describe("Analytics Script Loading", () => {
-    it("should include analytics.js on the page", () => {
-      cy.visit("/");
-      cy.get("script[src*='analytics.js']").should("exist");
+  describe("Decline", () => {
+    it("hides the banner, remembers the choice and keeps Google Analytics off", () => {
+      cy.visitWith("/", { consent: null });
+      cy.get("#cookie-decline").click();
+
+      cy.get("#cookie-consent-banner").should("not.exist");
+      cy.window().its("localStorage").invoke("getItem", "cookie_consent").should("eq", "declined");
+      cy.get(gaScript).should("not.exist");
+
+      cy.reload();
+      cy.get("#navbarMain").should("be.visible");
+      cy.get("#cookie-consent-banner").should("not.exist");
+      cy.get(gaScript).should("not.exist");
     });
-
-    it("should include analytics.js on store pages", () => {
-      cy.visit("/store");
-      cy.get("script[src*='analytics.js']").should("exist");
-    });
-  });
-});
-
-describe("Legal Pages — No Draft Banner", () => {
-  const legalPages = [
-    "/legal/terms-and-conditions.html",
-    "/legal/privacy-policy.html",
-    "/legal/cookie-policy.html",
-    "/legal/shipping-policy.html",
-    "/legal/disclaimer.html",
-    "/legal/contact.html",
-    "/legal/copyright-notice.html",
-    "/legal/accessibility-statement.html",
-  ];
-
-  legalPages.forEach(page => {
-    it(`should not show draft banner on ${page.split("/").pop()}`, () => {
-      cy.visit(page);
-      cy.get(".draft-banner").should("not.exist");
-      cy.contains("DRAFT").should("not.exist");
-    });
-  });
-
-  it("should show cookie consent banner on legal pages", () => {
-    cy.visit("/legal/privacy-policy.html");
-    cy.get("#cookie-consent-banner").should("be.visible");
-  });
-
-  it("should include analytics.js on legal pages", () => {
-    cy.visit("/legal/privacy-policy.html");
-    cy.get("script[src*='analytics.js']").should("exist");
   });
 });

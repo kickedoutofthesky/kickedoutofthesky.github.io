@@ -1,0 +1,578 @@
+// Order Status Page
+
+import {
+  isValidEmail,
+  isValidPrintfulOrderId,
+  formatDate,
+  formatStatus,
+  formatTrackingStatus,
+  getCountryFlag,
+  parseCostCents,
+  formatCurrencyAmount,
+} from "./utils/fixtures/order-status-utilities.js";
+
+let products = [];
+
+document.addEventListener("DOMContentLoaded", async () => {
+  await loadProducts();
+  setupEventListeners();
+
+  // Check if there's a stored order to restore from session
+  const storedOrderData = sessionStorage.getItem("kots_order_data");
+  if (storedOrderData) {
+    try {
+      const orderData = JSON.parse(storedOrderData);
+      displayOrder(orderData);
+    } catch (error) {
+      console.error("Error restoring stored order:", error);
+      // If restore fails, proceed to normal flow
+      checkForAutoLoad();
+    }
+  } else {
+    checkForAutoLoad();
+  }
+});
+
+async function loadProducts() {
+  try {
+    const response = await fetch("./data/products.json");
+    if (!response.ok) throw new Error("Failed to load products");
+    products = await response.json();
+  } catch (error) {
+    console.error("Error loading products:", error);
+  }
+}
+
+function setupEventListeners() {
+  const searchBtn = document.getElementById("search-btn");
+  const printfulOrderIdInput = document.getElementById("printful-order-id");
+  const emailInput = document.getElementById("email");
+
+  if (searchBtn) {
+    searchBtn.addEventListener("click", handleSearch);
+  }
+
+  // Allow Enter key to trigger search
+  if (printfulOrderIdInput) {
+    printfulOrderIdInput.addEventListener("keypress", e => {
+      if (e.key === "Enter") handleSearch();
+    });
+    // Real-time validation to highlight button
+    printfulOrderIdInput.addEventListener("input", updateButtonState);
+    printfulOrderIdInput.addEventListener("change", updateButtonState);
+  }
+
+  if (emailInput) {
+    emailInput.addEventListener("keypress", e => {
+      if (e.key === "Enter") handleSearch();
+    });
+    // Real-time validation to highlight button
+    emailInput.addEventListener("input", updateButtonState);
+    emailInput.addEventListener("change", updateButtonState);
+  }
+
+  // Initialize button state on load
+  updateButtonState();
+}
+
+function updateButtonState() {
+  const emailInput = document.getElementById("email");
+  const printfulOrderIdInput = document.getElementById("printful-order-id");
+  const searchBtn = document.getElementById("search-btn");
+  const email = emailInput.value.trim();
+  const printfulOrderId = printfulOrderIdInput.value.trim();
+
+  // Both email and Printful Order ID are required
+  const isValid = email && isValidEmail(email) && printfulOrderId && isValidPrintfulOrderId(printfulOrderId);
+
+  if (isValid) {
+    searchBtn.classList.add("active");
+    searchBtn.disabled = false;
+  } else {
+    searchBtn.classList.remove("active");
+    searchBtn.disabled = true;
+  }
+}
+
+function checkForAutoLoad() {
+  // Check if printful_order_id and email are in URL query parameters
+  const params = new URLSearchParams(window.location.search);
+  const printfulOrderId = params.get("printful_order_id");
+  const email = params.get("email");
+
+  // Populate fields from URL parameters if present
+  if (email) {
+    document.getElementById("email").value = email;
+  }
+  if (printfulOrderId) {
+    document.getElementById("printful-order-id").value = printfulOrderId;
+  }
+
+  // Only auto-load (search) if both parameters are present
+  if (email && printfulOrderId) {
+    handleSearch();
+  }
+}
+
+async function handleSearch() {
+  const printfulOrderId = document.getElementById("printful-order-id").value.trim();
+  const email = document.getElementById("email").value.trim();
+  const searchBtn = document.getElementById("search-btn");
+
+  // Validate inputs - both are required
+  if (!email) {
+    showError("Please enter an email address");
+    return;
+  }
+
+  if (!isValidEmail(email)) {
+    showError("Please enter a valid email address");
+    return;
+  }
+
+  if (!printfulOrderId) {
+    showError("Please enter a Printful Order ID");
+    return;
+  }
+
+  if (!isValidPrintfulOrderId(printfulOrderId)) {
+    showError("Printful Order ID must start with 'PF'");
+    return;
+  }
+
+  // Show loading state
+  showLoading();
+
+  try {
+    // Disable search button during request
+    searchBtn.disabled = true;
+
+    const backendUrl = window.__API_URL__;
+    const url = new URL(`${backendUrl}/api/order-status`);
+    url.searchParams.append("email", email);
+    if (printfulOrderId) {
+      url.searchParams.append("printful_order_id", printfulOrderId);
+    }
+
+    const response = await fetch(url.toString(), {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    console.log("Response status:", response.status);
+    console.log("Response ok:", response.ok);
+
+    const data = await response.json();
+    console.log("Response data:", data);
+
+    if (!response.ok) {
+      let errorMsg = data.error || data.message || "Failed to fetch order status";
+
+      // Handle specific error codes
+      if (response.status === 404) {
+        errorMsg = "Order not found. Please check your Order ID and email address.";
+      } else if (response.status === 403) {
+        errorMsg = "The email address does not match this order. Please verify and try again.";
+      }
+
+      console.error(`API error (GET /api/order-status): ${response.status} - ${errorMsg}`);
+      showError(errorMsg);
+      searchBtn.disabled = false;
+      return;
+    }
+
+    // Display single or multiple orders based on response
+    console.log("Displaying order:", data);
+    try {
+      displayOrder(data);
+      console.log("displayOrder completed successfully");
+    } catch (displayError) {
+      console.error("Error in displayOrder:", displayError);
+      console.error("Display error message:", displayError.message);
+      showError("Error displaying order: " + displayError.message);
+      searchBtn.disabled = false;
+      return;
+    }
+    searchBtn.disabled = false;
+  } catch (error) {
+    console.error("Error fetching order status:", error);
+    console.error("Error message:", error.message);
+    console.error("Error stack:", error.stack);
+    showError("Unable to connect to the server. Please try again later.");
+    searchBtn.disabled = false;
+  }
+}
+
+function displayOrder(orderData) {
+  console.log("displayOrder called with:", orderData);
+  hideLoading();
+  hideError();
+  hideSearchForm();
+
+  // Save order data to sessionStorage for page refresh persistence
+  try {
+    sessionStorage.setItem("kots_order_data", JSON.stringify(orderData));
+  } catch (error) {
+    console.error("Error saving order to sessionStorage:", error);
+  }
+
+  const orderDisplay = document.getElementById("order-display");
+  const pendingSection = document.getElementById("pending-section");
+  const processingSection = document.getElementById("processing-section");
+
+  // Reset displays
+  pendingSection.style.display = "none";
+  processingSection.style.display = "none";
+
+  // Show order display
+  orderDisplay.style.display = "block";
+
+  if (orderData.status === "pending") {
+    displayPendingOrder(orderData);
+  } else {
+    console.log("Calling displayProcessingOrder");
+    displayProcessingOrder(orderData);
+
+    if (orderData.status === "shipped") {
+      displayTrackingInfo();
+    }
+  }
+}
+
+function displayPendingOrder(orderData) {
+  const pendingSection = document.getElementById("pending-section");
+  const pendingMessage = document.getElementById("pending-message");
+
+  pendingMessage.textContent = orderData.message || "Order is being prepared. Please check back soon.";
+  pendingSection.style.display = "block";
+}
+
+function displayProcessingOrder(orderData) {
+  console.log("displayProcessingOrder called with:", orderData);
+
+  try {
+    const recipient = orderData.recipient || {};
+    const address = recipient.address || {};
+    const countryCode = address.country_code || "";
+    const shipments = orderData.shipments || [];
+    const items = orderData.items || [];
+    const costs = orderData.costs || {};
+    const enrichedItems = items.map(item => enrichItemWithProductData(item));
+
+    // Amounts are integer cents in the order's currency
+    const currency = costs.currency || items[0]?.currency || "USD";
+    const money = cents => formatCurrencyAmount(cents, currency);
+    const subtotalCents = parseCostCents(costs.subtotal_cents);
+    const discountCents = parseCostCents(costs.discount_cents);
+    const shippingCents = parseCostCents(costs.shipping_cents);
+    const taxCents = parseCostCents(costs.tax_cents);
+    const totalCents = parseCostCents(costs.total_cents);
+    const statusLabel = orderData.status_display || formatStatus(orderData.status);
+
+    // Build items (left column)
+    const itemsHTML = enrichedItems
+      .map(item => {
+        const priceCents = parseCostCents(item.price_cents);
+        const lineTotal = priceCents * item.quantity;
+
+        const productName = item.product_title || item.product_name || "Unknown Product";
+        const colorDisplay = item.color || "";
+        const sizeDisplay = item.size || "";
+
+        return `<div style="margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid #333; display: flex; gap: 16px; flex-wrap: wrap; text-align: left;">
+        <div style="flex-shrink: 0; width: 80px; height: 80px; overflow: hidden; border-radius: 4px;">
+          ${
+            item.image
+              ? `<img src="${item.image}" alt="${productName}" style="width: 100%; height: 100%; object-fit: cover;">`
+              : `<div style="width: 100%; height: 100%; background: #2a2a2a; display: flex; align-items: center; justify-content: center; color: #666;">No Image</div>`
+          }
+        </div>
+        <div style="flex: 1; text-align: left;">
+          <div style="display: flex; justify-content: space-between; gap: 10px; margin-bottom: 6px">
+            <div>${productName}${colorDisplay ? " - " + colorDisplay : ""}${sizeDisplay ? " - " + sizeDisplay : ""}</div>
+            <div style="color: #ffc107; font-weight: bold; white-space: nowrap">${money(lineTotal)}</div>
+          </div>
+          <div style="display: flex; justify-content: flex-start; color: #999; font-size: 0.85rem">
+            <div>Qty: ${item.quantity} × ${money(priceCents)} each</div>
+          </div>
+        </div>
+      </div>`;
+      })
+      .join("");
+
+    // Build shipping and tracking combined section
+    let shippingTrackingHTML = "";
+    if (shipments.length > 0) {
+      const latestShipment = shipments[shipments.length - 1];
+      const shippedDate = latestShipment.shipped_date
+        ? new Date(parseInt(latestShipment.shipped_date)).toLocaleDateString("en-US", {
+            month: "short",
+            day: "numeric",
+          })
+        : "";
+      const deliveredDate = latestShipment.delivered_date
+        ? new Date(parseInt(latestShipment.delivered_date)).toLocaleDateString("en-US", {
+            month: "short",
+            day: "numeric",
+            year: "numeric",
+          })
+        : "";
+
+      shippingTrackingHTML = `
+    <div class="shipping-tracking-grid">
+      <div style="background: #1a1a1a; padding: 20px; border-radius: 8px; border: 1px solid #262626;">
+        <h3 style="color: #ffc107; margin-bottom: 15px; font-size: 1.1rem;">Shipping Address</h3>
+        <div style="color: #ccc; line-height: 1.6;">
+          <div style="color: #fff; font-weight: bold; margin-bottom: 8px;">${recipient.name || "—"}</div>
+          <div style="margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #262626;">${recipient.email || "—"}</div>
+          <div>${address.line1 || "—"}${address.line2 ? "<br>" + address.line2 : ""}</div>
+          <div>${address.city || "—"}${address.state ? ", " + address.state : ""} ${address.zip || "—"}</div>
+          <div>${address.country || "—"}</div>
+        </div>
+      </div>
+      <div style="background: #1a1a1a; padding: 20px; border-radius: 8px; border: 1px solid #262626;">
+        <h3 style="color: #ffc107; margin-bottom: 15px; font-size: 1.1rem;">Tracking Information</h3>
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid #262626; color: #ccc;">
+          <span>Shipment ID:</span>
+          <span style="color: #fff; font-weight: bold;">
+            #${
+              latestShipment.id
+                ? typeof latestShipment.id === "string" && latestShipment.id.includes("-")
+                  ? latestShipment.id.split("-")[1]
+                  : latestShipment.id
+                : "—"
+            }
+          </span>
+        </div>
+        ${countryCode ? `<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid #262626; color: #ccc;"><span>Origin:</span><span style="font-size: 1.8rem;" aria-label="Origin: ${countryCode}">${getCountryFlag(countryCode)}</span></div>` : ""}
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid #262626; color: #ccc;">
+          <span>Carrier:</span>
+          <span>${latestShipment.carrier || "—"}</span>
+        </div>
+        ${
+          latestShipment.tracking_number
+            ? `<div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid #262626; color: #ccc;">
+          <span>Tracking:</span>
+          <span style="word-break: break-all; font-family: monospace;">${latestShipment.tracking_number}</span>
+        </div>`
+            : ""
+        }
+        ${
+          shippedDate
+            ? `<div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid #262626; color: #ccc;">
+          <span>Shipped:</span>
+          <span>${shippedDate}</span>
+        </div>`
+            : ""
+        }
+        ${
+          deliveredDate
+            ? `<div style="display: flex; justify-content: space-between; align-items: flex-start; color: #ccc;">
+          <span>Delivered:</span>
+          <span>${deliveredDate}</span>
+        </div>`
+            : ""
+        }
+        ${
+          latestShipment.tracking_url
+            ? `<a href="${latestShipment.tracking_url}" target="_blank" rel="noopener noreferrer" style="display: inline-block; margin-top: 12px; color: #ffc107; text-decoration: none;" aria-label="Track shipment ${latestShipment.id} (opens in new window)">
+            <i class="fas fa-external-link-alt" style="margin-right: 8px"></i>Track This Shipment
+          </a>`
+            : ""
+        }
+      </div>
+      <button id="search-another-btn" style="width: 100%; padding: 12px; background-color: #ffc107; color: #000; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 1rem;" aria-label="Search for another order">
+        Search Another Order
+      </button>
+    </div>
+  `;
+    }
+
+    // Combine all sections with two-column layout using the responsive grid
+    const processingHTML = `
+    <div class="order-shipping-grid">
+      <div>
+        <div style="background: #1a1a1a; padding: 20px; border-radius: 8px; border: 1px solid #262626;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+            <h3 style="color: #fff; margin-bottom: 0; margin-top: 0; padding: 0;">Order #${orderData.printful_order_id || "—"}</h3>
+            <span class="status-badge status-${orderData.status}" style="text-align: center;" aria-label="Order status: ${statusLabel}">${statusLabel}</span>
+          </div>
+          <p style="color: #999; font-size: 0.9rem; margin-bottom: 25px; margin-top: 0; text-align: left;">${formatDate(orderData.created_at)}</p>
+          ${itemsHTML}
+          <div style="border-top: 1px solid #333; padding-top: 20px; margin-top: 20px">
+            <div style="display: flex; justify-content: space-between; color: #ccc; margin-bottom: 12px; font-size: 0.95rem;">
+              <span>Subtotal:</span>
+              <span>${money(subtotalCents)}</span>
+            </div>
+            ${
+              discountCents > 0
+                ? `<div data-testid="order-discount" style="display: flex; justify-content: space-between; color: #ccc; margin-bottom: 12px; font-size: 0.95rem;">
+              <span>Discount:</span>
+              <span>−${money(discountCents)}</span>
+            </div>`
+                : ""
+            }
+            <div style="display: flex; justify-content: space-between; color: #ccc; margin-bottom: 12px; font-size: 0.95rem;">
+              <span>Shipping:</span>
+              <span>${money(shippingCents)}</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; color: #ccc; margin-bottom: 15px; font-size: 0.95rem;">
+              <span>Tax:</span>
+              <span>${money(taxCents)}</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; color: #ffc107; font-weight: bold; font-size: 1.15rem; border-top: 1px solid #333; padding-top: 15px;">
+              <span>Total:</span>
+              <span>${money(totalCents)}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 20px">
+        ${shippingTrackingHTML}
+      </div>
+    </div>
+  `;
+
+    try {
+      console.log("Setting innerHTML on processing-section");
+      document.getElementById("processing-section").innerHTML = processingHTML;
+      document.getElementById("processing-section").style.display = "block";
+
+      // Add event listener to "Search Another Order" button
+      const searchAnotherBtn = document.getElementById("search-another-btn");
+      if (searchAnotherBtn) {
+        searchAnotherBtn.addEventListener("click", resetForm);
+      }
+
+      console.log("displayProcessingOrder completed successfully");
+    } catch (error) {
+      console.error("Error setting innerHTML:", error);
+      throw error;
+    }
+  } catch (error) {
+    console.error("Error in displayProcessingOrder:", error);
+    console.error("Error message:", error.message);
+    console.error("Error stack:", error.stack);
+    throw error;
+  }
+}
+
+function displayTrackingInfo() {
+  // Tracking info is now integrated into main order display
+  // Keep this function for legacy support but hide the tracking section
+  const trackingSection = document.getElementById("tracking-section");
+  if (trackingSection) {
+    trackingSection.style.display = "none";
+  }
+}
+
+// Enrich item data with product catalog information
+function enrichItemWithProductData(item) {
+  const enrichedItem = { ...item };
+  const syncVariantId = parseInt(item.sync_variant_id);
+
+  // Catalog variant IDs in products.json are Printful sync variant IDs
+  for (const product of products) {
+    for (const [color, colorData] of Object.entries(product.variants || {})) {
+      for (const [size, sizeData] of Object.entries(colorData.sizes || {})) {
+        if (sizeData.variant_id === syncVariantId) {
+          // Found matching product
+          enrichedItem.product_title = product.title;
+          enrichedItem.product_name = product.title; // For backward compatibility
+          enrichedItem.image = colorData.image || product.image;
+          enrichedItem.color = color;
+          enrichedItem.size = size;
+          enrichedItem.variant_name = `${color} / ${size}`;
+          enrichedItem.garment_name = product.garment?.name;
+          // Add price from catalog if not already set
+          if (!enrichedItem.price_cents && sizeData.price_cents) {
+            enrichedItem.price_cents = sizeData.price_cents;
+          }
+          return enrichedItem;
+        }
+      }
+    }
+  }
+
+  // If no product found in catalog, return item as-is with fallback name
+  enrichedItem.product_name = enrichedItem.product_name || "Unknown Product";
+  return enrichedItem;
+}
+
+// Helper functions
+// Note: formatDate, formatStatus, formatTrackingStatus, getCountryFlag, isValidEmail, isValidPrintfulOrderId
+// are now imported from order-status-utilities.js
+
+function showError(message) {
+  const errorContainer = document.getElementById("error-container");
+  const errorMessage = document.getElementById("error-message");
+
+  errorMessage.textContent = message;
+  errorContainer.style.display = "block";
+  document.getElementById("loading-container").style.display = "none";
+  document.getElementById("order-display").style.display = "none";
+  document.getElementById("search-form").style.display = "block";
+}
+
+function hideError() {
+  document.getElementById("error-container").style.display = "none";
+}
+
+function showLoading() {
+  document.getElementById("loading-container").style.display = "block";
+  document.getElementById("error-container").style.display = "none";
+  document.getElementById("order-display").style.display = "none";
+  document.getElementById("search-form").style.display = "none";
+}
+
+function hideLoading() {
+  document.getElementById("loading-container").style.display = "none";
+}
+
+function hideSearchForm() {
+  document.getElementById("search-form").style.display = "none";
+}
+
+function resetForm() {
+  document.getElementById("printful-order-id").value = "";
+  document.getElementById("email").value = "";
+  updateButtonState();
+  document.getElementById("error-container").style.display = "none";
+  document.getElementById("order-display").style.display = "none";
+  document.getElementById("search-form").style.display = "block";
+  document.getElementById("printful-order-id").focus();
+
+  // Clear stored order data from sessionStorage
+  try {
+    sessionStorage.removeItem("kots_order_data");
+  } catch (error) {
+    console.error("Error clearing order from sessionStorage:", error);
+  }
+
+  // Clear URL query parameters
+  window.history.replaceState({}, document.title, window.location.pathname);
+}
+
+// Make resetForm available globally for HTML onclick handlers
+window.resetForm = resetForm;
+
+// For backward compatibility with Jest CommonJS imports
+// These functions are imported from order-status-utilities.js but re-exported for testing
+if (typeof module !== "undefined" && module.exports) {
+  module.exports = {
+    // Re-export imported utilities so they're available via require()
+    // in CommonJS test environments
+    isValidEmail,
+    isValidPrintfulOrderId,
+    formatDate,
+    formatStatus,
+    formatTrackingStatus,
+    getCountryFlag,
+    // Local functions
+    enrichItemWithProductData,
+    handleSearch,
+    displayOrder,
+  };
+}

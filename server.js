@@ -130,8 +130,8 @@ const server = http.createServer((req, res) => {
             };
             const firstProduct = products.find(p => getCategory(p.title) === type);
             if (firstProduct) {
-              const ogTitle = `${label} - Kicked Out of the Sky Merch`;
-              const ogDesc = `Shop ${label} from Kicked Out of the Sky.`;
+              const ogTitle = `${label} - Kicked Out Of The Sky Merch`;
+              const ogDesc = `Shop ${label} from Kicked Out Of The Sky.`;
               const ogImage = firstProduct.image.startsWith("http")
                 ? firstProduct.image
                 : `https://www.kickedoutofthesky.com/store/${firstProduct.image}`;
@@ -175,8 +175,8 @@ const server = http.createServer((req, res) => {
           const products = JSON.parse(fs.readFileSync(productsPath, "utf8"));
           const product = products.find(p => p.product_key === key);
           if (product) {
-            const ogTitle = `${product.title} - Kicked Out of the Sky`;
-            const ogDesc = `Shop ${product.title}. Official Kicked Out of the Sky merchandise.`;
+            const ogTitle = `${product.title} - Kicked Out Of The Sky`;
+            const ogDesc = `Shop ${product.title}. Official Kicked Out Of The Sky merchandise.`;
             const ogImage = product.image.startsWith("http")
               ? product.image
               : `https://www.kickedoutofthesky.com/store/${encodeURI(product.image)}`;
@@ -216,6 +216,76 @@ const server = http.createServer((req, res) => {
         }
       }
 
+      // Inject dynamic OG tags for release pages (/listen and /[slug])
+      const isListenPage = file.endsWith(path.join("listen", "index.html"));
+      const isReleasePage = /\/[a-z]+\/index\.html$/.test(file) && !file.includes("store") && !file.includes("/listen");
+
+      if ((isListenPage || isReleasePage) && !file.includes("node_modules")) {
+        try {
+          const releasesPath = path.join(BASE_DIR, "data", "releases.json");
+          const releasesData = JSON.parse(fs.readFileSync(releasesPath, "utf8"));
+
+          // Determine which release to show
+          let releaseSlug = releasesData.current;
+          if (isReleasePage) {
+            // Extract slug from path like /betterpartofme/
+            const match = file.match(/\/([a-z-]+)\/index\.html$/);
+            if (match) {
+              releaseSlug = match[1];
+            }
+          }
+
+          const release = releasesData.releases.find(r => r.slug === releaseSlug);
+          if (release) {
+            const ogTitle = `${release.title} - Kicked Out Of The Sky`;
+            const ogDesc = `Stream ${release.title} by ${release.artist}. Out ${release.releaseDate.replace(/(\d{4})-(\d{2})-(\d{2})/, "$3/$2/$1")}.`;
+            const ogImageCard = release.coverImageCard.startsWith("http")
+              ? release.coverImageCard
+              : `https://www.kickedoutofthesky.com${release.coverImageCard}`;
+            const ogUrl = isListenPage
+              ? `https://www.kickedoutofthesky.com/${release.slug}/`
+              : `https://www.kickedoutofthesky.com${req.url.replace(/\/$/, "") || req.url}/`;
+
+            let html = data.toString();
+            html = html.replace(
+              /<meta\s+property="og:title"[\s\S]*?\/?>/,
+              `<meta property="og:title" content="${ogTitle}" />`
+            );
+            html = html.replace(
+              /<meta\s+property="og:description"[\s\S]*?\/?>/,
+              `<meta property="og:description" content="${ogDesc}" />`
+            );
+            html = html.replace(
+              /<meta\s+property="og:image"[\s\S]*?\/?>/,
+              `<meta property="og:image" content="${ogImageCard}" />`
+            );
+            html = html.replace(
+              /<meta\s+property="og:url"[\s\S]*?\/?>/,
+              `<meta property="og:url" content="${ogUrl}" />`
+            );
+            html = html.replace(
+              /<meta\s+name="twitter:title"[\s\S]*?\/?>/,
+              `<meta name="twitter:title" content="${ogTitle}" />`
+            );
+            html = html.replace(
+              /<meta\s+name="twitter:description"[\s\S]*?\/?>/,
+              `<meta name="twitter:description" content="${ogDesc}" />`
+            );
+            html = html.replace(
+              /<meta\s+name="twitter:image"[\s\S]*?\/?>/,
+              `<meta name="twitter:image" content="${ogImageCard}" />`
+            );
+
+            response.writeHead(200, { "Content-Type": mimeType });
+            response.end(html);
+            console.log(`✅ ${req.url} (${mimeType}) [Release: ${release.title}]`);
+            return;
+          }
+        } catch (ogErr) {
+          console.error("Release OG tag injection error:", ogErr.message);
+        }
+      }
+
       response.writeHead(200, { "Content-Type": mimeType });
       response.end(data);
       console.log(`✅ ${req.url} (${mimeType})`);
@@ -223,7 +293,7 @@ const server = http.createServer((req, res) => {
   }
 });
 
-server.listen(PORT, () => {
+server.listen(PORT, "127.0.0.1", () => {
   console.log(`
 🚀 Development Server Running
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

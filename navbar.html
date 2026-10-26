@@ -1,0 +1,135 @@
+<nav
+  id="navbarMain"
+  class="navbar navbar-expand site-header fixed-top"
+  style="padding: 15px 40px 15px 0; background-color: #00000080; z-index: 1001"
+>
+  <style>
+    @media (max-width: 767px) {
+      #navbarMain {
+        padding: 15px 20px !important;
+      }
+      #navbarMain .container-fluid {
+        flex-direction: column;
+        align-items: center !important;
+        justify-content: center !important;
+        flex-wrap: wrap !important;
+        gap: 10px !important;
+      }
+      #navbarMain .container-fluid img.brand {
+        max-height: 35px !important;
+      }
+      #navbarMain .nav {
+        justify-content: center !important;
+        width: 100% !important;
+        flex-wrap: wrap !important;
+        gap: 20px !important;
+      }
+    }
+    @media (min-width: 768px) and (max-width: 991px) {
+      #navbarMain {
+        padding: 15px 20px !important;
+      }
+      #navbarMain .container-fluid img.brand {
+        max-height: 35px !important;
+      }
+      #navbarMain .nav {
+        gap: 15px !important;
+      }
+    }
+    @media (min-width: 662px) {
+      #navbarMain .container-fluid {
+        flex-wrap: nowrap !important;
+      }
+      #navbarMain .nav {
+        flex-wrap: nowrap !important;
+      }
+    }
+  </style>
+  <div class="container-fluid" style="display: flex; justify-content: space-between; align-items: center; gap: 20px">
+    <a href="/" style="flex-shrink: 0; display: flex; align-items: center" aria-label="Kicked Out of the Sky - Home">
+      <img
+        class="brand"
+        src="/img/Kicked-Out-Of-The-Sky_transparent.png"
+        alt="Kicked Out Of The Sky Logo"
+        style="width: auto; display: block; max-height: 50px"
+      />
+    </a>
+    <ul class="nav" style="gap: 30px; display: flex; margin: 0; list-style: none; justify-content: flex-end">
+      <li class="nav-item">
+        <a
+          class="nav-link"
+          href="/store/index.html"
+          style="
+            text-decoration: none;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            color: white;
+          "
+        >
+          Merch
+        </a>
+      </li>
+      <li class="nav-item" style="position: relative">
+        <a
+          class="nav-link"
+          href="/store/cart.html"
+          style="
+            text-decoration: none;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            color: white;
+          "
+        >
+          <i class="fas fa-shopping-cart"></i>
+          Cart
+          <span
+            id="cart-badge"
+            data-testid="cart-count"
+            class="badge"
+            aria-label="Items in cart"
+            style="
+              background-color: #ffc107;
+              color: #000;
+              position: absolute;
+              top: -5px;
+              right: -10px;
+              display: none;
+              font-size: 0.7rem;
+              width: 20px;
+              height: 20px;
+              border-radius: 50%;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              padding: 0;
+            "
+          >
+            0
+          </span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a
+          class="nav-link"
+          href="/store/order-status.html"
+          style="
+            text-decoration: none;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            color: white;
+          "
+        >
+          <i class="fas fa-package"></i>
+          Orders
+        </a>
+      </li>
+    </ul>
+  </div>
+</nav>

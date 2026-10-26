@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>404 - Page Not Found | Kicked Out Of The Sky</title>
+    <meta name="description" content="The page you're looking for doesn't exist. Return to Kicked Out Of The Sky." />
+    <meta name="robots" content="noindex" />
+    <link rel="icon" href="/img/star-64.ico" />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        background: linear-gradient(135deg, #1a1a2e 0%, #0f3460 100%);
+        color: #e0e0e0;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+      }
+
+      .container {
+        text-align: center;
+        max-width: 600px;
+        animation: fadeIn 0.6s ease-in;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .error-code {
+        font-size: 120px;
+        font-weight: 700;
+        color: #ff6b6b;
+        margin-bottom: 10px;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+      }
+
+      .error-title {
+        font-size: 32px;
+        font-weight: 600;
+        margin-bottom: 20px;
+        color: #ffffff;
+      }
+
+      .error-message {
+        font-size: 16px;
+        line-height: 1.6;
+        margin-bottom: 40px;
+        color: #b0b0b0;
+      }
+
+      .action-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .btn {
+        display: inline-block;
+        padding: 12px 30px;
+        border-radius: 4px;
+        font-size: 16px;
+        font-weight: 500;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        border: none;
+      }
+
+      .btn-primary {
+        background-color: #16a34a;
+        color: white;
+      }
+
+      .btn-primary:hover {
+        background-color: #15803d;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(22, 163, 74, 0.3);
+      }
+
+      .btn-secondary {
+        background-color: transparent;
+        color: #60a5fa;
+        border: 2px solid #60a5fa;
+      }
+
+      .btn-secondary:hover {
+        background-color: rgba(96, 165, 250, 0.1);
+        border-color: #93c5fd;
+        color: #93c5fd;
+      }
+
+      .suggestion {
+        margin-top: 50px;
+        padding-top: 30px;
+        border-top: 1px solid rgba(224, 224, 224, 0.1);
+        font-size: 14px;
+        color: #888;
+      }
+
+      .logo {
+        margin-bottom: 30px;
+      }
+
+      .logo img {
+        height: 60px;
+        opacity: 0.8;
+      }
+
+      @media (max-width: 600px) {
+        .error-code {
+          font-size: 80px;
+        }
+
+        .error-title {
+          font-size: 24px;
+        }
+
+        .error-message {
+          font-size: 14px;
+        }
+
+        .btn {
+          padding: 10px 20px;
+          font-size: 14px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="logo">
+        <img src="/img/star-64.ico" alt="Kicked Out of the Sky" />
+      </div>
+
+      <div class="error-code">404</div>
+
+      <h1 class="error-title">Page Not Found</h1>
+
+      <p class="error-message">
+        Sorry, the page you're looking for doesn't exist or has been moved. It looks like you got kicked out of the sky!
+        Let's get you back on track.
+      </p>
+
+      <div class="action-buttons">
+        <a href="/" class="btn btn-primary">Return to Home</a>
+        <a href="/store" class="btn btn-secondary">Browse Store</a>
+      </div>
+
+      <div class="suggestion">
+        <p>
+          If you believe this is an error, please
+          <a href="/" style="color: #60a5fa">contact us</a>
+          .
+        </p>
+      </div>
+    </div>
+  </body>
+</html>

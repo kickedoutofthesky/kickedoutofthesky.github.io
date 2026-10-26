@@ -1,5 +1,7 @@
 // Store - Product Grid
 
+import { formatUSD } from "../../js/money.js";
+
 function getProductCategory(title) {
   const t = title.toLowerCase();
   if (t.includes("sticker")) return "stickers";
@@ -51,7 +53,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         <div class="product-info">
           <h3 class="product-name" data-testid="product-title">${product.title}</h3>
           <p class="product-price" data-testid="product-price">${displayPrice}</p>
-          <a href="p/${product.product_key}/" class="btn btn-warning btn-sm">
+          <a href="product.html?key=${product.product_key}" class="btn btn-warning btn-sm">
             View Details
           </a>
         </div>
@@ -62,7 +64,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           console.error("Product key is missing for product:", product);
           return;
         }
-        window.location.href = `p/${product.product_key}/`;
+        window.location.href = `product.html?key=${product.product_key}`;
       });
 
       grid.appendChild(card);
@@ -143,9 +145,12 @@ function getPriceDisplay(product) {
     });
   }
 
-  // If no variant prices found, fall back to display_price
+  // If no variant prices found, check for display_price fallback
   if (prices.length === 0) {
-    return product.display_price;
+    if (product.display_price) {
+      return product.display_price.replace(/\s*USD$/, "");
+    }
+    return formatUSD(0);
   }
 
   // Sort prices and get min and max
@@ -155,11 +160,11 @@ function getPriceDisplay(product) {
 
   // If all prices are the same, show single price
   if (minPrice === maxPrice) {
-    return `$${(minPrice / 100).toFixed(2)}`;
+    return formatUSD(minPrice);
   }
 
   // If prices differ, show range
-  return `$${(minPrice / 100).toFixed(2)} - $${(maxPrice / 100).toFixed(2)}`;
+  return `${formatUSD(minPrice)} – ${formatUSD(maxPrice)}`;
 }
 
 // Allow importing in Node.js (Jest tests) while keeping browser globals
