@@ -30,9 +30,16 @@ describe("Main site", () => {
       cy.get("meta[name='viewport']").should("have.attr", "content").and("include", "width=device-width");
       cy.get("link[rel='canonical']").should("have.attr", "href", "https://www.kickedoutofthesky.com");
       cy.get("link[rel='icon']").should("have.attr", "href", "/img/star-64.ico");
-      cy.get("meta[property='og:title']").should("have.attr", "content").and("include", "Kicked Out of the Sky");
+      cy.get("meta[property='og:title']").should("have.attr", "content").and("eq", "Kicked Out Of The Sky");
       cy.get("meta[property='og:description']").should("have.attr", "content").and("not.be.empty");
       cy.get("meta[property='og:image']")
+        .should("have.attr", "content")
+        .and("match", /^https:\/\//);
+      cy.get("meta[property='og:image']")
+        .should("have.attr", "content")
+        .and("match", /\/img\/og-image\.jpg$/);
+      cy.get("meta[name='twitter:card']").should("have.attr", "content", "summary_large_image");
+      cy.get("meta[name='twitter:image']")
         .should("have.attr", "content")
         .and("match", /^https:\/\//);
       cy.get("meta[property='og:url']").should("have.attr", "content", "https://www.kickedoutofthesky.com");
