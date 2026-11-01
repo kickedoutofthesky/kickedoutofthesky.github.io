@@ -38,6 +38,10 @@ describe("Main site", () => {
       cy.get("meta[property='og:image']")
         .should("have.attr", "content")
         .and("match", /\/img\/og-image\.jpg$/);
+      cy.get("meta[name='twitter:card']").should("have.attr", "content", "summary_large_image");
+      cy.get("meta[name='twitter:image']")
+        .should("have.attr", "content")
+        .and("match", /^https:\/\//);
       cy.get("meta[property='og:url']").should("have.attr", "content", "https://www.kickedoutofthesky.com");
       cy.get("meta[property='og:type']").should("have.attr", "content", "website");
     });
