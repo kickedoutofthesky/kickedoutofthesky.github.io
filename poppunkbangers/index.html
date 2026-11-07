@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pop Punk Bangers</title>
+    <meta name="description" content="Pop punk anthems, old and new. Fresh tracks every week." />
+    <meta name="robots" content="noindex, follow" />
+    <meta name="theme-color" content="#111111" />
+
+    <meta property="og:title" content="Pop Punk Bangers" />
+    <meta property="og:description" content="Pop punk anthems, old and new. Fresh tracks every week." />
+    <meta property="og:image" content="https://www.kickedoutofthesky.com/img/poppunkbangers-og.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:url" content="https://www.kickedoutofthesky.com/poppunkbangers/" />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self' 'unsafe-inline' https://connect.facebook.net; style-src 'self' 'unsafe-inline'; img-src 'self' https: data:; connect-src 'self' https://facebook.com https://www.facebook.com; font-src 'self'"
+    />
+
+    <link rel="icon" href="/img/star-64.ico" />
+
+    <style>
+      html,
+      body {
+        margin: 0;
+        min-height: 100%;
+        background: #111111;
+        color: #f4efe6;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      }
+      /* Leave room for the cookie banner so the button stays visible above it */
+      body.has-banner {
+        padding-bottom: 9rem;
+      }
+      body.has-banner main {
+        min-height: calc(100vh - 9rem);
+      }
+      main {
+        box-sizing: border-box;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 1.5rem;
+        padding: 1.5rem 1.25rem;
+        text-align: center;
+      }
+      .cover {
+        width: min(80vw, 420px, 36vh);
+        height: auto;
+        aspect-ratio: 1 / 1;
+        object-fit: cover;
+        border-radius: 8px;
+        box-shadow: 0 10px 40px rgba(255, 46, 136, 0.25);
+      }
+      .tagline {
+        margin: 0;
+        max-width: 22rem;
+        font-size: 1.25rem;
+        line-height: 1.4;
+      }
+      .cta {
+        display: block;
+        box-sizing: border-box;
+        width: min(100%, 22rem);
+        padding: 1.1rem 1.5rem;
+        border-radius: 999px;
+        background: #ff2e88;
+        color: #111111;
+        font-size: 1.35rem;
+        font-weight: 800;
+        text-decoration: none;
+      }
+      .cta:hover,
+      .cta:focus-visible {
+        background: #ff5a9f;
+        outline: 3px solid #f4efe6;
+        outline-offset: 3px;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <img
+        class="cover"
+        src="/img/poppunkbangers-cover.jpg"
+        width="600"
+        height="600"
+        alt="Pop Punk Bangers playlist cover"
+      />
+      <p class="tagline">Pop punk anthems, old and new. Fresh tracks every week.</p>
+      <a id="listen" class="cta" href="https://open.spotify.com/playlist/4FZfdrXcWZG1tMwUFTCWDK">Listen on Spotify</a>
+    </main>
+
+    <!-- Meta Pixel: loads only after the visitor has accepted cookies -->
+    <script src="/js/meta-pixel.js"></script>
+    <script>
+      (function () {
+        var DEST = "https://open.spotify.com/playlist/4FZfdrXcWZG1tMwUFTCWDK";
+        var LEAD_DELAY = 400; // give the pixel beacon time to send before leaving
+
+        // Carry ad/attribution params through to the playlist link.
+        try {
+          var keep = ["utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term", "fbclid", "ttclid"];
+          var here = new URLSearchParams(location.search);
+          var out = new URL(DEST);
+          keep.forEach(function (k) {
+            if (here.has(k)) out.searchParams.set(k, here.get(k));
+          });
+          DEST = out.toString();
+        } catch (e) {}
+
+        var button = document.getElementById("listen");
+        button.href = DEST;
+
+        function consentValue() {
+          try {
+            return localStorage.getItem("cookie_consent");
+          } catch (e) {
+            return null;
+          }
+        }
+
+        function consented() {
+          return consentValue() === "accepted";
+        }
+
+        function uuid() {
+          return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
+            var r = (Math.random() * 16) | 0;
+            return (c === "x" ? r : (r & 0x3) | 0x8).toString(16);
+          });
+        }
+
+        var pageViewSent = false;
+        function firePageView() {
+          if (pageViewSent || !consented() || typeof window.fbq !== "function") return;
+          pageViewSent = true;
+          window.fbq("track", "PageView", {}, { eventID: uuid() });
+        }
+
+        function fireLead() {
+          if (!consented() || typeof window.fbq !== "function") return false;
+          window.fbq("track", "Lead", { content_name: "Pop Punk Bangers" }, { eventID: uuid() });
+          return true;
+        }
+
+        var leaving = false;
+        function leave(replace) {
+          if (leaving) return;
+          leaving = true;
+          setTimeout(function () {
+            if (replace) location.replace(DEST);
+            else location.assign(DEST);
+            leaving = false;
+          }, LEAD_DELAY);
+        }
+
+        // Called by js/cookie-consent.js right after the visitor clicks Accept.
+        window.flushReleaseAnalyticsQueue = function () {
+          document.body.classList.remove("has-banner");
+          firePageView();
+        };
+
+        button.addEventListener("click", function (e) {
+          if (!fireLead()) return; // no consent: follow the plain link
+          e.preventDefault();
+          leave(false);
+        });
+
+        if (consented()) {
+          firePageView();
+          fireLead();
+          leave(true);
+        } else if (consentValue() === null) {
+          document.body.classList.add("has-banner");
+        }
+      })();
+    </script>
+    <script src="/js/cookie-consent.js"></script>
+  </body>
+</html>
