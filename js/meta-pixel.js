@@ -8,7 +8,8 @@
 (function () {
   "use strict";
 
-  const PIXEL_ID = "1091548463560589";
+  // A page can set window.META_PIXEL_ID before this script to use a different pixel.
+  const PIXEL_ID = window.META_PIXEL_ID || "1091548463560589";
   const CONSENT_KEY = "cookie_consent";
 
   // Initialize fbq as a queue if it doesn't exist

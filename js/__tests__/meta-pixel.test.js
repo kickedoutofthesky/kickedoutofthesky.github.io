@@ -65,6 +65,14 @@ describe("meta-pixel.js", () => {
       // Verify pixel ID is present
       expect(code).toContain("1091548463560589");
     });
+
+    it("should let a page override the pixel ID", () => {
+      const fs = require("fs");
+      const path = require("path");
+      const code = fs.readFileSync(path.join(__dirname, "../meta-pixel.js"), "utf8");
+
+      expect(code).toContain("window.META_PIXEL_ID ||");
+    });
   });
 
   describe("Meta Pixel Script Loading", () => {
