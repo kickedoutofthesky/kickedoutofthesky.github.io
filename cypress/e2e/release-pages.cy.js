@@ -67,6 +67,7 @@ describe("Release pages", () => {
           expect(html).to.include('<meta property="og:image:width" content="1200" />');
           expect(html).to.include('<meta property="og:image:height" content="630" />');
           expect(html).to.include('<meta name="twitter:card" content="summary_large_image" />');
+          expect(html).to.include('window.META_PIXEL_ID = "1985329649108527";');
           expect(html).to.include('<script src="/js/meta-pixel.js"></script>');
           expect(html).to.include('<script src="/js/cookie-consent.js"></script>');
           expect(html).to.include(`href="${PLAYLIST_URL}"`);
@@ -105,6 +106,7 @@ describe("Release pages", () => {
       });
       cy.url().should("eq", PLAYLIST_URL);
       cy.then(() => {
+        expect(calls).to.deep.include(["init", "1985329649108527"]);
         const tracked = calls.filter(([type]) => type === "track");
         expect(tracked.map(([, event]) => event)).to.deep.equal(["PageView", "Lead"]);
         expect(tracked[1][3].eventID).to.be.a("string").and.not.equal(tracked[0][3].eventID);
