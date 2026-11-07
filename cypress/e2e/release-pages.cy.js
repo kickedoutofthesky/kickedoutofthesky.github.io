@@ -4,6 +4,7 @@
 // /betterpartofme/ (rendered by js/releases.js from data/releases.json).
 
 const FAN_LINK = "https://push.fm/fl/kickedoutofthesky";
+const PLAYLIST_URL = "https://open.spotify.com/playlist/4FZfdrXcWZG1tMwUFTCWDK";
 const PRESAVE_URL = "https://open.spotify.com/album/3mPTW6XxKAMcxIp1N3XKJ5";
 const LISTEN_URL = "https://open.spotify.com/track/3mPTW6XxKAMcxIp1N3XKJ5";
 
@@ -12,6 +13,7 @@ const pixelEvents = win => (win.fbq.queue || []).map(args => [...args]);
 describe("Release pages", () => {
   beforeEach(() => {
     cy.intercept("GET", "https://push.fm/**", { statusCode: 200, body: "<html><body>push.fm</body></html>" });
+    cy.intercept("GET", "https://open.spotify.com/**", { statusCode: 200, body: "<html><body>spotify</body></html>" });
     cy.intercept("GET", "https://connect.facebook.net/**", { statusCode: 200, body: "" });
   });
 
@@ -45,6 +47,34 @@ describe("Release pages", () => {
           expect(html).to.include(`<a href="${FAN_LINK}"`);
           expect(html).to.include('<script src="/js/meta-pixel.js"></script>');
           expect(html).to.include("<title>Kicked Out Of The Sky — Listen</title>");
+          expect(html).to.include('<meta name="robots" content="noindex, follow" />');
+        });
+    });
+  });
+
+  describe("/poppunkbangers/", () => {
+    it("redirects to the Spotify playlist", () => {
+      cy.visitWith("/poppunkbangers/");
+      cy.url().should("eq", PLAYLIST_URL);
+    });
+
+    it("forwards tracking parameters and drops everything else", () => {
+      cy.visitWith("/poppunkbangers/?utm_source=instagram&fbclid=fb1&random=x");
+      cy.url()
+        .should("include", PLAYLIST_URL)
+        .and("include", "utm_source=instagram")
+        .and("include", "fbclid=fb1")
+        .and("not.include", "random");
+    });
+
+    it("ships no-JS and link fallbacks, the consent-gated pixel and a noindex title", () => {
+      cy.request("/poppunkbangers/")
+        .its("body")
+        .should(html => {
+          expect(html).to.include(`<meta http-equiv="refresh" content="0;url=${PLAYLIST_URL}" />`);
+          expect(html).to.include(`<a href="${PLAYLIST_URL}"`);
+          expect(html).to.include('<script src="/js/meta-pixel.js"></script>');
+          expect(html).to.include("<title>Kicked Out Of The Sky — Pop Punk Bangers</title>");
           expect(html).to.include('<meta name="robots" content="noindex, follow" />');
         });
     });
