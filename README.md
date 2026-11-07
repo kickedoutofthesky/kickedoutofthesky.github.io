@@ -16,7 +16,8 @@ shipping, checkout (Stripe) and order lookups; Printful fulfils orders.
 | `/` ([index.html](index.html))          | Home: music, videos, tour, sign-up, contact form (Formspree)                                         |
 | `/betterpartofme/`                      | Release page driven by [data/releases.json](data/releases.json) and [js/releases.js](js/releases.js) |
 | `/listen/`                              | Redirects to the push.fm fan link (keeps UTM params, consent-gated Meta Pixel)                       |
-| `/poppunkbangers/`                      | Redirects to the Pop Punk Bangers Spotify playlist (keeps UTM params, consent-gated Meta Pixel)      |
+| `/poppunkbangers/`                      | Pop Punk Bangers smart link: consent banner, Meta Pixel PageView/Lead, then the Spotify playlist     |
+| `/ppb/`                                 | Redirects to `/poppunkbangers/` (keeps the query string)                                             |
 | `/presave.html`                         | Redirects to `/listen/`                                                                              |
 | `/legal/*.html`                         | Privacy, terms, shipping, cookies, copyright, accessibility, disclaimer, contact                     |
 | `/404.html`                             | Not-found page                                                                                       |
@@ -112,7 +113,7 @@ Other tools in [scripts/](scripts): `generate-og-pages.js` (builds `store/p/*` s
 
 ```
 index.html, 404.html, navbar.html   main site
-betterpartofme/, listen/, poppunkbangers/, presave.html        release pages
+betterpartofme/, listen/, poppunkbangers/, ppb/, presave.html        release pages
 legal/                                        legal pages
 js/                                           shared scripts (consent, analytics, releases, money, countries)
 data/releases.json                            release data
