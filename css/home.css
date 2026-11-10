@@ -192,10 +192,11 @@ body.home {
   overflow: hidden;
   background: #000;
 }
-.hero-media {
+.home .hero-media {
   position: absolute;
   inset: 0;
   width: 100%;
+  max-width: none;
   height: 100%;
   object-fit: cover;
 }
