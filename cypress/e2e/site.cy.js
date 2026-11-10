@@ -48,25 +48,40 @@ describe("Main site", () => {
 
     it("shows the main sections with in-page navigation", () => {
       cy.visitWith("/");
-      ["VIDEOS", "TOUR", "CONTACT"].forEach(section => cy.contains("h2", section).should("exist"));
-      ["#music", "#videos", "#tour", "#contact"].forEach(anchor => {
-        cy.get(`#navbarMain a[href='${anchor}']`).should("exist");
+      ["Music", "Videos", "Merch", "Contact"].forEach(section => cy.contains("h2", section).should("exist"));
+      ["#music", "#videos", "#contact"].forEach(anchor => {
+        cy.get(`#siteNav a[href='${anchor}']`).should("exist");
         cy.get(anchor).should("exist");
       });
+      cy.get("#tour").should("not.exist");
+      cy.get("h1").should("contain.text", "Pop Punk / Alt Rock");
     });
 
-    it("opens the merch store in a separate tab", () => {
-      cy.visitWith("/", { onBeforeLoad: win => cy.stub(win, "open").as("windowOpen") });
-      cy.get("#navbarMain a").contains("Merch").click();
-      cy.get("@windowOpen").should("have.been.calledWith", "/store/index.html", "storeTab");
-      cy.location("pathname").should("eq", "/");
+    it("links Merch to the store", () => {
+      cy.visitWith("/");
+      cy.get("#siteNav a").contains("Merch").should("have.attr", "href", "/store/index.html");
+      cy.get(".merch-tile").should("have.length", 3);
     });
 
-    it("opens social and streaming links in a new tab safely", () => {
+    it("shows the hero release state and a pre-save button", () => {
+      cy.visitWith("/");
+      cy.get("#heroLabel").should("have.text", "NEW SINGLE");
+      cy.get("#heroCta").should("have.attr", "href", "/betterpartofme/").and("have.text", "Pre-save");
+      cy.get("#countdown").should("be.visible");
+    });
+
+    it("loads YouTube only after the thumbnail is clicked", () => {
+      cy.visitWith("/");
+      cy.get("iframe").should("not.exist");
+      cy.get(".yt-facade").first().click();
+      cy.get("iframe.yt-frame").should("have.attr", "src").and("include", "youtube.com/embed/EmFTUu78lZg");
+    });
+
+    it("lists social and streaming links in the footer, opening in a new tab safely", () => {
       cy.visitWith("/");
       ["instagram.com", "facebook.com", "tiktok.com", "youtube.com", "open.spotify.com", "music.apple.com"].forEach(
         host => {
-          cy.get(`#navbarMain a[href*='${host}']`)
+          cy.get(`footer a[href*='${host}']`)
             .should("have.attr", "target", "_blank")
             .and("have.attr", "rel")
             .and("include", "noopener");
