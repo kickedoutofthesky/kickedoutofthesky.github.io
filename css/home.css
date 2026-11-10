@@ -410,7 +410,7 @@ body.home {
   color: var(--gold);
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  margin: 56px 0 20px;
+  margin: 120px 0 28px;
   text-align: center;
 }
 .muted {
@@ -454,29 +454,139 @@ body.home {
 }
 
 /* Sign-up */
-.signup {
-  max-width: 100%;
+.home .signup {
+  max-width: none;
   background: var(--bg-soft);
   text-align: center;
 }
-.signup-title {
-  font-size: clamp(1.5rem, 5vw, 2.4rem);
-  max-width: 800px;
-  margin: 0 auto 14px;
+.signup-inner {
+  max-width: 640px;
+  margin: 0 auto;
 }
-.signup-sub {
-  max-width: 600px;
-  margin: 0 auto 8px;
+.home .signup-title {
+  margin: 0 0 16px;
+  font-size: clamp(1.7rem, 6vw, 2.6rem);
+  text-wrap: balance;
+}
+.home .signup-sub {
+  margin: 0 auto 20px;
+  max-width: 520px;
   color: var(--muted);
+  font-size: 1.05rem;
+  text-wrap: balance;
 }
-.signup-shows {
+.home .signup-shows {
+  display: inline-block;
+  margin: 0 0 36px;
+  padding: 6px 14px;
+  border: 1px solid rgba(255, 214, 138, 0.45);
   color: var(--gold);
-  font-family: var(--font-head);
-  margin: 0 0 28px;
+  font-size: 0.8rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
 }
 .signup-form {
-  max-width: 480px;
+  max-width: 520px;
   margin: 0 auto;
+}
+
+/* MailerLite embedded form, restyled to match the site */
+.signup-form #mlb2-8448360,
+.signup-form #mlb2-8448360 * {
+  font-family: var(--font-body) !important;
+}
+.signup-form #mlb2-8448360 .ml-form-embedWrapper {
+  background: transparent !important;
+  border: 1px solid rgba(255, 255, 255, 0.18) !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  padding: 8px !important;
+}
+.signup-form #mlb2-8448360 .ml-form-embedWrapper .ml-form-embedBody {
+  padding: 24px 20px !important;
+  margin: 0 !important;
+  display: block !important;
+}
+.signup-form #mlb2-8448360 .ml-form-embedContent {
+  margin: 0 0 20px !important;
+  max-width: none !important;
+  width: 100% !important;
+  text-align: center !important;
+}
+.signup-form #mlb2-8448360 .ml-form-embedContent h4,
+.signup-form #mlb2-8448360 .ml-form-successContent h4 {
+  margin: 0 0 8px !important;
+  color: var(--gold) !important;
+  font-size: 0.85rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.25em !important;
+  text-transform: uppercase !important;
+}
+.signup-form #mlb2-8448360 .ml-form-embedContent p,
+.signup-form #mlb2-8448360 .ml-form-successContent p {
+  margin: 0 !important;
+  color: var(--muted) !important;
+  font-size: 0.95rem !important;
+  line-height: 1.5 !important;
+}
+.signup-form #mlb2-8448360 .ml-block-form {
+  width: 100% !important;
+}
+.signup-form #mlb2-8448360 .ml-form-horizontalRow {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 12px !important;
+}
+.signup-form #mlb2-8448360 .ml-input-horizontal,
+.signup-form #mlb2-8448360 .ml-button-horizontal {
+  width: 100% !important;
+  padding: 0 !important;
+}
+.signup-form #mlb2-8448360 input.form-control {
+  height: 50px !important;
+  padding: 0 14px !important;
+  background: var(--bg) !important;
+  color: var(--text) !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  border-radius: 0 !important;
+  font-size: 1rem !important;
+}
+.signup-form #mlb2-8448360 input.form-control:focus {
+  border-color: var(--rhodamine) !important;
+}
+.signup-form #mlb2-8448360 button.primary,
+.signup-form #mlb2-8448360 .ml-button-horizontal button {
+  width: 100% !important;
+  height: 50px !important;
+  background: var(--rhodamine) !important;
+  color: #fff !important;
+  border: 2px solid var(--rhodamine) !important;
+  border-radius: 0 !important;
+  font-size: 1rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.08em !important;
+  text-transform: uppercase !important;
+}
+.signup-form #mlb2-8448360 button.primary:hover {
+  background: #ff1fb6 !important;
+  border-color: #ff1fb6 !important;
+}
+.signup-form #mlb2-8448360 .ml-mobileButton-horizontal {
+  display: none !important;
+}
+
+/* MailerLite button: extra specificity to beat the embed's own rules */
+#signup #mlb2-8448360#mlb2-8448360 .ml-block-form .ml-button-horizontal {
+  display: block !important;
+}
+#signup #mlb2-8448360#mlb2-8448360 .ml-block-form .ml-button-horizontal button.primary {
+  background-color: var(--rhodamine) !important;
+  color: #fff !important;
+  border-color: var(--rhodamine) !important;
+}
+#signup #mlb2-8448360#mlb2-8448360 .ml-block-form .ml-button-horizontal button.primary:hover {
+  background-color: #ff1fb6 !important;
+  border-color: #ff1fb6 !important;
 }
 
 /* Videos */
@@ -630,10 +740,10 @@ body.home {
   margin-bottom: 15px;
 }
 
-@media (max-width: 400px) {
+@media (max-width: 900px) {
   .releases {
     grid-template-columns: 1fr;
-    max-width: 280px;
+    max-width: 360px;
     margin: 0 auto;
   }
   .release {
