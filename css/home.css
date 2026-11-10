@@ -405,12 +405,15 @@ body.home {
   text-align: center;
   margin-bottom: 40px;
 }
+.music .section-title {
+  margin-bottom: 60px;
+}
 .subhead {
   font-size: 1rem;
   color: var(--gold);
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  margin: 120px 0 28px;
+  margin: 150px 0 48px;
   text-align: center;
 }
 .muted {
