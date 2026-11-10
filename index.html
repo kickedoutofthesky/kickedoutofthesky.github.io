@@ -387,15 +387,18 @@
       <main id="top">
         <!-- Hero -->
         <section id="hero" class="hero" aria-label="New single">
-          <img
-            id="heroPoster"
-            class="hero-media"
-            src="img/hero-horizontal-poster.jpg"
-            alt=""
-            width="1920"
-            height="1080"
-            fetchpriority="high"
-          />
+          <picture>
+            <source id="heroPosterAvif" type="image/avif" srcset="img/hero-horizontal-poster.avif" />
+            <img
+              id="heroPoster"
+              class="hero-media"
+              src="img/hero-horizontal-poster.jpg"
+              alt=""
+              width="1920"
+              height="1080"
+              fetchpriority="high"
+            />
+          </picture>
           <video
             id="heroVideo"
             class="hero-media hero-video"

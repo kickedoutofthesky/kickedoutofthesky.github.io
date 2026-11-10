@@ -16,8 +16,22 @@
     ctaUrlBefore: "/betterpartofme/",
     ctaUrlAfter: "/betterpartofme/",
     hero: {
-      horizontal: { video: "img/video/hero-horizontal-1080.mp4", poster: "img/hero-horizontal-poster.jpg" },
-      vertical: { video: "img/video/hero-vertical-1080.mp4", poster: "img/hero-vertical-poster.jpg" },
+      horizontal: {
+        webm: "img/video/hero-horizontal.webm",
+        mp4: "img/video/hero-horizontal.mp4",
+        poster: "img/hero-horizontal-poster.jpg",
+        avif: "img/hero-horizontal-poster.avif",
+        width: 1920,
+        height: 1080,
+      },
+      vertical: {
+        webm: "img/video/hero-vertical.webm",
+        mp4: "img/video/hero-vertical.mp4",
+        poster: "img/hero-vertical-poster.jpg",
+        avif: "img/hero-vertical-poster.avif",
+        width: 606,
+        height: 1080,
+      },
     },
   };
 
@@ -94,12 +108,24 @@
     heroSrc = set;
     if (poster) {
       poster.setAttribute("src", set.poster);
-      poster.setAttribute("width", portrait.matches ? "1080" : "1920");
-      poster.setAttribute("height", portrait.matches ? "1920" : "1080");
+      poster.setAttribute("width", String(set.width));
+      poster.setAttribute("height", String(set.height));
+      var avif = $("heroPosterAvif");
+      if (avif) avif.setAttribute("srcset", set.avif);
     }
     if (!video || reduceMotion) return;
     video.setAttribute("poster", set.poster);
-    video.src = set.video;
+    video.textContent = "";
+    [
+      [set.webm, "video/webm"],
+      [set.mp4, "video/mp4"],
+    ].forEach(function (f) {
+      var source = document.createElement("source");
+      source.src = f[0];
+      source.type = f[1];
+      video.appendChild(source);
+    });
+    video.load();
     video.muted = true;
     video.preload = "auto";
     video.addEventListener(
