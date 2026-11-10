@@ -694,9 +694,9 @@ body.home {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    width: min(620px, 48%);
+    width: calc(50% - max(40px, 5vw));
     max-width: none;
-    margin: 0 max(40px, 5vw) 0 auto;
+    margin: 0 0 0 50%;
     padding: calc(var(--header-h) + 24px) 0 40px;
   }
   .hero-title {
