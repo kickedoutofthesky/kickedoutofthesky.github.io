@@ -16,8 +16,8 @@
     ctaUrlBefore: "/betterpartofme/",
     ctaUrlAfter: "/betterpartofme/",
     hero: {
-      horizontal: { video: "img/video/hero-horizontal.mp4", poster: "img/hero-horizontal-poster.jpg" },
-      vertical: { video: "img/video/hero-vertical.mp4", poster: "img/hero-vertical-poster.jpg" },
+      horizontal: { video: "img/video/hero-horizontal-1080.mp4", poster: "img/hero-horizontal-poster.jpg" },
+      vertical: { video: "img/video/hero-vertical-1080.mp4", poster: "img/hero-vertical-poster.jpg" },
     },
   };
 
