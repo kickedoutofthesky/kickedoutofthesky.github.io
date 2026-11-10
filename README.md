@@ -13,7 +13,7 @@ shipping, checkout (Stripe) and order lookups; Printful fulfils orders.
 
 | Path                                    | What it does                                                                                         |
 | --------------------------------------- | ---------------------------------------------------------------------------------------------------- |
-| `/` ([index.html](index.html))          | Home: music, videos, tour, sign-up, contact form (Formspree)                                         |
+| `/` ([index.html](index.html))          | Home: video hero, music, sign-up, videos, merch, contact (Formspree)                                 |
 | `/betterpartofme/`                      | Release page driven by [data/releases.json](data/releases.json) and [js/releases.js](js/releases.js) |
 | `/listen/`                              | Redirects to the push.fm fan link (keeps UTM params, consent-gated Meta Pixel)                       |
 | `/poppunkbangers/`                      | Pop Punk Bangers smart link: consent banner, Meta Pixel PageView/Lead, then the Spotify playlist     |
