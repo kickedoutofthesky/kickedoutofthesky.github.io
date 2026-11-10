@@ -649,6 +649,13 @@ body.home {
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 12px;
 }
+@media (max-width: 900px) {
+  .merch-grid {
+    grid-template-columns: 1fr;
+    max-width: 360px;
+    margin: 0 auto;
+  }
+}
 .merch-tile {
   display: block;
   background: var(--bg-soft);
