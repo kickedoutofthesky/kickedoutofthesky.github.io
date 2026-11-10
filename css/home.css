@@ -408,7 +408,7 @@ body.home {
 .music .section-title {
   margin-bottom: 60px;
 }
-.subhead {
+.home .subhead {
   font-size: 1rem;
   color: var(--gold);
   letter-spacing: 0.2em;
