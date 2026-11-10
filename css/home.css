@@ -399,14 +399,11 @@ body.home {
   opacity: 1;
   transform: none;
 }
-.section-title {
+.home .section-title {
   font-size: clamp(1.6rem, 5vw, 2.4rem);
   text-transform: uppercase;
   letter-spacing: 0.1em;
   text-align: center;
-  margin-bottom: 40px;
-}
-.music .section-title {
   margin-bottom: 60px;
 }
 .home .subhead {
