@@ -98,7 +98,6 @@
 
   // Hero: pick one video/poster by orientation so only one file downloads.
   var portrait = window.matchMedia("(orientation: portrait) and (max-width: 820px)");
-  var poster = $("heroPoster");
   var video = $("heroVideo");
   var heroSrc = null;
 
@@ -106,13 +105,6 @@
     var set = portrait.matches ? RELEASE.hero.vertical : RELEASE.hero.horizontal;
     if (heroSrc === set) return;
     heroSrc = set;
-    if (poster) {
-      poster.setAttribute("src", set.poster);
-      poster.setAttribute("width", String(set.width));
-      poster.setAttribute("height", String(set.height));
-      var avif = $("heroPosterAvif");
-      if (avif) avif.setAttribute("srcset", set.avif);
-    }
     if (!video || reduceMotion) return;
     video.setAttribute("poster", set.poster);
     video.textContent = "";

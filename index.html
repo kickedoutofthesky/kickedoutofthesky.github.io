@@ -388,7 +388,17 @@
         <!-- Hero -->
         <section id="hero" class="hero" aria-label="New single">
           <picture>
-            <source id="heroPosterAvif" type="image/avif" srcset="img/hero-horizontal-poster.avif" />
+            <source
+              media="(orientation: portrait) and (max-width: 820px)"
+              type="image/avif"
+              srcset="img/hero-vertical-poster.avif"
+            />
+            <source
+              media="(orientation: portrait) and (max-width: 820px)"
+              type="image/jpeg"
+              srcset="img/hero-vertical-poster.jpg"
+            />
+            <source type="image/avif" srcset="img/hero-horizontal-poster.avif" />
             <img
               id="heroPoster"
               class="hero-media"
