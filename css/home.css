@@ -113,8 +113,11 @@ body.home {
   justify-content: space-between;
 }
 .home .brand {
-  width: auto;
-  height: 40px;
+  display: block;
+  flex: none;
+  width: min(300px, calc(100vw - 112px));
+  max-width: none;
+  height: auto;
 }
 .site-nav {
   display: none;
@@ -627,13 +630,27 @@ body.home {
   margin-bottom: 15px;
 }
 
+@media (max-width: 400px) {
+  .releases {
+    grid-template-columns: 1fr;
+    max-width: 280px;
+    margin: 0 auto;
+  }
+  .release {
+    text-align: center;
+  }
+  .release .btn-row {
+    justify-content: center;
+  }
+}
+
 /* Wide screens */
 @media (min-width: 768px) {
   :root {
     --header-h: 76px;
   }
   .home .brand {
-    height: 48px;
+    width: min(480px, 36vw);
   }
   .menu-toggle {
     display: none;
