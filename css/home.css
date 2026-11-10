@@ -644,6 +644,15 @@ body.home {
 }
 
 /* Merch */
+.home .merch {
+  max-width: none;
+  background: var(--bg-soft);
+}
+.merch > * {
+  max-width: 1120px;
+  margin-left: auto;
+  margin-right: auto;
+}
 .merch-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -658,7 +667,7 @@ body.home {
 }
 .merch-tile {
   display: block;
-  background: var(--bg-soft);
+  background: var(--bg);
   text-align: center;
   font-family: var(--font-head);
   font-size: 0.8rem;
