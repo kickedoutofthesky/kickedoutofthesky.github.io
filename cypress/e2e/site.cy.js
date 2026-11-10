@@ -25,7 +25,7 @@ describe("Main site", () => {
 
     it("has the title, description, canonical, favicon and social sharing tags", () => {
       cy.visitWith("/");
-      cy.title().should("eq", "Kicked Out of the Sky | Indie / Alternative Rock Band | Official Website");
+      cy.title().should("eq", "Kicked Out Of The Sky | Pop Punk / Alt Rock | Official Website");
       cy.get("meta[name='description']").should("have.attr", "content").and("have.length.greaterThan", 20);
       cy.get("meta[name='viewport']").should("have.attr", "content").and("include", "width=device-width");
       cy.get("link[rel='canonical']").should("have.attr", "href", "https://www.kickedoutofthesky.com");
