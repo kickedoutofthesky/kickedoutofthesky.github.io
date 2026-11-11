@@ -496,6 +496,27 @@ function enrichItemWithProductData(item) {
     }
   }
 
+  // Orders placed before a catalog refresh carry retired variant IDs; match by "Title / Color / Size"
+  const nameParts = String(item.product_name || "")
+    .split(" / ")
+    .map(part => part.trim());
+  if (nameParts.length >= 3) {
+    const size = nameParts.pop();
+    const color = nameParts.pop();
+    const title = nameParts.join(" / ");
+    const product = products.find(p => p.title === title);
+    const colorData = product?.variants?.[color];
+    if (colorData?.sizes?.[size]) {
+      enrichedItem.product_title = product.title;
+      enrichedItem.image = colorData.image || product.image;
+      enrichedItem.color = color;
+      enrichedItem.size = size;
+      enrichedItem.variant_name = `${color} / ${size}`;
+      enrichedItem.garment_name = product.garment?.name;
+      return enrichedItem;
+    }
+  }
+
   // If no product found in catalog, return item as-is with fallback name
   enrichedItem.product_name = enrichedItem.product_name || "Unknown Product";
   return enrichedItem;
