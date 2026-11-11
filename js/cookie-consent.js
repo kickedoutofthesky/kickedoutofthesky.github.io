@@ -52,15 +52,15 @@
     "  gap: 20px; flex-wrap: wrap;" +
     "}" +
     ".cookie-consent-inner p { margin: 0; flex: 1; min-width: 200px; }" +
-    ".cookie-consent-inner a { color: #f0c040; text-decoration: none; }" +
-    ".cookie-consent-inner a:hover { color: #fff; }" +
+    ".cookie-consent-inner a { color: var(--accent); text-decoration: none; }" +
+    ".cookie-consent-inner a:hover { color: var(--accent-2); }" +
     ".cookie-consent-buttons { display: flex; gap: 10px; flex-shrink: 0; }" +
     ".cookie-btn {" +
     "  border: none; border-radius: 4px; padding: 8px 20px; cursor: pointer;" +
     "  font-size: 14px; font-weight: 600;" +
     "}" +
-    ".cookie-btn-accept { background: #f0c040; color: #000; }" +
-    ".cookie-btn-accept:hover { background: #ffd54f; }" +
+    ".cookie-btn-accept { background: var(--accent); color: #fff; }" +
+    ".cookie-btn-accept:hover { background: var(--accent-hover); }" +
     ".cookie-btn-decline { background: #333; color: #ccc; }" +
     ".cookie-btn-decline:hover { background: #444; color: #fff; }" +
     "@media (max-width: 480px) {" +

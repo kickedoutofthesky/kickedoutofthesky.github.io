@@ -123,7 +123,7 @@
                 width: 40px;
                 height: 40px;
                 border: 4px solid #333;
-                border-top: 4px solid #ffc107;
+                border-top: 4px solid var(--accent);
                 border-radius: 50%;
                 animation: spin 1s linear infinite;
                 margin-bottom: 15px;
@@ -200,7 +200,7 @@
                   style="
                     display: flex;
                     justify-content: space-between;
-                    color: #ffc107;
+                    color: var(--accent);
                     font-weight: bold;
                     font-size: 1.15rem;
                     border-top: 1px solid #333;
@@ -223,7 +223,7 @@
                 <h4 style="color: #fff; margin-bottom: 15px; margin-top: 0; font-size: 0.95rem">
                   Order Confirmation Sent To:
                 </h4>
-                <div id="customer-name" style="color: #ffc107; font-weight: 500; margin-bottom: 8px"></div>
+                <div id="customer-name" style="color: var(--accent); font-weight: 500; margin-bottom: 8px"></div>
                 <div id="customer-email" style="color: #ccc; font-size: 0.9rem; margin-bottom: 5px"></div>
                 <div id="customer-phone" style="color: #999; font-size: 0.9rem"></div>
               </div>
@@ -242,7 +242,7 @@
                   style="margin-top: 15px; border-top: 1px solid #333; padding-top: 15px; display: none"
                 >
                   <div style="color: #999; font-size: 0.85rem; margin-bottom: 5px">Shipping Method:</div>
-                  <div id="shipping-method" style="color: #ffc107; font-weight: 500"></div>
+                  <div id="shipping-method" style="color: var(--accent); font-weight: 500"></div>
                 </div>
               </div>
             </div>
@@ -549,7 +549,7 @@
                 itemHtml += `<div style="flex: 1;">
                   <div style="display: flex; justify-content: space-between; gap: 10px; margin-bottom: 6px">
                     <div>${item.name || "Item"}</div>
-                    <div style="color: #ffc107; font-weight: bold; white-space: nowrap">${currencySymbol}${lineTotal.toFixed(2)}</div>
+                    <div style="color: var(--accent); font-weight: bold; white-space: nowrap">${currencySymbol}${lineTotal.toFixed(2)}</div>
                   </div>
                   <div style="display: flex; justify-content: space-between; color: #999; font-size: 0.85rem">
                     <div>Qty: ${item.quantity || 1} × ${currencySymbol}${unitPrice.toFixed(2)} each</div>
@@ -625,7 +625,7 @@
         if (main) {
           const infoMsg = document.createElement("div");
           infoMsg.style.cssText =
-            "color: #ffc107; padding: 20px; background: #1a1a1a; border-radius: 8px; margin-top: 20px; border: 1px solid #ffc107";
+            "color: var(--accent); padding: 20px; background: #1a1a1a; border-radius: 8px; margin-top: 20px; border: 1px solid var(--accent)";
           infoMsg.innerHTML =
             "<p style='margin: 0'>Your order was placed successfully! Check your email for order confirmation and shipping details.</p>";
           main.appendChild(infoMsg);

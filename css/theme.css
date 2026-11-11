@@ -1,0 +1,8 @@
+/* Site-wide accent color. Change it here and it updates everywhere. */
+:root {
+  --accent: #e10098;
+  --accent-hover: #ff1fb6;
+  --accent-rgb: 225, 0, 152;
+  --accent-2: #ffd68a;
+  --accent-2-rgb: 255, 214, 138;
+}

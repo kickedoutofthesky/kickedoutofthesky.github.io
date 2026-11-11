@@ -292,7 +292,7 @@ function displayProcessingOrder(orderData) {
         <div style="flex: 1; text-align: left;">
           <div style="display: flex; justify-content: space-between; gap: 10px; margin-bottom: 6px">
             <div>${productName}${colorDisplay ? " - " + colorDisplay : ""}${sizeDisplay ? " - " + sizeDisplay : ""}</div>
-            <div style="color: #ffc107; font-weight: bold; white-space: nowrap">${money(lineTotal)}</div>
+            <div style="color: var(--accent); font-weight: bold; white-space: nowrap">${money(lineTotal)}</div>
           </div>
           <div style="display: flex; justify-content: flex-start; color: #999; font-size: 0.85rem">
             <div>Qty: ${item.quantity} × ${money(priceCents)} each</div>
@@ -323,7 +323,7 @@ function displayProcessingOrder(orderData) {
       shippingTrackingHTML = `
     <div class="shipping-tracking-grid">
       <div style="background: #1a1a1a; padding: 20px; border-radius: 8px; border: 1px solid #262626;">
-        <h3 style="color: #ffc107; margin-bottom: 15px; font-size: 1.1rem;">Shipping Address</h3>
+        <h3 style="color: var(--accent); margin-bottom: 15px; font-size: 1.1rem;">Shipping Address</h3>
         <div style="color: #ccc; line-height: 1.6;">
           <div style="color: #fff; font-weight: bold; margin-bottom: 8px;">${recipient.name || "—"}</div>
           <div style="margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #262626;">${recipient.email || "—"}</div>
@@ -333,7 +333,7 @@ function displayProcessingOrder(orderData) {
         </div>
       </div>
       <div style="background: #1a1a1a; padding: 20px; border-radius: 8px; border: 1px solid #262626;">
-        <h3 style="color: #ffc107; margin-bottom: 15px; font-size: 1.1rem;">Tracking Information</h3>
+        <h3 style="color: var(--accent); margin-bottom: 15px; font-size: 1.1rem;">Tracking Information</h3>
         <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid #262626; color: #ccc;">
           <span>Shipment ID:</span>
           <span style="color: #fff; font-weight: bold;">
@@ -377,13 +377,13 @@ function displayProcessingOrder(orderData) {
         }
         ${
           latestShipment.tracking_url
-            ? `<a href="${latestShipment.tracking_url}" target="_blank" rel="noopener noreferrer" style="display: inline-block; margin-top: 12px; color: #ffc107; text-decoration: none;" aria-label="Track shipment ${latestShipment.id} (opens in new window)">
+            ? `<a href="${latestShipment.tracking_url}" target="_blank" rel="noopener noreferrer" style="display: inline-block; margin-top: 12px; color: var(--accent); text-decoration: none;" aria-label="Track shipment ${latestShipment.id} (opens in new window)">
             <i class="fas fa-external-link-alt" style="margin-right: 8px"></i>Track This Shipment
           </a>`
             : ""
         }
       </div>
-      <button id="search-another-btn" style="width: 100%; padding: 12px; background-color: #ffc107; color: #000; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 1rem;" aria-label="Search for another order">
+      <button id="search-another-btn" style="width: 100%; padding: 12px; background-color: var(--accent); color: #fff; border: none; border-radius: 2px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; cursor: pointer; font-size: 1rem;" aria-label="Search for another order">
         Search Another Order
       </button>
     </div>
@@ -422,7 +422,7 @@ function displayProcessingOrder(orderData) {
               <span>Tax:</span>
               <span>${money(taxCents)}</span>
             </div>
-            <div style="display: flex; justify-content: space-between; color: #ffc107; font-weight: bold; font-size: 1.15rem; border-top: 1px solid #333; padding-top: 15px;">
+            <div style="display: flex; justify-content: space-between; color: var(--accent); font-weight: bold; font-size: 1.15rem; border-top: 1px solid #333; padding-top: 15px;">
               <span>Total:</span>
               <span>${money(totalCents)}</span>
             </div>

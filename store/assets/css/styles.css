@@ -37,15 +37,15 @@ body {
 }
 
 .filter-btn:focus-visible {
-  outline: 2px solid #ffc107;
+  outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
 
 .filter-btn.active {
-  background: #ffc107;
-  color: #000;
-  border-color: #ffc107;
-  font-weight: 600;
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+  font-weight: 700;
 }
 
 header {
@@ -69,7 +69,7 @@ header a {
 }
 
 header a:hover {
-  color: #cccccc;
+  color: var(--accent-2);
 }
 
 main {
@@ -170,7 +170,7 @@ main {
 }
 
 .btn:focus-visible {
-  outline: 2px solid #ffc107;
+  outline: 2px solid var(--accent);
   outline-offset: 2px;
   background-color: #cccccc;
   color: #000000;
@@ -190,7 +190,7 @@ main {
 }
 
 .btn-primary:focus-visible {
-  outline: 2px solid #ffc107;
+  outline: 2px solid var(--accent);
   outline-offset: 2px;
   background-color: #cccccc;
   color: #000000;
@@ -203,7 +203,7 @@ main {
 }
 
 .btn-secondary:focus-visible {
-  outline: 2px solid #ffc107;
+  outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
 
@@ -221,21 +221,21 @@ main {
 .btn-outline-secondary:focus-visible {
   background-color: #ffffff;
   color: #000000;
-  outline: 2px solid #ffc107;
+  outline: 2px solid var(--accent);
   outline-offset: -4px;
 }
 
 .btn-warning {
-  background-color: #ffc107 !important;
-  color: #000000 !important;
-  border: 1px solid #ffc107 !important;
+  background-color: var(--accent) !important;
+  color: #ffffff !important;
+  border: 1px solid var(--accent) !important;
   font-weight: normal !important;
 }
 
 .btn-warning:hover {
-  background-color: #e0a800 !important;
-  border-color: #e0a800 !important;
-  color: #000000 !important;
+  background-color: var(--accent-hover) !important;
+  border-color: var(--accent-hover) !important;
+  color: #ffffff !important;
 }
 
 .btn-warning:focus-visible {
@@ -404,9 +404,9 @@ input[type="submit"]:disabled,
   background-color: #0f0f0f;
   border-color: #999;
   color: #ffffff;
-  outline: 1px solid #ffc107;
+  outline: 1px solid var(--accent);
   outline-offset: 1px;
-  box-shadow: 0 0 0 0.1rem rgba(255, 193, 7, 0.1);
+  box-shadow: 0 0 0 0.1rem rgba(var(--accent-rgb), 0.15);
 }
 
 .form-select option {
@@ -465,7 +465,7 @@ nav .container-fluid {
 }
 
 .text-accent {
-  color: #ffc107;
+  color: var(--accent);
 }
 
 .text-error {
@@ -923,7 +923,63 @@ textarea[aria-invalid="true"]:focus {
   background-color: #1a1a1a;
   border-color: #333;
   color: #ccc;
-  outline: 1px solid #ffc107;
+  outline: 1px solid var(--accent);
   outline-offset: 1px;
-  box-shadow: 0 0 0 0.1rem rgba(255, 193, 7, 0.1);
+  box-shadow: 0 0 0 0.1rem rgba(var(--accent-rgb), 0.15);
+}
+
+/* Buttons matching the home page (.btn-main / .btn-outline) */
+.btn,
+.btn-primary,
+.btn-warning,
+.btn-outline-secondary,
+.filter-btn {
+  font-family:
+    "Inter",
+    system-ui,
+    -apple-system,
+    "Segoe UI",
+    Roboto,
+    "Helvetica Neue",
+    Arial,
+    sans-serif;
+  font-weight: 700 !important;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border-width: 2px !important;
+  border-radius: 2px !important;
+}
+
+.btn-primary,
+.btn-outline-secondary {
+  background-color: transparent;
+  color: #f4f1ea;
+  border-color: #f4f1ea;
+}
+
+.btn-primary:hover,
+.btn-primary:focus-visible,
+.btn-outline-secondary:hover,
+.btn-outline-secondary:focus-visible {
+  background-color: transparent;
+  color: var(--accent) !important;
+  border-color: var(--accent);
+}
+
+.btn-warning,
+.btn-warning i {
+  background-color: var(--accent) !important;
+  border-color: var(--accent) !important;
+  color: #fff !important;
+}
+
+.btn-warning:hover,
+.btn-warning:focus-visible {
+  background-color: var(--accent-hover) !important;
+  border-color: var(--accent-hover) !important;
+  color: #fff !important;
+}
+
+.btn-warning:focus-visible {
+  outline: 2px solid #fff !important;
 }

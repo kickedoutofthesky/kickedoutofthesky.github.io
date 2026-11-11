@@ -1,11 +1,12 @@
 /* Homepage styles (index.html only). */
+@import url("theme.css");
+
 :root {
   --bg: #0b0b0b;
   --bg-soft: #141414;
   --text: #f4f1ea;
   --muted: #a9a59c;
-  --rhodamine: #e10098;
-  --gold: #ffd68a;
+  --rhodamine: var(--accent);
   --font-head:
     "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   --font-body: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -71,7 +72,7 @@ body.home {
   position: absolute;
   top: -100%;
   left: 0;
-  background: var(--gold);
+  background: var(--accent-2);
   color: #000 !important;
   padding: 8px 16px;
   z-index: 10000;
@@ -82,7 +83,7 @@ body.home {
 }
 
 .home :focus-visible {
-  outline: 3px solid var(--gold);
+  outline: 3px solid var(--accent-2);
   outline-offset: 3px;
 }
 
@@ -141,7 +142,7 @@ body.home {
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 .site-nav a:hover {
-  color: var(--rhodamine);
+  color: var(--accent-2);
 }
 .menu-toggle {
   background: none;
@@ -236,7 +237,7 @@ body.home {
 }
 .label {
   margin: 0 0 8px;
-  color: var(--gold);
+  color: var(--accent-2);
   font-family: var(--font-head);
   font-size: 0.85rem;
   letter-spacing: 0.25em;
@@ -276,7 +277,7 @@ body.home {
   font-variant-numeric: tabular-nums;
 }
 .countdown small {
-  color: var(--gold);
+  color: var(--accent-2);
   text-transform: uppercase;
   letter-spacing: 0.15em;
   font-size: 0.65rem;
@@ -304,7 +305,7 @@ body.home {
   transition: color 0.2s ease;
 }
 .social-row a:hover {
-  color: var(--rhodamine);
+  color: var(--accent-2);
 }
 
 /* Buttons */
@@ -336,8 +337,8 @@ body.home {
   color: #fff !important;
 }
 .btn-main:hover {
-  background: #ff1fb6;
-  border-color: #ff1fb6;
+  background: var(--accent-hover);
+  border-color: var(--accent-hover);
 }
 .btn-outline {
   background: transparent;
@@ -361,10 +362,10 @@ body.home {
 /* Ticker */
 .ticker {
   background: #050505;
-  color: var(--gold);
+  color: var(--accent-2);
   overflow: hidden;
   white-space: nowrap;
-  border-block: 1px solid rgba(255, 214, 138, 0.25);
+  border-block: 1px solid rgba(var(--accent-2-rgb), 0.25);
   padding: 12px 0;
   font-family: var(--font-head);
   letter-spacing: 0.15em;
@@ -408,7 +409,7 @@ body.home {
 }
 .home .subhead {
   font-size: 1rem;
-  color: var(--gold);
+  color: var(--accent-2);
   letter-spacing: 0.2em;
   text-transform: uppercase;
   margin: 150px 0 48px;
@@ -432,7 +433,7 @@ body.home {
 }
 .feature-cover img {
   width: 100%;
-  box-shadow: 0 20px 60px rgba(225, 0, 152, 0.18);
+  box-shadow: 0 20px 60px rgba(var(--accent-rgb), 0.18);
 }
 .feature-text h3 {
   font-size: clamp(1.6rem, 5vw, 2.4rem);
@@ -480,8 +481,8 @@ body.home {
   display: inline-block;
   margin: 0 0 36px;
   padding: 6px 14px;
-  border: 1px solid rgba(255, 214, 138, 0.45);
-  color: var(--gold);
+  border: 1px solid rgba(var(--accent-2-rgb), 0.45);
+  color: var(--accent-2);
   font-size: 0.8rem;
   letter-spacing: 0.2em;
   text-transform: uppercase;
@@ -517,7 +518,7 @@ body.home {
 .signup-form #mlb2-8448360 .ml-form-embedContent h4,
 .signup-form #mlb2-8448360 .ml-form-successContent h4 {
   margin: 0 0 8px !important;
-  color: var(--gold) !important;
+  color: var(--accent-2) !important;
   font-size: 0.85rem !important;
   font-weight: 700 !important;
   letter-spacing: 0.25em !important;
@@ -569,8 +570,8 @@ body.home {
   text-transform: uppercase !important;
 }
 .signup-form #mlb2-8448360 button.primary:hover {
-  background: #ff1fb6 !important;
-  border-color: #ff1fb6 !important;
+  background: var(--accent-hover) !important;
+  border-color: var(--accent-hover) !important;
 }
 .signup-form #mlb2-8448360 .ml-mobileButton-horizontal {
   display: none !important;
@@ -586,8 +587,8 @@ body.home {
   border-color: var(--rhodamine) !important;
 }
 #signup #mlb2-8448360#mlb2-8448360 .ml-block-form .ml-button-horizontal button.primary:hover {
-  background-color: #ff1fb6 !important;
-  border-color: #ff1fb6 !important;
+  background-color: var(--accent-hover) !important;
+  border-color: var(--accent-hover) !important;
 }
 
 /* Videos */
@@ -696,7 +697,7 @@ body.home {
 .field label {
   display: block;
   margin-bottom: 6px;
-  color: var(--gold);
+  color: var(--accent-2);
   font-size: 0.85rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -743,7 +744,7 @@ body.home {
   text-transform: uppercase;
 }
 .legal-footer a {
-  color: #f0c040;
+  color: var(--accent);
   margin: 0 8px;
 }
 .legal-footer .social-row a,
@@ -751,7 +752,7 @@ body.home {
   margin: 0;
 }
 .legal-footer a:hover {
-  color: #fff;
+  color: var(--accent-2);
 }
 .legal-links {
   margin-bottom: 15px;

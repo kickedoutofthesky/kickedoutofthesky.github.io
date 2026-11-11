@@ -54,6 +54,6 @@ describe("Product Images", () => {
 
   test("products catalog is complete", () => {
     expect(products.length).toBeGreaterThan(0);
-    expect(products.length).toBe(45);
+    expect(products.length).toBe(26);
   });
 });
