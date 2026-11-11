@@ -17,7 +17,7 @@
 const STAGING_API = "https://api-staging.kickedoutofthesky.com";
 
 // Unisex Tee w/ Color Block Graphic - Black / XS
-const TEE = { productKey: "product_425342399", color: "Black", size: "XS", variantId: 5246069560 };
+const TEE = { productKey: "product_425342399", color: "Black", size: "XS", variantId: 5284973953 };
 
 const formatCents = cents => `$${(cents / 100).toFixed(2)}`;
 
@@ -107,8 +107,8 @@ describe("Integration Tests - Live staging API (no mocks)", () => {
         color: "Black",
         size: "XS",
         quantity: 2,
-        variantId: 5246069560,
-        unitCents: 2500,
+        variantId: 5284973953,
+        unitCents: 3000,
         name: "Unisex Tee w/ Color Block Graphic - Black / XS",
         image: "Unisex Tee w Color Block Graphic - Front - Black.jpg",
       },
@@ -117,8 +117,8 @@ describe("Integration Tests - Live staging API (no mocks)", () => {
         color: "Black",
         size: "L",
         quantity: 1,
-        variantId: 5246069569,
-        unitCents: 2500,
+        variantId: 5284973956,
+        unitCents: 3000,
         name: "Unisex Tee w/ Color Block Graphic - Black / L",
         image: "Unisex Tee w Color Block Graphic - Front - Black.jpg",
       },

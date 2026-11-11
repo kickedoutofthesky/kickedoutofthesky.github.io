@@ -3,7 +3,7 @@
 // Product detail page (store/product.html?key=... + product.js): variants, pricing,
 // images/carousel, URL pre-selection and add to cart.
 
-const TEE = "product_421296994"; // Unisex Tee w/ Text: Black / Dark Grey Heather, XS–2XL, $25
+const TEE = "product_421296994"; // Unisex Tee w/ Text: Black / Dark Grey Heather, XS–2XL, $30
 const VINTAGE_TEE = "product_424725213"; // Oxblood Black (S–2XL) / Natural (XS–2XL)
 const MULTI_MOCKUP = "product_425122887"; // Long Sleeve w/ Sleeve print: Front + Sleeve mockups per colour
 const HAT = "product_424963286"; // Snapback Hat: One Size
@@ -22,7 +22,7 @@ describe("Product page", () => {
       visitProduct(TEE);
 
       cy.get("[data-testid='product-title']").should("have.text", "Unisex Tee w/ Text");
-      cy.get("[data-testid='product-price']").should("have.text", "$25.00");
+      cy.get("[data-testid='product-price']").should("have.text", "$30.00");
       cy.get("[data-testid='color-select'] option")
         .then($opts => [...$opts].map(o => o.value))
         .should("deep.equal", ["Black", "Dark Grey Heather"]);

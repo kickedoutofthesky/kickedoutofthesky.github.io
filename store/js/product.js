@@ -380,7 +380,7 @@ function generateGarmentSection(product) {
 
   return `
     <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #333;">
-      <h4 style="color: #ffc107; margin-bottom: 15px;">Garment Details</h4>
+      <h4 style="color: var(--accent); margin-bottom: 15px;">Garment Details</h4>
       <div style="color: #ccc; font-size: 0.95rem; line-height: 1.6;">
         ${garment.name ? `<p style="margin-bottom: 10px;"><strong>${garment.name}</strong></p>` : ""}
         ${garment.material ? `<p style="margin-bottom: 8px;"><strong>Material:</strong> ${garment.material}</p>` : ""}
@@ -549,7 +549,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           <div class="col-md-5">
             <div class="product-detail-info" style="text-align: left;">
               <h1 class="mb-3" data-testid="product-title">${product.title}</h1>
-              <p class="product-detail-price fs-4 mb-4 text-warning" id="price-display" data-testid="product-price">${priceDisplay}</p>
+              <p class="product-detail-price fs-4 mb-4 text-accent" id="price-display" data-testid="product-price">${priceDisplay}</p>
 
               <form style="margin-bottom: 30px;">
                 <div class="mb-4">
@@ -709,7 +709,7 @@ function selectColorThumbnail(color) {
   thumbnails.forEach((thumb, index) => {
     const availableColors = Object.keys(currentProduct.variants);
     if (availableColors[index] === color) {
-      thumb.style.border = "3px solid #ffc107";
+      thumb.style.border = "3px solid var(--accent)";
     } else {
       thumb.style.border = "2px solid #333";
     }

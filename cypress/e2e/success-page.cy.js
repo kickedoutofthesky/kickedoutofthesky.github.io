@@ -98,7 +98,7 @@ describe("Success page", () => {
       cy.get("#order-items > div")
         .eq(0)
         .contains("div", /^\$50\.00$/)
-        .should("have.css", "color", "rgb(255, 193, 7)");
+        .should("have.css", "color", "rgb(225, 0, 152)");
     });
 
     it("shows the order summary totals", () => {

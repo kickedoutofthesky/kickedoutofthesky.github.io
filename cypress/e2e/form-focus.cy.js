@@ -37,11 +37,11 @@ describe("Form field focus style", () => {
     cy.get("#shipping-country option").should("have.length.greaterThan", 1);
     cy.get("#shipping-country").focus().should("have.focus");
     // Let any focus transition finish before taking the cart's style as the reference
-    cy.get("#shipping-country").should($el => expect(getComputedStyle($el[0]).boxShadow).to.include("255, 193, 7"));
+    cy.get("#shipping-country").should($el => expect(getComputedStyle($el[0]).boxShadow).to.include("225, 0, 152"));
     cy.get("#shipping-country").then($el => {
       const cartStyle = styleOf($el[0]);
       expect(cartStyle.outlineStyle, "cart outline").to.eq("solid");
-      expect(cartStyle.outlineColor, "cart outline colour").to.eq("rgb(255, 193, 7)");
+      expect(cartStyle.outlineColor, "cart outline colour").to.eq("rgb(225, 0, 152)");
 
       cy.visitWith("/store/product.html?key=product_421296994");
       cy.get("[data-testid='product-title']").should("be.visible");

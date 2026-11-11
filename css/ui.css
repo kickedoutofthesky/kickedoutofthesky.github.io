@@ -1,13 +1,14 @@
 /* ============================================================
    GLOBAL STYLES
    ============================================================ */
+@import url("theme.css");
 
 .skip-nav {
   position: absolute;
   top: -100%;
   left: 0;
-  background: #ffc107;
-  color: #000;
+  background: var(--accent);
+  color: #fff;
   padding: 8px 16px;
   z-index: 10000;
   font-weight: 600;
@@ -30,7 +31,7 @@ a,
 a:visited,
 a:hover,
 a:active {
-  color: #ffffff;
+  color: var(--accent-2);
   text-decoration: none;
 }
 
@@ -169,7 +170,7 @@ h2 {
 }
 
 .site-header a:hover {
-  color: #ffffff;
+  color: var(--accent-2);
   text-decoration: none;
 }
 
@@ -299,12 +300,12 @@ h2 {
 }
 
 .nav-link:hover {
-  color: #ffffff !important;
+  color: var(--accent-2) !important;
 }
 
 .nav-link:focus-visible {
   color: #ffffff !important;
-  outline: 2px solid #ffc107;
+  outline: 2px solid var(--accent);
   outline-offset: 2px;
   border-radius: 2px;
 }
@@ -353,18 +354,18 @@ h2 {
 }
 
 #contact .btn-light {
-  background-color: #ffc107 !important;
-  color: #000000 !important;
-  border: 1px solid #ffc107 !important;
+  background-color: var(--accent) !important;
+  color: #ffffff !important;
+  border: 1px solid var(--accent) !important;
   border-radius: 4px !important;
   transition: all 0.3s ease !important;
   font-weight: 500 !important;
 }
 
 #contact .btn-light:hover {
-  background-color: #e0a800 !important;
-  border-color: #e0a800 !important;
-  color: #000000 !important;
+  background-color: var(--accent-hover) !important;
+  border-color: var(--accent-hover) !important;
+  color: #ffffff !important;
 }
 
 /* ============================================================
@@ -386,7 +387,7 @@ h2 {
 }
 
 .tour-placeholder:hover {
-  border-color: #ffc107;
+  border-color: var(--accent);
   background-color: #222222;
 }
 
@@ -433,8 +434,8 @@ h2 {
 }
 
 .date-box {
-  background-color: #ffc107;
-  color: #000000;
+  background-color: var(--accent);
+  color: #ffffff;
   border-radius: 8px;
   padding: 12px;
   text-align: center;
@@ -516,13 +517,13 @@ h2 {
 }
 
 .legal-footer a {
-  color: #f0c040;
+  color: var(--accent);
   text-decoration: none;
   margin: 0 8px;
 }
 
 .legal-footer a:hover {
-  color: #fff;
+  color: var(--accent-2);
 }
 
 .legal-links {

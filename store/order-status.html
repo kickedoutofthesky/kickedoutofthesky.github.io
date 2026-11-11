@@ -154,8 +154,8 @@
       }
 
       .status-pending {
-        background-color: #ffc107;
-        color: #000;
+        background-color: var(--accent);
+        color: #fff;
       }
 
       .status-processing {
@@ -187,7 +187,7 @@
       }
 
       .order-section h3 {
-        color: #ffc107;
+        color: var(--accent);
         margin-bottom: 15px;
         font-size: 1.1rem;
       }
@@ -252,7 +252,7 @@
 
       .item-price {
         text-align: right;
-        color: #ffc107;
+        color: var(--accent);
         font-weight: bold;
       }
 
@@ -354,15 +354,15 @@
       }
 
       .search-button.active {
-        background-color: #ffc107;
-        color: #000;
+        background-color: var(--accent);
+        color: #fff;
         cursor: pointer;
       }
 
       .search-button.active:hover {
-        background-color: #e0a800;
+        background-color: var(--accent-hover);
         transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(255, 193, 7, 0.3);
+        box-shadow: 0 4px 12px rgba(var(--accent-rgb), 0.3);
       }
 
       .search-button:disabled {
@@ -385,7 +385,7 @@
         width: 20px;
         height: 20px;
         border: 3px solid #333;
-        border-top-color: #ffc107;
+        border-top-color: var(--accent);
         border-radius: 50%;
         animation: spin 1s linear infinite;
       }
@@ -454,7 +454,7 @@
           <div class="form-group-custom">
             <label for="printful-order-id">
               Printful Order ID
-              <span style="color: #ffc107; font-weight: normal" aria-label="required">*</span>
+              <span style="color: var(--accent); font-weight: normal" aria-label="required">*</span>
             </label>
             <input
               type="text"
@@ -469,7 +469,7 @@
           <div class="form-group-custom">
             <label for="email">
               Email Address
-              <span style="color: #ffc107; font-weight: normal" aria-label="required">*</span>
+              <span style="color: var(--accent); font-weight: normal" aria-label="required">*</span>
             </label>
             <input
               type="email"
@@ -513,7 +513,7 @@
           <div id="pending-section" style="display: none">
             <div class="order-section">
               <p class="text-tertiary" style="font-size: 1.05rem; line-height: 1.6">
-                <i class="fas fa-hourglass-half" style="color: #ffc107; margin-right: 10px"></i>
+                <i class="fas fa-hourglass-half" style="color: var(--accent); margin-right: 10px"></i>
                 <span id="pending-message"></span>
               </p>
             </div>
