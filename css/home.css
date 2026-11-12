@@ -450,6 +450,11 @@ body.home {
   max-width: 520px;
   margin: 0 auto;
 }
+.home .signup-note {
+  margin: 12px 0 0;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
 
 /* MailerLite embedded form, restyled to match the site */
 .signup-form #mlb2-8448360,
