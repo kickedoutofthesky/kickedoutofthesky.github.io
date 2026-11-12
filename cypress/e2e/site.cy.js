@@ -84,7 +84,7 @@ describe("Main site", () => {
     it("shows the out-now hero state and a listen button", () => {
       cy.visitWith("/");
       cy.get("#heroLabel").should("have.text", "OUT NOW");
-      cy.get(".hero-date").should("have.text", "Out Now");
+      cy.get(".hero-date").should("not.exist");
       cy.get("#heroCta")
         .should("have.attr", "href", "https://listen.kickedoutofthesky.com/betterpartofme")
         .and("have.text", "Listen");
