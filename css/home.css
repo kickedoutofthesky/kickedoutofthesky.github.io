@@ -440,21 +440,11 @@ body.home {
   text-wrap: balance;
 }
 .home .signup-sub {
-  margin: 0 auto 20px;
+  margin: 0 auto 36px;
   max-width: 520px;
   color: var(--muted);
   font-size: 1.05rem;
   text-wrap: balance;
-}
-.home .signup-shows {
-  display: inline-block;
-  margin: 0 0 36px;
-  padding: 6px 14px;
-  border: 1px solid rgba(var(--accent-2-rgb), 0.45);
-  color: var(--accent-2);
-  font-size: 0.8rem;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
 }
 .signup-form {
   max-width: 520px;
