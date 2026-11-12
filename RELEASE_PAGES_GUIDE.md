@@ -1,10 +1,10 @@
 # Release pages
 
-| Route              | File                                                   | Behaviour                                                                                                                      |
-| ------------------ | ------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------ |
-| `/betterpartofme/` | [betterpartofme/index.html](betterpartofme/index.html) | Permanent release page rendered by [js/releases.js](js/releases.js) from [data/releases.json](data/releases.json)              |
-| `/listen/`         | [listen/index.html](listen/index.html)                 | Redirects to the push.fm fan link `https://push.fm/fl/kickedoutofthesky`, carrying `utm_*`, `fbclid` and `ttclid` query params |
-| `/presave.html`    | [presave.html](presave.html)                           | Redirects to `/listen/` (`location.replace`)                                                                                   |
+| Route              | File                                                   | Behaviour                                                                                                                                                                                            |
+| ------------------ | ------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `/betterpartofme/` | [betterpartofme/index.html](betterpartofme/index.html) | Redirects to the Feature.fm smart link `https://listen.kickedoutofthesky.com/betterpartofme` (pre-save countdown, then listen page at release), carrying `utm_*`, `fbclid` and `ttclid` query params |
+| `/listen/`         | [listen/index.html](listen/index.html)                 | Redirects to the same Feature.fm smart link, carrying `utm_*`, `fbclid` and `ttclid` query params                                                                                                    |
+| `/presave.html`    | [presave.html](presave.html)                           | Redirects to `/listen/` (`location.replace`)                                                                                                                                                         |
 
 ## Release data
 
