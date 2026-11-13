@@ -244,43 +244,12 @@ body.home {
   text-transform: uppercase;
 }
 .hero-title {
-  margin: 0;
+  margin: 0 0 28px;
   font-family: var(--font-head);
   font-weight: 700;
   font-size: clamp(2rem, 9vw, 3.6rem);
   overflow-wrap: anywhere;
   line-height: 1.05;
-}
-.hero-date {
-  margin: 8px 0 20px;
-  font-size: 1.1rem;
-  color: var(--rhodamine);
-}
-.countdown {
-  display: flex;
-  gap: 18px;
-  margin-bottom: 24px;
-}
-.countdown[hidden] {
-  display: none;
-}
-.countdown div {
-  text-align: center;
-  min-width: 52px;
-}
-.countdown span {
-  display: block;
-  font-family: var(--font-head);
-  font-size: 2rem;
-  font-weight: 700;
-  color: var(--text);
-  font-variant-numeric: tabular-nums;
-}
-.countdown small {
-  color: var(--accent-2);
-  text-transform: uppercase;
-  letter-spacing: 0.15em;
-  font-size: 0.65rem;
 }
 .hero-actions,
 .btn-row {
@@ -471,25 +440,20 @@ body.home {
   text-wrap: balance;
 }
 .home .signup-sub {
-  margin: 0 auto 20px;
+  margin: 0 auto 36px;
   max-width: 520px;
   color: var(--muted);
   font-size: 1.05rem;
   text-wrap: balance;
 }
-.home .signup-shows {
-  display: inline-block;
-  margin: 0 0 36px;
-  padding: 6px 14px;
-  border: 1px solid rgba(var(--accent-2-rgb), 0.45);
-  color: var(--accent-2);
-  font-size: 0.8rem;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-}
 .signup-form {
   max-width: 520px;
   margin: 0 auto;
+}
+.home .signup-note {
+  margin: 12px 0 0;
+  color: var(--muted);
+  font-size: 0.85rem;
 }
 
 /* MailerLite embedded form, restyled to match the site */

@@ -63,11 +63,32 @@ describe("Main site", () => {
       cy.get(".merch-tile").should("have.length", 3);
     });
 
-    it("shows the hero release state and a pre-save button", () => {
+    it("adds a More link to each Out now release card", () => {
       cy.visitWith("/");
-      cy.get("#heroLabel").should("have.text", "NEW SINGLE");
-      cy.get("#heroCta").should("have.attr", "href", "/betterpartofme/").and("have.text", "Pre-save");
-      cy.get("#countdown").should("be.visible");
+      [
+        ["Wasting My Life Away", "wastingmylifeaway"],
+        ["Levity Of Lies", "levityoflies"],
+        ["Kicked Out Of The Sky", "kickedoutofthesky"],
+      ].forEach(([title, slug]) => {
+        cy.contains(".release", title)
+          .find("a.btn-small")
+          .last()
+          .should($a => expect($a.text().trim()).to.eq("More"))
+          .and("have.attr", "href", `https://listen.kickedoutofthesky.com/${slug}`)
+          .and("have.attr", "aria-label", `More platforms for ${title}`)
+          .and("have.attr", "target", "_blank")
+          .and("have.attr", "rel", "noopener");
+      });
+    });
+
+    it("shows the out-now hero state and a listen button", () => {
+      cy.visitWith("/");
+      cy.get("#heroLabel").should("have.text", "OUT NOW");
+      cy.get(".hero-date").should("not.exist");
+      cy.get("#heroCta")
+        .should("have.attr", "href", "https://listen.kickedoutofthesky.com/betterpartofme")
+        .and("have.text", "Listen");
+      cy.get("#countdown").should("not.exist");
     });
 
     it("loads YouTube only after the thumbnail is clicked", () => {

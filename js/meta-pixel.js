@@ -1,6 +1,6 @@
 /**
  * meta-pixel.js
- * Meta Pixel (1091548463560589) loaded after cookie consent
+ * Meta Pixel (1985329649108527) loaded after cookie consent
  * Implements consent-gated event tracking with UUID deduplication for Conversions API
  * Queues events fired before consent and flushes on acceptance
  */
@@ -9,7 +9,7 @@
   "use strict";
 
   // A page can set window.META_PIXEL_ID before this script to use a different pixel.
-  const PIXEL_ID = window.META_PIXEL_ID || "1091548463560589";
+  const PIXEL_ID = window.META_PIXEL_ID || "1985329649108527";
   const CONSENT_KEY = "cookie_consent";
 
   // Initialize fbq as a queue if it doesn't exist

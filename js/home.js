@@ -4,17 +4,10 @@
 
   // Edit this object for the next single.
   var RELEASE = {
-    releaseAt: "2026-11-13T00:00:00Z",
-    title: "BETTER PART OF ME",
-    dateText: "Out November 13",
-    labelBefore: "NEW SINGLE",
-    labelAfter: "OUT NOW",
-    tickerBefore: "BETTER PART OF ME \u2736 OUT 13.11.2026 \u2736 PRE-SAVE NOW \u2736",
-    tickerAfter: "BETTER PART OF ME \u2736 OUT NOW \u2736",
-    ctaBefore: "Pre-save",
-    ctaAfter: "Listen now",
-    ctaUrlBefore: "/betterpartofme/",
-    ctaUrlAfter: "/betterpartofme/",
+    labelText: "OUT NOW",
+    tickerText: "BETTER PART OF ME \u2736 OUT NOW \u2736",
+    ctaText: "Listen",
+    ctaUrl: "https://listen.kickedoutofthesky.com/betterpartofme",
     hero: {
       horizontal: {
         webm: "img/video/hero-horizontal.webm",
@@ -35,13 +28,9 @@
     },
   };
 
-  var releaseTime = new Date(RELEASE.releaseAt).getTime();
   var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   var $ = function (id) {
     return document.getElementById(id);
-  };
-  var pad = function (n) {
-    return String(n).padStart(2, "0");
   };
 
   function setText(id, text) {
@@ -50,18 +39,17 @@
   }
 
   function applyReleaseState() {
-    var released = Date.now() >= releaseTime;
-    setText("heroLabel", released ? RELEASE.labelAfter : RELEASE.labelBefore);
-    setText("featureLabel", released ? RELEASE.labelAfter : RELEASE.labelBefore);
+    setText("heroLabel", RELEASE.labelText);
+    setText("featureLabel", RELEASE.labelText);
     ["heroCta", "featureCta"].forEach(function (id) {
       var el = $(id);
       if (!el) return;
-      el.textContent = released ? RELEASE.ctaAfter : RELEASE.ctaBefore;
-      el.setAttribute("href", released ? RELEASE.ctaUrlAfter : RELEASE.ctaUrlBefore);
+      el.textContent = RELEASE.ctaText;
+      el.setAttribute("href", RELEASE.ctaUrl);
     });
     var track = $("tickerTrack");
     if (track) {
-      var text = released ? RELEASE.tickerAfter : RELEASE.tickerBefore;
+      var text = RELEASE.tickerText;
       if (track.dataset.text !== text) {
         track.dataset.text = text;
         var chunk = (text + " ").repeat(6);
@@ -73,28 +61,9 @@
         }
       }
     }
-    return released;
   }
 
-  function tick() {
-    var released = applyReleaseState();
-    var cd = $("countdown");
-    if (released) {
-      if (cd) cd.hidden = true;
-      return true;
-    }
-    var diff = Math.max(0, releaseTime - Date.now());
-    setText("cdDays", pad(Math.floor(diff / 86400000)));
-    setText("cdHours", pad(Math.floor((diff % 86400000) / 3600000)));
-    setText("cdMins", pad(Math.floor((diff % 3600000) / 60000)));
-    setText("cdSecs", pad(Math.floor((diff % 60000) / 1000)));
-    return false;
-  }
-
-  tick();
-  var timer = setInterval(function () {
-    if (tick()) clearInterval(timer);
-  }, 1000);
+  applyReleaseState();
 
   // Hero: pick one video/poster by orientation so only one file downloads.
   var portrait = window.matchMedia("(orientation: portrait) and (max-width: 820px)");

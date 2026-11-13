@@ -63,7 +63,7 @@ describe("meta-pixel.js", () => {
       const code = fs.readFileSync(path.join(__dirname, "../meta-pixel.js"), "utf8");
 
       // Verify pixel ID is present
-      expect(code).toContain("1091548463560589");
+      expect(code).toContain("1985329649108527");
     });
 
     it("should let a page override the pixel ID", () => {
