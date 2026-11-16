@@ -562,8 +562,13 @@ body.home {
 }
 .video-side {
   display: grid;
+  grid-template-columns: repeat(3, 1fr);
   gap: 16px;
-  align-content: start;
+}
+@media (max-width: 599px) {
+  .video-side {
+    grid-template-columns: 1fr;
+  }
 }
 .yt-facade,
 .yt-frame {
@@ -772,9 +777,6 @@ body.home {
   .feature {
     grid-template-columns: 1fr 1fr;
     gap: 48px;
-  }
-  .video-grid {
-    grid-template-columns: 2fr 1fr;
   }
   .merch-tile {
     font-size: 1rem;
