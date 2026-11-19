@@ -143,13 +143,6 @@
           });
         }
 
-        var pageViewSent = false;
-        function firePageView() {
-          if (pageViewSent || !consented() || typeof window.fbq !== "function") return;
-          pageViewSent = true;
-          window.fbq("track", "PageView", {}, { eventID: uuid() });
-        }
-
         function fireLead() {
           if (!consented() || typeof window.fbq !== "function") return false;
           window.fbq("track", "Lead", { content_name: "Pop Punk Bangers" }, { eventID: uuid() });
@@ -170,7 +163,6 @@
         // Called by js/cookie-consent.js right after the visitor clicks Accept.
         window.flushReleaseAnalyticsQueue = function () {
           document.body.classList.remove("has-banner");
-          firePageView();
         };
 
         button.addEventListener("click", function (e) {
@@ -180,7 +172,6 @@
         });
 
         if (consented()) {
-          firePageView();
           fireLead();
           leave(true);
         } else if (consentValue() === null) {

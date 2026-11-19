@@ -59,7 +59,6 @@
 
         var delay = 250;
         if (consented && typeof window.fbq === "function") {
-          window.fbq("track", "PageView");
           window.fbq("track", "Lead", { content_name: "Listen redirect" });
           delay = 800; // give the pixel beacon time to send before leaving
         }

@@ -146,10 +146,7 @@
     <!-- Navbar loaded dynamically from navbar.html -->
     <div class="legal-container">
       <h1>Cookie Policy</h1>
-      <p class="last-updated">
-        Last updated:
-        <span id="last-updated"></span>
-      </p>
+      <p class="last-updated">Last updated: 19 November 2026</p>
 
       <h2>1. What Are Cookies?</h2>
       <p>
@@ -173,6 +170,7 @@
             <th>Cookie</th>
             <th>Purpose</th>
             <th>Duration</th>
+            <th>Recipient</th>
           </tr>
         </thead>
         <tbody>
@@ -180,19 +178,27 @@
             <td>Stripe session cookies</td>
             <td>Required to process secure payments through Stripe during checkout</td>
             <td>Session</td>
+            <td>Stripe</td>
           </tr>
           <tr>
             <td>localStorage (cart data)</td>
             <td>Stores your shopping cart items and selected product filters locally in your browser</td>
             <td>Persistent until cleared</td>
+            <td>None (stays in your browser)</td>
+          </tr>
+          <tr>
+            <td>cookie_consent (localStorage)</td>
+            <td>Remembers whether you accepted or declined cookies so we do not ask again</td>
+            <td>Persistent until cleared</td>
+            <td>None (stays in your browser)</td>
           </tr>
         </tbody>
       </table>
 
       <h2>4. Analytics Cookies</h2>
       <p>
-        We use Google Analytics 4 (GA4) to understand how visitors interact with our website. These cookies collect
-        information in an anonymized form.
+        We use Google Analytics 4 (GA4) to understand how visitors interact with our website. These cookies are only set
+        after you click Accept on the cookie banner.
       </p>
       <table>
         <thead>
@@ -200,6 +206,7 @@
             <th>Cookie</th>
             <th>Purpose</th>
             <th>Duration</th>
+            <th>Recipient</th>
           </tr>
         </thead>
         <tbody>
@@ -207,41 +214,59 @@
             <td>_ga</td>
             <td>Distinguishes unique users by assigning a randomly generated number as a client identifier</td>
             <td>2 years</td>
+            <td>Google</td>
           </tr>
           <tr>
             <td>_ga_*</td>
             <td>Used by GA4 to persist session state</td>
             <td>2 years</td>
+            <td>Google</td>
           </tr>
           <tr>
             <td>_gid</td>
             <td>Distinguishes users for analytics purposes</td>
             <td>24 hours</td>
+            <td>Google</td>
           </tr>
         </tbody>
       </table>
 
       <h2>5. Advertising Cookies</h2>
       <p>
-        With your consent, we use the TikTok Pixel to measure the effectiveness of our advertising. It is only loaded
-        after you click Accept on the cookie banner, and it is never loaded if you decline. We do not serve targeted ads
-        on this site.
+        With your consent, we use the Meta Pixel and the TikTok Pixel to measure the effectiveness of our advertising.
+        They are only loaded after you click Accept on the cookie banner, and are never loaded if you decline. We do not
+        serve targeted ads on this site.
       </p>
       <table>
         <thead>
           <tr>
             <th>Cookie</th>
             <th>Purpose</th>
-            <th>Recipient</th>
             <th>Duration</th>
+            <th>Recipient</th>
           </tr>
         </thead>
         <tbody>
           <tr>
+            <td>_fbp</td>
+            <td>Identifies the browser so Meta can measure visits and ad performance (Meta Pixel)</td>
+            <td>90 days</td>
+            <td>Meta Platforms</td>
+          </tr>
+          <tr>
+            <td>_fbc</td>
+            <td>
+              Stores the Meta click ID (fbclid) when you arrive from a Meta ad, so conversions can be attributed (Meta
+              Pixel)
+            </td>
+            <td>90 days</td>
+            <td>Meta Platforms</td>
+          </tr>
+          <tr>
             <td>_ttp</td>
             <td>Advertising measurement (TikTok Pixel)</td>
-            <td>TikTok</td>
             <td>13 months</td>
+            <td>TikTok</td>
           </tr>
         </tbody>
       </table>
@@ -249,6 +274,13 @@
       <h2>6. Third-Party Cookies</h2>
       <p>The following third-party services may set cookies when you use our site:</p>
       <ul>
+        <li>
+          <strong>Meta Platforms</strong>
+          — Advertising measurement cookies as described above. See
+          <a href="https://www.facebook.com/privacy/policy/" target="_blank" rel="noopener noreferrer">
+            Meta's Privacy Policy
+          </a>
+        </li>
         <li>
           <strong>TikTok</strong>
           — Advertising measurement cookie as described above. See
@@ -310,8 +342,10 @@
 
       <h2>9. Cookie Consent</h2>
       <p>
-        By continuing to use kickedoutofthesky.com, you consent to the use of cookies as described in this policy. You
-        may withdraw your consent at any time by adjusting your browser settings or clearing cookies.
+        Analytics and advertising cookies are only set after you click Accept on the cookie banner. You can withdraw
+        your consent at any time by clearing this site's data in your browser (which removes the cookie_consent entry
+        and shows the banner again so you can choose Decline), or by deleting the cookies listed above in your browser
+        settings.
       </p>
 
       <h2>10. Changes to This Cookie Policy</h2>
@@ -352,9 +386,6 @@
       </p>
     </footer>
 
-    <script>
-      document.getElementById("last-updated").textContent = new Date().toLocaleDateString();
-    </script>
     <script src="../js/navbar-loader.js?v=20261026130000"></script>
     <script src="../js/analytics.js"></script>
     <script src="../js/cookie-consent.js"></script>

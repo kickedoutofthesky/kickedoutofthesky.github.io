@@ -8,6 +8,40 @@ const PLAYLIST_URL = "https://open.spotify.com/playlist/4FZfdrXcWZG1tMwUFTCWDK";
 
 const pixelEvents = win => (win.fbq.queue || []).map(args => [...args]);
 
+// Replaces fbq with a recorder that notes the page's META_PAGEVIEW_EVENT_ID at each PageView
+function recordPixel(calls, { presetEventId } = {}) {
+  return win => {
+    if (presetEventId) win.META_PAGEVIEW_EVENT_ID = presetEventId;
+    win.fbq = (...args) => calls.push({ args, pageViewId: win.META_PAGEVIEW_EVENT_ID });
+  };
+}
+
+const pageViewCalls = calls => calls.filter(({ args }) => args[0] === "track" && args[1] === "PageView");
+
+// One PageView per load, sent by meta-pixel.js with an eventID that is also exposed on window
+function expectSinglePageView(path, expectedUrl) {
+  const calls = [];
+  cy.visitWith(path, { consent: "accepted", onBeforeLoad: recordPixel(calls) });
+  cy.url().should("eq", expectedUrl);
+  cy.then(() => {
+    const views = pageViewCalls(calls);
+    expect(views).to.have.length(1);
+    expect(views[0].args[3].eventID).to.be.a("string").and.have.length.greaterThan(10);
+    expect(views[0].args[3].eventID).to.equal(views[0].pageViewId);
+  });
+}
+
+function expectPresetEventIdUsed(path, expectedUrl) {
+  const calls = [];
+  cy.visitWith(path, { consent: "accepted", onBeforeLoad: recordPixel(calls, { presetEventId: "preset-event-id" }) });
+  cy.url().should("eq", expectedUrl);
+  cy.then(() => {
+    const views = pageViewCalls(calls);
+    expect(views).to.have.length(1);
+    expect(views[0].args[3].eventID).to.equal("preset-event-id");
+  });
+}
+
 describe("Release pages", () => {
   beforeEach(() => {
     cy.intercept("GET", "https://listen.kickedoutofthesky.com/**", {
@@ -38,6 +72,14 @@ describe("Release pages", () => {
         .and("include", "fbclid=fb1")
         .and("include", "ttclid=tt1")
         .and("not.include", "random");
+    });
+
+    it("sends exactly one PageView with an eventID per load", () => {
+      expectSinglePageView("/listen/", FAN_LINK);
+    });
+
+    it("uses a META_PAGEVIEW_EVENT_ID set by the page", () => {
+      expectPresetEventIdUsed("/listen/", FAN_LINK);
     });
 
     it("ships no-JS and link fallbacks, the consent-gated pixel and a noindex title", () => {
@@ -93,8 +135,17 @@ describe("Release pages", () => {
       cy.window().should(win => {
         const pageViews = pixelEvents(win).filter(([type, event]) => type === "track" && event === "PageView");
         expect(pageViews).to.have.length(1);
-        expect(pageViews[0][3]).to.have.property("eventID");
+        expect(pageViews[0][3]).to.have.property("eventID", win.META_PAGEVIEW_EVENT_ID);
+        expect(win.META_PAGEVIEW_EVENT_ID).to.be.a("string").and.have.length.greaterThan(10);
       });
+    });
+
+    it("sends exactly one PageView with an eventID per load, then redirects", () => {
+      expectSinglePageView("/poppunkbangers/", PLAYLIST_URL);
+    });
+
+    it("uses a META_PAGEVIEW_EVENT_ID set by the page", () => {
+      expectPresetEventIdUsed("/poppunkbangers/", PLAYLIST_URL);
     });
 
     it("fires PageView and a Lead with an eventID, then redirects automatically when consent is given", () => {
@@ -170,6 +221,10 @@ describe("Release pages", () => {
         .and("include", "utm_source=tiktok")
         .and("include", "fbclid=abc")
         .and("not.include", "other");
+    });
+
+    it("sends exactly one PageView with an eventID per load", () => {
+      expectSinglePageView("/betterpartofme/", FAN_LINK);
     });
 
     it("ships link fallbacks and the consent-gated pixel", () => {
