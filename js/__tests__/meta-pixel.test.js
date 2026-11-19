@@ -14,6 +14,7 @@ describe("meta-pixel.js", () => {
     // Reset window globals
     delete window.fbq;
     delete window._loadMetaPixel;
+    delete window.META_PAGEVIEW_EVENT_ID;
 
     // Reset system time
     jest.useRealTimers();
@@ -160,6 +161,73 @@ describe("meta-pixel.js", () => {
       // Verify IIFE pattern
       expect(code).toContain("(function");
       expect(code).toContain("})()");
+    });
+  });
+
+  describe("PageView", () => {
+    function pageViews() {
+      return (window.fbq ? window.fbq.queue : []).filter(a => a[0] === "track" && a[1] === "PageView");
+    }
+
+    function loadScripts() {
+      document.head.innerHTML = "<script></script>";
+      jest.isolateModules(() => {
+        require("../meta-pixel.js");
+        require("../cookie-consent.js");
+      });
+    }
+
+    it("does not fire before consent", () => {
+      loadScripts();
+
+      expect(pageViews()).toHaveLength(0);
+    });
+
+    it("fires once after Accept, even if the loader is called again", () => {
+      loadScripts();
+      document.getElementById("cookie-accept").click();
+      window._loadMetaPixel();
+
+      expect(pageViews()).toHaveLength(1);
+    });
+
+    it("sends an eventID and exposes it as window.META_PAGEVIEW_EVENT_ID", () => {
+      localStorage.setItem("cookie_consent", "accepted");
+      loadScripts();
+
+      const id = window.META_PAGEVIEW_EVENT_ID;
+      expect(id).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[0-9a-f]{4}-[0-9a-f]{12}$/);
+      expect(pageViews()[0][3]).toEqual({ eventID: id });
+    });
+
+    it("uses a META_PAGEVIEW_EVENT_ID set by the page", () => {
+      window.META_PAGEVIEW_EVENT_ID = "server-shared-id";
+      localStorage.setItem("cookie_consent", "accepted");
+      loadScripts();
+
+      expect(pageViews()[0][3]).toEqual({ eventID: "server-shared-id" });
+      expect(window.META_PAGEVIEW_EVENT_ID).toBe("server-shared-id");
+    });
+
+    it("fires once on load when consent was already accepted", () => {
+      localStorage.setItem("cookie_consent", "accepted");
+      loadScripts();
+
+      expect(pageViews()).toHaveLength(1);
+    });
+
+    it("never fires after Decline", () => {
+      loadScripts();
+      document.getElementById("cookie-decline").click();
+
+      expect(pageViews()).toHaveLength(0);
+    });
+
+    it("never fires on load when consent was declined", () => {
+      localStorage.setItem("cookie_consent", "declined");
+      loadScripts();
+
+      expect(pageViews()).toHaveLength(0);
     });
   });
 });
