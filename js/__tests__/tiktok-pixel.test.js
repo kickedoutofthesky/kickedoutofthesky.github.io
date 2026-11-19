@@ -75,7 +75,7 @@ describe("tiktok-pixel.js", () => {
     expect(tiktokScripts()).toHaveLength(1);
   });
 
-  it("leaves ttq.track callable for releases.js once loaded", () => {
+  it("leaves ttq.track callable once loaded", () => {
     loadScripts();
     window._loadTikTokPixel();
 
