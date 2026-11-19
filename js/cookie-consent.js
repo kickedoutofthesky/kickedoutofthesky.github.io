@@ -13,6 +13,7 @@
   if (existing === "accepted") {
     if (typeof loadGA === "function") loadGA(); // eslint-disable-line no-undef
     if (typeof window._loadMetaPixel === "function") window._loadMetaPixel();
+    if (typeof window._loadTikTokPixel === "function") window._loadTikTokPixel();
     if (typeof window.flushReleaseAnalyticsQueue === "function") window.flushReleaseAnalyticsQueue();
     return;
   }
@@ -87,6 +88,7 @@
       banner.remove();
       if (typeof loadGA === "function") loadGA(); // eslint-disable-line no-undef
       if (typeof window._loadMetaPixel === "function") window._loadMetaPixel();
+      if (typeof window._loadTikTokPixel === "function") window._loadTikTokPixel();
       if (typeof window.flushReleaseAnalyticsQueue === "function") window.flushReleaseAnalyticsQueue();
     });
     document.getElementById("cookie-decline").addEventListener("click", function () {

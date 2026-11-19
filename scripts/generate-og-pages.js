@@ -53,6 +53,8 @@ function buildPage({ title, description, url, imageUrl, redirectUrl, productKey 
 <meta name="twitter:image" content="${imageUrl}" />
 <link rel="canonical" href="${redirectUrl}" />
 <meta http-equiv="refresh" content="0;url=${redirectUrl}" />
+<script src="/js/meta-pixel.js"></script>
+<script src="/js/tiktok-pixel.js"></script>
 </head>
 <body>
 <script>

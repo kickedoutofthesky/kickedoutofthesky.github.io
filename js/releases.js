@@ -75,13 +75,12 @@
   }
 
   // Fire TikTok pixel equivalents if ttq is available
-  function fireTikTokPageView() {
-    if (typeof ttq !== "function") return;
-    ttq.track("PageView");
-  }
+  // ttq is an array-based stub (not a function) once tiktok-pixel.js has loaded it.
+  // ttq.page() in tiktok-pixel.js already records the page view, so there is nothing to add here.
+  function fireTikTokPageView() {}
 
   function fireTikTokLead(releaseTitle) {
-    if (typeof ttq !== "function") return;
+    if (typeof ttq === "undefined" || typeof ttq.track !== "function") return;
     ttq.track("Lead", { content_name: releaseTitle });
   }
 
