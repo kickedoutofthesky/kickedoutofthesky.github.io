@@ -95,7 +95,7 @@ describe("Main site", () => {
       cy.visitWith("/");
       cy.get("iframe").should("not.exist");
       cy.get(".yt-facade").first().click();
-      cy.get("iframe.yt-frame").should("have.attr", "src").and("include", "youtube.com/embed/EmFTUu78lZg");
+      cy.get("iframe.yt-frame").should("have.attr", "src").and("include", "youtube.com/embed/q2F5YubcJwg");
     });
 
     it("lists social and streaming links in the footer, opening in a new tab safely", () => {

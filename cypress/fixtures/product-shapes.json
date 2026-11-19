@@ -1,0 +1,77 @@
+[
+  {
+    "product_key": "product_424725213",
+    "title": "Unisex Tee w/ Vintage Fixture",
+    "image": "assets/images/Fixture Tee - Front - Oxblood Black.jpg",
+    "display_price": "$25.00",
+    "variants": {
+      "Oxblood Black": {
+        "image": "assets/images/Fixture Tee - Front - Oxblood Black.jpg",
+        "sizes": {
+          "S": { "variant_id": 1001, "price_cents": 2500 },
+          "M": { "variant_id": 1002, "price_cents": 2500 },
+          "L": { "variant_id": 1003, "price_cents": 2500 },
+          "XL": { "variant_id": 1004, "price_cents": 2500 },
+          "2XL": { "variant_id": 1005, "price_cents": 2500 }
+        },
+        "mockups": ["assets/images/Fixture Tee - Front - Oxblood Black.jpg"]
+      },
+      "Natural": {
+        "image": "assets/images/Fixture Tee - Front - Natural.jpg",
+        "sizes": {
+          "XS": { "variant_id": 1011, "price_cents": 2500 },
+          "S": { "variant_id": 1012, "price_cents": 2500 },
+          "M": { "variant_id": 1013, "price_cents": 2500 },
+          "L": { "variant_id": 1014, "price_cents": 2500 },
+          "XL": { "variant_id": 1015, "price_cents": 2500 },
+          "2XL": { "variant_id": 1016, "price_cents": 2500 }
+        },
+        "mockups": ["assets/images/Fixture Tee - Front - Natural.jpg"]
+      }
+    },
+    "garment": {
+      "name": "Unisex T-shirt",
+      "material": "100% cotton",
+      "weight": "6 oz/yd²",
+      "fit": "Unisex",
+      "features": ["Side-seamed construction"],
+      "care": "Machine wash cold."
+    }
+  },
+  {
+    "product_key": "product_425122887",
+    "title": "Unisex Long Sleeve Tee w/ Sleeve Print Fixture",
+    "image": "assets/images/Fixture Long Sleeve - Front - Black.jpg",
+    "display_price": "$35.00",
+    "variants": {
+      "Black": {
+        "image": "assets/images/Fixture Long Sleeve - Front - Black.jpg",
+        "sizes": {
+          "M": { "variant_id": 2001, "price_cents": 3500 }
+        },
+        "mockups": [
+          "assets/images/Fixture Long Sleeve - Front - Black.jpg",
+          "assets/images/Fixture Long Sleeve - Sleeve - Black.jpg"
+        ]
+      },
+      "Dark Grey Heather": {
+        "image": "assets/images/Fixture Long Sleeve - Front - Dark Grey Heather.jpg",
+        "sizes": {
+          "M": { "variant_id": 2002, "price_cents": 3500 }
+        },
+        "mockups": [
+          "assets/images/Fixture Long Sleeve - Front - Dark Grey Heather.jpg",
+          "assets/images/Fixture Long Sleeve - Sleeve - Dark Grey Heather.jpg"
+        ]
+      }
+    },
+    "garment": {
+      "name": "Unisex Long Sleeve",
+      "material": "100% cotton",
+      "weight": "6 oz/yd²",
+      "fit": "Unisex",
+      "features": ["Side-seamed construction"],
+      "care": "Machine wash cold."
+    }
+  }
+]
