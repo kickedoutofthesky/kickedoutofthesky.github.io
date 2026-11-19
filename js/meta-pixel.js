@@ -27,8 +27,8 @@
   /**
    * Generate UUID for Conversions API deduplication
    */
-  // eslint-disable-next-line no-unused-vars
   function generateUUID() {
+    if (window.crypto && typeof window.crypto.randomUUID === "function") return window.crypto.randomUUID();
     return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
       var r = (Math.random() * 16) | 0;
       var v = c === "x" ? r : (r & 0x3) | 0x8;
@@ -53,7 +53,11 @@
     // Initialize pixel once script loads
     // (We do this right away; the real fbq will queue it if not ready)
     window.fbq("init", PIXEL_ID);
-    // Note: PageView will be fired by releases.js to avoid duplicates
+
+    // The single PageView for the page. A page can set window.META_PAGEVIEW_EVENT_ID first
+    // (e.g. to share the ID with a server-side event); other code can read it afterwards.
+    window.META_PAGEVIEW_EVENT_ID = window.META_PAGEVIEW_EVENT_ID || generateUUID();
+    window.fbq("track", "PageView", {}, { eventID: window.META_PAGEVIEW_EVENT_ID });
   }
 
   // Load pixel if consent already given

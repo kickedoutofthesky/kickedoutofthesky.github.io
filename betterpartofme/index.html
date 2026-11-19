@@ -46,6 +46,8 @@
         background: #000;
       }
     </style>
+    <script src="/js/meta-pixel.js"></script>
+    <script src="/js/tiktok-pixel.js"></script>
   </head>
   <body>
     <!-- Visually-hidden fallback link; the page auto-redirects. -->
@@ -61,8 +63,6 @@
       </p>
     </noscript>
 
-    <!-- Meta Pixel: only initializes if the visitor previously accepted cookies -->
-    <script src="/js/meta-pixel.js"></script>
     <script>
       (function () {
         var DEST = "https://listen.kickedoutofthesky.com/betterpartofme";
@@ -86,7 +86,6 @@
 
         var delay = 250;
         if (consented && typeof window.fbq === "function") {
-          window.fbq("track", "PageView");
           window.fbq("track", "Lead", { content_name: "Better Part Of Me redirect" });
           delay = 800; // give the pixel beacon time to send before leaving
         }
