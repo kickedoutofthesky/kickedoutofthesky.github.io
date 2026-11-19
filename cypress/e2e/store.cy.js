@@ -30,7 +30,7 @@ describe("Store", () => {
         .filter(`:has(a[href='product.html?key=${tee.product_key}'])`)
         .within(() => {
           cy.get("[data-testid='product-title']").should("have.text", tee.title);
-          cy.get("[data-testid='product-price']").should("have.text", "$25.00");
+          cy.get("[data-testid='product-price']").should("have.text", "$30.00");
           cy.get("img").should("have.attr", "alt", tee.title).and("have.attr", "src", tee.image);
         });
 

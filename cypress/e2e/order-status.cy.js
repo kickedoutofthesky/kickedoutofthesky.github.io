@@ -26,7 +26,7 @@ const SHIPPED_ORDER = {
   },
   items: [
     {
-      sync_variant_id: 5211354650,
+      sync_variant_id: 5634425976,
       product_name: "Unisex Tee w/ Text / M",
       quantity: 2,
       price_cents: 2500,

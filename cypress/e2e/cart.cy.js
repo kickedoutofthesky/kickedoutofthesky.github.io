@@ -3,7 +3,7 @@
 // Cart page (store/cart.html + cart-display.js): items, quantities, subtotal,
 // country dropdown, shipping estimate and checkout button state.
 
-const TEE = { productKey: "product_421296994", color: "Black", size: "M" }; // Unisex Tee w/ Text, $25.00, variant 5211354650
+const TEE = { productKey: "product_421296994", color: "Black", size: "M" }; // Unisex Tee w/ Text, $30.00, variant 5634425976
 const STICKER = { productKey: "product_421115395", color: "Satin", size: "3x3" }; // Die-cut Sticker w/ Text, $5.50, variant 5209549630
 
 const shippingReply = amount => ({
@@ -50,9 +50,9 @@ describe("Cart page", () => {
           cy.get("[data-testid='item-name']").should("have.text", "Unisex Tee w/ Text");
           cy.contains("Color: Black");
           cy.contains("Size: M");
-          cy.get("[data-testid='item-price']").should("have.text", "$25.00");
+          cy.get("[data-testid='item-price']").should("have.text", "$30.00");
           cy.get("[data-testid='quantity-input']").should("have.value", "2");
-          cy.contains("$50.00");
+          cy.contains("$60.00");
           cy.get("img").shouldShowImage("Unisex Tee w Text - Front - Black.jpg");
         });
 
@@ -64,7 +64,7 @@ describe("Cart page", () => {
           cy.get("img").shouldShowImage("Die-cut Sticker w Text - Front - Satin.jpg");
         });
 
-      cy.get("[data-testid='cart-subtotal']").should("have.text", "$55.50");
+      cy.get("[data-testid='cart-subtotal']").should("have.text", "$65.50");
       cy.get("[data-testid='cart-count']").should("have.text", "3");
     });
 
@@ -72,7 +72,7 @@ describe("Cart page", () => {
       cy.get("[data-testid='cart-item']").eq(0).find(".cart-qty-btn").last().click();
 
       cy.get("[data-testid='quantity-input']").eq(0).should("have.value", "3");
-      cy.get("[data-testid='cart-subtotal']").should("have.text", "$80.50");
+      cy.get("[data-testid='cart-subtotal']").should("have.text", "$95.50");
       cy.get("[data-testid='cart-count']").should("have.text", "4");
       cy.window()
         .its("localStorage")
@@ -81,7 +81,7 @@ describe("Cart page", () => {
 
       cy.get("[data-testid='cart-item']").eq(0).find(".cart-qty-btn").first().click();
       cy.get("[data-testid='quantity-input']").eq(0).should("have.value", "2");
-      cy.get("[data-testid='cart-subtotal']").should("have.text", "$55.50");
+      cy.get("[data-testid='cart-subtotal']").should("have.text", "$65.50");
     });
 
     it("removes an item when its quantity is decreased below 1", () => {
@@ -89,7 +89,7 @@ describe("Cart page", () => {
 
       cy.get("[data-testid='cart-item']").should("have.length", 1);
       cy.get("[data-testid='item-name']").should("have.text", "Unisex Tee w/ Text");
-      cy.get("[data-testid='cart-subtotal']").should("have.text", "$50.00");
+      cy.get("[data-testid='cart-subtotal']").should("have.text", "$60.00");
     });
 
     it("removes items with the trash button and shows the empty state when none are left", () => {
@@ -137,7 +137,7 @@ describe("Cart page", () => {
         .its("request.body")
         .should("deep.equal", {
           country: "US",
-          items: [{ variant_id: 5211354650, quantity: 2 }],
+          items: [{ variant_id: 5634425976, quantity: 2 }],
         });
       cy.get("[data-testid='shipping-estimate']").should("have.text", "$9.99");
       cy.get("#shipping-to-line").should("be.visible").and("contain", "Shipping to United States");
@@ -170,7 +170,7 @@ describe("Cart page", () => {
 
       cy.wait("@calculateShipping")
         .its("request.body.items")
-        .should("deep.equal", [{ variant_id: 5211354650, quantity: 5 }]);
+        .should("deep.equal", [{ variant_id: 5634425976, quantity: 5 }]);
       cy.wait(500);
       cy.get("@calculateShipping.all").should("have.length", 2);
     });
@@ -250,7 +250,7 @@ describe("Cart page", () => {
     it("shows a placeholder instead of an error when the API rejects the cart data", () => {
       cy.intercept("POST", "**/api/calculate-shipping", {
         statusCode: 400,
-        body: { error: "Invalid quantity for variant 5211354650" },
+        body: { error: "Invalid quantity for variant 5634425976" },
       }).as("badCartData");
 
       cy.get("#shipping-country").select("US");

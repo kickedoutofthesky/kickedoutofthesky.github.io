@@ -4,14 +4,19 @@
 // images/carousel, URL pre-selection and add to cart.
 
 const TEE = "product_421296994"; // Unisex Tee w/ Text: Black / Dark Grey Heather, XS–2XL, $30
+// The live catalog has no product with per-colour size lists or several mockups per colour, so these
+// two come from cypress/fixtures/product-shapes.json (served in place of data/products.json).
 const VINTAGE_TEE = "product_424725213"; // Oxblood Black (S–2XL) / Natural (XS–2XL)
-const MULTI_MOCKUP = "product_425122887"; // Long Sleeve w/ Sleeve print: Front + Sleeve mockups per colour
+const MULTI_MOCKUP = "product_425122887"; // Front + Sleeve mockups per colour
 const HAT = "product_424963286"; // Snapback Hat: One Size
 const STICKER = "product_421115395"; // Die-cut Sticker: 2x2 $4.50, 3x3 $5.50
 
 const sizeOptions = () => cy.get("[data-testid='size-select'] option").then($opts => [...$opts].map(o => o.value));
 
 function visitProduct(query) {
+  if (query.startsWith(VINTAGE_TEE) || query.startsWith(MULTI_MOCKUP)) {
+    cy.intercept("GET", "**/data/products.json", { fixture: "product-shapes.json" });
+  }
   cy.visitWith(`/store/product.html?key=${query}`);
   cy.get("[data-testid='product-title']").should("be.visible");
 }
@@ -44,7 +49,7 @@ describe("Product page", () => {
         .should(schema => {
           expect(schema.name).to.eq("Unisex Tee w/ Text");
           expect(schema.offers.priceCurrency).to.eq("USD");
-          expect(schema.offers.lowPrice).to.eq("25.00");
+          expect(schema.offers.lowPrice).to.eq("30.00");
         });
     });
 

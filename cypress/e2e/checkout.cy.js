@@ -3,7 +3,7 @@
 // Checkout from the cart page: POST /api/create-checkout-session, redirect to the
 // returned Stripe URL, and the error/double-submit handling around it.
 
-const TEE = { productKey: "product_421296994", color: "Black", size: "M" }; // variant 5211354650
+const TEE = { productKey: "product_421296994", color: "Black", size: "M" }; // variant 5634425976
 const STICKER = { productKey: "product_421115395", color: "Satin", size: "3x3" }; // variant 5209549630
 const TEE_IMAGE = "Unisex Tee w Text - Front - Black.jpg";
 const STICKER_IMAGE = "Die-cut Sticker w Text - Front - Satin.jpg";
@@ -53,7 +53,7 @@ describe("Checkout", () => {
 
     cy.wait("@createSession")
       .its("request.body")
-      .should("deep.equal", { items: [{ variantId: "5211354650", quantity: 1 }], country: "US", termsAccepted: true });
+      .should("deep.equal", { items: [{ variantId: "5634425976", quantity: 1 }], country: "US", termsAccepted: true });
 
     cy.location("pathname").should("eq", "/store/success.html");
     cy.wait("@orderDetails");
@@ -113,14 +113,14 @@ describe("Checkout", () => {
           cy.get("img").shouldShowImage(image);
         });
     });
-    cy.get("[data-testid='cart-subtotal']").should("have.text", "$116.50");
+    cy.get("[data-testid='cart-subtotal']").should("have.text", "$136.50");
 
     cy.selectShippingCountry("CA");
     cy.get("@calculateShipping")
       .its("request.body.items")
       .should("deep.equal", [
-        { variant_id: 5211354650, quantity: 3 },
-        { variant_id: 5211354651, quantity: 1 },
+        { variant_id: 5634425976, quantity: 3 },
+        { variant_id: 5634425977, quantity: 1 },
         { variant_id: 5209549630, quantity: 3 },
       ]);
     cy.acceptTerms();
@@ -130,8 +130,8 @@ describe("Checkout", () => {
       .its("request.body")
       .should("deep.equal", {
         items: [
-          { variantId: "5211354650", quantity: 3 },
-          { variantId: "5211354651", quantity: 1 },
+          { variantId: "5634425976", quantity: 3 },
+          { variantId: "5634425977", quantity: 1 },
           { variantId: "5209549630", quantity: 3 },
         ],
         country: "CA",
@@ -245,10 +245,10 @@ describe("Checkout", () => {
       "createSession"
     );
 
-    // Oxblood Black of the vintage tee is not offered in XS
+    // The Black hoodie is not offered in XS
     readyCartForCheckout([
       { ...TEE, quantity: 1 },
-      { productKey: "product_424725213", color: "Oxblood Black", size: "XS", quantity: 1 },
+      { productKey: "product_425256483", color: "Black", size: "XS", quantity: 1 },
     ]);
     cy.get("#checkout-btn").click();
 
