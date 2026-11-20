@@ -184,10 +184,36 @@ describe("signup-events.js", () => {
       expect(window.gtag).toHaveBeenCalledTimes(1);
     });
 
+    it("fires once for the real message MailerLite sends, which has a numeric suffix", () => {
+      localStorage.setItem("cookie_consent", "accepted");
+      loadScript();
+
+      popupSuccessMessage("mlWebformSubmitSuccess-8426711-39");
+      popupSuccessMessage("mlWebformSubmitSuccess-8426711-40");
+
+      expect(window.fbq).toHaveBeenCalledTimes(1);
+      expect(window.ttq.track).toHaveBeenCalledTimes(1);
+      expect(window.gtag).toHaveBeenCalledTimes(1);
+    });
+
+    it("treats suffixed and unsuffixed messages for the same form as one signup", () => {
+      localStorage.setItem("cookie_consent", "accepted");
+      loadScript();
+
+      popupSuccessMessage("mlWebformSubmitSuccess-8426711");
+      popupSuccessMessage("mlWebformSubmitSuccess-8426711-39");
+
+      expect(window.fbq).toHaveBeenCalledTimes(1);
+      expect(window.ttq.track).toHaveBeenCalledTimes(1);
+      expect(window.gtag).toHaveBeenCalledTimes(1);
+    });
+
     it("ignores other messages and messages from other origins", () => {
       localStorage.setItem("cookie_consent", "accepted");
       loadScript();
 
+      popupSuccessMessage("mlWebformSubmitSuccess-8426711-abc");
+      popupSuccessMessage("mlWebformSubmitSuccess-8426711-39-1");
       popupSuccessMessage("mlCloseIframe-abc");
       popupSuccessMessage("mlWebformSubmitSuccess-8426711", "https://evil.example");
       popupSuccessMessage("mlWebformSubmitSuccess-8426711", "https://mailerlite.com.evil.example");
