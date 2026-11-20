@@ -259,7 +259,7 @@ describe("meta-pixel.js", () => {
       expect(document.querySelectorAll('script[src*="fbevents"]')).toHaveLength(1);
     });
 
-    it("sends nothing from before consent: a guarded call is skipped, then Accept queues only init and PageView", () => {
+    it("sends nothing from before consent: a guarded call is skipped, then Accept queues only autoConfig, init and PageView in order", () => {
       loadScripts();
       if (typeof window.fbq === "function") window.fbq("track", "Lead", { content_name: "early" });
 
@@ -267,9 +267,11 @@ describe("meta-pixel.js", () => {
 
       const queued = window.fbq.queue.map(a => [a[0], a[1]]);
       expect(queued).toEqual([
+        ["set", "autoConfig"],
         ["init", "1091548463560589"],
         ["track", "PageView"],
       ]);
+      expect(Array.from(window.fbq.queue[0])).toEqual(["set", "autoConfig", false, "1091548463560589"]);
     });
 
     it("forwards calls to callMethod once fbevents.js has attached it, instead of queueing them", () => {
