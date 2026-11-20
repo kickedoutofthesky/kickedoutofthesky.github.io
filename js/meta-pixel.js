@@ -55,8 +55,9 @@
     script.src = "https://connect.facebook.net/en_US/fbevents.js";
     document.head.appendChild(script);
 
+    // Stop Meta auto-tracking button clicks (e.g. the cookie banner's Decline); must precede init
+    window.fbq("set", "autoConfig", false, PIXEL_ID);
     window.fbq("init", PIXEL_ID);
-
     // The single PageView for the page. A page can set window.META_PAGEVIEW_EVENT_ID first
     // (e.g. to share the ID with a server-side event); other code can read it afterwards.
     window.META_PAGEVIEW_EVENT_ID = window.META_PAGEVIEW_EVENT_ID || generateUUID();
