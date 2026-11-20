@@ -1,6 +1,6 @@
 /**
  * meta-pixel.js
- * Meta Pixel (1985329649108527) loaded after cookie consent
+ * Meta Pixel / dataset (1091548463560589) loaded after cookie consent
  * window.fbq does not exist until loadMetaPixel() runs, so nothing Meta-related is defined before consent.
  * Pages must guard calls with typeof window.fbq === "function".
  */
@@ -9,7 +9,7 @@
   "use strict";
 
   // A page can set window.META_PIXEL_ID before this script to use a different pixel.
-  const PIXEL_ID = window.META_PIXEL_ID || "1985329649108527";
+  const PIXEL_ID = window.META_PIXEL_ID || "1091548463560589";
   const CONSENT_KEY = "cookie_consent";
   let pixelLoaded = false;
 
