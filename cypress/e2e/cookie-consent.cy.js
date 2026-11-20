@@ -52,6 +52,36 @@ describe("Cookie consent", () => {
     });
   });
 
+  describe("Cookie settings link", () => {
+    ["/", "/store/", "/legal/cookie-policy.html"].forEach(path => {
+      it(`is in the footer of ${path} and reopens the banner with focus`, () => {
+        cy.visitWith(path, { consent: "accepted" });
+        cy.get("#cookie-consent-banner").should("not.exist");
+
+        cy.get("footer .cookie-settings-link")
+          .scrollIntoView()
+          .should("be.visible")
+          .and("have.text", "Cookie settings")
+          .click();
+
+        cy.get("#cookie-consent-banner").should("be.visible").and("have.focus");
+        cy.get("#cookie-accept").should("be.visible");
+        cy.get("#cookie-decline").should("be.visible");
+      });
+    });
+
+    it("withdraws consent on Decline after Accept and reloads without loading Google Analytics", () => {
+      cy.visitWith("/", { consent: "accepted" });
+      cy.get("footer .cookie-settings-link").scrollIntoView().click();
+      cy.get("#cookie-decline").click();
+
+      cy.get("#navbarMain").should("be.visible");
+      cy.window().its("localStorage").invoke("getItem", "cookie_consent").should("eq", "declined");
+      cy.get("#cookie-consent-banner").should("not.exist");
+      cy.get(gaScript).should("not.exist");
+    });
+  });
+
   describe("Decline", () => {
     it("hides the banner, remembers the choice and keeps Google Analytics off", () => {
       cy.visitWith("/", { consent: null });
