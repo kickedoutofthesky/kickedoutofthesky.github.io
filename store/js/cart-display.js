@@ -90,6 +90,28 @@ function updateCheckoutButtonState() {
 }
 
 // Resolve cart items to Printful sync variant IDs; items that can't be resolved are skipped
+// Cart lines in the shape the tracking helpers expect (content_id = variant id, price in cents)
+function getCartTrackingItems() {
+  if (!cart || !Array.isArray(cart.items)) return [];
+  return cart.items
+    .map(item => {
+      const product = products.find(p => p.product_key === item.productKey);
+      if (!product) return null;
+      const variantId = getVariantIdForColorSize(product, item.color, item.size);
+      if (!variantId) return null;
+      return {
+        id: variantId,
+        name: product.title,
+        priceCents: cart.getPriceForVariant(product, item.color, item.size) || 0,
+        quantity: item.quantity,
+      };
+    })
+    .filter(item => item !== null);
+}
+
+// Longest we hold the redirect to Stripe so the pixels can send InitiateCheckout
+const TRACKING_REDIRECT_DELAY_MS = 300;
+
 function getCartVariantItems() {
   if (!cart || !Array.isArray(cart.items)) return [];
   return cart.items
@@ -523,6 +545,8 @@ async function proceedToCheckout() {
 
     // Call backend checkout endpoint
     const backendUrl = window.__API_URL__;
+    const tools = window.kotsStoreTracking;
+    const eventId = crypto.randomUUID();
     const response = await fetch(`${backendUrl}/api/create-checkout-session`, {
       method: "POST",
       headers: {
@@ -532,6 +556,7 @@ async function proceedToCheckout() {
         items,
         country: countrySelect.value,
         termsAccepted: termsCheckbox.checked,
+        ...(tools ? { tracking: tools.buildCheckoutTracking(eventId) } : {}),
       }),
     });
 
@@ -565,6 +590,9 @@ async function proceedToCheckout() {
     // Redirect to Stripe Checkout Session
     const stripeUrl = data.redirect_url || data.url;
     if (stripeUrl) {
+      // Same event_id as in the Stripe metadata, so a later server-side event can be deduplicated
+      const sent = tools && tools.trackInitiateCheckout(getCartTrackingItems(), eventId);
+      if (sent) await new Promise(resolve => setTimeout(resolve, TRACKING_REDIRECT_DELAY_MS));
       window.location.href = stripeUrl;
     } else {
       throw new Error("No redirect_url provided by server");

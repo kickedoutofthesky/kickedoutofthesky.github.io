@@ -18,6 +18,7 @@ import {
 } from "./utils/fixtures/product-utilities.js";
 /* eslint-enable no-unused-vars */
 let currentProduct = null;
+let productViewTracked = false;
 let currentImageIndex = 0; // Track carousel position (0 = main, 1 = sleeve mockup)
 
 // Zoom and Pan state (zoomLevel is a scale multiplier: 1 = 100%)
@@ -629,6 +630,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     checkFormComplete();
+    trackProductView();
   } catch (error) {
     console.error("Error loading product:", error);
     loading.style.display = "none";
@@ -764,6 +766,30 @@ function checkFormComplete() {
   }
 }
 
+function getTrackingTools() {
+  return typeof window !== "undefined" ? window.kotsStoreTracking : null;
+}
+
+// ViewContent once per page load. Uses the chosen variant if the URL preselected one,
+// otherwise the product key and the lowest price.
+function trackProductView() {
+  const tools = getTrackingTools();
+  if (!tools || !currentProduct || productViewTracked) return;
+  productViewTracked = true;
+
+  const color = document.getElementById("color")?.value || Object.keys(currentProduct.variants)[0];
+  const size = document.getElementById("size")?.value;
+  const variantId = size ? getVariantIdForColorSize(currentProduct, color, size) : null;
+  const variantPrice = size ? getPriceForColorSize(currentProduct, color, size) : null;
+
+  tools.trackViewContent({
+    id: variantId || currentProduct.product_key,
+    name: currentProduct.title,
+    priceCents: variantPrice ?? Math.round(getPriceRange(currentProduct).min * 100),
+    quantity: 1,
+  });
+}
+
 async function addToCart() {
   if (!currentProduct) return;
 
@@ -784,6 +810,16 @@ async function addToCart() {
 
   // Add to cart without updating badge yet (skipBadgeUpdate = true)
   cart.addItem(currentProduct.product_key, color, size, quantity, true);
+
+  const tools = getTrackingTools();
+  if (tools) {
+    tools.trackAddToCart({
+      id: getVariantIdForColorSize(currentProduct, color, size) || currentProduct.product_key,
+      name: currentProduct.title,
+      priceCents: getPriceForColorSize(currentProduct, color, size) || 0,
+      quantity,
+    });
+  }
 
   // Show notifications and wait for animation to complete
   playDingSound();
