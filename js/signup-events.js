@@ -12,7 +12,7 @@
 
   var CONSENT_KEY = "cookie_consent";
   var MAILERLITE_ORIGIN = /^https:\/\/([a-z0-9-]+\.)*mailerlite\.com$/;
-  var SUCCESS_MESSAGE = /^mlWebformSubmitSuccess-(\d+)$/;
+  var SUCCESS_MESSAGE = /^mlWebformSubmitSuccess-(\d+)(?:-\d+)?$/;
   var handled = {};
 
   function hasConsent() {
