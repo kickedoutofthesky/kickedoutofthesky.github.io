@@ -65,7 +65,7 @@ describe("meta-pixel.js", () => {
       const code = fs.readFileSync(path.join(__dirname, "../meta-pixel.js"), "utf8");
 
       // Verify pixel ID is present
-      expect(code).toContain("1985329649108527");
+      expect(code).toContain("1091548463560589");
     });
 
     it("should let a page override the pixel ID", () => {
@@ -267,7 +267,7 @@ describe("meta-pixel.js", () => {
 
       const queued = window.fbq.queue.map(a => [a[0], a[1]]);
       expect(queued).toEqual([
-        ["init", "1985329649108527"],
+        ["init", "1091548463560589"],
         ["track", "PageView"],
       ]);
     });
@@ -298,7 +298,7 @@ describe("meta-pixel.js", () => {
       loadScripts();
 
       expect(window.fbq).toBe(pageFbq);
-      expect(pageFbq).toHaveBeenCalledWith("init", "1985329649108527");
+      expect(pageFbq).toHaveBeenCalledWith("init", "1091548463560589");
     });
   });
 });
