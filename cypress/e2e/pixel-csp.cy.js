@@ -15,6 +15,8 @@ const PAGES = [
   "/poppunkbangers/",
 ];
 
+const REDIRECT_PAGES = ["/listen/", "/betterpartofme/", "/poppunkbangers/"];
+
 const SCRIPT_HOSTS = ["https://connect.facebook.net", "https://analytics.tiktok.com"];
 const CONNECT_HOSTS = [
   "https://www.facebook.com",
@@ -30,26 +32,32 @@ const directive = (csp, name) => {
 
 describe("CSP allows the Meta and TikTok pixel hosts", () => {
   PAGES.forEach(path => {
-    it(`${path} (consent accepted)`, () => {
+    it(`${path} meta CSP lists the pixel hosts`, () => {
+      // Parsed from the served HTML: the release pages redirect away shortly after load
+      cy.request(path)
+        .its("body")
+        .then(html => {
+          const doc = new DOMParser().parseFromString(html, "text/html");
+          const csp = doc.querySelector('meta[http-equiv="Content-Security-Policy"]').getAttribute("content");
+          const scriptSrc = directive(csp, "script-src");
+          const connectSrc = directive(csp, "connect-src");
+          SCRIPT_HOSTS.forEach(host => expect(scriptSrc, `script-src ${host}`).to.include(host));
+          CONNECT_HOSTS.forEach(host => expect(connectSrc, `connect-src ${host}`).to.include(host));
+        });
+    });
+  });
+
+  PAGES.filter(path => !REDIRECT_PAGES.includes(path)).forEach(path => {
+    it(`${path} has no Meta/TikTok CSP violations with consent accepted`, () => {
       const violations = [];
       cy.visitWith(path, {
         consent: "accepted",
-        failOnStatusCode: false,
         onBeforeLoad(win) {
           win.addEventListener("securitypolicyviolation", e =>
             violations.push(`${e.violatedDirective} ${e.blockedURI}`)
           );
         },
       });
-
-      cy.document().then(doc => {
-        const csp = doc.querySelector('meta[http-equiv="Content-Security-Policy"]').getAttribute("content");
-        const scriptSrc = directive(csp, "script-src");
-        const connectSrc = directive(csp, "connect-src");
-        SCRIPT_HOSTS.forEach(host => expect(scriptSrc, `script-src ${host}`).to.include(host));
-        CONNECT_HOSTS.forEach(host => expect(connectSrc, `connect-src ${host}`).to.include(host));
-      });
-
       cy.wait(1000);
       cy.then(() => {
         expect(violations.filter(v => /facebook|tiktok/.test(v))).to.deep.equal([]);
