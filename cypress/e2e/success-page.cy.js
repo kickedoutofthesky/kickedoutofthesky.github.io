@@ -35,12 +35,18 @@ function visitSuccess(query = `?session_id=${SESSION_ID}`) {
 
 describe("Success page", () => {
   it("uses the same shared navbar as the other store pages", () => {
+    // Measure only once the logo has loaded; before that its height is 0 and the comparison is a race
     const navSummary = () =>
-      cy.get("#navbarMain").then($nav => ({
-        links: [...$nav.find(".nav-link")].map(a => a.getAttribute("href")),
-        homeLabel: $nav.find("a[aria-label]").attr("aria-label"),
-        logoHeight: Math.round($nav.find("img.brand")[0].getBoundingClientRect().height),
-      }));
+      cy
+        .get("#navbarMain img.brand")
+        .should($img => expect($img[0].complete && $img[0].naturalWidth, "logo loaded").to.be.greaterThan(0))
+        .then(() =>
+          cy.get("#navbarMain").then($nav => ({
+            links: [...$nav.find(".nav-link")].map(a => a.getAttribute("href")),
+            homeLabel: $nav.find("a[aria-label]").attr("aria-label"),
+            logoHeight: Math.round($nav.find("img.brand")[0].getBoundingClientRect().height),
+          }))
+        );
 
     cy.visitWith("/store/cart.html", { cart: CART });
     cy.get("#navbarMain").should("have.length", 1);
