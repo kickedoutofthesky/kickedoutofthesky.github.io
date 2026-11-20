@@ -6,7 +6,7 @@
 const FAN_LINK = "https://listen.kickedoutofthesky.com/betterpartofme";
 const PLAYLIST_URL = "https://open.spotify.com/playlist/4FZfdrXcWZG1tMwUFTCWDK";
 
-const pixelEvents = win => (win.fbq.queue || []).map(args => [...args]);
+const pixelEvents = win => ((win.fbq && win.fbq.queue) || []).map(args => [...args]);
 
 // Replaces fbq with a recorder that notes the page's META_PAGEVIEW_EVENT_ID at each PageView
 function recordPixel(calls, { presetEventId } = {}) {
@@ -97,6 +97,11 @@ describe("Release pages", () => {
 
   describe("/poppunkbangers/", () => {
     const leadCalls = win => pixelEvents(win).filter(([type, event]) => type === "track" && event === "Lead");
+
+    // Keep fbevents.js from draining fbq.queue so the tests can read the events the page fired
+    beforeEach(() => {
+      cy.intercept("https://connect.facebook.net/**", { statusCode: 200, body: "" });
+    });
 
     it("ships the smart-link page with its link-preview tags and consent-gated pixel", () => {
       cy.request("/poppunkbangers/")

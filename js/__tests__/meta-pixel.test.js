@@ -13,6 +13,7 @@ describe("meta-pixel.js", () => {
 
     // Reset window globals
     delete window.fbq;
+    delete window._fbq;
     delete window._loadMetaPixel;
     delete window.META_PAGEVIEW_EVENT_ID;
 
@@ -25,7 +26,7 @@ describe("meta-pixel.js", () => {
   });
 
   describe("Module Structure", () => {
-    it("should define fbq queue if not present", () => {
+    it("should define the fbq stub with a queue", () => {
       const fs = require("fs");
       const path = require("path");
       const code = fs.readFileSync(path.join(__dirname, "../meta-pixel.js"), "utf8");
@@ -228,6 +229,76 @@ describe("meta-pixel.js", () => {
       loadScripts();
 
       expect(pageViews()).toHaveLength(0);
+    });
+  });
+
+  describe("fbq stub", () => {
+    function loadScripts() {
+      document.head.innerHTML = "<script></script>";
+      jest.isolateModules(() => {
+        require("../meta-pixel.js");
+        require("../cookie-consent.js");
+      });
+    }
+
+    it("leaves window.fbq undefined before consent and after Decline", () => {
+      loadScripts();
+      expect(window.fbq).toBeUndefined();
+      expect(document.querySelector('script[src*="fbevents"]')).toBeNull();
+
+      document.getElementById("cookie-decline").click();
+      expect(window.fbq).toBeUndefined();
+      expect(document.querySelector('script[src*="fbevents"]')).toBeNull();
+    });
+
+    it("defines fbq and injects fbevents.js only after Accept", () => {
+      loadScripts();
+      document.getElementById("cookie-accept").click();
+
+      expect(typeof window.fbq).toBe("function");
+      expect(document.querySelectorAll('script[src*="fbevents"]')).toHaveLength(1);
+    });
+
+    it("sends nothing from before consent: a guarded call is skipped, then Accept queues only init and PageView", () => {
+      loadScripts();
+      if (typeof window.fbq === "function") window.fbq("track", "Lead", { content_name: "early" });
+
+      document.getElementById("cookie-accept").click();
+
+      const queued = window.fbq.queue.map(a => [a[0], a[1]]);
+      expect(queued).toEqual([
+        ["init", "1985329649108527"],
+        ["track", "PageView"],
+      ]);
+    });
+
+    it("forwards calls to callMethod once fbevents.js has attached it, instead of queueing them", () => {
+      localStorage.setItem("cookie_consent", "accepted");
+      loadScripts();
+      const queuedAtLoad = window.fbq.queue.length;
+
+      // fbevents.js replaces the queue handling by attaching callMethod
+      window.fbq.callMethod = jest.fn();
+      window.fbq("track", "Lead", { content_name: "newsletter" }, { eventID: "abc" });
+
+      expect(window.fbq.callMethod).toHaveBeenCalledTimes(1);
+      expect(window.fbq.callMethod.mock.calls[0]).toEqual([
+        "track",
+        "Lead",
+        { content_name: "newsletter" },
+        { eventID: "abc" },
+      ]);
+      expect(window.fbq.queue).toHaveLength(queuedAtLoad);
+    });
+
+    it("keeps an fbq the page already provides", () => {
+      const pageFbq = jest.fn();
+      window.fbq = pageFbq;
+      localStorage.setItem("cookie_consent", "accepted");
+      loadScripts();
+
+      expect(window.fbq).toBe(pageFbq);
+      expect(pageFbq).toHaveBeenCalledWith("init", "1985329649108527");
     });
   });
 });
