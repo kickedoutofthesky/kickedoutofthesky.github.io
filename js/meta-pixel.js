@@ -1,8 +1,8 @@
 /**
  * meta-pixel.js
  * Meta Pixel (1985329649108527) loaded after cookie consent
- * Implements consent-gated event tracking with UUID deduplication for Conversions API
- * Queues events fired before consent and flushes on acceptance
+ * window.fbq does not exist until loadMetaPixel() runs, so nothing Meta-related is defined before consent.
+ * Pages must guard calls with typeof window.fbq === "function".
  */
 
 (function () {
@@ -11,17 +11,20 @@
   // A page can set window.META_PIXEL_ID before this script to use a different pixel.
   const PIXEL_ID = window.META_PIXEL_ID || "1985329649108527";
   const CONSENT_KEY = "cookie_consent";
+  let pixelLoaded = false;
 
-  // Initialize fbq as a queue if it doesn't exist
-  // (Facebook's pixel script will convert this to the real implementation once loaded)
-  if (!window.fbq) {
-    window.fbq = function () {
-      if (window.fbq.queue) {
-        window.fbq.queue.push(arguments);
-      }
+  // Meta's official base-code stub: queues calls until fbevents.js attaches callMethod, then forwards them
+  function createFbqStub() {
+    const n = function () {
+      n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments);
     };
-    window.fbq.queue = [];
-    window.fbq.loaded = false;
+    window.fbq = n;
+    if (!window._fbq) window._fbq = n;
+    n.push = n;
+    n.loaded = true;
+    n.version = "2.0";
+    n.queue = [];
+    return n;
   }
 
   /**
@@ -40,18 +43,18 @@
    * Load Meta Pixel after consent
    */
   function loadMetaPixel() {
-    if (window.fbq.loaded) return;
-    window.fbq.loaded = true;
+    if (pixelLoaded) return;
+    pixelLoaded = true;
 
-    // Load the Meta Pixel script
-    // Facebook's script will check if window.fbq exists, see our queue, and use it
+    // Reuse an fbq a page already provides, as Meta's own snippet does
+    if (typeof window.fbq !== "function") createFbqStub();
+
+    // fbevents.js finds window.fbq, takes over its queue and attaches callMethod
     var script = document.createElement("script");
     script.async = true;
     script.src = "https://connect.facebook.net/en_US/fbevents.js";
     document.head.appendChild(script);
 
-    // Initialize pixel once script loads
-    // (We do this right away; the real fbq will queue it if not ready)
     window.fbq("init", PIXEL_ID);
 
     // The single PageView for the page. A page can set window.META_PAGEVIEW_EVENT_ID first
