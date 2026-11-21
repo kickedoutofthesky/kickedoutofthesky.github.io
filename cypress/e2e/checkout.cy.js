@@ -10,6 +10,7 @@ const STICKER_IMAGE = "Die-cut Sticker w Text - Front - Satin.jpg";
 
 // Same-origin stand-in for the Stripe Checkout URL so the redirect can be observed
 const STRIPE_URL = "/store/success.html?session_id=cs_test_checkout";
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
 
 const ORDER_DETAILS = {
   customer: { name: "Jane Fan", email: "jane@example.com" },
@@ -53,7 +54,17 @@ describe("Checkout", () => {
 
     cy.wait("@createSession")
       .its("request.body")
-      .should("deep.equal", { items: [{ variantId: "5634425976", quantity: 1 }], country: "US", termsAccepted: true });
+      .should(body => {
+        const { tracking, ...rest } = body;
+        expect(rest).to.deep.equal({
+          items: [{ variantId: "5634425976", quantity: 1 }],
+          country: "US",
+          termsAccepted: true,
+        });
+        // Consent was not given, so only the event id and consent:false are sent
+        expect(tracking).to.deep.equal({ event_id: tracking.event_id, consent: false });
+        expect(tracking.event_id).to.match(UUID);
+      });
 
     cy.location("pathname").should("eq", "/store/success.html");
     cy.wait("@orderDetails");
@@ -128,14 +139,18 @@ describe("Checkout", () => {
 
     cy.wait("@createSession")
       .its("request.body")
-      .should("deep.equal", {
-        items: [
-          { variantId: "5634425976", quantity: 3 },
-          { variantId: "5634425977", quantity: 1 },
-          { variantId: "5209549630", quantity: 3 },
-        ],
-        country: "CA",
-        termsAccepted: true,
+      .should(body => {
+        const { tracking, ...rest } = body;
+        expect(rest).to.deep.equal({
+          items: [
+            { variantId: "5634425976", quantity: 3 },
+            { variantId: "5634425977", quantity: 1 },
+            { variantId: "5209549630", quantity: 3 },
+          ],
+          country: "CA",
+          termsAccepted: true,
+        });
+        expect(tracking.consent).to.eq(false);
       });
 
     cy.location("pathname").should("eq", "/store/success.html");

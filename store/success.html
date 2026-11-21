@@ -104,6 +104,7 @@
     </style>
     <script src="/js/meta-pixel.js"></script>
     <script src="/js/tiktok-pixel.js"></script>
+    <script src="/js/store-tracking.js"></script>
   </head>
   <body>
     <a href="#main-content" class="skip-nav">Skip to content</a>
@@ -417,6 +418,7 @@
 
           if (data.lineItems || data.orderSummary || data.shippingDetails || data.shippingAddress) {
             displayOrderDetails(data);
+            trackPurchase(data, sessionId);
             hideLoadingIndicator();
             // Clear cart and saved country now that payment is confirmed
             if (typeof cart !== "undefined" && cart && typeof cart.clear === "function") {
@@ -435,6 +437,33 @@
           showApiErrorMessage();
         }
       });
+
+      // Resolve an order line ("Title - Color / Size") to a Printful variant id, falling back to the product key
+      function getLineItemContentId(item) {
+        const { productTitle, color, size } = parseItemName(item.name || "");
+        const product = findProductByTitle(productTitle);
+        if (!product) return item.name || "unknown";
+        const variantId = product.variants?.[color]?.sizes?.[size]?.variant_id;
+        return variantId || product.product_key;
+      }
+
+      // Purchase / CompletePayment, deduplicated with the event_id created at checkout. Once per session id.
+      function trackPurchase(data, sessionId) {
+        const tools = window.kotsStoreTracking;
+        if (!tools || !data.event_id) return;
+        tools.trackPurchase({
+          sessionId,
+          eventId: data.event_id,
+          amountCents: data.amount_total,
+          currency: data.currency,
+          items: (data.lineItems || []).map(item => ({
+            id: getLineItemContentId(item),
+            name: parseItemName(item.name || "").productTitle,
+            priceCents: item.unitPrice,
+            quantity: item.quantity || 1,
+          })),
+        });
+      }
 
       function displayOrderDetails(data) {
         // Map API response fields (may vary based on backend implementation)
@@ -637,5 +666,6 @@
     </script>
     <script src="../js/analytics.js"></script>
     <script src="../js/cookie-consent.js"></script>
+    <script src="../js/click-ids.js"></script>
   </body>
 </html>

@@ -97,6 +97,8 @@
   function accept() {
     localStorage.setItem(CONSENT_KEY, "accepted");
     closeBanner();
+    // Keep any ad click IDs still in the URL (click-ids.js only stores them with consent)
+    if (window.kotsClickIds && typeof window.kotsClickIds.capture === "function") window.kotsClickIds.capture();
     loadTrackers();
   }
 
@@ -114,7 +116,7 @@
 
   // localStorage/sessionStorage keys written by the TikTok and Meta pixels
   function isTrackingStorageKey(key) {
-    return /^(tt_|_tt|__tt|ttclid|_fbp|_fbc|fbevents|fbssls|_fbq)/i.test(key);
+    return /^(tt_|_tt|__tt|ttclid|_fbp|_fbc|fbevents|fbssls|_fbq|kots_click_ids)/i.test(key);
   }
 
   function deleteCookie(name) {

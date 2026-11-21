@@ -71,7 +71,13 @@ function buildPage({ title, description, url, imageUrl, redirectUrl, productKey 
       targetUrl = '${redirectUrl}';
     }
 
-    window.location.replace(targetUrl);
+    // Carry over ad click ids and utm_* params; key stays the one from the target URL
+    const target = new URL(targetUrl);
+    new URLSearchParams(window.location.search).forEach(function(value, name) {
+      if (name !== 'key') target.searchParams.append(name, value);
+    });
+
+    window.location.replace(target.toString());
   })();
 </script>
 <p>Redirecting to <a href="${redirectUrl}">${safeTitle}</a>...</p>
