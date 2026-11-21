@@ -52,8 +52,8 @@ const server = http.createServer((req, res) => {
     // If it's a directory, try index.html
     if (!err && stats.isDirectory()) {
       // Redirect to trailing slash if needed
-      if (!req.url.endsWith("/")) {
-        res.writeHead(301, { Location: req.url + "/" });
+      if (!parsedUrl.pathname.endsWith("/")) {
+        res.writeHead(301, { Location: `${parsedUrl.pathname}/${parsedUrl.search}` });
         res.end();
         return;
       }

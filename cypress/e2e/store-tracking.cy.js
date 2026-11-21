@@ -138,4 +138,17 @@ describe("Store funnel tracking", () => {
       cy.then(() => expect(events(second, "Purchase")).to.have.length(0));
     });
   });
+
+  describe("store/p redirect", () => {
+    it("keeps fbclid and utm_* through the OG redirect", () => {
+      cy.visit(`/store/p/${TEE.productKey}/?fbclid=test123&utm_source=meta`);
+      cy.location("pathname").should("eq", "/store/product.html");
+      cy.location("search").then(search => {
+        const params = new URLSearchParams(search);
+        expect(params.getAll("key")).to.deep.equal([TEE.productKey]);
+        expect(params.get("fbclid")).to.eq("test123");
+        expect(params.get("utm_source")).to.eq("meta");
+      });
+    });
+  });
 });
